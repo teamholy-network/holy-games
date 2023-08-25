@@ -31,7 +31,7 @@ public class Lobby extends JavaPlugin {
 
     @Getter
     private static Lobby instance;
-    private String prefix = "§6Lobby §8× §7 ";
+    private String prefix = "§6Lobby §8× §7";
     private boolean isPremiumLobby;
 
     private LobbyPlayerHandler lobbyPlayerEntryHandler;
