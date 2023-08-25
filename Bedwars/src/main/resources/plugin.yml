@@ -1,0 +1,14 @@
+name: Bedwars
+version: 1.0
+author: Yassino
+main: de.teamholy.bedwars.Bedwars
+depend: [API, NoteBlockAPI, bukkit-core]
+
+commands:
+  npcshop:
+    aliases: [bwshop,armorstandshop, slimeworldmanager]
+  forcemap:
+  start:
+  setup:
+  resetinv:
+    aliases: [resetshop, resetshopinventory, resetinventory, deleteinv]

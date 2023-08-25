@@ -1,0 +1,16 @@
+name: API
+version: 1.0
+main: de.teamholy.api.BukkitHolyAPI
+
+depend: [ProtocolLib, bukkit-core, SlimeWorldManager]
+
+commands:
+  sudo:
+  tpblock:
+  gc:
+  bcommand:
+  location:
+  gamemode:
+    aliases: [gm]
+  chatclear:
+    aliases: [cc]

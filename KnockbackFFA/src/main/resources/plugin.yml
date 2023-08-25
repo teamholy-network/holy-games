@@ -1,0 +1,14 @@
+name: knockbackffa
+version: 1.0
+author: yassino
+main: de.teamholy.knockbackffa.KnockbackFFA
+
+depend: [API, EffectLib, MarkupAPI]
+
+commands:
+  setup:
+  quit:
+  teaming:
+    aliases: [tm, teams]
+  vanish:
+    aliases: [v]

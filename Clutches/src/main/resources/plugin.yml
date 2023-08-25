@@ -1,0 +1,12 @@
+name: Clutches
+main: de.teamholy.clutches.Clutches
+version: 1.0
+
+depend: [ API, bukkit-core, SlimeWorldManager ]
+softdepend:
+  - SlimeWorldManager
+
+commands:
+  playworld:
+  quit:
+  spawn:

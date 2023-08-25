@@ -1,0 +1,11 @@
+name: Lobby
+author: Yassino
+version: 1.0
+main: de.teamholy.lobby.Lobby
+
+depend: [API, HolographicDisplays]
+softdepend: [API,HolographicDisplays]
+
+commands:
+  fly:
+  eastern:
