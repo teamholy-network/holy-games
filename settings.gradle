@@ -1,4 +1,4 @@
-rootProject.name = 'BukkitHoly'
+rootProject.name = 'holy-games'
 include 'API'
 include 'Bedwars'
 include 'Clutches'

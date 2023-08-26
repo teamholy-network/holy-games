@@ -9,19 +9,19 @@ version = '1.0'
 repositories {
     mavenCentral()
     mavenLocal()
-    maven { url 'https://jitpack.io' }
+
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation project(':API')
-    compileOnly 'com.github.koca2000:NoteBlockAPI:1.6.2'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
 
 test {
     useJUnitPlatform()
