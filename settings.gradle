@@ -4,4 +4,6 @@ include 'Bedwars'
 include 'Clutches'
 include 'KnockbackFFA'
 include 'Lobby'
+include 'MLGRush'
+include 'SGFFA'
 

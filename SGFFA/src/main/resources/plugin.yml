@@ -1,0 +1,9 @@
+name: SGFFA
+version: 1.0
+main: de.teamholy.sgffa.SGFFA
+
+commands:
+  setup:
+  teaming:
+  vanish:
+    aliases: [v]

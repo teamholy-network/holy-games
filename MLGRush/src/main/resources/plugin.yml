@@ -1,0 +1,13 @@
+name: MLGRush
+author: Yassino
+version: 1.0
+main: de.teamholy.mlgrush.MLGRush
+depend: [API, bukkit-core]
+
+commands:
+  setup:
+  quit:
+  spawn:
+  spectate:
+    aliases: [spec, watch]
+
