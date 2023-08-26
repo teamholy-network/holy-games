@@ -18,9 +18,7 @@ public final class PlayerMoveListener implements Listener {
         NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId());
         if (playerEntry == null)
         	return;
-        playerEntry.getNpcs().values().forEach(npc -> {
-            npc.remove(playerEntry.getPlayer());
-        });
+        playerEntry.getNpcs().values().forEach(npc -> npc.remove(playerEntry.getPlayer()));
     }
 
     @EventHandler
@@ -29,9 +27,7 @@ public final class PlayerMoveListener implements Listener {
         NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId());
         if (playerEntry == null)
             return;
-        playerEntry.getNpcs().values().forEach(npc -> {
-            npc.update(playerEntry.getPlayer());
-        });
+        playerEntry.getNpcs().values().forEach(npc -> npc.update(playerEntry.getPlayer()));
     }
 
 
@@ -45,10 +41,7 @@ public final class PlayerMoveListener implements Listener {
         }
 
         BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().values().forEach(playerEntry -> {
-            playerEntry.getNpcs().values().forEach(npc -> {
-                npc.update(playerEntry.getPlayer());
-            });
-
+            playerEntry.getNpcs().values().forEach(npc -> npc.update(playerEntry.getPlayer()));
         });
     }
 
@@ -56,9 +49,7 @@ public final class PlayerMoveListener implements Listener {
     public final void onPlayerDeath(final PlayerDeathEvent event) {
         if (event.getEntity() != null) {
             NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(event.getEntity().getUniqueId());
-            playerEntry.getNpcs().values().forEach(npc -> {
-                npc.remove(playerEntry.getPlayer());
-            });
+            playerEntry.getNpcs().values().forEach(npc -> npc.remove(playerEntry.getPlayer()));
         }
     }
 }

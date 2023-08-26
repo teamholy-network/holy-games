@@ -472,9 +472,13 @@ public class LobbyPlayer implements ILabyMod {
     public void setInventory() {
 
         player.getInventory().clear();
-        ItemBuilder perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
-        if (perk != null) {
-            player.getInventory().setItem(4, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+
+        while (true) {
+            ItemBuilder perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+            if (perk != null) {
+                player.getInventory().setItem(4, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+                break;
+            }
         }
 
         player.getInventory().setItem(0, new ItemBuilder(Material.COMPASS, 1).setName("§8» §6Games §8(§7rightclick§8)").build());
