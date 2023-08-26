@@ -18,6 +18,10 @@ dependencies {
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
 test {
     useJUnitPlatform()
 }
