@@ -52,7 +52,7 @@ public class Lobby extends JavaPlugin {
         statsResetHandler = new StatsResetHandler();
         bedwarsServerInventory = new BedwarsServerInventory();
         bedwarsSpectateInventory = new BedwarsSpectateInventory();
-        registerListener("codes.yassino.lobby.listeners");
+        registerListener("de.teamholy.lobby.listeners");
         if (Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0].equalsIgnoreCase("PremiumLobby")) {
             prefix = "§6PremiumLobby §8× §7";
             isPremiumLobby = true;

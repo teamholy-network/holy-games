@@ -63,7 +63,7 @@ public class BukkitHolyAPI extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        registerListener("codes.yassino.api.bukkit.listeners");
+        registerListener("de.teamholy.api.bukkit.listeners");
         bukkitCacheHandler = new BukkitCacheHandler();
         locationManager = new LocationManager();
         bukkitCloudUtil = new BukkitCloudUtil(this);

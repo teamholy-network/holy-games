@@ -71,7 +71,7 @@ public class MLGRush extends JavaPlugin {
         getCommand("spawn").setExecutor(new SpawnCMD());
         getCommand("spectate").setExecutor(new SpectateCommand());
 
-        registerListener("codes.yassino.mlgrush.listener");
+        registerListener("de.teamholy.mlgrush.listener");
         startIngameCounter();
         startIngameKiller();
 

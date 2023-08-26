@@ -58,7 +58,7 @@ public class KnockbackFFA extends JavaPlugin {
         getCommand("quit").setExecutor(new QuitCommand());
         getCommand("vanish").setExecutor(new VanishCommand());
         getCommand("teaming").setExecutor(new TeamingCommand());
-        registerListener("codes.yassino.knockbackffa.listeners");
+        registerListener("de.teamholy.knockbackffa.listeners");
         registerMaps();
         startMoveListener();
         new ArmorColorRainbowTask(this);

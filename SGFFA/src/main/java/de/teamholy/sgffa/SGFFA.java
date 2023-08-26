@@ -48,7 +48,7 @@ public class SGFFA extends JavaPlugin {
         cacheHandler = new CacheHandler();
         itemHandler = new ItemHandler();
         teamingHandler = new TeamingHandler(this);
-        registerListener("codes.yassino.sgffa.listeners");
+        registerListener("de.teamholy.sgffa.listeners");
         registerMapsAndConfig();
 
         getCommand("setup").setExecutor(new SetupCommand());

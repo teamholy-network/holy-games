@@ -126,7 +126,7 @@ public class Bedwars extends JavaPlugin {
                 });
             }
         }, 20, 20);
-        registerListener("codes.yassino.bedwars.listeners");
+        registerListener("de.teamholy.bedwars.listeners");
         Bukkit.getPluginManager().registerEvents(new ShopInventory(), this);
 
 
