@@ -8,6 +8,7 @@ import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.enums.ArmorColor;
 import de.teamholy.clutches.playground.enums.PlaygroundItems;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.clutches.playground.task.CountdownItemTask;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -16,6 +17,7 @@ import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -44,7 +46,7 @@ public class PlaygroundPlayer {
     private PlaygroundWorld playgroundWorld;
     private Player player;
 
-    public enum CountdownLocation { CHAT , ACTIONBAR , TITLE }
+    public enum CountdownLocation {CHAT, ACTIONBAR, TITLE}
 
     public PlaygroundPlayer(PlayerEntry playerEntry, GameProfile gameProfile) {
         this.playerEntry = playerEntry;
@@ -78,7 +80,7 @@ public class PlaygroundPlayer {
 
             if (getArmorColor() == armorColor) {
                 itemBuilder.setLore("§2selected");
-                itemBuilder.setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL,2);
+                itemBuilder.setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
                 itemBuilder.setAttributs();
             } else {
 
@@ -91,13 +93,13 @@ public class PlaygroundPlayer {
                 }
 
             }
-            inventory.setItem(itemBuilder.build(),i,event -> {
+            inventory.setItem(itemBuilder.build(), i, event -> {
                 boolean sucess = false;
                 if (ArmorColor.isBuyable(armorColor)) {
                     if (perkPlayerProfile.getOwnedPerks().contains(ArmorColor.getId(armorColor))) {
                         sucess = true;
                     } else {
-                        ArmorColor.buyPerk(player,perkPlayerProfile,armorColor,armorColor.getName());
+                        ArmorColor.buyPerk(player, perkPlayerProfile, armorColor, armorColor.getName());
                         return;
                     }
                 } else {
@@ -106,7 +108,7 @@ public class PlaygroundPlayer {
 
                 if (sucess) {
                     player.sendMessage(BukkitHolyAPI.getInstance().getPrefix() + "Armor color selected!");
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING,2f,2f);
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2f, 2f);
                     setArmorColor(armorColor);
                     player.closeInventory();
                 }
@@ -116,31 +118,129 @@ public class PlaygroundPlayer {
 
         player.openInventory(inventory.getInventory());
     }
+
     public void openSettings() {
-        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Settings", 6*9);
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Settings", 6 * 9);
 
 
-        for (int i = 0; i < 6*9; i++) {
+        for (int i = 0; i < 6 * 9; i++) {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
 
 
-
         // perks
-        inventory.setItem(null,30);
-        inventory.setItem(null,34);
+        inventory.setItem(null, 30);
+        inventory.setItem(null, 34);
 
-        inventory.setItem(new ItemBuilder(Material.DIAMOND).setName("§8» §6Perks").build(),28);
+        inventory.setItem(new ItemBuilder(Material.DIAMOND).setName("§8» §6Perks").build(), 28);
 
-        inventory.setItem(new ItemBuilder(Material.SANDSTONE).setName("§8» §6Blocks").build(),31,
-                event -> BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player,PerkType.BLOCK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL));
-        inventory.setItem(new ItemBuilder(Material.LEATHER_CHESTPLATE).setName("§8» §6Armor").build(),32, event -> openArmorColor());
-        inventory.setItem(new ItemBuilder(Material.STICK).setName("§8» §6Sticks").build(),33,
-                event -> BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player,PerkType.STICK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL));
+        inventory.setItem(new ItemBuilder(Material.SANDSTONE).setName("§8» §6Blocks").build(), 31,
+                event -> BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player, PerkType.BLOCK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL));
+        inventory.setItem(new ItemBuilder(Material.LEATHER_CHESTPLATE).setName("§8» §6Armor").build(), 32, event -> openArmorColor());
+        inventory.setItem(new ItemBuilder(Material.STICK).setName("§8» §6Sticks").build(), 33,
+                event -> BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player, PerkType.STICK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL));
 
 
         //settings
-        inventory.setItem(new ItemBuilder(Material.REDSTONE_COMPARATOR).setName("§8» §6Settings").build(),37);
+        inventory.setItem(new ItemBuilder(Material.REDSTONE_COMPARATOR).setName("§8» §6Settings").build(), 37);
+        inventory.setItem(new ItemBuilder(Material.IRON_SWORD).setName("§8» §6PvP §8(§cno damage§8)")
+                .setLore("§7currently " + (isPvpEnabled() ? "§aenabled" : "§cdisabled"))
+                .build(), 39, event -> {
+
+            setPvpEnabled(!isPvpEnabled());
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+            openSettings();
+        });
+
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV" +
+                        "0L3RleHR1cmUvOTQzOGI1MTEzOGY4MGE0OWYyZDE5ZjliMWFiZWQ5OWUxZjMyMjVlYmNmZThjOGI0Nzk4NDkxZTFiY2RhOTVlMiJ9fX0=", "").setName("§8» §6Adjust hit direction")
+                .setLore(
+                        "§7currently " + (isPvpEnabled() ? "§aenabled " : "§cdisabled "),
+                        " ",
+                        " §7if enabled you will get hit in a ",
+                        " §efixed §7postion for your clutch, ",
+                        " §7meaning 180°§8, §790°§8, §70°§8 & §7-90° ",
+                        " ",
+                        " §cnote §7if disabled diagonal clutches wont work ",
+                        " §8(§7they do but you need to stand diagonal§8) ",
+                        ""
+
+                )
+                .build(), 39, event -> {
+
+            setAdjustDirection(!isAdjustDirection());
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+            openSettings();
+        });
+
+        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND, 1, (byte) 0).setName("§8» §6Inventory sort").build(), 40, event -> {
+            de.teamholy.core.bukkit.utils.Inventory sort = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Sort shop inventory", 3 * 9, false);
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+
+
+            inventory.getInventory().setContents(getInventory().getContents());
+            playerEntry.getPlayer().getInventory().clear();
+
+            inventory.setOnClose(inventoryCloseEvent -> {
+                if (PlaygroundItems.correctInventory(sort.getInventory())) {
+                    playerEntry.setInventory(sort.getInventory());
+                    player.sendMessage(Clutches.PREFIX + "Your inventory sort was saved");
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2f, 2f);
+                } else {
+                    playerEntry.createInv();
+                    player.sendMessage(Clutches.PREFIX + "Your inventory was not saved");
+                    player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2f, 2f);
+                }
+                Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
+                    playerEntry.setItemsSpawn();
+                }, 1);
+            });
+
+
+
+            playerEntry.getPlayer().openInventory(inventory.getInventory());
+        });
+
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 0).setSkullMeta(CountdownItemTask.Heads.getCurrentHead(),"").setName("§8» §6Clutch countdown")
+                .setLore("§7Currently selected §8» §b" + countdown," ", " §crightclick §7-1 ", " §aleftclick §7+1 ").build(), 41, event -> {
+
+            if (event.getClick().isRightClick()) {
+                if (!(countdown <= 2)) {
+                    setCountdown(countdown - 1);
+                    openSettings();
+                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+                }
+            } else if (event.getClick().isLeftClick()) {
+                if (!(countdown >= 12)) {
+                    setCountdown(countdown + 1);
+                    openSettings();
+                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+                }
+            }
+
+        });
+
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 0).setSkullMeta(PAPER,"").setName("§8» §6Clutch countdown location")
+                .setLore("§7Currently selected §8» §b" + countdown," ", " §crightclick §7-1 ", " §aleftclick §7+1 ").build(), 41, event -> {
+
+            if (event.getClick().isRightClick()) {
+                if (!(countdown <= 2)) {
+                    setCountdown(countdown - 1);
+                    openSettings();
+                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+                }
+            } else if (event.getClick().isLeftClick()) {
+                if (!(countdown >= 12)) {
+                    setCountdown(countdown + 1);
+                    openSettings();
+                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
+                }
+            }
+
+        });
+
+
+
 
 
         player.openInventory(inventory.getInventory());

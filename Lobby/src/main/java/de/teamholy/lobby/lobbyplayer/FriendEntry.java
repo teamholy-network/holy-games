@@ -389,7 +389,7 @@ public class FriendEntry {
     @Getter
     @AllArgsConstructor
     public enum SortOption {
-        LASTONLINE_RECENTLY(" Last online §8(§6recently §7➡ §6long§8)",(o1, o2) -> {
+        LASTONLINE_RECENTLY(" Last online §8(§6recently §7➡ §6long§8)", (o1, o2) -> {
             boolean o1Online = o1.isOnline();
             boolean o2Online = o2.isOnline();
             if (o1Online && !o2Online) {

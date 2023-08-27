@@ -463,8 +463,7 @@ public class LobbyPlayer implements ILabyMod {
                 .collect(Collectors.toList());
 
         Collections.reverse(collection);
-
-
+        
         itemBuilder.setLore(collection);
     }
 

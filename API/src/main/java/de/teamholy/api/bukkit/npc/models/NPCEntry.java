@@ -77,6 +77,7 @@ public class NPCEntry extends Reflection {
                 i = 2.9;
                 break;
             case 3:
+                i = 3.2;
                 break;
             case 4:
                 i = 3.4;
