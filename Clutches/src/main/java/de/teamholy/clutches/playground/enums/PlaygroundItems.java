@@ -24,7 +24,7 @@ public enum PlaygroundItems {
     private final ItemStack itemStack;
 
     public static Inventory newInventory() {
-        Inventory inventory = Bukkit.createInventory(null, 9 * 3, "inv");
+        Inventory inventory = Bukkit.createInventory(null, 9, "inv");
         for (PlaygroundItems playgroundItems : PlaygroundItems.values()) {
             inventory.setItem(playgroundItems.getSlot(), playgroundItems.getItemStack());
         }

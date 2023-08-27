@@ -3,6 +3,7 @@ package de.teamholy.clutches.listeners;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.enums.Items;
 import de.teamholy.clutches.player.PlayerEntry;
+import de.teamholy.clutches.player.PlayerState;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +19,7 @@ public class InventoryCloseListener implements Listener {
         Player player = (Player) event.getPlayer();
         if (playerEntry == null) return;
         playerEntry.setPause(false);
+        if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND) return;
         if (event.getInventory().getName().equals("§8» §6Inventory Sort")) {
             if (Items.correctInventory(event.getInventory())) {
                 playerEntry.setInventory(event.getInventory());

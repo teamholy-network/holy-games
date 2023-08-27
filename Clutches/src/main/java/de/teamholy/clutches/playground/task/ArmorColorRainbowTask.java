@@ -236,10 +236,10 @@ public class ArmorColorRainbowTask {
                 }
 
                 if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND && playerEntry.getPlaygroundPlayer().getArmorColor() == ArmorColor.RAINBOW && playerEntry.getPlayer().getInventory().getChestplate() != null) {
-                    playerEntry.getPlayer().getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
-                    playerEntry.getPlayer().getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
-                    playerEntry.getPlayer().getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
-                    playerEntry.getPlayer().getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
+                    playerEntry.getPlayer().getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
+                    playerEntry.getPlayer().getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
+                    playerEntry.getPlayer().getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
+                    playerEntry.getPlayer().getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
                 }
 
 

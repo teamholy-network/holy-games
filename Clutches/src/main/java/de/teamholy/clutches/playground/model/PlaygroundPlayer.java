@@ -8,7 +8,6 @@ import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.enums.ArmorColor;
 import de.teamholy.clutches.playground.enums.PlaygroundItems;
 import de.dytanic.cloudnet.wrapper.Wrapper;
-import de.teamholy.clutches.playground.task.CountdownItemTask;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -26,8 +25,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -46,7 +47,7 @@ public class PlaygroundPlayer {
     private PlaygroundWorld playgroundWorld;
     private Player player;
 
-    public enum CountdownLocation {CHAT, ACTIONBAR, TITLE}
+    public enum CountdownLocation {TITLE,ACTIONBAR,CHAT}
 
     public PlaygroundPlayer(PlayerEntry playerEntry, GameProfile gameProfile) {
         this.playerEntry = playerEntry;
@@ -155,7 +156,7 @@ public class PlaygroundPlayer {
         inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV" +
                         "0L3RleHR1cmUvOTQzOGI1MTEzOGY4MGE0OWYyZDE5ZjliMWFiZWQ5OWUxZjMyMjVlYmNmZThjOGI0Nzk4NDkxZTFiY2RhOTVlMiJ9fX0=", "").setName("§8» §6Adjust hit direction")
                 .setLore(
-                        "§7currently " + (isPvpEnabled() ? "§aenabled " : "§cdisabled "),
+                        "§7currently " + (isAdjustDirection() ? "§aenabled " : "§cdisabled "),
                         " ",
                         " §7if enabled you will get hit in a ",
                         " §efixed §7postion for your clutch, ",
@@ -163,46 +164,44 @@ public class PlaygroundPlayer {
                         " ",
                         " §cnote §7if disabled diagonal clutches wont work ",
                         " §8(§7they do but you need to stand diagonal§8) ",
-                        ""
+                        " "
 
                 )
-                .build(), 39, event -> {
+                .build(), 40, event -> {
 
             setAdjustDirection(!isAdjustDirection());
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
             openSettings();
         });
 
-        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND, 1, (byte) 0).setName("§8» §6Inventory sort").build(), 40, event -> {
-            de.teamholy.core.bukkit.utils.Inventory sort = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Sort shop inventory", 3 * 9, false);
+        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND, 1, (byte) 0).setName("§8» §6Inventory sort").build(), 41, event -> {
+            de.teamholy.core.bukkit.utils.Inventory sort = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Sort inventory", 9, false);
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
 
 
-            inventory.getInventory().setContents(getInventory().getContents());
-            playerEntry.getPlayer().getInventory().clear();
+            sort.getInventory().setContents(getInventory().getContents());
+            player.getInventory().clear();
 
-            inventory.setOnClose(inventoryCloseEvent -> {
+            sort.setOnClose(inventoryCloseEvent -> {
                 if (PlaygroundItems.correctInventory(sort.getInventory())) {
-                    playerEntry.setInventory(sort.getInventory());
+                    setInventory(sort.getInventory());
                     player.sendMessage(Clutches.PREFIX + "Your inventory sort was saved");
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 2f, 2f);
                 } else {
-                    playerEntry.createInv();
+                    setInventory(PlaygroundItems.newInventory());
                     player.sendMessage(Clutches.PREFIX + "Your inventory was not saved");
                     player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2f, 2f);
                 }
-                Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
-                    playerEntry.setItemsSpawn();
-                }, 1);
+                Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), this::setItems, 1);
             });
 
 
 
-            playerEntry.getPlayer().openInventory(inventory.getInventory());
+            playerEntry.getPlayer().openInventory(sort.getInventory());
         });
 
-        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 0).setSkullMeta(CountdownItemTask.Heads.getCurrentHead(),"").setName("§8» §6Clutch countdown")
-                .setLore("§7Currently selected §8» §b" + countdown," ", " §crightclick §7-1 ", " §aleftclick §7+1 ").build(), 41, event -> {
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg2YjlkNThiY2QxYTU1NWY5M2U3ZDg2NTkxNTljZmQyNWI4ZGQ2ZTliY2UxZTk3MzgyMjgyNDI5MTg2MiJ9fX0=","").setName("§8» §6Clutch countdown")
+                .setLore("§7Currently selected §8» §b" + countdown," ", " §crightclick §7-1 ", " §aleftclick §7+1 " , " ").build(), 42, event -> {
 
             if (event.getClick().isRightClick()) {
                 if (!(countdown <= 2)) {
@@ -220,23 +219,19 @@ public class PlaygroundPlayer {
 
         });
 
-        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 0).setSkullMeta(PAPER,"").setName("§8» §6Clutch countdown location")
-                .setLore("§7Currently selected §8» §b" + countdown," ", " §crightclick §7-1 ", " §aleftclick §7+1 ").build(), 41, event -> {
+        inventory.setItem(new ItemBuilder(Material.PAPER, 1).setName("§8» §6Clutch countdown location")
+                .setLore(
+                        Arrays.stream(CountdownLocation.values()).map(value -> (countdownLocation == value) ? "§a" + value.toString().toLowerCase() : "§7" + value.toString().toLowerCase()).collect(Collectors.toList())
+                ).build(), 43, event -> {
 
-            if (event.getClick().isRightClick()) {
-                if (!(countdown <= 2)) {
-                    setCountdown(countdown - 1);
-                    openSettings();
-                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
-                }
-            } else if (event.getClick().isLeftClick()) {
-                if (!(countdown >= 12)) {
-                    setCountdown(countdown + 1);
-                    openSettings();
-                    player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
-                }
+            switch (countdownLocation) {
+                case TITLE -> countdownLocation = CountdownLocation.ACTIONBAR;
+                case ACTIONBAR -> countdownLocation = CountdownLocation.CHAT;
+                case CHAT -> countdownLocation = CountdownLocation.TITLE;
             }
 
+            openSettings();
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
         });
 
 
@@ -251,10 +246,10 @@ public class PlaygroundPlayer {
         player.getInventory().setArmorContents(null);
         int slot = 0;
 
-        player.getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).build());
-        player.getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).build());
-        player.getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).build());
-        player.getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).build());
+        player.getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).setUnbreakable().build());
+        player.getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).setUnbreakable().build());
+        player.getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).setUnbreakable().build());
+        player.getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(armorColor.getColor()).setUnbreakable().build());
 
         for (ItemStack itemStack : inventory.getContents()) {
 

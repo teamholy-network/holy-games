@@ -4,7 +4,6 @@ import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.playground.model.HitPreset;
 import de.teamholy.clutches.playground.model.PlaygroundWorld;
 import de.teamholy.clutches.playground.task.ArmorColorRainbowTask;
-import de.teamholy.clutches.playground.task.CountdownItemTask;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -27,7 +26,6 @@ public class PlaygroundManager {
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         armorColorRainbowTask = new ArmorColorRainbowTask(instance);
         instance.getServer().getPluginManager().registerEvents(new PlaygroundListener(),instance);
-        instance.getServer().getScheduler().scheduleSyncRepeatingTask(instance,new CountdownItemTask(),10,10);
         System.out.println(yamlConfiguration.getStringList("maps"));
         if (yamlConfiguration.contains("maps")) {
 
