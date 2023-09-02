@@ -1,5 +1,7 @@
 package de.teamholy.clutches.playground.model;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.clutches.Clutches;
@@ -8,6 +10,7 @@ import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.enums.ArmorColor;
 import de.teamholy.clutches.playground.enums.PlaygroundItems;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.clutches.utils.PlayerUtils;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -17,17 +20,17 @@ import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -40,14 +43,17 @@ public class PlaygroundPlayer {
     private Inventory inventory = PlaygroundItems.newInventory(); // setting
     private CountdownLocation countdownLocation = CountdownLocation.TITLE; // setting
     private ArmorColor armorColor = ArmorColor.GREY; // setting
-    private List<HitPreset> hitPresets = new ArrayList<>();
+    private List<HitPreset> hitPresetMap = Lists.newLinkedList();
 
     private PlayerEntry playerEntry;
     private ScoreboardAPI scoreboardAPI;
     private PlaygroundWorld playgroundWorld;
     private Player player;
 
-    public enum CountdownLocation {TITLE,ACTIONBAR,CHAT}
+    private HitPreset currentEditPreset;
+    private boolean chatEdit = false;
+
+    public enum CountdownLocation {TITLE, ACTIONBAR, CHAT}
 
     public PlaygroundPlayer(PlayerEntry playerEntry, GameProfile gameProfile) {
         this.playerEntry = playerEntry;
@@ -120,14 +126,76 @@ public class PlaygroundPlayer {
         player.openInventory(inventory.getInventory());
     }
 
+    public void openHitpresets() {
+
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Hitpresets", 4 * 9);
+
+        int lastRowIndex = (inventory.getInventory().getSize() / 9) - 1;
+        int startIndex = lastRowIndex * 9;
+
+        for (int i = startIndex; i < startIndex + 9; i++) {
+            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
+        }
+
+        int i = 0;
+        for (HitPreset hitPreset : hitPresetMap.stream().sorted(Comparator.comparing(HitPreset::getCreated)).toList()) {
+
+            inventory.setItem(new ItemBuilder(hitPreset.getIcon().getMaterial(), hitPreset.getHitMap().size(), (byte) hitPreset.getIcon().getSubId())
+                    .setName("§8» §6" + hitPreset.getName())
+                    .setLore(" ",
+                            " §7created§8: §6" + PlayerUtils.convertTime(hitPreset.getCreated()),
+                            " §7last edited§8: §6" + PlayerUtils.convertTime(hitPreset.getLastEdit()),
+                            " ",
+                            " §7you used this preset §6" + hitPreset.getUsed() + " " + (hitPreset.getUsed() == 1 ? "§7time" : "§7times"),
+                            " §7§lrightclick §r§7to §bedit§8, §7§lleftclick §r§7to §aselect",
+                            " "
+                    )
+                    .build(), i, event -> {
+                if (event.getClick().isRightClick()) Clutches.getInstance().getPlaygroundManager().getEditInventories().openHitPresetEdit(this,hitPreset);
+            });
+
+            i++;
+        }
+
+        if (hitPresetMap.size() <= 9) {
+            inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
+                    .setName("§8» §6Create new hitpreset")
+                    .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWEyZDg5MWM2YWU5ZjZiYWEwNDBkNzM2YWI4NGQ0ODM0NGJiNmI3MGQ3ZjFhMjgwZGQxMmNiYWM0ZDc3NyJ9fX0=","").build(), 31, event -> {
+
+                HitPreset hitPreset = new HitPreset();
+                hitPresetMap.add(hitPreset);
+                Clutches.getInstance().getPlaygroundManager().getEditInventories().openHitPresetEdit(this,hitPreset);
+
+
+            });
+        }
+
+        player.openInventory(inventory.getInventory());
+
+    }
+
+
+
     public void openSettings() {
         de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Settings", 6 * 9);
 
+        currentEditPreset = null;
+        chatEdit = false;
 
         for (int i = 0; i < 6 * 9; i++) {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
 
+
+        inventory.setItem(null, 16);
+        inventory.setItem(null, 14);
+        inventory.setItem(null, 12);
+
+
+        inventory.setItem(new ItemBuilder(Material.RED_SANDSTONE).setName("§8» §6Hit presets").setLore(" ", " §7here you can §esee §8& §acreate", " §7your own §cHit presets§7! ", " ").build(), 13, event -> openHitpresets());
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullMeta(
+                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cm" +
+                        "UvNzZjYmFlNzI0NmNjMmM2ZTg4ODU4NzE5OGM3OTU5OTc5NjY2YjRmNWE0MDg4ZjI0ZTI2ZTA3NWYxNDBhZTZjMyJ9fX0=", "").setName("§8» §6Featured hit presets").setLore(" ", " §7here you can §esee §8& §bcopy", " §7featured §cHit presets ", " §7of people like §52sa §8& §5derNOZE " , " ").build(), 15);
 
         // perks
         inventory.setItem(null, 30);
@@ -161,9 +229,6 @@ public class PlaygroundPlayer {
                         " §7if enabled you will get hit in a ",
                         " §efixed §7postion for your clutch, ",
                         " §7meaning 180°§8, §790°§8, §70°§8 & §7-90° ",
-                        " ",
-                        " §cnote §7if disabled diagonal clutches wont work ",
-                        " §8(§7they do but you need to stand diagonal§8) ",
                         " "
 
                 )
@@ -196,12 +261,11 @@ public class PlaygroundPlayer {
             });
 
 
-
             playerEntry.getPlayer().openInventory(sort.getInventory());
         });
 
-        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg2YjlkNThiY2QxYTU1NWY5M2U3ZDg2NTkxNTljZmQyNWI4ZGQ2ZTliY2UxZTk3MzgyMjgyNDI5MTg2MiJ9fX0=","").setName("§8» §6Clutch countdown")
-                .setLore("§7Currently selected §8» §b" + countdown," ", " §crightclick §7-1 ", " §aleftclick §7+1 " , " ").build(), 42, event -> {
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, countdown, (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg2YjlkNThiY2QxYTU1NWY5M2U3ZDg2NTkxNTljZmQyNWI4ZGQ2ZTliY2UxZTk3MzgyMjgyNDI5MTg2MiJ9fX0=", "").setName("§8» §6Clutch countdown")
+                .setLore("§7Currently selected §8» §b" + countdown, " ", " §crightclick §7-1 ", " §aleftclick §7+1 ", " ").build(), 42, event -> {
 
             if (event.getClick().isRightClick()) {
                 if (!(countdown <= 2)) {
@@ -233,9 +297,6 @@ public class PlaygroundPlayer {
             openSettings();
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
         });
-
-
-
 
 
         player.openInventory(inventory.getInventory());
@@ -278,6 +339,8 @@ public class PlaygroundPlayer {
 
 
     public void quit() {
+        setChatEdit(false);
+        setCurrentEditPreset(null);
         playerEntry.setPlayerState(PlayerState.LOBBY);
         playgroundWorld = null;
         playerEntry.setItemsSpawn();

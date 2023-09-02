@@ -3,6 +3,7 @@ package de.teamholy.mlgrush.player;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
+import de.teamholy.core.api.utility.EloRank;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.BlockResetType;
 import de.teamholy.mlgrush.enums.GameType;
@@ -67,8 +68,10 @@ public class PlayerEntry {
         if (!statsProfile.exists(Gamemodes.MLGRUSH.toString())) {
 
             for (StatsType time : StatsType.values()) {
-                for (String string : Gamemodes.MLGRUSH.getStatKeys())
-                    statsProfile.setStat(Gamemodes.MLGRUSH.toString(), time, string, 0);
+                for (String string : Gamemodes.MLGRUSH.getStatKeys()) statsProfile.setStat(Gamemodes.MLGRUSH.toString(), time, string, 0);
+
+                statsProfile.setStat(Gamemodes.MLGRUSH.toString(),time,"elo",1000);
+
             }
 
             statsProfile.setSetting(Gamemodes.MLGRUSH.toString(), "invsort", InventoryUtils.inventoryToString(inventory));
@@ -272,11 +275,14 @@ public class PlayerEntry {
         if (playerState == PlayerState.LOBBY) {
             scoreboardAPI.clearScoreboard();
             BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),gameProfile -> {
-                scoreboardAPI.setLine(13, " §8§m--------------- ");
+                scoreboardAPI.setLine(15, " §8§m--------------- ");
+                scoreboardAPI.setLine(14,"§4");
+                scoreboardAPI.setLine(13," §7Stats§8: " + shownBoardStatsType.toBeauty());
                 scoreboardAPI.setLine(12,"§2");
-                scoreboardAPI.setLine(11," §7Stats§8: " + shownBoardStatsType.toBeauty());
-                scoreboardAPI.setLine(10,"§2");
-                scoreboardAPI.setLine(9," §7Rank§8: §6#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.MLGRUSH,shownBoardStatsType,player.getUniqueId()));
+                scoreboardAPI.setLine(11," §7Rank§8: §6#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.MLGRUSH,shownBoardStatsType,player.getUniqueId()));
+                int elo = (int) gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"elo");
+                scoreboardAPI.setLine(10," §7Elo§8: §6" + elo + " " + EloRank.getEloRank(elo).getShortName());
+                scoreboardAPI.setLine(9," §1");
                 scoreboardAPI.setLine(8," §7Kills§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"kills"));
                 scoreboardAPI.setLine(7," §7Deaths§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"deaths"));
                 scoreboardAPI.setLine(6," §7Games§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"played_games"));

@@ -39,10 +39,10 @@ subprojects {
     dependencies {
         compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.8.0";
         compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
-        compileOnly 'de.teamholy:holy-core-api:2.4'
-        compileOnly 'de.teamholy:bukkit-core-api:2.4'
-        compileOnly 'de.teamholy:bungee-core-api:2.4'
-        compileOnly 'de.teamholy:bukkit-markupapi:2.4'
+        compileOnly 'de.teamholy:holy-core-api:2.5'
+        compileOnly 'de.teamholy:bukkit-core-api:2.5'
+        compileOnly 'de.teamholy:bungee-core-api:2.5'
+        compileOnly 'de.teamholy:bukkit-markupapi:2.5'
         implementation 'eu.koboo:en2do:2.3.3'
         implementation 'io.netty:netty-codec:4.1.97.Final'
         compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'

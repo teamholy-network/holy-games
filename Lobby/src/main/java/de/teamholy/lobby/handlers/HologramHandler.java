@@ -3,6 +3,7 @@ package de.teamholy.lobby.handlers;
 
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.api.utility.EloRank;
 import de.teamholy.lobby.Lobby;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -11,8 +12,10 @@ import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /* copyright by Yassino */
@@ -40,6 +43,22 @@ public class HologramHandler {
         gameholograms.put("KnockbackFFA",createHologram(new ItemBuilder(Material.SANDSTONE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa")));
         gameholograms.put("Clutches",createHologram(new ItemBuilder(Material.RED_SANDSTONE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches")));
         gameholograms.put("SGFFA",createHologram(new ItemBuilder(Material.IRON_SWORD).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa")));
+
+
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("§8§m------------§f§lRANKS§8§m------------");
+        for (EloRank eloRank : EloRank.values()) {
+            String s = eloRank.getName() + " §8» §7" + eloRank.getMinRange() + " §a- §7" + eloRank.getMaxRange() + " §8» " + eloRank.getShortName();
+            arrayList.add(s);
+        }
+        arrayList.add("§8§m------------§f§lRANKS§8§m------------");
+
+
+        Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,7,0));
+        eloholo.appendItemLine(new ItemBuilder(Material.DIAMOND_SWORD).setEnchantments(Enchantment.DAMAGE_ALL,1).build());
+        arrayList.forEach(eloholo::appendTextLine);
+
     }
 
     public void updateHolograms() {

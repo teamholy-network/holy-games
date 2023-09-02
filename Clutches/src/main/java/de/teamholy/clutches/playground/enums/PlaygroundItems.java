@@ -25,13 +25,11 @@ public enum PlaygroundItems {
 
     public static Inventory newInventory() {
         Inventory inventory = Bukkit.createInventory(null, 9, "inv");
-        for (PlaygroundItems playgroundItems : PlaygroundItems.values()) {
-            inventory.setItem(playgroundItems.getSlot(), playgroundItems.getItemStack());
-        }
+        for (PlaygroundItems playgroundItems : PlaygroundItems.values()) inventory.setItem(playgroundItems.getSlot(), playgroundItems.getItemStack());
         return inventory;
     }
 
-    public static final boolean correctInventory(final Inventory inventory) {
+    public static boolean correctInventory(final Inventory inventory) {
         for (PlaygroundItems gameItem : PlaygroundItems.values()) {
             if (!inventory.contains(gameItem.getItemStack())) {
                 return false;

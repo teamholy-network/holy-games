@@ -9,6 +9,9 @@ import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class PlayerUtils {
     public static void sendBar(Player player, String message) {
         IChatBaseComponent msg = ChatSerializer.a("{\"text\": \"" + message + "\"}");
@@ -25,6 +28,12 @@ public class PlayerUtils {
         connection.sendPacket(timepacket);
         connection.sendPacket(titlepacket);
         connection.sendPacket(subtitlepacket);
+    }
+
+    public static String convertTime(long timestampInMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("d. MMM yyyy HH:mm:ss");
+        Date date = new Date(timestampInMillis);
+        return sdf.format(date);
     }
 
 

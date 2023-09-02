@@ -21,10 +21,12 @@ public class PlaygroundManager {
     private final YamlConfiguration yamlConfiguration;
 
     private final ArmorColorRainbowTask armorColorRainbowTask;
+    private final EditInventories editInventories;
 
     public PlaygroundManager(Clutches instance) {
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         armorColorRainbowTask = new ArmorColorRainbowTask(instance);
+        editInventories = new EditInventories();
         instance.getServer().getPluginManager().registerEvents(new PlaygroundListener(),instance);
         System.out.println(yamlConfiguration.getStringList("maps"));
         if (yamlConfiguration.contains("maps")) {

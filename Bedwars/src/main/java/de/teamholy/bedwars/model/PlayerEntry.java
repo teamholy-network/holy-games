@@ -63,8 +63,9 @@ public class PlayerEntry {
         if (Bedwars.isRushMode()) createInv();
         if (!statsProfile.exists(Bedwars.MODE.toString())) {
             for (StatsType time : StatsType.values()) {
-                for (String string : Bedwars.MODE.getStatKeys())
-                    statsProfile.setStat(Bedwars.MODE.toString(), time, string, 0);
+                for (String string : Bedwars.MODE.getStatKeys()) statsProfile.setStat(Bedwars.MODE.toString(), time, string, 0);
+
+                statsProfile.setStat(Bedwars.MODE.toString(),time,"elo",1000);
             }
             if (Bedwars.isRushMode()) {
                 statsProfile.setSetting(Gamemodes.RUSHBW.toString(), "invsort", InventoryUtils.inventoryToString(shopInventory));

@@ -3,6 +3,7 @@ package de.teamholy.knockbackffa.models;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
+import de.teamholy.core.api.utility.EloRank;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.*;
 import de.teamholy.core.api.entities.game.GameProfile;
@@ -57,6 +58,8 @@ public class PlayerEntry {
         if (!statsProfile.exists(Gamemodes.KNOCKBACKFFA.toString())) {
             for (StatsType time : StatsType.values()) {
                 for (String string : Gamemodes.KNOCKBACKFFA.getStatKeys()) statsProfile.setStat(Gamemodes.KNOCKBACKFFA.toString(), time, string, 0);
+
+                statsProfile.setStat(Gamemodes.KNOCKBACKFFA.toString(),time,"elo",1000);
             }
 
 
@@ -242,14 +245,16 @@ public class PlayerEntry {
     public void setScoreboard() {
         scoreboardAPI.clearScoreboard();
         BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),gameProfile -> {
-            scoreboardAPI.setLine(12, " §8§m--------------- ");
-            scoreboardAPI.setLine(11,"§4");
-            scoreboardAPI.setLine(10," §7Map§8: §e-/-");
-            scoreboardAPI.setLine(9," §7Team§8: §e-/-");
-            scoreboardAPI.setLine(8,"§3");
-            scoreboardAPI.setLine(7," §7Stats§8: " + shownBoardStatsType.toBeauty());
-            scoreboardAPI.setLine(6,"§2");
-            scoreboardAPI.setLine(5," §7Rank§8: §e#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.KNOCKBACKFFA,shownBoardStatsType,player.getUniqueId()));
+            scoreboardAPI.setLine(13, " §8§m--------------- ");
+            scoreboardAPI.setLine(12,"§4");
+            scoreboardAPI.setLine(11," §7Map§8: §e-/-");
+            scoreboardAPI.setLine(10," §7Team§8: §e-/-");
+            scoreboardAPI.setLine(9,"§3");
+            scoreboardAPI.setLine(8," §7Stats§8: " + shownBoardStatsType.toBeauty());
+            scoreboardAPI.setLine(7,"§2");
+            scoreboardAPI.setLine(6," §7Rank§8: §e#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.KNOCKBACKFFA,shownBoardStatsType,player.getUniqueId()));
+            int elo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"elo");
+            scoreboardAPI.setLine(5," §7Elo§8: §e"  + elo + " " + EloRank.getEloRank(elo).getShortName());
             scoreboardAPI.setLine(4," §7Kills§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"));
             scoreboardAPI.setLine(3," §7Deaths§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths"));
             scoreboardAPI.setLine(2," §7K/D§8: §e" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths")));
@@ -277,7 +282,9 @@ public class PlayerEntry {
 
     public void updateScoreboard() {
         BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),gameProfile -> {
-            scoreboardAPI.updateLine(5," §7Rank§8: §e#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.KNOCKBACKFFA,shownBoardStatsType,player.getUniqueId()));
+            scoreboardAPI.updateLine(6," §7Rank§8: §e#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.KNOCKBACKFFA,shownBoardStatsType,player.getUniqueId()));
+            int elo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"elo");
+            scoreboardAPI.updateLine(5," §7Elo§8: §e"  + elo + " " + EloRank.getEloRank(elo).getShortName());
             scoreboardAPI.updateLine(4," §7Kills§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"));
             scoreboardAPI.updateLine(3," §7Deaths§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths"));
             scoreboardAPI.updateLine(2," §7K/D§8: §e" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths")));
