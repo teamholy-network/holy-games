@@ -36,7 +36,7 @@ public class LobbyTask {
     public void sendActionBar(Player p, String nachricht) {
         CraftPlayer cp = (CraftPlayer) p;
         IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + nachricht + "\"}");
-        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
+        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 1);
         cp.getHandle().playerConnection.sendPacket(ppoc);
     }
 

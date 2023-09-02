@@ -215,6 +215,7 @@ public class GameEntry {
                         playerEntry.setGameTrophies(playerEntry.getGameTrophies() - loserTrophies);
                     }
 
+                    playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() + playerEntry.getGameTrophies());
                     playerEntry.getPlayer().sendMessage(" §7Kills §8» §e" + playerEntry.getIngamePlayer().getKills());
                     playerEntry.getPlayer().sendMessage(" §7Beds §8» §e" + playerEntry.getIngamePlayer().getBeds());
                     playerEntry.getPlayer().sendMessage(" §7Deaths §8» §c" + playerEntry.getIngamePlayer().getDeaths());

@@ -1,5 +1,6 @@
 package de.teamholy.bedwars.model;
 
+import de.teamholy.api.manager.StatsManager;
 import de.teamholy.bedwars.Bedwars;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.enums.RushBWShopItems;
@@ -18,6 +19,7 @@ import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import eu.koboo.markup.MarkupAPI;
@@ -55,6 +57,9 @@ public class PlayerEntry {
 
     private int beds = 0, kills = 0;
 
+    private int alltimeTrophies = 1000;
+    private int gameTrophies = 0;
+
     public PlayerEntry(Player player) {
         this.player = player;
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
@@ -63,14 +68,14 @@ public class PlayerEntry {
         if (Bedwars.isRushMode()) createInv();
         if (!statsProfile.exists(Bedwars.MODE.toString())) {
             for (StatsType time : StatsType.values()) {
-                for (String string : Bedwars.MODE.getStatKeys()) statsProfile.setStat(Bedwars.MODE.toString(), time, string, 0);
-
-                statsProfile.setStat(Bedwars.MODE.toString(),time,"elo",1000);
+                for (Gamemodes.StatKey statKey : Bedwars.MODE.getStatKeys()) statsProfile.setStat(Bedwars.MODE.toString(), time, statKey.getName(), statKey.getDefaultValue());
             }
+
             if (Bedwars.isRushMode()) {
                 statsProfile.setSetting(Gamemodes.RUSHBW.toString(), "invsort", InventoryUtils.inventoryToString(shopInventory));
             }
         } else {
+            alltimeTrophies = (int) statsProfile.getStat(Bedwars.MODE.toString(),StatsType.ALLTIME,"trophies");
             if (Bedwars.isRushMode()) {
                 try {
                     String inventory = statsProfile.getSetting(Gamemodes.RUSHBW.toString(), "invsort");
@@ -222,11 +227,30 @@ public class PlayerEntry {
                 BukkitCore.getAPI().getCoinManager().addCoins(killer.getUniqueId(), 10, true);
 
                 PlayerEntry killerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(killer.getUniqueId());
+
+
+                int difference = getAlltimeTrophies() - killerEntry.getAlltimeTrophies();
+
+                int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.PLUS,
+                        TrophieLeague.calculateRange(difference,2,5));
+
+                int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
+                        TrophieLeague.calculateRange(difference,1,4));
+
+                sendActionBar(killer,"§a+" + killerTrophies + " §6trophies");
+                sendActionBar(player,"§c-" + playerTrophies + " §6trophies");
+
+
                 killerEntry.setKills(killerEntry.getKills() + 1);
                 killerEntry.updateScoreboard();
 
                 BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "kills", killer.getUniqueId());
                 killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 1, 1);
+            } else {
+                int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
+                        3);
+
+                sendActionBar(player,"§c-" + playerTrophies + " §6trophies");
             }
             if (teamEntry.getPlayers().size() == 0) {
                 teamEntry.setHasBed(false);
@@ -246,8 +270,8 @@ public class PlayerEntry {
             }
         }
         Bedwars.getInstance().updateMotd();
-    }
 
+    }
 
     public void saveData() {
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
