@@ -168,14 +168,14 @@ public class PlayerEntry {
         if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.REDUCE) {
             NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true,false).setPlayer(playerEntry.player);
             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
-            npcEntry.update(player);
+            npcEntry.update();
             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
         } else if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.EXPERIMENTAL) {
             for (int j = 0; j < 10; j++) {
                 Location location = new Location(getSpectateArena().getNpc().getWorld(), getSpectateArena().getNpc().getX() + (j * spectateArena.getArenaPlayers().get(0).getMultiReduceNpcDistance()), getSpectateArena().getNpc().getY(), getSpectateArena().getNpc().getZ());
                 NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), location, 100, 20, true,false).setPlayer(playerEntry.player);
                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
-                npcEntry.update(player);
+                npcEntry.update();
                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
             }
         }
@@ -251,7 +251,7 @@ public class PlayerEntry {
 
                             NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), getArenaEntry().getNpc(), 100, 20, true,false).setPlayer(player);
                             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
-                            npcEntry.update(player);
+                            npcEntry.update();
                             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
 
 
@@ -262,7 +262,7 @@ public class PlayerEntry {
                                 Location location = new Location(getArenaEntry().getNpc().getWorld(), getArenaEntry().getNpc().getX() + (j * getMultiReduceNpcDistance()), getArenaEntry().getNpc().getY(), getArenaEntry().getNpc().getZ());
                                 NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), location, 100, 20, true,false).setPlayer(player);
                                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
-                                npcEntry.update(player);
+                                npcEntry.update();
                                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
                             }
                         }

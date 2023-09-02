@@ -55,7 +55,7 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("bedwars_spawn","§c§lBedwars", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_bw")).build(player);
             new NPCBuilder("rush_spawn","§c§lRushBW", UUID.fromString("7414ffe4-6355-4877-8103-1ff6e0432e61"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_rbw")).build(player);
 
-            new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","","To receive §eCoins!").build(player);
+            new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
             new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("cac3bd6a-b55f-4bfd-8c2b-537dc06375a6"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
 
 

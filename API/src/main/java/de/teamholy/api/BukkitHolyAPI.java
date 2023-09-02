@@ -102,9 +102,7 @@ public class BukkitHolyAPI extends JavaPlugin {
         String fallback = new File("/proc/self").getCanonicalFile().getName();
         String pid = getProcessId(fallback);
         System.out.println("PID: " + pid);
-        npcSkinRepository.asyncFindAll().thenAccept(skinEntries -> skinEntries.forEach(skinEntry -> {
-            getBukkitCacheHandler().getSkinEntryHashMap().put(skinEntry.getUuid(),skinEntry);
-        }));
+        npcSkinRepository.asyncFindAll().thenAccept(skinEntries -> skinEntries.forEach(skinEntry -> getBukkitCacheHandler().getSkinEntryHashMap().put(skinEntry.getUuid(),skinEntry)));
     }
 
 

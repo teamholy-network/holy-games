@@ -1,6 +1,7 @@
 package de.teamholy.api.bukkit.npc.listeners;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.api.bukkit.npc.models.NPCPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,7 @@ public final class PlayerMoveListener implements Listener {
         NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId());
         if (playerEntry == null)
         	return;
-        playerEntry.getNpcs().values().forEach(npc -> npc.remove(playerEntry.getPlayer()));
+        playerEntry.getNpcs().values().forEach(NPCEntry::update);
     }
 
     @EventHandler
@@ -27,7 +28,7 @@ public final class PlayerMoveListener implements Listener {
         NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId());
         if (playerEntry == null)
             return;
-        playerEntry.getNpcs().values().forEach(npc -> npc.update(playerEntry.getPlayer()));
+        playerEntry.getNpcs().values().forEach(NPCEntry::update);
     }
 
 
@@ -40,16 +41,15 @@ public final class PlayerMoveListener implements Listener {
             return;
         }
 
-        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().values().forEach(playerEntry -> {
-            playerEntry.getNpcs().values().forEach(npc -> npc.update(playerEntry.getPlayer()));
-        });
+        NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(event.getPlayer().getUniqueId());
+        playerEntry.getNpcs().values().forEach(NPCEntry::update);
     }
 
     @EventHandler
     public final void onPlayerDeath(final PlayerDeathEvent event) {
         if (event.getEntity() != null) {
             NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(event.getEntity().getUniqueId());
-            playerEntry.getNpcs().values().forEach(npc -> npc.remove(playerEntry.getPlayer()));
+            playerEntry.getNpcs().values().forEach(NPCEntry::remove);
         }
     }
 }

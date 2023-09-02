@@ -27,7 +27,6 @@ import java.util.UUID;
 @SuppressWarnings("unchecked")
 public class NPCEntry extends Reflection {
 
-    private List<Player> players = new ArrayList<>();
     private Player player;
     private String displayName;
     private UUID skinUUID, uuid;
@@ -38,6 +37,8 @@ public class NPCEntry extends Reflection {
     private boolean looker, kickBack;
     private Hologram hologram;
 
+    private boolean canSee;
+
     public NPCEntry(String displayName, UUID skinUUID, Location location, int maxSeeRange, int maxTargetRange, boolean looker, boolean kickBack) {
 
         if (displayName.length() > 16) {
@@ -46,8 +47,10 @@ public class NPCEntry extends Reflection {
             this.displayName = displayName;
         }
 
+
         this.uuid = new UUID(new Random().nextLong(),0);
         this.gameProfile = new GameProfile(uuid, this.displayName);
+        setSkin(skinUUID);
 
         this.entityId = new Random().nextInt(10000000);
         this.location = location;
@@ -57,7 +60,6 @@ public class NPCEntry extends Reflection {
 
         this.looker = looker;
         this.kickBack = kickBack;
-        setSkin(skinUUID);
     }
 
     public NPCEntry setGameProfile(GameProfile gameProfile) {
@@ -94,6 +96,7 @@ public class NPCEntry extends Reflection {
 
     public NPCEntry setPlayer(Player player) {
         this.player = player;
+        update();
         return this;
     }
 
@@ -113,50 +116,10 @@ public class NPCEntry extends Reflection {
         sendPacket(packet, player);
     }
 
+    public void update() {
+        if(!this.isInRange(player) && canSee) { this.remove(); }
 
-    public void spawn(Player player) {
-        if(!this.isInRange(player) && this.players.contains(player)) { this.remove(player); }
-
-
-        if (this.isInRange(player) && !this.players.contains(player)) {
-            DataWatcher dataWatcher = new DataWatcher(null);
-            dataWatcher.a(6, (float) 20);
-            dataWatcher.a(10, (byte) 127);
-
-            PacketPlayOutNamedEntitySpawn packet = new PacketPlayOutNamedEntitySpawn();
-            setValue(packet, "a", this.entityId);
-            setValue(packet, "b", this.gameProfile.getId());
-            setValue(packet, "c", intMaker(location.getX()));
-            setValue(packet, "d", intMaker(location.getY()));
-            setValue(packet, "e", intMaker(location.getZ()));
-            setValue(packet, "f", byteMaker(location.getYaw()));
-            setValue(packet, "g", byteMaker(location.getPitch()));
-            setValue(packet, "h", 0);
-            setValue(packet, "i", dataWatcher);
-
-            this.toTablist(player);
-
-            sendPacket(packet, player);
-
-            this.look(this.location.getYaw(), this.location.getPitch(), player);
-            this.players.add(player);
-
-
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    removeTablist(player);
-                    teleport(location, player);
-                }
-            }.runTaskLater(BukkitHolyAPI.getInstance(), 2);
-        }
-    }
-
-    public void update(Player player) {
-        if(!this.isInRange(player) && this.players.contains(player)) { this.remove(player); }
-
-        if (this.isInRange(player) && !this.players.contains(player)) {
+        if (this.isInRange(player) && !canSee) {
             DataWatcher dataWatcher = new DataWatcher(null);
             dataWatcher.a(6, (float) 20);
             dataWatcher.a(10, (byte) 127);
@@ -175,7 +138,7 @@ public class NPCEntry extends Reflection {
             this.toTablist(player);
 
             sendPacket(packet, player);
-            this.players.add(player);
+            canSee = true;
 
 
             this.look(this.location.getYaw(), this.location.getPitch(), player);
@@ -227,12 +190,12 @@ public class NPCEntry extends Reflection {
         sendPacket(new PacketPlayOutEntityEquipment(this.entityId, 0, CraftItemStack.asNMSCopy(this.heldItem)), player);
     }
 
-    public void remove(Player player) {
+    public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(this.entityId);
 
         sendPacket(packet, player);
         this.removeTablist(player);
-        this.players.remove(player);
+        canSee = false;
     }
 
     public void animation(Player player, int animation) {
