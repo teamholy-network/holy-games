@@ -3,7 +3,7 @@ package de.teamholy.mlgrush.player;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
-import de.teamholy.core.api.utility.EloRank;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.BlockResetType;
 import de.teamholy.mlgrush.enums.GameType;
@@ -54,6 +54,9 @@ public class PlayerEntry {
     private BlockResetType blockResetType = BlockResetType.OFF;
     private StatsType shownBoardStatsType = StatsType.ALLTIME;
 
+    private int alltimeTrophies = 1000;
+    private int gameTrophies = 0;
+
     GameProfile statsProfile;
 
 
@@ -68,10 +71,7 @@ public class PlayerEntry {
         if (!statsProfile.exists(Gamemodes.MLGRUSH.toString())) {
 
             for (StatsType time : StatsType.values()) {
-                for (String string : Gamemodes.MLGRUSH.getStatKeys()) statsProfile.setStat(Gamemodes.MLGRUSH.toString(), time, string, 0);
-
-                statsProfile.setStat(Gamemodes.MLGRUSH.toString(),time,"elo",1000);
-
+                for (Gamemodes.StatKey statKey : Gamemodes.MLGRUSH.getStatKeys()) statsProfile.setStat(Gamemodes.MLGRUSH.toString(), time, statKey.getName(), statKey.getDefaultValue());
             }
 
             statsProfile.setSetting(Gamemodes.MLGRUSH.toString(), "invsort", InventoryUtils.inventoryToString(inventory));
@@ -89,6 +89,7 @@ public class PlayerEntry {
                 setInventory(InventoryUtils.inventoryFromString(inventory));
             }
 
+            alltimeTrophies = (int) statsProfile.getStat(Gamemodes.MLGRUSH.toString(),StatsType.ALLTIME,"trophies");
             noHitDelay = Boolean.parseBoolean(statsProfile.getSetting(Gamemodes.MLGRUSH.toString(), "noHitDelay"));
             onlyVerticalKnockback = Boolean.parseBoolean(statsProfile.getSetting(Gamemodes.MLGRUSH.toString(), "onlyVerticalKnockback"));
             noIngameMessage = Boolean.parseBoolean(statsProfile.getSetting(Gamemodes.MLGRUSH.toString(), "noIngameMessages"));
@@ -169,7 +170,6 @@ public class PlayerEntry {
 
     public void setItemsSpawn() {
         player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
         player.getInventory().setItem(1, new ItemBuilder(Material.REDSTONE_COMPARATOR).setName("§8» §6Settings §8(§7rightclick§8)").build());
         player.getInventory().setItem(3, new ItemBuilder(Material.IRON_SWORD).setName("§8» §6Challenger §8(§7leftclick§8)").setUnbreakable().build());
         player.getInventory().setItem(5, new ItemBuilder(Material.EYE_OF_ENDER).setName("§8» §6Spectate §8(§7rightclick§8)").build());
@@ -264,7 +264,6 @@ public class PlayerEntry {
     }
 
     public void setSpectatorItems() {
-        player.getInventory().setArmorContents(null);
         player.getInventory().clear();
         player.getInventory().setItem(3, new ItemBuilder(Material.NETHER_STAR).setName("§8» §6Spectate §8(§7rightclick§8)").setUnbreakable().setAttributs().build());
         player.getInventory().setItem(5, new ItemBuilder(Material.MAGMA_CREAM).setName("§8» §6Back to Spawn §8(§7rightclick§8)").build());
@@ -280,8 +279,8 @@ public class PlayerEntry {
                 scoreboardAPI.setLine(13," §7Stats§8: " + shownBoardStatsType.toBeauty());
                 scoreboardAPI.setLine(12,"§2");
                 scoreboardAPI.setLine(11," §7Rank§8: §6#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.MLGRUSH,shownBoardStatsType,player.getUniqueId()));
-                int elo = (int) gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"elo");
-                scoreboardAPI.setLine(10," §7Elo§8: §6" + elo + " " + EloRank.getEloRank(elo).getShortName());
+                int elo = (int) gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"trophies");
+                scoreboardAPI.setLine(10," §7Trophies§8: §6" + elo + " " + TrophieLeague.getEloRank(elo).getShortName());
                 scoreboardAPI.setLine(9," §1");
                 scoreboardAPI.setLine(8," §7Kills§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"kills"));
                 scoreboardAPI.setLine(7," §7Deaths§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"deaths"));

@@ -1,6 +1,8 @@
 package de.teamholy.sgffa.listeners;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.manager.StatsManager;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.sgffa.SGFFA;
 import de.teamholy.sgffa.models.PlayerEntry;
 import de.teamholy.core.api.utility.Gamemodes;
@@ -16,6 +18,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 /* copyright by Yassino */
 public class PlayerDeathRespawnListener implements Listener {
@@ -38,20 +42,43 @@ public class PlayerDeathRespawnListener implements Listener {
         },  1L);
 
         if (killer == null || killer == player) {
-            player.sendMessage(SGFFA.PREFIX + "You died!");
+            player.sendMessage(SGFFA.PREFIX + "You died! §8(§c-2 §6trophies§8)");
             player.setLevel(0);
+            BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.SGFFA.toString(), StatsManager.TrophieAdjustType.MINUS,2);
+            playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() -2);
             return;
         } else {
+
+
             PlayerEntry killerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(killer.getUniqueId());
-            killer.sendMessage(SGFFA.PREFIX + "You killed " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName());
+
+            int difference = playerEntry.getAlltimeTrophies() - killerEntry.getAlltimeTrophies();
+
+            int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Gamemodes.SGFFA.toString(), StatsManager.TrophieAdjustType.PLUS,
+                    TrophieLeague.calculateRange(difference,2,5));
+
+            int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.SGFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
+                    TrophieLeague.calculateRange(difference,1,4));
+
+            killerEntry.setAlltimeTrophies(killerEntry.getAlltimeTrophies() + killerTrophies);
+            playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() - playerTrophies);
+
+            killer.sendMessage(SGFFA.PREFIX + "You killed " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName()
+            + " §8(§a+" + killerTrophies
+
+                             + " §6trophies§8)"
+            );
             String healthString = getHealthColor(killer.getHealth()) + String.valueOf(Math.round(killer.getHealth() / 2D));
-            player.sendMessage(SGFFA.PREFIX + "You have been killed by " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(killer.getUniqueId()) + killer.getName() + " §8(" + healthString + "§c❤§8)");
+            player.sendMessage(SGFFA.PREFIX + "You have been killed by " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(killer.getUniqueId()) + killer.getName()
+                    + " §8(" + healthString + "§c❤§8)"+
+                    " §8(§c-" + playerTrophies + " §6trophies§8)"
+            );
             killer.setLevel(killer.getLevel()+1);
             killer.setHealth(20);
 
             killer.playSound(killer.getLocation(),Sound.NOTE_PLING,2f,2f);
             BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.SGFFA.toString(),"kills",killer.getUniqueId());
-            if (killer.getLevel() == 5 || killer.getLevel() == 10 || killer.getLevel() == 15 || killer.getLevel() == 20 || killer.getLevel() == 25 || killer.getLevel() == 50) {
+            if (killer.getLevel() % 5 == 0) {
                 BukkitCore.getAPI().getCoinManager().addCoins(killer.getUniqueId(),30,true);
                 Bukkit.getOnlinePlayers().forEach(all -> {
                     all.sendMessage(SGFFA.PREFIX + "The Player " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(killer.getUniqueId()) + killer.getName() + " §7has made §c" + killer.getLevel() + " §7kills in a row!");

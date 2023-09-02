@@ -4,6 +4,7 @@ package de.teamholy.api.manager;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.bukkit.BukkitCore;
+import lombok.Getter;
 
 import java.text.DecimalFormat;
 import java.util.UUID;
@@ -20,6 +21,24 @@ public class StatsManager {
             BukkitCore.getAPI().getGameService().saveEntity(gameProfile, true, true);
     }
 
+    public int handleTrophie(UUID uuid, String game, TrophieAdjustType adjustType, int trophies) {
+
+
+        GameProfile gameProfile = BukkitCore.getAPI().getGameService().getEntity(uuid, () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(uuid));
+        if (adjustType == TrophieAdjustType.PLUS) {
+            gameProfile.addStat(game, StatsType.DAILY, "trophies", trophies);
+            gameProfile.addStat(game, StatsType.MONTHLY, "trophies", trophies);
+            gameProfile.addStat(game, StatsType.ALLTIME, "trophies", trophies);
+        } else {
+            gameProfile.removeStat(game, StatsType.DAILY, "trophies", trophies);
+            gameProfile.removeStat(game, StatsType.MONTHLY, "trophies", trophies);
+            gameProfile.removeStat(game, StatsType.ALLTIME, "trophies", trophies);
+        }
+        BukkitCore.getAPI().getGameService().saveEntity(gameProfile, true, true);
+
+        return trophies;
+    }
+
 
     public String calculateKD(long kills, long deaths) {
         String KD;
@@ -30,6 +49,11 @@ public class StatsManager {
             KD = "0.00";
         }
         return KD;
+    }
+
+
+    public enum TrophieAdjustType {
+        PLUS, MINUS;
     }
 
 }

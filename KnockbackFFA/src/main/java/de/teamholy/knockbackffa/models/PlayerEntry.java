@@ -3,7 +3,7 @@ package de.teamholy.knockbackffa.models;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
-import de.teamholy.core.api.utility.EloRank;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.*;
 import de.teamholy.core.api.entities.game.GameProfile;
@@ -48,6 +48,8 @@ public class PlayerEntry {
 
     private TeamEntry teamEntry;
 
+    private int alltimeTrophies = 1000;
+
     public PlayerEntry(Player player) {
         this.player = player;
         statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
@@ -57,9 +59,7 @@ public class PlayerEntry {
         createInv();
         if (!statsProfile.exists(Gamemodes.KNOCKBACKFFA.toString())) {
             for (StatsType time : StatsType.values()) {
-                for (String string : Gamemodes.KNOCKBACKFFA.getStatKeys()) statsProfile.setStat(Gamemodes.KNOCKBACKFFA.toString(), time, string, 0);
-
-                statsProfile.setStat(Gamemodes.KNOCKBACKFFA.toString(),time,"elo",1000);
+                for (Gamemodes.StatKey statKey : Gamemodes.KNOCKBACKFFA.getStatKeys()) statsProfile.setStat(Gamemodes.KNOCKBACKFFA.toString(), time, statKey.getName(), statKey.getDefaultValue());
             }
 
 
@@ -82,6 +82,7 @@ public class PlayerEntry {
                 setInventory(InventoryUtils.inventoryFromString(inventory));
             }
 
+            alltimeTrophies = (int) statsProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),StatsType.ALLTIME,"trophies");
             seeEffects = Boolean.valueOf(statsProfile.getSetting(Gamemodes.KNOCKBACKFFA.toString(),"seeEffects"));
             killStreakEffect = KillStreakEffect.valueOf(statsProfile.getSetting(Gamemodes.KNOCKBACKFFA.toString(),"killStreakEffect"));
             bowTrail = BowTrail.valueOf(statsProfile.getSetting(Gamemodes.KNOCKBACKFFA.toString(),"bowTrail"));
@@ -253,8 +254,8 @@ public class PlayerEntry {
             scoreboardAPI.setLine(8," §7Stats§8: " + shownBoardStatsType.toBeauty());
             scoreboardAPI.setLine(7,"§2");
             scoreboardAPI.setLine(6," §7Rank§8: §e#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.KNOCKBACKFFA,shownBoardStatsType,player.getUniqueId()));
-            int elo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"elo");
-            scoreboardAPI.setLine(5," §7Elo§8: §e"  + elo + " " + EloRank.getEloRank(elo).getShortName());
+            int elo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"trophies");
+            scoreboardAPI.setLine(5," §7Trophies§8: §e"  + elo + " " + TrophieLeague.getEloRank(elo).getShortName());
             scoreboardAPI.setLine(4," §7Kills§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"));
             scoreboardAPI.setLine(3," §7Deaths§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths"));
             scoreboardAPI.setLine(2," §7K/D§8: §e" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths")));
@@ -283,8 +284,8 @@ public class PlayerEntry {
     public void updateScoreboard() {
         BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),gameProfile -> {
             scoreboardAPI.updateLine(6," §7Rank§8: §e#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Gamemodes.KNOCKBACKFFA,shownBoardStatsType,player.getUniqueId()));
-            int elo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"elo");
-            scoreboardAPI.updateLine(5," §7Elo§8: §e"  + elo + " " + EloRank.getEloRank(elo).getShortName());
+            int elo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"trophies");
+            scoreboardAPI.updateLine(5," §7Trophies§8: §e"  + elo + " " + TrophieLeague.getEloRank(elo).getShortName());
             scoreboardAPI.updateLine(4," §7Kills§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"));
             scoreboardAPI.updateLine(3," §7Deaths§8: §e" + gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths"));
             scoreboardAPI.updateLine(2," §7K/D§8: §e" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths")));

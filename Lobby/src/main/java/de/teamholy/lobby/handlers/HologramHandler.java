@@ -3,7 +3,7 @@ package de.teamholy.lobby.handlers;
 
 
 import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.core.api.utility.EloRank;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.lobby.Lobby;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -47,12 +47,12 @@ public class HologramHandler {
 
 
         ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("§8§m------------§f§lRANKS§8§m------------");
-        for (EloRank eloRank : EloRank.values()) {
+        arrayList.add("§8§m------------§f§lLEAGUES§8§m------------");
+        for (TrophieLeague eloRank : TrophieLeague.values()) {
             String s = eloRank.getName() + " §8» §7" + eloRank.getMinRange() + " §a- §7" + eloRank.getMaxRange() + " §8» " + eloRank.getShortName();
             arrayList.add(s);
         }
-        arrayList.add("§8§m------------§f§lRANKS§8§m------------");
+        arrayList.add("§8§m------------§f§lLEAGUES§8§m------------");
 
 
         Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,7,0));

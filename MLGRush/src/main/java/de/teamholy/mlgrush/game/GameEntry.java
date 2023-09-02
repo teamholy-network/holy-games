@@ -1,6 +1,8 @@
 package de.teamholy.mlgrush.game;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.manager.StatsManager;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.BlockResetType;
 import de.teamholy.mlgrush.enums.GameType;
@@ -129,10 +131,21 @@ public class GameEntry {
     }
 
     public void destroyBed(PlayerEntry playerEntry, PlayerEntry destroyed) {
-        BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(),"destroyed_beds",playerEntry.getPlayer().getUniqueId());
+        BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "destroyed_beds", playerEntry.getPlayer().getUniqueId());
+
+
+        int difference = destroyed.getAlltimeTrophies() - playerEntry.getAlltimeTrophies();
+
+        int killerTrophies = TrophieLeague.calculateRange(difference, 1, 3);
+        int playerTrophies = TrophieLeague.calculateRange(difference, 1, 3);
+
+        playerEntry.setGameTrophies(playerEntry.getGameTrophies() + killerTrophies);
+        destroyed.setGameTrophies(destroyed.getGameTrophies() - playerTrophies);
+
+
         placedBlocks.keySet().forEach(location -> location.getBlock().setType(Material.AIR, true));
         placedBlocks.clear();
-        bukkitRunnables.forEach(bukkitTask -> bukkitTask.cancel());
+        bukkitRunnables.forEach(BukkitTask::cancel);
         bukkitRunnables.clear();
         playersInArena.forEach(playerEntry1 -> {
             if (!playerEntry1.isNoIngameMessage()) {
@@ -153,14 +166,37 @@ public class GameEntry {
         mapEntry.getMapTemplate().getFreeTemplatesCount().add(mapEntry);
         placedBlocks.keySet().forEach(location -> location.getBlock().setType(Material.AIR, true));
         placedBlocks.clear();
-        bukkitRunnables.forEach(bukkitTask -> bukkitTask.cancel());
+        bukkitRunnables.forEach(BukkitTask::cancel);
         bukkitRunnables.clear();
-        playersPlaying.forEach(playerEntry -> {
-            BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(),"played_games",playerEntry.getPlayer().getUniqueId());
-        });
+        playersPlaying.forEach(playerEntry -> BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "played_games", playerEntry.getPlayer().getUniqueId()));
+
+
+        List<PlayerEntry> losers = new ArrayList<>(playersPlaying);
+        int difference;
+
+
+        if (winner != null) {
+            losers.remove(winner);
+
+            int sum = losers.stream().mapToInt(PlayerEntry::getGameTrophies).sum() / losers.size();
+
+            difference = sum - winner.getGameTrophies();
+            int winnerTrophies = 0;
+            if (losers.size() == 3) {
+                winnerTrophies = TrophieLeague.calculateRange(difference,15,27);
+            } else {
+                winnerTrophies = TrophieLeague.calculateRange(difference,10,22);
+            }
+
+            winner.setGameTrophies(winner.getGameTrophies() + winnerTrophies);
+        } else {
+            difference = 0;
+        }
+
         if (!stopserver) {
             String winnerName = null;
-            if (winner != null) winnerName = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(winner.getPlayer().getUniqueId()) + winner.getPlayer().getName();
+            if (winner != null)
+                winnerName = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(winner.getPlayer().getUniqueId()) + winner.getPlayer().getName();
 
             String finalWinnerName = winnerName;
             playersInArena.forEach(playerEntry -> {
@@ -173,13 +209,31 @@ public class GameEntry {
                         finalWinnerName + " §8(§e" + winner.getIngamePlayer().getBeds() + " BEDS§8)"));
                 playerEntry.getPlayer().sendMessage("");
                 if (playersPlaying.contains(playerEntry)) {
+
+                    if (winner != null && winner != playerEntry) {
+                        int loserTrophies = TrophieLeague.calculateRange(difference,4,11);
+                        playerEntry.setGameTrophies(playerEntry.getGameTrophies() - loserTrophies);
+                    }
+
                     playerEntry.getPlayer().sendMessage(" §7Kills §8» §e" + playerEntry.getIngamePlayer().getKills());
                     playerEntry.getPlayer().sendMessage(" §7Beds §8» §e" + playerEntry.getIngamePlayer().getBeds());
                     playerEntry.getPlayer().sendMessage(" §7Deaths §8» §c" + playerEntry.getIngamePlayer().getDeaths());
-                    playerEntry.getPlayer().sendMessage("");
+                    if (playerEntry.getGameTrophies() > 0) {
+                        playerEntry.getPlayer().sendMessage(" §6Trophies §8» §a+" + playerEntry.getGameTrophies());
+                        BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
+                                StatsManager.TrophieAdjustType.PLUS,playerEntry.getGameTrophies());
+                    } else if (playerEntry.getGameTrophies() < 0) {
+                        playerEntry.getPlayer().sendMessage(" §6Trophies §8» §c-" + playerEntry.getGameTrophies());
+                        BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
+                                StatsManager.TrophieAdjustType.PLUS,playerEntry.getGameTrophies());
+                    } else {
+                        playerEntry.getPlayer().sendMessage(" §6Trophies §8» §7+-0");
+                    }
+                    playerEntry.getPlayer().sendMessage(" ");
                 }
 
 
+                playerEntry.setGameTrophies(0);
                 playerEntry.performSpawn();
                 playerEntry.setItemsSpawn();
                 playerEntry.getPlayer().teleport(MLGRush.getInstance().getLobby());
@@ -205,15 +259,15 @@ public class GameEntry {
 
     private PlayerEntry getWinner() {
         HashMap<PlayerEntry, Integer> map = new HashMap<>();
-        playersPlaying.forEach(playerEntry -> map.put(playerEntry,playerEntry.getIngamePlayer().getBeds()));
+        playersPlaying.forEach(playerEntry -> map.put(playerEntry, playerEntry.getIngamePlayer().getBeds()));
         ArrayList<PlayerEntry> winners = MLGRush.getInstance().getPlayerUtils().getHighestValue(map);
-        if (winners.size() == 1 && (winners.get(0).getIngamePlayer().getBeds() >= 3 )) {
+        if (winners.size() == 1 && (winners.get(0).getIngamePlayer().getBeds() >= 3)) {
             if (map.size() == 4) {
-                BukkitCore.getAPI().getCoinManager().addCoins(winners.get(0).getPlayer().getUniqueId(),45,true);
+                BukkitCore.getAPI().getCoinManager().addCoins(winners.get(0).getPlayer().getUniqueId(), 45, true);
             } else {
-                BukkitCore.getAPI().getCoinManager().addCoins(winners.get(0).getPlayer().getUniqueId(),30,true);
+                BukkitCore.getAPI().getCoinManager().addCoins(winners.get(0).getPlayer().getUniqueId(), 30, true);
             }
-            BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(),"won_games",winners.get(0).getPlayer().getUniqueId());
+            BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "won_games", winners.get(0).getPlayer().getUniqueId());
             return winners.get(0);
         }
         return null;
@@ -245,7 +299,6 @@ public class GameEntry {
         }
         return 0;
     }
-
 
 
 }
