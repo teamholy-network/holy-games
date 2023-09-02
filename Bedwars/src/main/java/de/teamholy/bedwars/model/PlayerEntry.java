@@ -74,6 +74,8 @@ public class PlayerEntry {
             if (Bedwars.isRushMode()) {
                 statsProfile.setSetting(Gamemodes.RUSHBW.toString(), "invsort", InventoryUtils.inventoryToString(shopInventory));
             }
+
+            BukkitCore.getAPI().getGameService().saveEntity(statsProfile,true,true);
         } else {
             alltimeTrophies = (int) statsProfile.getStat(Bedwars.MODE.toString(),StatsType.ALLTIME,"trophies");
             if (Bedwars.isRushMode()) {
@@ -104,24 +106,31 @@ public class PlayerEntry {
 
     public void updateTeamScoreboard() {
         if (teamEntry != null) {
-            scoreboardAPI.updateLine(4, " §7Team§8: " + teamEntry.getColorCode() + teamEntry.getName());
+            scoreboardAPI.updateLine(8, " §7Team§8: " + teamEntry.getColorCode() + teamEntry.getName());
         } else {
-            scoreboardAPI.updateLine(4, " §7Team§8: §6-/-");
+            scoreboardAPI.updateLine(8, " §7Team§8: §6-/-");
         }
     }
 
     public void setScorebord() {
         scoreboardAPI.clearScoreboard();
         if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
-
-            scoreboardAPI.setLine(7, " §8§m--------------- ");
-            scoreboardAPI.setLine(6, " §7§o" + (Bedwars.isRushMode() ? "rush bedwars" : "bedwars"));
-            scoreboardAPI.setLine(5, "§6");
-            scoreboardAPI.setLine(4, " §7Team§8: §6-/-");
-            scoreboardAPI.setLine(3, " §7Mode§8: §6" + Bedwars.getInstance().getMode());
-            scoreboardAPI.setLine(2, "§3");
-            scoreboardAPI.setLine(1, " §8§m--------------- ");
-            scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+            BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),gameProfile -> {
+                scoreboardAPI.setLine(11, " §8§m--------------- ");
+                scoreboardAPI.setLine(10, " §7§o" + (Bedwars.isRushMode() ? "rush bedwars" : "bedwars"));
+                scoreboardAPI.setLine(9, "§6");
+                scoreboardAPI.setLine(8, " §7Team§8: §6-/-");
+                scoreboardAPI.setLine(7, " §7Mode§8: §6" + Bedwars.getInstance().getMode());
+                scoreboardAPI.setLine(6, "§1");
+                scoreboardAPI.setLine(5, " §cALLTIME");
+                scoreboardAPI.setLine(4," §7Rank§8: §6#" + BukkitCore.getAPI().getRankingManager().getRankFromUUID(Bedwars.MODE,StatsType.ALLTIME,player.getUniqueId()));
+                int elo = (int) gameProfile.getStat(Bedwars.MODE.toString(),StatsType.ALLTIME,"trophies");
+                scoreboardAPI.setLine(3," §7Trophies§8: §6" + elo + " " + TrophieLeague.getEloRank(elo).getShortName());
+                scoreboardAPI.setLine(2, "§3");
+                scoreboardAPI.setLine(1, " §8§m--------------- ");
+                scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+                Bedwars.getInstance().getServer().getScheduler().runTask(Bedwars.getInstance(),() -> scoreboardAPI.build());
+            });
         } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
             int i = 3;
             ArrayList<TeamEntry> teamEntries = new ArrayList<>();
@@ -139,8 +148,8 @@ public class PlayerEntry {
             scoreboardAPI.setLine(2, "§7");
             scoreboardAPI.setLine(1, " §8§m--------------- ");
             scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+            scoreboardAPI.build();
         }
-        scoreboardAPI.build();
     }
 
     public void updateScoreboard() {
@@ -231,14 +240,15 @@ public class PlayerEntry {
 
                 int difference = getAlltimeTrophies() - killerEntry.getAlltimeTrophies();
 
-                int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.PLUS,
-                        TrophieLeague.calculateRange(difference,2,5));
-
-                int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
+                int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS,
                         TrophieLeague.calculateRange(difference,1,4));
 
-                sendActionBar(killer,"§a+" + killerTrophies + " §6trophies");
-                sendActionBar(player,"§c-" + playerTrophies + " §6trophies");
+                int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS,
+                        TrophieLeague.calculateRange(difference,4,10));
+
+
+                killer.getPlayer().sendTitle("","§a+" + killerTrophies + " §6trophies");
+                player.getPlayer().sendTitle("","§c-" + playerTrophies + " §6trophies");
 
 
                 killerEntry.setKills(killerEntry.getKills() + 1);
@@ -247,10 +257,9 @@ public class PlayerEntry {
                 BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "kills", killer.getUniqueId());
                 killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 1, 1);
             } else {
-                int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
-                        3);
+                int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS, 7);
 
-                sendActionBar(player,"§c-" + playerTrophies + " §6trophies");
+                player.getPlayer().sendTitle("","§c-" + playerTrophies + " §6trophies");
             }
             if (teamEntry.getPlayers().size() == 0) {
                 teamEntry.setHasBed(false);
@@ -337,10 +346,6 @@ public class PlayerEntry {
             Bedwars.getInstance().getMapEntry().stopSpawner();
 
 
-            winner.getPlayers().forEach(winners -> {
-                BukkitCore.getAPI().getCoinManager().addCoins(winners.getUniqueId(), 50, true);
-                BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "won_games", winners.getUniqueId());
-            });
             for (Player a : Bukkit.getOnlinePlayers()) {
                 a.setHealth(20);
                 a.setMaxHealth(20);
@@ -372,6 +377,13 @@ public class PlayerEntry {
 
                 radioSongPlayer.addPlayer(a);
             }
+
+            winner.getPlayers().forEach(winners -> {
+                BukkitCore.getAPI().getCoinManager().addCoins(winners.getUniqueId(), 50, true);
+                BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "won_games", winners.getUniqueId());
+                BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(winners.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS, 15);
+                winners.sendTitle("","§a+15 §6trophies");
+            });
 
             Bedwars.getInstance().updateNameTags();
 
