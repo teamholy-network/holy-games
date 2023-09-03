@@ -224,9 +224,9 @@ public class GameEntry {
                         BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
                                 StatsManager.TrophieAdjustType.PLUS,playerEntry.getGameTrophies());
                     } else if (playerEntry.getGameTrophies() < 0) {
-                        playerEntry.getPlayer().sendMessage(" §6Trophies §8» §c-" + playerEntry.getGameTrophies());
+                        playerEntry.getPlayer().sendMessage(" §6Trophies §8» §c" + playerEntry.getGameTrophies());
                         BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
-                                StatsManager.TrophieAdjustType.PLUS,playerEntry.getGameTrophies());
+                                StatsManager.TrophieAdjustType.MINUS,Math.abs(playerEntry.getGameTrophies()));
                     } else {
                         playerEntry.getPlayer().sendMessage(" §6Trophies §8» §7+-0");
                     }
