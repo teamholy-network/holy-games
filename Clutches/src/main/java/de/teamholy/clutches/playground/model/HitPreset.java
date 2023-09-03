@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor
 public class HitPreset {
 
     private UUID uuid = UUID.randomUUID();

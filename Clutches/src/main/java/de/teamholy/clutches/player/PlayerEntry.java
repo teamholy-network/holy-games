@@ -81,7 +81,6 @@ public class PlayerEntry {
 
         createInv();
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
-        playgroundPlayer = new PlaygroundPlayer(this,statsProfile);
         if (!statsProfile.exists(Gamemodes.CLUTCHES.toString())) {
             statsProfile.setStat(Gamemodes.CLUTCHES.toString(), StatsType.ALLTIME,"lol",0);
 
@@ -125,6 +124,8 @@ public class PlayerEntry {
             npcSkin = NPCSkin.getNPCSkinFromId(Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcSkin")));
 
         }
+
+        playgroundPlayer = new PlaygroundPlayer(this,statsProfile);
 
         blocks = new ArrayList<>();
     }
@@ -622,6 +623,8 @@ public class PlayerEntry {
         statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcHit",npcHit.toString());
 
         statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcSkin",String.valueOf(npcSkin.getId()));
+
+        playgroundPlayer.saveData();
 
         BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
     }

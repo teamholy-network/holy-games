@@ -1,17 +1,21 @@
 package de.teamholy.clutches.playground.model;
 
+import jdk.jshell.Diag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Material;
 
-@Getter @NoArgsConstructor @Setter
+@Getter
+@NoArgsConstructor
+@Setter
 public class Hit {
 
     private double xknock = 1.2;
     private double yknock = 0.373;
     private Icon icon = Icon.YELLOW_WOOL;
+    private DiagonalDirection diagonalDirection = DiagonalDirection.STRAIGHT;
 
 
     @AllArgsConstructor
@@ -44,5 +48,15 @@ public class Hit {
 
         Material material;
         int subId;
-        }
+    }
+
+    @AllArgsConstructor @Getter
+    public enum DiagonalDirection {
+        STRAIGHT("Straight / Normal Hit"),
+        LEFT("Diagonal left"),
+        RIGHT("Diagonal right");
+
+
+        private String name;
+    }
 }

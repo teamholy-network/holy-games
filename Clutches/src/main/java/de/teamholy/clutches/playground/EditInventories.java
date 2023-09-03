@@ -15,7 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /* copyright by Yassino */
 public class EditInventories implements Listener {
@@ -121,6 +123,22 @@ public class EditInventories implements Listener {
 
             goBackToHits.set(false);
             hit.setXknock(0.8);
+            playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(), Sound.HORSE_ARMOR, 2, 2);
+            openHitEditor(playgroundPlayer,hit);
+        });
+
+        inventory.setItem(new ItemBuilder(Material.STICK, 1).setName("§8» §6Hit direction §8(§ediagonal)§8")
+                .setLore(
+                        Arrays.stream(Hit.DiagonalDirection.values()).map(value -> (hit.getDiagonalDirection() == value) ? "§a" + value.getName() : "§7" + value.getName()).collect(Collectors.toList())
+                ).build(), 34, event -> {
+
+            switch (hit.getDiagonalDirection()) {
+                case STRAIGHT -> hit.setDiagonalDirection(Hit.DiagonalDirection.LEFT);
+                case LEFT -> hit.setDiagonalDirection(Hit.DiagonalDirection.RIGHT);
+                case RIGHT -> hit.setDiagonalDirection(Hit.DiagonalDirection.STRAIGHT);
+            }
+
+            goBackToHits.set(false);
             playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(), Sound.HORSE_ARMOR, 2, 2);
             openHitEditor(playgroundPlayer,hit);
         });
@@ -436,7 +454,7 @@ public class EditInventories implements Listener {
             playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(), Sound.ANVIL_BREAK, 2, 2);
             playgroundPlayer.setCurrentEditPreset(null);
 
-            playgroundPlayer.getHitPresetMap().removeIf(temp -> temp.getUuid().equals(hitPreset.getUuid()));
+            playgroundPlayer.getSettings().getHitPresetMap().removeIf(temp -> temp.getUuid().equals(hitPreset.getUuid()));
         });
 
         inventory.setItem(new ItemBuilder(Material.INK_SACK, 1, (byte) 1).setName("§8» §cNo").build(), 6, event -> {

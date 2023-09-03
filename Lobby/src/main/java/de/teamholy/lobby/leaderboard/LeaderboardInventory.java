@@ -48,7 +48,7 @@ public class LeaderboardInventory {
                     List<TopEntry> topEntryList = Lists.newArrayList();
                     RScoredSortedSet scoredSortedSet = BukkitCore.getAPI().getRedissonManager().getRedissonClient().getScoredSortedSet(value.toString() + "_" + statsType.toString());
 
-                    scoredSortedSet.entryRange(0, 4).forEach(o -> {
+                    scoredSortedSet.entryRangeReversed(0, 4).forEach(o -> {
                         ScoredEntry<UUID> scoredEntry = (ScoredEntry<UUID>) o;
 
                         System.out.println(scoredEntry.getScore());
@@ -81,7 +81,7 @@ public class LeaderboardInventory {
             System.out.println("Ended leaderboard cache in " + (System.currentTimeMillis() - time) + "ms");
 
 
-        }, 0, 20 * 60 * 10);
+        }, 0, 20 * 60);
     }
 
     public void open(Player player, Gamemodes gamemode) {
