@@ -4,6 +4,7 @@ import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.api.interfaces.ILabyMod;
+import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.lobby.Lobby;
 import de.dytanic.cloudnet.common.document.gson.JsonDocument;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
@@ -46,6 +47,8 @@ public class LobbyPlayer implements ILabyMod {
 
     private FriendEntry friendEntry;
 
+    private GameProfile gameProfile;
+
 
     public LobbyPlayer(Player player) {
         this.player = player;
@@ -71,6 +74,8 @@ public class LobbyPlayer implements ILabyMod {
             if (playerProfile.getCollectables().containsKey("namemc")) collectedNameMCReward = true;
             if (playerProfile.getCollectables().containsKey("labymod")) collectedLabyModReward = true;
         });
+
+        BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),this::setGameProfile);
     }
 
     public void executeBungeeCommand(String command) {

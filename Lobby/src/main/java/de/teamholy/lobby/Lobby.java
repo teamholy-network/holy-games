@@ -6,6 +6,7 @@ import de.teamholy.lobby.bedwars.BedwarsSpectateInventory;
 import de.teamholy.lobby.commands.FlyCommand;
 import de.teamholy.lobby.handlers.HologramHandler;
 import de.teamholy.lobby.handlers.StatsResetHandler;
+import de.teamholy.lobby.leaderboard.LeaderboardInventory;
 import de.teamholy.lobby.listeners.CloudListener;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayerHandler;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -40,6 +41,7 @@ public class Lobby extends JavaPlugin {
     private StatsResetHandler statsResetHandler;
     private BedwarsServerInventory bedwarsServerInventory;
     private BedwarsSpectateInventory bedwarsSpectateInventory;
+    private LeaderboardInventory leaderboardInventory;
 
 
 
@@ -52,6 +54,7 @@ public class Lobby extends JavaPlugin {
         statsResetHandler = new StatsResetHandler();
         bedwarsServerInventory = new BedwarsServerInventory();
         bedwarsSpectateInventory = new BedwarsSpectateInventory();
+        leaderboardInventory = new LeaderboardInventory();
         registerListener("de.teamholy.lobby.listeners");
         if (Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0].equalsIgnoreCase("PremiumLobby")) {
             prefix = "§6PremiumLobby §8× §7";

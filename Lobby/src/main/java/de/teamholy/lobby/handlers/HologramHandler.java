@@ -3,6 +3,7 @@ package de.teamholy.lobby.handlers;
 
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.lobby.Lobby;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -12,6 +13,7 @@ import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -53,11 +55,21 @@ public class HologramHandler {
             arrayList.add(s);
         }
         arrayList.add("§8§m------------§f§lLEAGUES§8§m------------");
+        arrayList.add(null);
+        arrayList.add("§f§lClick to see the §c§lleaderboards");
 
 
         Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,7,0));
         eloholo.appendItemLine(new ItemBuilder(Material.DIAMOND_SWORD).setEnchantments(Enchantment.DAMAGE_ALL,1).build());
-        arrayList.forEach(eloholo::appendTextLine);
+        arrayList.forEach(s -> {
+            eloholo.appendTextLine(s).setTouchHandler(player -> {
+
+                Lobby.getInstance().getLeaderboardInventory().open(player, Gamemodes.MLGRUSH);
+
+
+            });
+        });
+
 
     }
 
