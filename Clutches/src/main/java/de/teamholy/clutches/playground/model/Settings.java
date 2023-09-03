@@ -29,5 +29,6 @@ public class Settings {
     private CountdownLocation countdownLocation = CountdownLocation.TITLE;
     private ArmorColor armorColor = ArmorColor.GREY;
     private List<HitPreset> hitPresetMap = Lists.newLinkedList();
+    private HitPreset selectedPreset;
 
 }

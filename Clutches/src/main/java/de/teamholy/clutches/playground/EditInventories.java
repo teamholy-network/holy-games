@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ public class EditInventories implements Listener {
 
         inventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
             hitPreset.setLastEdit(System.currentTimeMillis());
+            playgroundPlayer.saveData();
             if (playgroundPlayer != null && playgroundPlayer.getPlayer().isOnline() && openHitPresets.get())
                 playgroundPlayer.openHitpresets();
         }, 1));
@@ -106,12 +108,20 @@ public class EditInventories implements Listener {
     }
 
     private void openHitEditor(PlaygroundPlayer playgroundPlayer, Hit hit) {
-        Inventory inventory = new Inventory("§8» §6Hit editor", 6*9);
+        Inventory inventory = new Inventory("§8» §6Hit editor", 5*9);
 
-        for (int i = 9; i < 6*9; i++) {
+        for (int i = 0; i < 5*9; i++) {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
 
+
+
+        for (int i = 9; i < 18; i++) {
+            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1).setName("§8//").build(), i);
+        }
+
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM,1,3).setName("§6§lTemplates §8»").setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjlj" +
+                "YjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19","").build(),0);
 
         AtomicBoolean goBackToHits = new AtomicBoolean(true);
 
@@ -119,7 +129,7 @@ public class EditInventories implements Listener {
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS,1, (byte) 5)
                 .setName("§6Teamholy §aEasy")
                         .setLore(" " , " §7Teamholy x knockback on §aeasy §7is §a0.8 " , " §7Click to set §a0.8 §ex-knock §7on your hit! " , " ")
-                .build(),1,event -> {
+                .build(),2,event -> {
 
             goBackToHits.set(false);
             hit.setXknock(0.8);
@@ -146,7 +156,7 @@ public class EditInventories implements Listener {
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS,1, (byte) 7)
                 .setName("§6Teamholy §6Medium")
                 .setLore(" " , " §7Teamholy x knockback on §6medium §7is §61.2 " , " §7Click to set §61.2 §ex-knock §7on your hit! " , " ")
-                .build(),2,event -> {
+                .build(),3,event -> {
 
             goBackToHits.set(false);
             hit.setXknock(1.2);
@@ -157,7 +167,7 @@ public class EditInventories implements Listener {
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS,1, (byte) 14)
                 .setName("§6Teamholy §cHard")
                 .setLore(" " , " §7Teamholy x knockback on §chard §7is §c1.6 " , " §7Click to set §c1.6 §ex-knock §7on your hit! " , " ")
-                .build(),3,event -> {
+                .build(),4,event -> {
 
             goBackToHits.set(false);
             hit.setXknock(1.6);
@@ -171,7 +181,7 @@ public class EditInventories implements Listener {
 
                 .setName("§6Teamholy Reduce")
                 .setLore(" " , " §7Teamholy y knockback on §6reducer §7is §60.353 " , " §7Click to set §60.353 §ey-knock §7on your hit! " , " ")
-                .build(),5,event -> {
+                .build(),6,event -> {
 
             goBackToHits.set(false);
             hit.setYknock(0.353);
@@ -183,7 +193,7 @@ public class EditInventories implements Listener {
 
                 .setName("§6Teamholy Clutch §7/ §6Diagonal Clutch")
                 .setLore(" " , " §7Teamholy y knockback on §6clutch §7is §60.373 " , " §7Click to set §60.373 §ey-knock §7on your hit! " , " ")
-                .build(),6,event -> {
+                .build(),7,event -> {
 
             goBackToHits.set(false);
             hit.setYknock(0.373);
@@ -195,7 +205,7 @@ public class EditInventories implements Listener {
 
                 .setName("§6Teamholy Multireduce")
                 .setLore(" " , " §7Teamholy y knockback on §6multireduce §7is §60.363 " , " §7Click to set §60.363 §ey-knock §7on your hit! " , " ")
-                .build(),7,event -> {
+                .build(),8,event -> {
 
             goBackToHits.set(false);
             hit.setYknock(0.363);
@@ -345,11 +355,11 @@ public class EditInventories implements Listener {
 
     public void openHitIconChange(PlaygroundPlayer playgroundPlayer, Hit hit) {
 
-        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Edit icon", 5 * 9);
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Edit icon", 6 * 9);
 
-        for (int row = 0; row < 5; row++) {
+        for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 9; col++) {
-                if (row == 0 || row == 4 || col == 0 || col == 8) {
+                if (row == 0 || row == 5 || col == 0 || col == 8) {
                     inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), row * 9 + col);
                 }
             }
@@ -461,10 +471,15 @@ public class EditInventories implements Listener {
             playgroundPlayer.getPlayer().closeInventory();
         });
 
-        inventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
-            if (playgroundPlayer != null && playgroundPlayer.getPlayer().isOnline())
-                if (openAgain.get()) openHitPresetEdit(playgroundPlayer, hitPreset);
-        }, 1));
+        inventory.setOnClose(event -> {
+            playgroundPlayer.getSettings().setSelectedPreset(null);
+
+            Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
+                if (playgroundPlayer != null && playgroundPlayer.getPlayer().isOnline())
+                    if (openAgain.get()) openHitPresetEdit(playgroundPlayer, hitPreset);
+            }, 1);
+
+        });
 
         playgroundPlayer.getPlayer().openInventory(inventory.getInventory());
 

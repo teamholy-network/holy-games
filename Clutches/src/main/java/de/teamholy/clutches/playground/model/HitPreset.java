@@ -25,7 +25,7 @@ public class HitPreset {
     private Origin origin = Origin.CREATED;
 
 
-    public enum Origin { OTHER, CREATED, IMPORTED, FEATURED }
+    public enum Origin { OTHER, CREATED, IMPORTED }
 
     @AllArgsConstructor @Getter
     public enum Icon {
@@ -45,7 +45,11 @@ public class HitPreset {
         IRON_SWORD(Material.IRON_SWORD,0),
         DIAMOND_SWORD(Material.DIAMOND_SWORD,0),
         DIAMOND_PICKAXE(Material.DIAMOND_PICKAXE,0),
-        IRON_PICKAXE(Material.IRON_PICKAXE,0);
+        IRON_PICKAXE(Material.IRON_PICKAXE,0),
+        DIAMOND(Material.DIAMOND,0),
+        IRON(Material.IRON_INGOT,0),
+        GOLD(Material.GOLD_INGOT,0),
+        HOE(Material.GOLD_HOE,0);
 
 
 

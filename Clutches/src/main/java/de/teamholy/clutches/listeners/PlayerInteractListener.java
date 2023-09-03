@@ -3,7 +3,10 @@ package de.teamholy.clutches.listeners;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
+import de.teamholy.clutches.playground.model.PlaygroundPlayer;
+import de.teamholy.clutches.utils.PlayerUtils;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +33,7 @@ public class PlayerInteractListener implements Listener {
                 } else if (event.getItem().getType() == Material.MAGMA_CREAM && playerEntry.getPlayerState() == PlayerState.SPECTATE) {
                     playerEntry.leaveSpectator();
                 } else if (event.getItem().getType() == Material.REDSTONE_COMPARATOR) {
-                    if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND) {
-                        playerEntry.getPlaygroundPlayer().openSettings();
-                        return;
-                    }
+                    if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND) return;
                     if (playerEntry.getArenaEntry() != null) {
                         playerEntry.openIngameSettings();
                     } else {

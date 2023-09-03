@@ -43,7 +43,13 @@ public class Hit {
         BLUE_STAINED_CLAY(Material.STAINED_CLAY, 11),
         PURPLE_STAINED_CLAY(Material.STAINED_CLAY, 10),
         LG_STAINED_CLAY(Material.STAINED_CLAY, 8),
-        BLACK_STAINED_CLAY(Material.STAINED_CLAY, 15);
+        BLACK_STAINED_CLAY(Material.STAINED_CLAY, 15),
+
+        STICK(Material.STICK,0),
+        WOODSTAIR(Material.WOOD_STAIRS,0),
+        STEP(Material.WOOD_STEP,0),
+        STONESTAIR(Material.COBBLESTONE_STAIRS,0),
+        STONESTEP(Material.STONE_SLAB2,0);
 
 
         Material material;

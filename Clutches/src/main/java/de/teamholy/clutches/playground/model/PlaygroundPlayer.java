@@ -11,6 +11,7 @@ import de.teamholy.clutches.playground.enums.ArmorColor;
 import de.teamholy.clutches.playground.enums.CountdownLocation;
 import de.teamholy.clutches.playground.enums.PlaygroundItems;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.clutches.playground.task.PlayerTask;
 import de.teamholy.clutches.utils.PlayerUtils;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -42,6 +43,7 @@ public class PlaygroundPlayer {
     private Player player;
     private org.bukkit.inventory.Inventory inventory;
     private Settings settings = new Settings();
+    private PlayerTask playerTask;
 
     private HitPreset currentEditPreset;
     private boolean chatEdit = false;
@@ -51,6 +53,7 @@ public class PlaygroundPlayer {
         this.playerEntry = playerEntry;
         this.scoreboardAPI = playerEntry.getScoreboardAPI();
         this.player = playerEntry.getPlayer();
+        this.playerTask = new PlayerTask(this);
         settings.setUuid(player.getUniqueId());
 
         BukkitCore.getAPI().getExecutor().execute(() -> {
@@ -60,10 +63,10 @@ public class PlaygroundPlayer {
                 settings = temp;
             } else Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings);
 
+            this.inventory = InventoryUtils.inventoryFromString(settings.getInventoryString());
         });
 
 
-        this.inventory = InventoryUtils.inventoryFromString(settings.getInventoryString());
 
 
     }
@@ -83,6 +86,7 @@ public class PlaygroundPlayer {
     }
 
     public void saveData() {
+        settings.setInventoryString(InventoryUtils.inventoryToString(inventory));
         BukkitCore.getAPI().getExecutor().execute(() -> Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings));
     }
 
@@ -154,7 +158,9 @@ public class PlaygroundPlayer {
 
             inventory.setItem(new ItemBuilder(hitPreset.getIcon().getMaterial(), hitPreset.getHitMap().size(), (byte) hitPreset.getIcon().getSubId())
                     .setName("§8» §6" + hitPreset.getName())
-                    .setLore(" ",
+                    .setLore(
+                            settings.getSelectedPreset() == hitPreset ? "§aselected" : null,
+                            " ",
                             " §7created§8: §6" + PlayerUtils.convertTime(hitPreset.getCreated()),
                             " §7last edited§8: §6" + PlayerUtils.convertTime(hitPreset.getLastEdit()),
                             " ",
@@ -164,6 +170,13 @@ public class PlaygroundPlayer {
                     )
                     .build(), i, event -> {
                 if (event.getClick().isRightClick()) Clutches.getInstance().getPlaygroundManager().getEditInventories().openHitPresetEdit(this,hitPreset);
+                if (event.getClick().isLeftClick()) {
+                    player.playSound(player.getLocation(),Sound.NOTE_PLING,2,2);
+                    settings.setSelectedPreset(hitPreset);
+                    player.closeInventory();
+                    player.sendMessage(Clutches.PREFIX + "You selected the §6" + hitPreset.getName() + " §7hitpreset");
+                    player.sendMessage(Clutches.PREFIX + "Press §6leftclick §7on the §csettings §7item to start clutching");
+                }
             });
 
             i++;
@@ -193,6 +206,7 @@ public class PlaygroundPlayer {
 
         currentEditPreset = null;
         chatEdit = false;
+        playerTask.stopIfActive();
 
         for (int i = 0; i < 6 * 9; i++) {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
@@ -352,6 +366,7 @@ public class PlaygroundPlayer {
     public void quit() {
         setChatEdit(false);
         setCurrentEditPreset(null);
+        playerTask.stopIfActive();
         playerEntry.setPlayerState(PlayerState.LOBBY);
         playgroundWorld = null;
         playerEntry.setItemsSpawn();
