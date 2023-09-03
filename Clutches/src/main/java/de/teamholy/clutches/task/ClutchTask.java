@@ -141,7 +141,6 @@ public class ClutchTask {
         playerEntry.getCountdown().set(playerEntry.getDelay() + 1);
         playerEntry.getClutchCount().set(0);
         playerEntry.getNpcAirHit().set(playerEntry.getNpcAirHits());
-        System.out.println(playerEntry.getNpcAirHits() + " test");
         playerEntry.getPlayer().setLevel(0);
         playerEntry.getPlayer().setExp(0);
     }

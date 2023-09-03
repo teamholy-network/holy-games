@@ -83,7 +83,7 @@ public class PlaygroundPlayer {
     }
 
     public void saveData() {
-        Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings);
+        BukkitCore.getAPI().getExecutor().execute(() -> Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings));
     }
 
     public void openArmorColor() {
