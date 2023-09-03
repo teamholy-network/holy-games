@@ -125,7 +125,7 @@ public class PlayerEntry {
 
         }
 
-        playgroundPlayer = new PlaygroundPlayer(this,statsProfile);
+        playgroundPlayer = new PlaygroundPlayer(this);
 
         blocks = new ArrayList<>();
     }

@@ -4,6 +4,7 @@ import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.playground.model.HitPreset;
 import de.teamholy.clutches.playground.model.PlaygroundWorld;
 import de.teamholy.clutches.playground.task.ArmorColorRainbowTask;
+import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -22,11 +23,13 @@ public class PlaygroundManager {
 
     private final ArmorColorRainbowTask armorColorRainbowTask;
     private final EditInventories editInventories;
+    private final PlaygroundRepository playgroundRepository;
 
     public PlaygroundManager(Clutches instance) {
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         armorColorRainbowTask = new ArmorColorRainbowTask(instance);
         editInventories = new EditInventories();
+        playgroundRepository = BukkitCore.getAPI().getMongoManager().create(PlaygroundRepository.class);
         instance.getServer().getPluginManager().registerEvents(new PlaygroundListener(),instance);
         System.out.println(yamlConfiguration.getStringList("maps"));
         if (yamlConfiguration.contains("maps")) {

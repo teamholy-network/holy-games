@@ -1,35 +1,31 @@
 package de.teamholy.clutches.playground.model;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.enums.ArmorColor;
+import de.teamholy.clutches.playground.enums.CountdownLocation;
 import de.teamholy.clutches.playground.enums.PlaygroundItems;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.clutches.utils.PlayerUtils;
-import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
-import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import eu.koboo.en2do.repository.entity.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -44,42 +40,34 @@ public class PlaygroundPlayer {
     private ScoreboardAPI scoreboardAPI;
     private PlaygroundWorld playgroundWorld;
     private Player player;
+    private org.bukkit.inventory.Inventory inventory;
     private Settings settings = new Settings();
 
     private HitPreset currentEditPreset;
     private boolean chatEdit = false;
 
-    public enum CountdownLocation {TITLE, ACTIONBAR, CHAT}
 
-    public PlaygroundPlayer(PlayerEntry playerEntry, GameProfile gameProfile) {
+    public PlaygroundPlayer(PlayerEntry playerEntry) {
         this.playerEntry = playerEntry;
         this.scoreboardAPI = playerEntry.getScoreboardAPI();
         this.player = playerEntry.getPlayer();
+        settings.setUuid(player.getUniqueId());
 
-        if (gameProfile.getSetting(Gamemodes.CLUTCHES.toString(),"playground_pvpEnabled") == null) {
+        BukkitCore.getAPI().getExecutor().execute(() -> {
 
-            gameProfile.setSetting(Gamemodes.CLUTCHES.toString(),"playground_pvpEnabled", String.valueOf(settings.isPvpEnabled()));
-            gameProfile.setSetting(Gamemodes.CLUTCHES.toString(),"playground_adjustDirection", String.valueOf(settings.isAdjustDirection()));
-            gameProfile.setSetting(Gamemodes.CLUTCHES.toString(),"playground_countdown", String.valueOf(settings.isAdjustDirection()));
+            Settings temp = Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().findFirstById(player.getUniqueId());
+            if (temp != null) {
+                settings = temp;
+            } else Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings);
 
-        } else {
+        });
 
-        }
 
-    }
+        this.inventory = InventoryUtils.inventoryFromString(settings.getInventoryString());
 
-    @Getter @Setter @NoArgsConstructor
-    public class Settings {
-
-        private boolean pvpEnabled = false; // setting
-        private boolean adjustDirection = true; // setting
-        private int countdown = 3; // setting
-        private Inventory inventory = PlaygroundItems.newInventory(); // setting
-        private CountdownLocation countdownLocation = CountdownLocation.TITLE; // setting
-        private ArmorColor armorColor = ArmorColor.GREY; // setting
-        private List<HitPreset> hitPresetMap = Lists.newLinkedList();
 
     }
+
 
     public void setScoreboard() {
         scoreboardAPI.clearScoreboard();
@@ -95,7 +83,7 @@ public class PlaygroundPlayer {
     }
 
     public void saveData() {
-
+        Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings);
     }
 
     public void openArmorColor() {
@@ -240,7 +228,7 @@ public class PlaygroundPlayer {
                 .setLore("§7currently " + (settings.isPvpEnabled() ? "§aenabled" : "§cdisabled"))
                 .build(), 39, event -> {
 
-            settings.setPvpEnabled(!settings.pvpEnabled);
+            settings.setPvpEnabled(!settings.isPvpEnabled());
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
             openSettings();
         });
@@ -268,16 +256,16 @@ public class PlaygroundPlayer {
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
 
 
-            sort.getInventory().setContents(settings.getInventory().getContents());
+            sort.getInventory().setContents(getInventory().getContents());
             player.getInventory().clear();
 
             sort.setOnClose(inventoryCloseEvent -> {
                 if (PlaygroundItems.correctInventory(sort.getInventory())) {
-                    settings.setInventory(sort.getInventory());
+                    setInventory(sort.getInventory());
                     player.sendMessage(Clutches.PREFIX + "Your inventory sort was saved");
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 2f, 2f);
                 } else {
-                    settings.setInventory(PlaygroundItems.newInventory());
+                    setInventory(PlaygroundItems.newInventory());
                     player.sendMessage(Clutches.PREFIX + "Your inventory was not saved");
                     player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2f, 2f);
                 }
@@ -288,18 +276,18 @@ public class PlaygroundPlayer {
             playerEntry.getPlayer().openInventory(sort.getInventory());
         });
 
-        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, settings.countdown, (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg2YjlkNThiY2QxYTU1NWY5M2U3ZDg2NTkxNTljZmQyNWI4ZGQ2ZTliY2UxZTk3MzgyMjgyNDI5MTg2MiJ9fX0=", "").setName("§8» §6Clutch countdown")
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, settings.getCountdown(), (byte) 3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg2YjlkNThiY2QxYTU1NWY5M2U3ZDg2NTkxNTljZmQyNWI4ZGQ2ZTliY2UxZTk3MzgyMjgyNDI5MTg2MiJ9fX0=", "").setName("§8» §6Clutch countdown")
                 .setLore("§7Currently selected §8» §b" + settings.getCountdown(), " ", " §crightclick §7-1 ", " §aleftclick §7+1 ", " ").build(), 42, event -> {
 
             if (event.getClick().isRightClick()) {
                 if (!(settings.getCountdown() <= 2)) {
-                    getSettings().setCountdown(settings.countdown - 1);
+                    getSettings().setCountdown(settings.getCountdown() - 1);
                     openSettings();
                     player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
                 }
             } else if (event.getClick().isLeftClick()) {
                 if (!(settings.getCountdown() >= 12)) {
-                    getSettings().setCountdown(settings.countdown + 1);
+                    getSettings().setCountdown(settings.getCountdown() + 1);
                     openSettings();
                     player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2, 2);
                 }
@@ -308,14 +296,13 @@ public class PlaygroundPlayer {
         });
 
         inventory.setItem(new ItemBuilder(Material.PAPER, 1).setName("§8» §6Clutch countdown location")
-                .setLore(
-                        Arrays.stream(CountdownLocation.values()).map(value -> (settings.countdownLocation == value) ? "§a" + value.toString().toLowerCase() : "§7" + value.toString().toLowerCase()).collect(Collectors.toList())
+                .setLore(Arrays.stream(CountdownLocation.values()).map(value -> (settings.getCountdownLocation() == value) ? "§a" + value.toString().toLowerCase() : "§7" + value.toString().toLowerCase()).collect(Collectors.toList())
                 ).build(), 43, event -> {
 
-            switch (settings.countdownLocation) {
-                case TITLE -> settings.countdownLocation = CountdownLocation.ACTIONBAR;
-                case ACTIONBAR -> settings.countdownLocation = CountdownLocation.CHAT;
-                case CHAT -> settings.countdownLocation = CountdownLocation.TITLE;
+            switch (settings.getCountdownLocation()) {
+                case TITLE -> settings.setCountdownLocation(CountdownLocation.ACTIONBAR);
+                case ACTIONBAR -> settings.setCountdownLocation(CountdownLocation.CHAT);
+                case CHAT -> settings.setCountdownLocation(CountdownLocation.TITLE);
             }
 
             openSettings();
@@ -336,7 +323,7 @@ public class PlaygroundPlayer {
         player.getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(settings.getArmorColor().getColor()).setUnbreakable().build());
         player.getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(settings.getArmorColor().getColor()).setUnbreakable().build());
 
-        for (ItemStack itemStack : settings.getInventory().getContents()) {
+        for (ItemStack itemStack : getInventory().getContents()) {
 
             if (itemStack != null && itemStack.getType() != null) {
                 if (itemStack.getType() == Material.STICK) {

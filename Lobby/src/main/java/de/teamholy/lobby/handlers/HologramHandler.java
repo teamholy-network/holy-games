@@ -1,7 +1,5 @@
 package de.teamholy.lobby.handlers;
 
-
-
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.TrophieLeague;
@@ -17,8 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /* copyright by Yassino */
 @Getter
@@ -50,7 +47,10 @@ public class HologramHandler {
 
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("§8§m------------§f§lLEAGUES§8§m------------");
-        for (TrophieLeague eloRank : TrophieLeague.values()) {
+        List<TrophieLeague> ranks = new ArrayList<>(Arrays.stream(TrophieLeague.values()).toList());
+
+        Collections.reverse(ranks);
+        for (TrophieLeague eloRank : ranks) {
             String s = eloRank.getName() + " §8» §7" + eloRank.getMinRange() + " §a- §7" + eloRank.getMaxRange() + " §8» " + eloRank.getShortName();
             arrayList.add(s);
         }
@@ -61,14 +61,7 @@ public class HologramHandler {
 
         Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,7,0));
         eloholo.appendItemLine(new ItemBuilder(Material.DIAMOND_SWORD).setEnchantments(Enchantment.DAMAGE_ALL,1).build());
-        arrayList.forEach(s -> {
-            eloholo.appendTextLine(s).setTouchHandler(player -> {
-
-                Lobby.getInstance().getLeaderboardInventory().open(player, Gamemodes.MLGRUSH);
-
-
-            });
-        });
+        arrayList.forEach(s -> eloholo.appendTextLine(s).setTouchHandler(player -> Lobby.getInstance().getLeaderboardInventory().open(player, Gamemodes.MLGRUSH)));
 
 
     }

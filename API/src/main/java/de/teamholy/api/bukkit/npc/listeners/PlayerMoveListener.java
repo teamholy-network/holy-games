@@ -40,9 +40,12 @@ public final class PlayerMoveListener implements Listener {
                 && (event.getFrom().getWorld() == event.getTo().getWorld())) {
             return;
         }
+        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().values().forEach(playerEntry -> {
+            playerEntry.getNpcs().values().forEach(npc -> {
+                npc.update();
+            });
 
-        NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(event.getPlayer().getUniqueId());
-        playerEntry.getNpcs().values().forEach(NPCEntry::update);
+        });
     }
 
     @EventHandler

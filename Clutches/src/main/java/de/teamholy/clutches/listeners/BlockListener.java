@@ -48,7 +48,7 @@ public class BlockListener implements Listener {
             PlayerEntry damager = Clutches.getInstance().getPlayerEntryHandler().get(event.getDamager().getUniqueId());
 
             if (entity.getPlayerState() == PlayerState.PLAYGROUND
-            && entity.getPlaygroundPlayer().isPvpEnabled() && damager.getPlaygroundPlayer().isPvpEnabled()) {
+            && entity.getPlaygroundPlayer().getSettings().isPvpEnabled() && damager.getPlaygroundPlayer().getSettings().isPvpEnabled()) {
                 event.setDamage(0);
             } else {
                 event.setCancelled(true);

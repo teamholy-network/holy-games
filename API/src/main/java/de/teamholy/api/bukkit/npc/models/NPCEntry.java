@@ -26,7 +26,7 @@ import java.util.UUID;
 @Getter
 @SuppressWarnings("unchecked")
 public class NPCEntry extends Reflection {
-
+    private List<Player> players = new ArrayList<>();
     private Player player;
     private String displayName;
     private UUID skinUUID, uuid;
@@ -37,8 +37,6 @@ public class NPCEntry extends Reflection {
     private boolean looker, kickBack;
     private Hologram hologram;
 
-    private boolean canSee;
-
     public NPCEntry(String displayName, UUID skinUUID, Location location, int maxSeeRange, int maxTargetRange, boolean looker, boolean kickBack) {
 
         if (displayName.length() > 16) {
@@ -47,10 +45,8 @@ public class NPCEntry extends Reflection {
             this.displayName = displayName;
         }
 
-
         this.uuid = new UUID(new Random().nextLong(),0);
         this.gameProfile = new GameProfile(uuid, this.displayName);
-        setSkin(skinUUID);
 
         this.entityId = new Random().nextInt(10000000);
         this.location = location;
@@ -60,6 +56,7 @@ public class NPCEntry extends Reflection {
 
         this.looker = looker;
         this.kickBack = kickBack;
+        setSkin(skinUUID);
     }
 
     public NPCEntry setGameProfile(GameProfile gameProfile) {
@@ -79,7 +76,7 @@ public class NPCEntry extends Reflection {
                 i = 2.9;
                 break;
             case 3:
-                i = 3.2;
+                i = 3.1;
                 break;
             case 4:
                 i = 3.4;
@@ -96,7 +93,6 @@ public class NPCEntry extends Reflection {
 
     public NPCEntry setPlayer(Player player) {
         this.player = player;
-        update();
         return this;
     }
 
@@ -116,10 +112,50 @@ public class NPCEntry extends Reflection {
         sendPacket(packet, player);
     }
 
-    public void update() {
-        if(!this.isInRange(player) && canSee) { this.remove(); }
 
-        if (this.isInRange(player) && !canSee) {
+    public void spawn() {
+        if(!this.isInRange(player) && this.players.contains(player)) { this.remove(); }
+
+
+        if (this.isInRange(player) && !this.players.contains(player)) {
+            DataWatcher dataWatcher = new DataWatcher(null);
+            dataWatcher.a(6, (float) 20);
+            dataWatcher.a(10, (byte) 127);
+
+            PacketPlayOutNamedEntitySpawn packet = new PacketPlayOutNamedEntitySpawn();
+            setValue(packet, "a", this.entityId);
+            setValue(packet, "b", this.gameProfile.getId());
+            setValue(packet, "c", intMaker(location.getX()));
+            setValue(packet, "d", intMaker(location.getY()));
+            setValue(packet, "e", intMaker(location.getZ()));
+            setValue(packet, "f", byteMaker(location.getYaw()));
+            setValue(packet, "g", byteMaker(location.getPitch()));
+            setValue(packet, "h", 0);
+            setValue(packet, "i", dataWatcher);
+
+            this.toTablist(player);
+
+            sendPacket(packet, player);
+
+            this.look(this.location.getYaw(), this.location.getPitch(), player);
+            this.players.add(player);
+
+
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    removeTablist(player);
+                    teleport(location, player);
+                }
+            }.runTaskLater(BukkitHolyAPI.getInstance(), 2);
+        }
+    }
+
+    public void update() {
+        if(!this.isInRange(player) && this.players.contains(player)) { this.remove(); }
+
+        if (this.isInRange(player) && !this.players.contains(player)) {
             DataWatcher dataWatcher = new DataWatcher(null);
             dataWatcher.a(6, (float) 20);
             dataWatcher.a(10, (byte) 127);
@@ -138,7 +174,7 @@ public class NPCEntry extends Reflection {
             this.toTablist(player);
 
             sendPacket(packet, player);
-            canSee = true;
+            this.players.add(player);
 
 
             this.look(this.location.getYaw(), this.location.getPitch(), player);
@@ -195,7 +231,7 @@ public class NPCEntry extends Reflection {
 
         sendPacket(packet, player);
         this.removeTablist(player);
-        canSee = false;
+        this.players.remove(player);
     }
 
     public void animation(Player player, int animation) {
@@ -305,5 +341,4 @@ public class NPCEntry extends Reflection {
     private byte byteMaker(float value) {
         return (byte) ((int) (value * 256.0F / 360.0F));
     }
-
 }

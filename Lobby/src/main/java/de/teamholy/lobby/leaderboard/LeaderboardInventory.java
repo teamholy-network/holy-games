@@ -209,7 +209,8 @@ public class LeaderboardInventory {
             } else {
                 double percent = (100.0 / games);
                 current = percent * wins;
-                show = getWinrateColor((int) current) + String.valueOf(current) + "% ";
+
+                show = getWinrateColor((int) current) + String.valueOf(Math.round(current)) + "% ";
             }
 
             stringBuilder.append("§8︳ §7Winrate§8: " + show);

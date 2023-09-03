@@ -19,6 +19,7 @@ import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.models.SkinEntry;
 import de.teamholy.clutches.commands.QuitCommand;
 import de.teamholy.clutches.npcskin.NPCSkin;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,6 +65,7 @@ public class Clutches extends JavaPlugin {
 
         slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         slimeLoader = slimePlugin.getLoader("mongodb");
+
 
         mapEntryHandler.put("line", new MapEntry("Line",  new ItemBuilder(Material.WOOD, 1, (byte) 0).setName("§8» §6Line"), Arrays.asList(ArenaType.DIAGONAL_CLUTCH)));
         mapEntryHandler.put("wood", new MapEntry("Wood", new ItemBuilder(Material.LOG, 1, (byte) 0).setName("§8» §6Wood"), null));

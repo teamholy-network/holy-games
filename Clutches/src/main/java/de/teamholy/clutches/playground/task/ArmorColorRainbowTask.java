@@ -3,6 +3,7 @@ package de.teamholy.clutches.playground.task;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.enums.ArmorColor;
+import de.teamholy.clutches.playground.model.PlaygroundPlayer;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -19,6 +20,7 @@ public class ArmorColorRainbowTask {
 
     public int r, g, b = 20;
     public int time = 59;
+
 
     public ArmorColorRainbowTask(Clutches instance) {
         AtomicInteger i = new AtomicInteger(0);
@@ -235,7 +237,7 @@ public class ArmorColorRainbowTask {
                     playerEntry.getPlayer().getOpenInventory().setItem(7,itemStack);
                 }
 
-                if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND && playerEntry.getPlaygroundPlayer().getArmorColor() == ArmorColor.RAINBOW && playerEntry.getPlayer().getInventory().getChestplate() != null) {
+                if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND && playerEntry.getPlaygroundPlayer().getSettings().getArmorColor() == ArmorColor.RAINBOW && playerEntry.getPlayer().getInventory().getChestplate() != null) {
                     playerEntry.getPlayer().getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
                     playerEntry.getPlayer().getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
                     playerEntry.getPlayer().getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 4).setUnbreakable().setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(c).build());
