@@ -19,8 +19,9 @@ public class PlaygroundManager {
 
     private final List<PlaygroundWorld> playgroundWorlds = new ArrayList<>();
     private final List<HitPreset> presentedHits = new ArrayList<>();
-    private final File cfgfFile = new File(Clutches.getInstance().getDataFolder(),"playgroundWorlds.yml");
+    private final File cfgfFile = new File(Clutches.getInstance().getDataFolder(),"playground.yml");
     private final YamlConfiguration yamlConfiguration;
+
 
     private final ArmorColorRainbowTask armorColorRainbowTask;
     private final EditInventories editInventories;
@@ -30,6 +31,8 @@ public class PlaygroundManager {
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         armorColorRainbowTask = new ArmorColorRainbowTask(instance);
         editInventories = new EditInventories();
+
+
         playgroundRepository = BukkitCore.getAPI().getMongoManager().create(PlaygroundRepository.class);
         instance.getServer().getPluginManager().registerEvents(new PlaygroundListener(),instance);
         System.out.println(yamlConfiguration.getStringList("maps"));

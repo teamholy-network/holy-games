@@ -1,6 +1,7 @@
-package de.teamholy.clutches.playground;
+package de.teamholy.clutches.playground.commands;
 
 import de.teamholy.clutches.Clutches;
+import de.teamholy.clutches.playground.PlaygroundManager;
 import de.teamholy.clutches.playground.model.PlaygroundWorld;
 import lombok.SneakyThrows;
 import org.bukkit.Material;

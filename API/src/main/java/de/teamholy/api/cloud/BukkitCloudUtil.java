@@ -8,6 +8,7 @@ import de.dytanic.cloudnet.driver.channel.ChannelMessage;
 import de.dytanic.cloudnet.driver.event.EventListener;
 import de.dytanic.cloudnet.driver.event.events.channel.ChannelMessageReceiveEvent;
 import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
+import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
 import eu.koboo.markup.MarkupAPI;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class BukkitCloudUtil implements Listener {
 
     public String getRankColor(UUID uuid) {
         if (MarkupAPI.isNicked(Bukkit.getPlayer(uuid)))
-            return "§7";
+            return PlayerRank.PLAYER.getColorCode();
         return getRankColorWithoutNick(uuid);
     }
 

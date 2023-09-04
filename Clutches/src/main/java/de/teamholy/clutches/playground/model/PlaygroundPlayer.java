@@ -19,6 +19,7 @@ import de.teamholy.core.bukkit.perks.PerkManager;
 import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import eu.koboo.en2do.repository.entity.Id;
+import io.netty.handler.codec.spdy.SpdyHttpResponseStreamIdHandler;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -78,11 +80,15 @@ public class PlaygroundPlayer {
         scoreboardAPI.setLine(7, "§7");
         scoreboardAPI.setLine(6, " §7Map§8: §b" + playgroundWorld.getName());
         scoreboardAPI.setLine(5, "§1");
-        scoreboardAPI.setLine(4, " §7Selected§8: §cnone");
+        scoreboardAPI.setLine(4, settings.getSelectedPreset() == null ? " §cno clutch selected" : "§6" + settings.getSelectedPreset().getName());
         scoreboardAPI.setLine(3, " §7Clutch count§8: §b0");
         scoreboardAPI.setLine(2, "§5");
         scoreboardAPI.setLine(1, " §8§m--------------- ");
         scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+    }
+
+    public void updateClutchSelectedScore() {
+        scoreboardAPI.updateLine(4, settings.getSelectedPreset() == null ? " §cno clutch selected" : " §6" + settings.getSelectedPreset().getName());
     }
 
     public void saveData() {
@@ -142,6 +148,75 @@ public class PlaygroundPlayer {
         player.openInventory(inventory.getInventory());
     }
 
+    public void openFeaturedPresets() {
+        List<HitPreset> hitPresets = Clutches.getInstance().getPlaygroundManager().getPresentedHits();
+
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Featured Hit§8-§6Presets", 9);
+
+
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
+        }
+
+        int i = 0;
+        for (HitPreset hitPreset : hitPresets) {
+
+            inventory.setItem(new ItemBuilder(hitPreset.getIcon().getMaterial(), hitPreset.getHitMap().size(), (byte) hitPreset.getIcon().getSubId())
+                            .setName("§8» §6" + hitPreset.getName())
+                            .setLore(
+                                    " ",
+                                    " §7This hitpreset has §6" + hitPreset.getHitMap().size() + " §7hits",
+                                    " §7leftclick to §aselect §7rightclick to §bimport"
+                            )
+                            .build(), i, event -> {
+                if (event.isLeftClick()) {
+                    player.playSound(player.getLocation(),Sound.NOTE_PLING,2,2);
+                    settings.setSelectedPreset(hitPreset);
+                    updateClutchSelectedScore();
+                    player.closeInventory();
+                    player.sendMessage(Clutches.PREFIX + "You selected the §6" + hitPreset.getName() + " §7hitpreset");
+                    player.sendMessage(Clutches.PREFIX + "Press §6leftclick §7on the §csettings §7item to start clutching");
+                } else if (event.isRightClick()) {
+
+                    if (settings.getHitPresetMap().stream().anyMatch(temp -> temp.getUuid().equals(hitPreset.getUuid()))) {
+                        player.closeInventory();
+                        player.sendMessage(Clutches.PREFIX + "§cYou already have this preset");
+                        return;
+                    }
+
+                    if (settings.getHitPresetMap().size() < 27) {
+                        HitPreset temp = new HitPreset();
+                        temp.setIcon(hitPreset.getIcon());
+                        temp.setOrigin(HitPreset.Origin.IMPORTED);
+                        temp.setHitMap(hitPreset.getHitMap());
+                        temp.setName(hitPreset.getName());
+                        temp.setUuid(hitPreset.getUuid());
+
+                        player.closeInventory();
+                        player.playSound(player.getLocation(),Sound.NOTE_PLING,2,2);
+                        settings.getHitPresetMap().add(temp);
+                        player.sendMessage(Clutches.PREFIX + "You imported the §6" + hitPreset.getName() + " §7hitpreset");
+
+
+                    } else {
+
+                        player.playSound(player.getLocation(),Sound.ITEM_BREAK,2,2);
+                        player.closeInventory();
+                        player.sendMessage(Clutches.PREFIX + "§cYou dont have enough space! delete a hitpreset");
+
+                    }
+
+                }
+
+            });
+
+            i++;
+        }
+
+        player.openInventory(inventory.getInventory());
+
+    }
+
     public void openHitpresets() {
 
         de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Hitpresets", 4 * 9);
@@ -160,8 +235,7 @@ public class PlaygroundPlayer {
                     .setName("§8» §6" + hitPreset.getName())
                     .setLore(
                             settings.getSelectedPreset() == hitPreset ? "§aselected" : null,
-                            " ",
-                            " §7created§8: §6" + PlayerUtils.convertTime(hitPreset.getCreated()),
+                            hitPreset.getOrigin() == HitPreset.Origin.CREATED ? " §7created§8: §6" + PlayerUtils.convertTime(hitPreset.getCreated()) : " §b§lIMPORTED",
                             " §7last edited§8: §6" + PlayerUtils.convertTime(hitPreset.getLastEdit()),
                             " ",
                             " §7you used this preset §6" + hitPreset.getUsed() + " " + (hitPreset.getUsed() == 1 ? "§7time" : "§7times"),
@@ -173,6 +247,7 @@ public class PlaygroundPlayer {
                 if (event.getClick().isLeftClick()) {
                     player.playSound(player.getLocation(),Sound.NOTE_PLING,2,2);
                     settings.setSelectedPreset(hitPreset);
+                    updateClutchSelectedScore();
                     player.closeInventory();
                     player.sendMessage(Clutches.PREFIX + "You selected the §6" + hitPreset.getName() + " §7hitpreset");
                     player.sendMessage(Clutches.PREFIX + "Press §6leftclick §7on the §csettings §7item to start clutching");
@@ -182,7 +257,7 @@ public class PlaygroundPlayer {
             i++;
         }
 
-        if (settings.getHitPresetMap().size() <= 9) {
+        if (settings.getHitPresetMap().size() < 27) {
             inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
                     .setName("§8» §6Create new hitpreset")
                     .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWEyZDg5MWM2YWU5ZjZiYWEwNDBkNzM2YWI4NGQ0ODM0NGJiNmI3MGQ3ZjFhMjgwZGQxMmNiYWM0ZDc3NyJ9fX0=","").build(), 31, event -> {
@@ -193,6 +268,12 @@ public class PlaygroundPlayer {
 
 
             });
+        } else {
+            inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
+                    .setName("§cDelete a hitpreset to create a new one")
+                            .setLore("§7you reached the §cmax §7amount of hitpresets")
+                    .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==","").build(), 31);
+
         }
 
         player.openInventory(inventory.getInventory());
@@ -217,11 +298,16 @@ public class PlaygroundPlayer {
         inventory.setItem(null, 14);
         inventory.setItem(null, 12);
 
+        if (settings.getSelectedPreset() == null) {
+            inventory.setItem(new ItemBuilder(Material.BARRIER).setName("§cNo clutch selected").build(),10);
+        } else {
+            inventory.setItem(new ItemBuilder(settings.getSelectedPreset().getIcon().getMaterial(),settings.getSelectedPreset().getHitMap().size(),settings.getSelectedPreset().getIcon().subId).setName("§7Selected clutch§8: §6" +settings.getSelectedPreset().getName()).build(),10);
+        }
 
         inventory.setItem(new ItemBuilder(Material.RED_SANDSTONE).setName("§8» §6Hit presets").setLore(" ", " §7here you can §esee §8& §acreate", " §7your own §cHit presets§7! ", " ").build(), 13, event -> openHitpresets());
         inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullMeta(
                 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cm" +
-                        "UvNzZjYmFlNzI0NmNjMmM2ZTg4ODU4NzE5OGM3OTU5OTc5NjY2YjRmNWE0MDg4ZjI0ZTI2ZTA3NWYxNDBhZTZjMyJ9fX0=", "").setName("§8» §6Featured hit presets").setLore(" ", " §7here you can §esee §8& §bcopy", " §7featured §cHit presets ", " §7of people like §52sa §8& §5derNOZE " , " ").build(), 15);
+                        "UvNzZjYmFlNzI0NmNjMmM2ZTg4ODU4NzE5OGM3OTU5OTc5NjY2YjRmNWE0MDg4ZjI0ZTI2ZTA3NWYxNDBhZTZjMyJ9fX0=", "").setName("§8» §6Featured hit presets").setLore(" ", " §7here you can §esee §8& §bcopy", " §7featured §cHit presets ", " §7of people like §52sa §8& §5derNOZE " , " ").build(), 15,event -> openFeaturedPresets());
 
         // perks
         inventory.setItem(null, 30);
@@ -325,6 +411,10 @@ public class PlaygroundPlayer {
 
 
         player.openInventory(inventory.getInventory());
+    }
+
+    public void updateClutchCountScore(int count) {
+        scoreboardAPI.updateLine(3, " §7Clutch count§8: §b" + count);
     }
 
     public void setItems() {

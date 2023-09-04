@@ -36,6 +36,11 @@ public class PlaygroundListener implements Listener {
                         player.playSound(player.getLocation(), Sound.ITEM_BREAK,2,2);
                         PlayerUtils.sendTitle(player,"","§cno preset selected",0,10,0);
                     } else {
+                        if (playgroundPlayer.getSettings().getSelectedPreset().getHitMap().size() == 0) {
+                            PlayerUtils.sendTitle(player,"","§cno hits added yet",0,20,0);
+                            player.playSound(player.getLocation(), Sound.ITEM_BREAK,2,2);
+                            return;
+                        }
                         if (playgroundPlayer.getPlayerTask().stopIfActive()) {
                             PlayerUtils.sendTitle(player,"","§cstopped",0,10,0);
                             player.playSound(player.getLocation(), Sound.ITEM_BREAK,2,2);

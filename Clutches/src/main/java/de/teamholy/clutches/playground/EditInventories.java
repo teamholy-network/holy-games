@@ -74,6 +74,7 @@ public class EditInventories implements Listener {
 
         inventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
             hitPreset.setLastEdit(System.currentTimeMillis());
+            if (playgroundPlayer.getSettings().getSelectedPreset() != null && playgroundPlayer.getSettings().getSelectedPreset() == hitPreset) playgroundPlayer.getSettings().setSelectedPreset(hitPreset);
             playgroundPlayer.saveData();
             if (playgroundPlayer != null && playgroundPlayer.getPlayer().isOnline() && openHitPresets.get())
                 playgroundPlayer.openHitpresets();
@@ -229,9 +230,9 @@ public class EditInventories implements Listener {
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setXknock(hit.getXknock() - 0.1);
             }
 
-            if (hit.getXknock() >= 3) {
+            if (hit.getXknock() >= 6) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setXknock(3);
+                hit.setXknock(6);
             } else if (hit.getXknock() <= 0) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
                 hit.setXknock(0);
@@ -263,9 +264,9 @@ public class EditInventories implements Listener {
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setXknock(hit.getXknock() + 0.1);
             }
 
-            if (hit.getXknock() >= 3) {
+            if (hit.getXknock() >= 6) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setXknock(3);
+                hit.setXknock(6);
             } else if (hit.getXknock() <= 0) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
                 hit.setXknock(0);
@@ -296,9 +297,9 @@ public class EditInventories implements Listener {
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setYknock(hit.getYknock() - 0.1);
             }
 
-            if (hit.getYknock() >= 1) {
+            if (hit.getYknock() >= 2) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setYknock(1);
+                hit.setYknock(2);
             } else if (hit.getYknock() <= 0) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
                 hit.setYknock(0);
@@ -325,9 +326,9 @@ public class EditInventories implements Listener {
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setYknock(hit.getYknock() + 0.1);
             }
 
-            if (hit.getYknock() >= 1) {
+            if (hit.getYknock() >= 2) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setYknock(1);
+                hit.setYknock(2);
             } else if (hit.getYknock() <= 0) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
                 hit.setYknock(0);
@@ -462,8 +463,8 @@ public class EditInventories implements Listener {
             playgroundPlayer.getPlayer().closeInventory();
             playgroundPlayer.getPlayer().sendMessage(Clutches.PREFIX + "§cYou deleted the preset §6" + hitPreset.getName());
             playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(), Sound.ANVIL_BREAK, 2, 2);
-            playgroundPlayer.setCurrentEditPreset(null);
-
+            if (playgroundPlayer.getSettings().getSelectedPreset() != null && playgroundPlayer.getSettings().getSelectedPreset() == hitPreset) playgroundPlayer.getSettings().setSelectedPreset(null);
+            playgroundPlayer.updateClutchSelectedScore();
             playgroundPlayer.getSettings().getHitPresetMap().removeIf(temp -> temp.getUuid().equals(hitPreset.getUuid()));
         });
 
@@ -472,7 +473,6 @@ public class EditInventories implements Listener {
         });
 
         inventory.setOnClose(event -> {
-            playgroundPlayer.getSettings().setSelectedPreset(null);
 
             Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
                 if (playgroundPlayer != null && playgroundPlayer.getPlayer().isOnline())

@@ -7,6 +7,7 @@ softdepend:
   - SlimeWorldManager
 
 commands:
+  playgroundpreset:
   playworld:
   quit:
   spawn:
