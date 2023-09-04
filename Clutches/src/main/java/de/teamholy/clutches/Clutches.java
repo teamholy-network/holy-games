@@ -34,6 +34,7 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -136,6 +137,7 @@ public class Clutches extends JavaPlugin {
                     player.playSound(player.getLocation(),Sound.ENDERMAN_TELEPORT,5,5);
                     player.sendMessage(PREFIX + "You got out of map!");
                 } else if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND && player.getLocation().getBlockY() < playerEntry.getPlaygroundPlayer().getPlaygroundWorld().getDeathHeight()) {
+                    player.setVelocity(new Vector(0,0,0));
                     player.teleport(playerEntry.getPlaygroundPlayer().getPlaygroundWorld().getSpawns().get(new Random().nextInt(playerEntry.getPlaygroundPlayer().getPlaygroundWorld().getSpawns().size())));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 50, 1);
                     playerEntry.getPlaygroundPlayer().getPlayerTask().stopIfActive();

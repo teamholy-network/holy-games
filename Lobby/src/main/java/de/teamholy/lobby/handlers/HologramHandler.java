@@ -3,6 +3,7 @@ package de.teamholy.lobby.handlers;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.TrophieLeague;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.lobby.Lobby;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -51,7 +52,7 @@ public class HologramHandler {
 
         Collections.reverse(ranks);
         for (TrophieLeague eloRank : ranks) {
-            String s = eloRank.getName() + " §8» §7" + eloRank.getMinRange() + " §a- §7" + eloRank.getMaxRange() + " §8» " + eloRank.getShortName();
+            String s = eloRank.getName() + " §8» §7" + BukkitCore.getAPI().getCoinManager().formatInteger(eloRank.getMinRange()) + " §a- §7" + BukkitCore.getAPI().getCoinManager().formatInteger(eloRank.getMaxRange()) + " §8» " + eloRank.getShortName();
             arrayList.add(s);
         }
         arrayList.add("§8§m------------§f§lLEAGUES§8§m------------");
@@ -59,7 +60,7 @@ public class HologramHandler {
         arrayList.add("§f§lClick to see the §c§lleaderboards");
 
 
-        Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,7,0));
+        Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,8,0));
         eloholo.appendItemLine(new ItemBuilder(Material.DIAMOND_SWORD).setEnchantments(Enchantment.DAMAGE_ALL,1).build());
         arrayList.forEach(s -> eloholo.appendTextLine(s).setTouchHandler(player -> Lobby.getInstance().getLeaderboardInventory().open(player, Gamemodes.MLGRUSH)));
 

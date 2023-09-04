@@ -60,6 +60,8 @@ public class PlayerTask {
         final int[] clutchCount = {0};
         final int[] nextClutch = {0};
 
+        hitPreset.setUsed(hitPreset.getUsed() + 1);
+
         bukkitTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -74,7 +76,16 @@ public class PlayerTask {
                         playgroundPlayer.updateClutchCountScore(clutchCount[0]);
 
                         playgroundPlayer.getPlayer().damage(0);
-                        playgroundPlayer.getPlayer().setVelocity(getVelocity(createVector(calculateBackYaw(),0),hit.getXknock(),hit.getYknock()));
+
+                        float add = 0;
+                        if (hit.getDiagonalDirection() == Hit.DiagonalDirection.LEFT) add = 47.5F;
+                        if (hit.getDiagonalDirection() == Hit.DiagonalDirection.RIGHT) add = -47.5F;
+
+                        if (playgroundPlayer.getSettings().isAdjustDirection()) {
+                            playgroundPlayer.getPlayer().setVelocity( getVelocity(calculateHitInBack(calculateNearestCardinalDirection(vectorToYaw(calculateHitInBack(playgroundPlayer.getPlayer().getLocation().getYaw(),0))) + add,0) ,hit.getXknock(),hit.getYknock()));
+                        } else {
+                            playgroundPlayer.getPlayer().setVelocity( getVelocity(calculateHitInBack(playgroundPlayer.getPlayer().getLocation().getYaw() + add,0) ,hit.getXknock(),hit.getYknock()));
+                        }
 
                         playgroundPlayer.getPlayer().setLevel(0);
                         playgroundPlayer.getPlayer().setExp(0);
@@ -109,34 +120,49 @@ public class PlayerTask {
         return blick.multiply(multiplier).setY(y);
     }
 
-    private float calculateBackYaw() {
-        float currentYaw = playgroundPlayer.getPlayer().getLocation().getYaw();
 
-        // Add 180 degrees to the current yaw to get the back yaw
-        float backYaw = currentYaw - 90;
+    private float vectorToYaw(Vector vector) {
+        double x = vector.getX();
+        double z = vector.getZ();
 
-        // Ensure that the back yaw stays within the range of -180 to 180 degrees
-        if (backYaw > 180.0f) {
-            backYaw -= 180;
-        } else if (backYaw < -180.0f) {
-            backYaw += 180;
-        }
-        return backYaw;
+        double radians = Math.atan2(-x, z);
+        double degrees = Math.toDegrees(radians);
+
+        float yaw = (float) degrees;
+        yaw = (yaw + 360) % 360;
+
+        return yaw;
     }
 
-    private Vector createVector(float yaw, float pitch) {
-        // Wir verwenden trigonometrische Funktionen, um aus Yaw und Pitch X-, Y- und Z-Komponenten abzuleiten
-        double x = Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch));
-        double y = Math.sin(Math.toRadians(pitch));
-        double z = Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch));
+    private Vector calculateHitInBack(float yaw, float pitch) {
+        double yawRadians = Math.toRadians(yaw);
+        double pitchRadians = Math.toRadians(pitch);
+
+        double x = Math.sin(yawRadians) * Math.cos(pitchRadians);
+        double y = -Math.sin(pitchRadians);
+        double z = -Math.cos(yawRadians) * Math.cos(pitchRadians);
 
         return new Vector(x, y, z);
+    }
+
+
+    public float calculateNearestCardinalDirection(float yaw) {
+        yaw = (yaw % 360 + 360) % 360;
+
+        if (yaw >= 45 && yaw < 135) {
+            return -90;
+        } else if (yaw >= 135 && yaw < 225) {
+            return 0;
+        } else if (yaw >= 225 && yaw < 315) {
+            return 90;
+        } else {
+            return -180;
+        }
     }
 
     public boolean stopIfActive() {
         if (bukkitTask != null) {
             Bukkit.getScheduler().cancelTask(bukkitTask.getTaskId());
-            System.out.println("TEST");
             playgroundPlayer.getPlayer().setExp(0);
             playgroundPlayer.getPlayer().setLevel(0);
             bukkitTask = null;

@@ -74,7 +74,7 @@ public class EditInventories implements Listener {
 
         inventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
             hitPreset.setLastEdit(System.currentTimeMillis());
-            if (playgroundPlayer.getSettings().getSelectedPreset() != null && playgroundPlayer.getSettings().getSelectedPreset() == hitPreset) playgroundPlayer.getSettings().setSelectedPreset(hitPreset);
+            if (playgroundPlayer.getSettings().getSelectedPreset() != null && playgroundPlayer.getSettings().getSelectedPreset().getUuid().equals(hitPreset.getUuid())) playgroundPlayer.getSettings().setSelectedPreset(hitPreset);
             playgroundPlayer.saveData();
             if (playgroundPlayer != null && playgroundPlayer.getPlayer().isOnline() && openHitPresets.get())
                 playgroundPlayer.openHitpresets();
@@ -463,7 +463,7 @@ public class EditInventories implements Listener {
             playgroundPlayer.getPlayer().closeInventory();
             playgroundPlayer.getPlayer().sendMessage(Clutches.PREFIX + "§cYou deleted the preset §6" + hitPreset.getName());
             playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(), Sound.ANVIL_BREAK, 2, 2);
-            if (playgroundPlayer.getSettings().getSelectedPreset() != null && playgroundPlayer.getSettings().getSelectedPreset() == hitPreset) playgroundPlayer.getSettings().setSelectedPreset(null);
+            if (playgroundPlayer.getSettings().getSelectedPreset() != null && playgroundPlayer.getSettings().getSelectedPreset().getUuid().equals(hitPreset.getUuid())) playgroundPlayer.getSettings().setSelectedPreset(null);
             playgroundPlayer.updateClutchSelectedScore();
             playgroundPlayer.getSettings().getHitPresetMap().removeIf(temp -> temp.getUuid().equals(hitPreset.getUuid()));
         });

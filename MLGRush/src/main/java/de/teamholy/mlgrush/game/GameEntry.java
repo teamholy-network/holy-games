@@ -136,7 +136,7 @@ public class GameEntry {
 
         int difference = destroyed.getAlltimeTrophies() - playerEntry.getAlltimeTrophies();
 
-        int killerTrophies = TrophieLeague.calculateRange(difference, 1, 3);
+        int killerTrophies = TrophieLeague.calculateRange(difference, 2, 4);
         int playerTrophies = TrophieLeague.calculateRange(difference, 1, 3);
 
         playerEntry.setGameTrophies(playerEntry.getGameTrophies() + killerTrophies);

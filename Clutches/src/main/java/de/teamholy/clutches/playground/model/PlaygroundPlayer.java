@@ -80,7 +80,7 @@ public class PlaygroundPlayer {
         scoreboardAPI.setLine(7, "§7");
         scoreboardAPI.setLine(6, " §7Map§8: §b" + playgroundWorld.getName());
         scoreboardAPI.setLine(5, "§1");
-        scoreboardAPI.setLine(4, settings.getSelectedPreset() == null ? " §cno clutch selected" : "§6" + settings.getSelectedPreset().getName());
+        scoreboardAPI.setLine(4, settings.getSelectedPreset() == null ? " §cno clutch selected" : " §6" + settings.getSelectedPreset().getName());
         scoreboardAPI.setLine(3, " §7Clutch count§8: §b0");
         scoreboardAPI.setLine(2, "§5");
         scoreboardAPI.setLine(1, " §8§m--------------- ");

@@ -64,16 +64,16 @@ public class PlayerEntry {
 
     public void updateTeamScore() {
         if (teamEntry == null) {
-            scoreboardAPI.updateLine(10," §7Team§8: §a-/-");
+            scoreboardAPI.updateLine(11," §7Team§8: §a-/-");
         } else {
-            scoreboardAPI.updateLine(10," §7Team§8: §a" + teamEntry.getTag());
+            scoreboardAPI.updateLine(11," §7Team§8: §a" + teamEntry.getTag());
         }
     }
 
 
 
     public void updateMapScore() {
-        scoreboardAPI.updateLine(11," §7Map§8: §a" + SGFFA.getInstance().getActiveMapEntry().getMapName());
+        scoreboardAPI.updateLine(12," §7Map§8: §a" + SGFFA.getInstance().getActiveMapEntry().getMapName());
     }
 
     public void setScoreboard() {

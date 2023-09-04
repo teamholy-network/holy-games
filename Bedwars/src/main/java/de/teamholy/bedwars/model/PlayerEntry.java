@@ -244,7 +244,7 @@ public class PlayerEntry {
                         TrophieLeague.calculateRange(difference,1,3));
 
                 int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS,
-                        TrophieLeague.calculateRange(difference,4,10));
+                        TrophieLeague.calculateRange(difference,3,6));
 
 
                 killer.getPlayer().sendTitle("","§a+" + killerTrophies + " §6trophies");
