@@ -55,7 +55,7 @@ public class PlayerDeathListener implements Listener {
             int difference = playerEntry.getAlltimeTrophies() - killerEntry.getAlltimeTrophies();
 
             int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.PLUS,
-                    TrophieLeague.calculateRange(difference,2,5));
+                    TrophieLeague.calculateRange(difference,1,4));
 
             int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
                     TrophieLeague.calculateRange(difference,1,4));

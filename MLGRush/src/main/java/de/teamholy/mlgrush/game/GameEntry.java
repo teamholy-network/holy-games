@@ -211,7 +211,7 @@ public class GameEntry {
                 if (playersPlaying.contains(playerEntry)) {
 
                     if (winner != null && winner != playerEntry) {
-                        int loserTrophies = TrophieLeague.calculateRange(difference,4,11);
+                        int loserTrophies = TrophieLeague.calculateRange(difference,4,10);
                         playerEntry.setGameTrophies(playerEntry.getGameTrophies() - loserTrophies);
                     }
 
