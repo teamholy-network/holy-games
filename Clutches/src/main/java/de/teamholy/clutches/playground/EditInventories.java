@@ -219,7 +219,7 @@ public class EditInventories implements Listener {
 
 
         inventory.setItem(new ItemBuilder(Material.SKULL_ITEM,1, (byte) 3).setName("§c- §6to x")
-                .setLore(" ", " §7leftclick§8: §c- 0.00§l1 "," §7rightclick§8: §c- 0.0§l1 "," §7shiftclick§8: §c- 0.§l1 ", " " , "§7current x§8-§7knock value§8: §6" + decimalFormat.format(hit.getXknock()))
+                .setLore(" ", " §7leftclick§8: §c- 0.00§l1 "," §7rightclick§8: §c- 0.0§l1 "," §7shiftclick§8: §c- 0.§l1 "," §7middleclick§8: §c- §l1 ", " " , "§7current x§8-§7knock value§8: §6" + decimalFormat.format(hit.getXknock()))
                 .setSkullMeta(minus,"")
                 .build(),37, event -> {
 
@@ -228,6 +228,7 @@ public class EditInventories implements Listener {
                 case LEFT -> hit.setXknock(hit.getXknock() - 0.001);
                 case RIGHT -> hit.setXknock(hit.getXknock() - 0.01);
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setXknock(hit.getXknock() - 0.1);
+                case MIDDLE -> hit.setXknock(hit.getXknock() - 1);
             }
 
             if (hit.getXknock() >= 6) {
@@ -252,7 +253,7 @@ public class EditInventories implements Listener {
 
 
         inventory.setItem(new ItemBuilder(Material.SKULL_ITEM,1, (byte) 3).setName("§a+ §6to x")
-                        .setLore(" ", " §7leftclick§8: §a+ 0.00§l1 "," §7rightclick§8: §a+ 0.0§l1 "," §7shiftclick§8: §a+ 0.§l1 ", " " , "§7current x§8-§7knock value§8: §6" + decimalFormat.format(hit.getXknock()))
+                        .setLore(" ", " §7leftclick§8: §a+ 0.00§l1 "," §7rightclick§8: §a+ 0.0§l1 "," §7shiftclick§8: §a+ 0.§l1 ", " §7middleclick§8: §a+ §l1 ", " " , "§7current x§8-§7knock value§8: §6" + decimalFormat.format(hit.getXknock()))
                 .setSkullMeta(plus,"")
                 .build(),19, event -> {
 
@@ -262,6 +263,7 @@ public class EditInventories implements Listener {
                 case LEFT -> hit.setXknock(hit.getXknock() + 0.001);
                 case RIGHT -> hit.setXknock(hit.getXknock() + 0.01);
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setXknock(hit.getXknock() + 0.1);
+                case MIDDLE -> hit.setXknock(hit.getXknock() + 1);
             }
 
             if (hit.getXknock() >= 6) {
@@ -284,7 +286,7 @@ public class EditInventories implements Listener {
 
 
         inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setName("§c- §6to Y")
-                .setLore(" ", " §7leftclick§8: §c- 0.00§l1 ", " §7rightclick§8: §c- 0.0§l1 ", " §7shiftclick§8: §c- 0.§l1 ", " ", "§7current y§8-§7knock value§8: §6" + decimalFormat.format(hit.getYknock()))
+                .setLore(" ", " §7leftclick§8: §c- 0.00§l1 ", " §7rightclick§8: §c- 0.0§l1 ", " §7shiftclick§8: §c- 0.§l1 ", " §7middleclick§8: §c- §l1 " ,  " ", "§7current y§8-§7knock value§8: §6" + decimalFormat.format(hit.getYknock()))
                 .setSkullMeta(minus, "")
                 .build(), 39, event -> {
 
@@ -295,6 +297,7 @@ public class EditInventories implements Listener {
                 case LEFT -> hit.setYknock(hit.getYknock() - 0.001);
                 case RIGHT -> hit.setYknock(hit.getYknock() - 0.01);
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setYknock(hit.getYknock() - 0.1);
+                case MIDDLE -> hit.setYknock(hit.getYknock() - 1);
             }
 
             if (hit.getYknock() >= 2) {
@@ -313,7 +316,7 @@ public class EditInventories implements Listener {
 
 
         inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setName("§a+ §6to Y")
-                .setLore(" ", " §7leftclick§8: §a+ 0.00§l1 ", " §7rightclick§8: §a+ 0.0§l1 ", " §7shiftclick§8: §a+ 0.§l1 ", " ", "§7current y§8-§7knock value§8: §6" + decimalFormat.format(hit.getYknock()))
+                .setLore(" ", " §7leftclick§8: §a+ 0.00§l1 ", " §7rightclick§8: §a+ 0.0§l1 ", " §7shiftclick§8: §a+ 0.§l1 "," §7middleclick§8: §a+ §l1 ", " ", "§7current y§8-§7knock value§8: §6" + decimalFormat.format(hit.getYknock()))
                 .setSkullMeta(plus, "")
                 .build(), 21, event -> {
 
@@ -324,6 +327,7 @@ public class EditInventories implements Listener {
                 case LEFT -> hit.setYknock(hit.getYknock() + 0.001);
                 case RIGHT -> hit.setYknock(hit.getYknock() + 0.01);
                 case SHIFT_LEFT, SHIFT_RIGHT -> hit.setYknock(hit.getYknock() + 0.1);
+                case MIDDLE -> hit.setYknock(hit.getYknock() + 1);
             }
 
             if (hit.getYknock() >= 2) {

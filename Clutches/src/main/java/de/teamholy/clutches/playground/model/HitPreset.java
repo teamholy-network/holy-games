@@ -23,6 +23,7 @@ public class HitPreset {
     private int used = 0;
     private long created = System.currentTimeMillis(), lastEdit = System.currentTimeMillis();
     private Origin origin = Origin.CREATED;
+    private boolean shared = false;
 
 
     public enum Origin { OTHER, CREATED, IMPORTED }

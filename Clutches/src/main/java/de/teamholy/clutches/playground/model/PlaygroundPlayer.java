@@ -238,8 +238,8 @@ public class PlaygroundPlayer {
                             hitPreset.getOrigin() == HitPreset.Origin.CREATED ? " §7created§8: §6" + PlayerUtils.convertTime(hitPreset.getCreated()) : " §b§lIMPORTED",
                             " §7last edited§8: §6" + PlayerUtils.convertTime(hitPreset.getLastEdit()),
                             " ",
-                            " §7you used this preset §6" + hitPreset.getUsed() + " " + (hitPreset.getUsed() == 1 ? "§7time" : "§7times"),
-                            " §7§lrightclick §r§7to §bedit§8, §7§lleftclick §r§7to §aselect",
+                            " §7you used this preset §6" + BukkitCore.getAPI().getCoinManager().formatInteger(hitPreset.getUsed()) + " " + (hitPreset.getUsed() == 1 ? "§7time" : "§7times"),
+                            " §7§lleftclick §r§7to §aselect §8| §7§lrightclick §r§7to §bedit§8",
                             " "
                     )
                     .build(), i, event -> {
