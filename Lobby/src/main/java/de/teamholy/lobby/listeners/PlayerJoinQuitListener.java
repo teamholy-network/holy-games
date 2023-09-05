@@ -34,6 +34,7 @@ public class PlayerJoinQuitListener implements Listener {
         Player player = event.getPlayer();
         player.setGameMode(GameMode.SURVIVAL);
         player.setFoodLevel(20);
+        player.sendTitle("","§cnew gamemmode §aplayground!");
 
         final LobbyPlayer[] lobbyPlayer = new LobbyPlayer[1];
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {

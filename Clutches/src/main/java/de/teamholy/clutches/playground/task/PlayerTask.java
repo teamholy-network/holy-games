@@ -84,7 +84,7 @@ public class PlayerTask {
                         if (playgroundPlayer.getSettings().isAdjustDirection()) {
                             playgroundPlayer.getPlayer().setVelocity( getVelocity(calculateHitInBack(calculateNearestCardinalDirection(vectorToYaw(calculateHitInBack(playgroundPlayer.getPlayer().getLocation().getYaw(),0))) + add,0) ,hit.getXknock(),hit.getYknock()));
                         } else {
-                            playgroundPlayer.getPlayer().setVelocity( getVelocity(calculateHitInBack(playgroundPlayer.getPlayer().getLocation().getYaw() + add,0) ,hit.getXknock(),hit.getYknock()));
+                            playgroundPlayer.getPlayer().setVelocity( getVelocity(calculateHitInBack(playgroundPlayer.getPlayer().getLocation().getYaw() + add,0).normalize() ,hit.getXknock(),hit.getYknock()));
                         }
 
                         playgroundPlayer.getPlayer().setLevel(0);

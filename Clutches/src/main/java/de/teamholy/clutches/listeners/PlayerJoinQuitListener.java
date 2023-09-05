@@ -20,6 +20,7 @@ public class PlayerJoinQuitListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
         Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
             PlayerEntry playerEntry = new PlayerEntry(player);
             Clutches.getInstance().getPlayerEntryHandler().put(player.getUniqueId(), playerEntry);
@@ -28,7 +29,6 @@ public class PlayerJoinQuitListener implements Listener {
             player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
 
             //04042384-cf5e-4f58-a128-6a87ede461b4
-            if (player.hasPermission("teamholy.team"))
             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("playground", new NPCEntry("§a§lPLAYGROUND", UUID.fromString("04042384-cf5e-4f58-a128-6a87ede461b4"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("playground"), 100, 20, true, true).setPlayer(player));
             if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("reduce") != null)
                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduce", new NPCEntry("§f§lREDUCE", UUID.fromString("aa89e99d-843a-4ab2-8221-4fe9bcafd8a8"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("reduce"), 100, 20, true, true).setPlayer(player));

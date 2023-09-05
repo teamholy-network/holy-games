@@ -268,8 +268,9 @@ public class LobbyPlayer implements ILabyMod {
                 )
                 .build(), 12, (event) -> openGameSubInventory("MLGRush", Material.STICK));
         inventory.setItem(new ItemBuilder(Material.RED_SANDSTONE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Clutches")))
-                .setName("§8» §6Clutches §8x §6Reduce")
-                .setLore(" "
+                .setName("§8» §6Clutches §8x §6Reduce §8/ §aPlayground")
+                .setLore("§c§lNEW MODE §a§lPLAYGROUND! ",
+                        ""
                         , " §7The perfect mode for practicing your clutching skills §7§lalone§7! "
                         , " §7Use our ReduceBot, which behaves just like a real player, and "
                         , " §7it offers modes like reduce, clutch, diagonal-clutch, and multi-reduce."
