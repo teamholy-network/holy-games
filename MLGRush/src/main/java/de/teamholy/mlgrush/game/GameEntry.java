@@ -136,7 +136,7 @@ public class GameEntry {
 
         int difference = destroyed.getAlltimeTrophies() - playerEntry.getAlltimeTrophies();
 
-        int killerTrophies = TrophieLeague.calculateRange(difference, 2, 4);
+        int killerTrophies = TrophieLeague.calculateRange(difference, 3, 5);
         int playerTrophies = TrophieLeague.calculateRange(difference, 1, 3);
 
         playerEntry.setGameTrophies(playerEntry.getGameTrophies() + killerTrophies);
@@ -183,9 +183,9 @@ public class GameEntry {
             difference = sum - winner.getGameTrophies();
             int winnerTrophies = 0;
             if (losers.size() == 3) {
-                winnerTrophies = TrophieLeague.calculateRange(difference,15,27);
+                winnerTrophies = TrophieLeague.calculateRange(difference,20,30);
             } else {
-                winnerTrophies = TrophieLeague.calculateRange(difference,10,22);
+                winnerTrophies = TrophieLeague.calculateRange(difference,17,25);
             }
 
             winner.setGameTrophies(winner.getGameTrophies() + winnerTrophies);

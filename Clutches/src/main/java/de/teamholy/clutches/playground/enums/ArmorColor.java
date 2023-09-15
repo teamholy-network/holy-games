@@ -28,7 +28,7 @@ public enum ArmorColor {
     RED("Red",PerkRankType.VIP,500,Color.RED),
     BLACK("Black",PerkRankType.VIP,750,Color.BLACK),
     WHITE("White",PerkRankType.HOLY,0,Color.WHITE),
-    RAINBOW("Rainbow",PerkRankType.HOLY,5000,Color.GRAY);
+    RAINBOW("Rainbow",PerkRankType.HOLY,2500,Color.GRAY);
 
     private final String name;
     private PerkRankType perkRankType;

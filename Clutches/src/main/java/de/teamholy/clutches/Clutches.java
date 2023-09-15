@@ -57,8 +57,6 @@ public class Clutches extends JavaPlugin {
     private SlimeLoader slimeLoader;
 
 
-
-
     @SneakyThrows
     @Override
     public void onEnable() {

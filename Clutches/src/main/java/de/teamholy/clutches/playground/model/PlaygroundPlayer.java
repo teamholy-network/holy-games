@@ -419,12 +419,10 @@ public class PlaygroundPlayer {
 
     public void setItems() {
         player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
         int slot = 0;
 
         player.getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(settings.getArmorColor().getColor()).setUnbreakable().build());
         player.getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(settings.getArmorColor().getColor()).setUnbreakable().build());
-        player.getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(settings.getArmorColor().getColor()).setUnbreakable().build());
         player.getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setEnchantments(Enchantment.PROTECTION_PROJECTILE, 1).setEnchantments(Enchantment.PROTECTION_ENVIRONMENTAL, 2).setLeatherColor(settings.getArmorColor().getColor()).setUnbreakable().build());
 
         for (ItemStack itemStack : getInventory().getContents()) {

@@ -30,9 +30,12 @@ public class PlayerTask {
 
         final int[] countdown = {playgroundPlayer.getSettings().getCountdown()};
 
+
         bukkitTask = new BukkitRunnable() {
             @Override
             public void run() {
+
+                if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
 
                 switch (playgroundPlayer.getSettings().getCountdownLocation()) {
                     case CHAT -> playgroundPlayer.getPlayer().sendMessage(Clutches.PREFIX + "Clutch in §6§l" + countdown[0]);
@@ -45,7 +48,7 @@ public class PlayerTask {
 
                 countdown[0]--;
 
-                if (countdown[0] == 0) {
+                if (countdown[0] <= 0) {
                     stopIfActive();
                     playHitPreset(hitPreset);
                 }
@@ -66,6 +69,8 @@ public class PlayerTask {
             @Override
             public void run() {
                 counter[0]++;
+
+                if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
 
                 for (int i = counter[0]; i < 28; i++) {
 

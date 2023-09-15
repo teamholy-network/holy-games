@@ -241,7 +241,7 @@ public class PlayerEntry {
                 int difference = getAlltimeTrophies() - killerEntry.getAlltimeTrophies();
 
                 int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS,
-                        TrophieLeague.calculateRange(difference,1,3));
+                        TrophieLeague.calculateRange(difference,3,6));
 
                 int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS,
                         TrophieLeague.calculateRange(difference,3,6));
@@ -381,7 +381,7 @@ public class PlayerEntry {
             winner.getPlayers().forEach(winners -> {
                 BukkitCore.getAPI().getCoinManager().addCoins(winners.getUniqueId(), 50, true);
                 BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "won_games", winners.getUniqueId());
-                BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(winners.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS, 10);
+                BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(winners.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS, 20);
                 winners.sendTitle("","§a+10 §6trophies");
             });
 

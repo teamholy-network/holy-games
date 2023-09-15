@@ -76,7 +76,7 @@ public class BlockBreakListener implements Listener {
                         int difference = (int) teamEntry.getAllPlayers().stream().mapToInt(PlayerEntry::getAlltimeTrophies).count() / teamEntry.getSize();
 
                         int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS,
-                                TrophieLeague.calculateRange(difference - playerEntry.getAlltimeTrophies(),1,6));
+                                TrophieLeague.calculateRange(difference - playerEntry.getAlltimeTrophies(),3,9));
 
 
 
@@ -92,7 +92,7 @@ public class BlockBreakListener implements Listener {
                             teamPlayers.playSound(teamPlayers.getLocation(), Sound.ANVIL_BREAK, 20f, 20f);
                             teamPlayers.sendTitle("","§c-" +
                                     BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(teamPlayers.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS,
-                                            TrophieLeague.calculateRange(difference - playerEntry.getAlltimeTrophies(),1,6))
+                                            TrophieLeague.calculateRange(difference - playerEntry.getAlltimeTrophies(),2,6))
                                     + " §6trophies");
 
                         }

@@ -6,6 +6,7 @@ import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.model.PlaygroundPlayer;
 import de.teamholy.clutches.utils.PlayerUtils;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -59,7 +60,9 @@ public class PlaygroundListener implements Listener {
         Player player = (Player) event.getPlayer();
         if (event.getInventory().getName() != null && (event.getInventory().getName().toLowerCase().contains("perks") || event.getInventory().getName().toLowerCase().contains("armor"))) {
             PlaygroundPlayer playgroundPlayer = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId()).getPlaygroundPlayer();
+            PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
             if (playgroundPlayer == null) return;
+            if (playerEntry.getPlayerState() != PlayerState.PLAYGROUND) return;
             playgroundPlayer.setItems();
         }
 

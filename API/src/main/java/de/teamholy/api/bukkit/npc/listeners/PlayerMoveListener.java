@@ -19,7 +19,7 @@ public final class PlayerMoveListener implements Listener {
         NPCPlayer playerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId());
         if (playerEntry == null)
         	return;
-        playerEntry.getNpcs().values().forEach(NPCEntry::update);
+        playerEntry.getNpcs().values().forEach(NPCEntry::remove);
     }
 
     @EventHandler

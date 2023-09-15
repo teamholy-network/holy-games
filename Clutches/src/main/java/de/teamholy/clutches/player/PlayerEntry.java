@@ -630,7 +630,11 @@ public class PlayerEntry {
     }
 
     public void setItemsSpawn() {
-        player.getInventory().setArmorContents(null);
+
+        player.getInventory().setChestplate(null);
+        player.getInventory().setBoots(null);
+        player.getInventory().setLeggings(null);
+
         player.getInventory().clear();
         player.getInventory().setItem(2, new ItemBuilder(Material.EYE_OF_ENDER).setName("§8» §6Spectate §8(§7rightclick§8)").build());
         player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).setName("§8» §6Settings §8(§7rightclick§8)").build());
