@@ -142,14 +142,14 @@ public class BedwarsServerInventory implements Listener {
 
 
                 gameServices.forEach(gameService -> {
+                    String motdProperty = gameService.getProperty(BridgeServiceProperty.MOTD).get();
 
-                    if (gameService.getProperty(BridgeServiceProperty.MOTD).get().equalsIgnoreCase("END")) return;
+                    if (motdProperty.equalsIgnoreCase("END")) return;
 
-
-                    String[] splitMotd = gameService.getProperty(BridgeServiceProperty.MOTD).get().split(";");
+                    String[] splitMotd = motdProperty.split(";");
                     boolean voting = false;
 
-                    if (splitMotd.length == 1) return;
+                    if (splitMotd.length <= 2) return; // Did this so we don't get a ArrayIndexOutOfBoundsException
 
                     if (splitMotd[2].equalsIgnoreCase("null")) {
                         voting = true;
@@ -157,17 +157,21 @@ public class BedwarsServerInventory implements Listener {
 
                     int count = gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).get();
 
-                    if (count != 0) {
-                        inventoryHashMap.get(group).setItem(i.getAndIncrement(), new ItemBuilder((voting ? Material.PAPER : Material.valueOf(splitMotd[3])), count, (voting ? 0 : Byte.parseByte(splitMotd[4])))
-                                .setAttributs()
-                                .setEnchantments(Enchantment.DURABILITY,1)
-                                .setLore("§7Map §8× §6" + (voting ? "voting..." : splitMotd[2]), "§7Players §8× §6" + splitMotd[0] + "§7/§c" + splitMotd[1])
-                                .setName("§8» §6" + gameService.getName()).build());
-                    } else
-                        inventoryHashMap.get(group).setItem(i.getAndIncrement(), new ItemBuilder((voting ? Material.PAPER : Material.valueOf(splitMotd[3])), 1, (voting ? 0 : Byte.parseByte(splitMotd[4])))
-                                .setLore("§7Map §8× §6" + (voting ? "voting..." : splitMotd[2]), "§7Players §8× §6" + splitMotd[0] + "§7/§c" + splitMotd[1])
-                                .setName("§8» §6" + gameService.getName()).build());
+                    if (splitMotd.length > 4) { // Ensure we can access 3&4 index, so we don't throw an Exception
+                        if (count != 0) {
+                            inventoryHashMap.get(group).setItem(i.getAndIncrement(), new ItemBuilder((voting ? Material.PAPER : Material.valueOf(splitMotd[3])), count, (voting ? 0 : Byte.parseByte(splitMotd[4])))
+                                    .setAttributs()
+                                    .setEnchantments(Enchantment.DURABILITY,1)
+                                    .setLore("§7Map §8× §6" + (voting ? "voting..." : splitMotd[2]), "§7Players §8× §6" + splitMotd[0] + "§7/§c" + splitMotd[1])
+                                    .setName("§8» §6" + gameService.getName()).build());
+                        } else {
+                            inventoryHashMap.get(group).setItem(i.getAndIncrement(), new ItemBuilder((voting ? Material.PAPER : Material.valueOf(splitMotd[3])), 1, (voting ? 0 : Byte.parseByte(splitMotd[4])))
+                                    .setLore("§7Map §8× §6" + (voting ? "voting..." : splitMotd[2]), "§7Players §8× §6" + splitMotd[0] + "§7/§c" + splitMotd[1])
+                                    .setName("§8» §6" + gameService.getName()).build());
+                        }
+                    }
                 });
+
             }
         });
     }
