@@ -72,6 +72,7 @@ public class Clutches extends JavaPlugin {
         mapEntryHandler.put("island", new MapEntry("Island", new ItemBuilder(Material.GRASS, 1, (byte) 0).setName("§8» §6Island"),Arrays.asList(ArenaType.EXPERIMENTAL,ArenaType.DIAGONAL_CLUTCH)));
         mapEntryHandler.put("cube", new MapEntry("Cube", new ItemBuilder(Material.STONE, 1, (byte) 0).setName("§8» §6Cube"), null));
         mapEntryHandler.put("mushroom", new MapEntry("Mushroom", new ItemBuilder(Material.BROWN_MUSHROOM, 1, (byte) 0).setName("§8» §6Mushroom"), null));
+        mapEntryHandler.put("diagonal", new MapEntry("Diagonal", new ItemBuilder(Material.STICK, 1, (byte) 0).setName("§8» §6Diagonal §8(§fQuadratHose§8)"), null));
         registerListener("de.teamholy.clutches.listeners");
         getCommand("spawn").setExecutor(new SpawnCMD());
         getCommand("quit").setExecutor(new QuitCommand());

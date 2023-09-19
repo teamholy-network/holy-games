@@ -61,6 +61,10 @@ public class ArenaEntry {
             case "mushroom":
                 temp = new Location(world, npc.getX(), npc.getBlockY(), npc.getZ() + 1);
                 break;
+
+            case "diagonal":
+                temp = new Location(world, npc.getX() -0.5, npc.getBlockY(), npc.getZ() + 1.5);
+                break;
         }
         temp.setYaw(180);
         return temp;
@@ -81,6 +85,9 @@ public class ArenaEntry {
                     break;
                 case "mushroom":
                     temp = new Location(world, location.getX() -1, location.getBlockY(), location.getZ() + 1);
+                    break;
+                case "diagonal":
+                    temp = new Location(world, location.getX() -0.5, location.getBlockY(), location.getZ() + 1.5);
                     break;
             }
         temp.setYaw(-135F);
