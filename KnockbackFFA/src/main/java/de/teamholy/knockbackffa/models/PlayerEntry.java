@@ -15,6 +15,7 @@ import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.knockbackffa.enums.*;
+import de.teamholy.knockbackffa.listeners.PlayerNameTagListener;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -25,6 +26,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /* copyright by Yassino */
@@ -49,6 +53,9 @@ public class PlayerEntry {
     private TeamEntry teamEntry;
 
     private int alltimeTrophies = 1000;
+
+    @Getter
+    public final Map<UUID, GameProfile> gameProfileCache = new HashMap<>();
 
     public PlayerEntry(Player player) {
         this.player = player;
@@ -261,6 +268,7 @@ public class PlayerEntry {
             scoreboardAPI.setLine(2," §7K/D§8: §e" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(),shownBoardStatsType,"deaths")));
             scoreboardAPI.setLine(1, "§5");
             scoreboardAPI.setLine(0, " §8§m--------------- ");
+            gameProfileCache.put(player.getUniqueId(),gameProfile);
             Bukkit.getScheduler().runTask(KnockbackFFA.getInstance(),() -> scoreboardAPI.build());
         });
     }

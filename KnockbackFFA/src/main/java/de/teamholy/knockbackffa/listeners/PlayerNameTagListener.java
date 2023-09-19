@@ -1,6 +1,10 @@
 package de.teamholy.knockbackffa.listeners;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.api.entities.game.GameProfile;
+import de.teamholy.core.api.entities.game.StatsType;
+import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.core.api.entities.clan.Clan;
@@ -16,7 +20,6 @@ import org.bukkit.event.Listener;
 public class PlayerNameTagListener implements Listener {
 
 
-
     @EventHandler
     public void onNameTag(PlayerNameTagEvent event) {
 
@@ -26,42 +29,45 @@ public class PlayerNameTagListener implements Listener {
 
         if (playerRank == null) return;
 
+        GameProfile gameProfile = playerEntry.getGameProfileCache().get(player.getUniqueId());
+
+
         // Get default values from HolyPlayer
         int sortId = playerRank.getSortId();
+        int playersElo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(), StatsType.ALLTIME, "trophies");
         String prefix = playerRank.getTabPrefix();
-        String suffix = "";
+        StringBuilder suffixBuilder = new StringBuilder();
+        StringBuilder displaySuffixBuilder = new StringBuilder();
 
-        // Get PlayerProfiles
-        ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
 
-        // Check and add clan-tag as suffix if exists
-        if (clanPlayerProfile != null) {
-            Clan clan = BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId());
-            if (clan != null) {
-                suffix = " §8[" + clan.getColor() + clan.getTag() + "§8]";
-            }
-        }
-
-        // Fake PLAYER rank if we got a nicked player
         if (MarkupAPI.isNicked(player)) {
             sortId = PlayerRank.PLAYER.getSortId();
             prefix = PlayerRank.PLAYER.getTabPrefix();
-            suffix = "";
-        }
 
-        if (playerEntry != null && playerEntry.getTeamEntry() != null) {
-            suffix = suffix + " §7§o" + playerEntry.getTeamEntry().getTag();
-            event.setDisplaySuffix(" §7§o" + playerEntry.getTeamEntry().getTag());
-        }
-
-
-        if(player.getName().equalsIgnoreCase("Koboo")) {
+            suffixBuilder.append(" §8[").append("§7N").append("§8]"); // Did this so we hide the real elo from players
+        } else if (player.getName().equalsIgnoreCase("Koboo")) {
             prefix = "§8[§5Koboo§8] §7";
+        } else {
+            ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
+            if (playerEntry.getTeamEntry() != null) {
+                suffixBuilder.append(" §7§o").append(playerEntry.getTeamEntry().getTag());
+                displaySuffixBuilder.append(" §7§o").append(playerEntry.getTeamEntry().getTag());
+            } else if (clanPlayerProfile != null) {
+                Clan clan = BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId());
+                if (clan != null) {
+                    suffixBuilder.append(" §8[").append(clan.getColor()).append(clan.getTag()).append("§8]");
+                }
+            }
+
+            suffixBuilder.append(" §8[").append(TrophieLeague.getEloRank(playersElo).getShortName()).append("§8]");
         }
 
-        // Set the values into the event
+
         event.setSortId(sortId);
         event.setPrefix(prefix);
-        event.setSuffix(suffix);
+        event.setSuffix(suffixBuilder.toString());
+        event.setDisplaySuffix(displaySuffixBuilder.toString());
     }
+
+
 }
