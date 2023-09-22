@@ -5,6 +5,7 @@ import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.arena.ArenaEntry;
 import de.teamholy.clutches.arena.ArenaType;
+import de.teamholy.clutches.enums.FirstHitDelay;
 import de.teamholy.clutches.enums.HitType;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
@@ -33,6 +34,7 @@ public class ClutchTask {
                         player.playSound(player.getLocation(), Sound.ITEM_BREAK, 1, 50);
                         playerEntry.getClutchCount().set(0);
                         playerEntry.getNpcAirHit().set(playerEntry.getNpcAirHits());
+                        playerEntry.getFirstHitDelay().setReceived(false);
                     } else {
 
                         if (player.getOpenInventory() != null && player.getOpenInventory().getTitle().equalsIgnoreCase("§8» §6Settings")) {
@@ -43,6 +45,13 @@ public class ClutchTask {
                             if (playerEntry.getPre().get() == 0 || playerEntry.isSecondRound()) {
 
                                 PlayerUtils.sendBar(player, "");
+
+
+                                if (playerEntry.getArenaType() == ArenaType.REDUCE) {
+                                    if (playerEntry.getFirstHitDelay() == FirstHitDelay.AFTER && !playerEntry.getFirstHitDelay().isReceived()) {
+                                        return;
+                                    }
+                                }
 
                                 if (playerEntry.getCountdown().get() == 0) {
                                     PlayerUtils.sendBar(player, "§fServer §8» §c§lTeamholy.de");

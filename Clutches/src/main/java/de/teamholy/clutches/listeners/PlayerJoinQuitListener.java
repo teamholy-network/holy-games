@@ -53,6 +53,7 @@ public class PlayerJoinQuitListener implements Listener {
         if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND) {
             playerEntry.getPlaygroundPlayer().quit();
         }
+        playerEntry.getFirstHitDelay().setReceived(false);
         playerEntry.getPlaygroundPlayer().getPlayerTask().stopIfActive();
         playerEntry.checkQuit();
         playerEntry.saveData();

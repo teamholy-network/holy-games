@@ -72,6 +72,12 @@ public class NPCClickListener implements Listener {
         if (playerEntry.getAttackCooldown() > System.currentTimeMillis())
             return;
         if (playerEntry.getPlayerState() == PlayerState.INGAME && (playerEntry.getArenaType() == ArenaType.REDUCE || playerEntry.getArenaType() == ArenaType.EXPERIMENTAL)) {
+
+            if (!playerEntry.getFirstHitDelay().isReceived()) {
+                playerEntry.getFirstHitDelay().setReceived(true);
+                playerEntry.getCountdown().set(0);
+            }
+
             playerEntry.setAttackCooldown(System.currentTimeMillis() + 420);
             event.getNpcEntry().animation(playerEntry.getPlayer(), 1);
             playerEntry.getPlayer().playSound(event.getNpcEntry().getLocation(), Sound.HURT_FLESH, 0.4F, 5);

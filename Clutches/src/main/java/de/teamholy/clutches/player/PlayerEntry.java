@@ -8,6 +8,7 @@ import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.arena.ArenaEntry;
 import de.teamholy.clutches.arena.ArenaType;
+import de.teamholy.clutches.enums.FirstHitDelay;
 import de.teamholy.clutches.enums.HitType;
 import de.teamholy.clutches.enums.Items;
 import de.teamholy.clutches.map.MapEntry;
@@ -55,11 +56,15 @@ public class PlayerEntry {
 
     private HitType npcHit = HitType.EASY, firstHit = HitType.EASY, secondHit = HitType.NONE, thirdHit = HitType.NONE, fourthHit = HitType.NONE;
 
+    private FirstHitDelay firstHitDelay;
+
+
     private int delay = 3;
     private int npcAirHits = 0;
     private double multiReduceNpcDistance = 3;
 
-    private NPCSkin npcSkin = NPCSkin.IAMSLOWLY;
+
+    private NPCSkin npcSkin = NPCSkin.ALEX;
 
     private boolean isPause, isSecondRound;
     private long attackCooldown;
@@ -78,6 +83,8 @@ public class PlayerEntry {
         attackCooldown = System.currentTimeMillis();
         this.scoreboardAPI = new ScoreboardAPI();
         scoreboardAPI.createScoreboard(player, "§b");
+        firstHitDelay = FirstHitDelay.COUNTDOWN;
+        firstHitDelay.setReceived(false);
 
         createInv();
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
@@ -122,6 +129,7 @@ public class PlayerEntry {
             fourthHit= HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"fourthHit"));
             npcHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcHit"));
             npcSkin = NPCSkin.getNPCSkinFromId(Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcSkin")));
+
 
         }
 
@@ -309,6 +317,7 @@ public class PlayerEntry {
         getPre().set(6);
         getCountdown().set(getDelay() + 1);
         getClutchCount().set(0);
+        firstHitDelay.setReceived(false);
     }
 
     public void checkQuit() {
@@ -464,6 +473,30 @@ public class PlayerEntry {
             }
 
         });
+
+        if (player.hasPermission("*")) {
+            inventory.setItem(new ItemBuilder(Material.IRON_SWORD, 1, (byte) 3)
+                    .setName("§8» §6First hit mode")
+                    .setLore("§7Currently selected §8» §d" + firstHitDelay.getName(),
+                            "§cLeft-click §7to toggle mode")
+                    .build(), 22, event -> {
+
+                if (event.getClick().isLeftClick()) {
+                    if (firstHitDelay == FirstHitDelay.COUNTDOWN) {
+                        firstHitDelay = FirstHitDelay.AFTER;
+                    } else {
+                        firstHitDelay = FirstHitDelay.COUNTDOWN;
+                    }
+
+                    openIngameSettings();
+                    player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 100.0F);
+                }
+
+            });
+        }
+
+
+
 
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS, 1, (byte) getHitInt(npcHit)).setName("§8» §6Reduce-NPC hit").setLore("§7Currently selected §8» §d" + npcHit.getString()).build(), 3, event -> {
             player.playSound(player.getLocation(), Sound.CLICK, 1.0F, 100.0F);
