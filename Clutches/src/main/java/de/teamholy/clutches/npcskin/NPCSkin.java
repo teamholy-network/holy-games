@@ -22,7 +22,7 @@ public enum NPCSkin {
     CHARONXYZ(11,"charonxyz",UUID.fromString("d08cbbd7-5e65-43e1-ad58-6ed90a560818")),
     STEVE(12,"Steve",UUID.fromString("726ad0d8-c5ed-4301-9f66-ec719c292278")),
     ALEX(13,"Alex",UUID.fromString("7bf10b6d-0a8e-4c2b-a567-2e6491a89da5")),
-    SELTTIX(14,"Selttix",UUID.fromString("7414ffe4-6355-4877-8103-1ff6e0432e61"));
+    SELTT(14,"seltt",UUID.fromString("7414ffe4-6355-4877-8103-1ff6e0432e61"));
 
 
 
