@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 public enum FirstHitDelay {
 
-    COUNTDOWN(false, "After countdown"),
-    AFTER(false, "After Player hit");
+    COUNTDOWN(false, "After Countdown"),
+    AFTER(false, "Player Hit");
 
     @Setter
     private boolean received;

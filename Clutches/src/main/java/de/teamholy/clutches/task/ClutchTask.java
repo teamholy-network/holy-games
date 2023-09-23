@@ -49,7 +49,7 @@ public class ClutchTask {
 
                                 if (playerEntry.getArenaType() == ArenaType.REDUCE) {
                                     if (playerEntry.getFirstHitDelay() == FirstHitDelay.AFTER && !playerEntry.getFirstHitDelay().isReceived()) {
-                                        return;
+                                        continue;
                                     }
                                 }
 

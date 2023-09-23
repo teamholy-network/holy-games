@@ -83,8 +83,6 @@ public class PlayerEntry {
         attackCooldown = System.currentTimeMillis();
         this.scoreboardAPI = new ScoreboardAPI();
         scoreboardAPI.createScoreboard(player, "§b");
-        firstHitDelay = FirstHitDelay.COUNTDOWN;
-        firstHitDelay.setReceived(false);
 
         createInv();
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
@@ -104,7 +102,7 @@ public class PlayerEntry {
             statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"thirdHit",HitType.NONE.name());
             statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"fourthHit",HitType.NONE.name());
             statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcHit",HitType.EASY.name());
-
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "firstHitDelay", "COUNTDOWN");
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
 
         } else {
@@ -129,11 +127,16 @@ public class PlayerEntry {
             fourthHit= HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"fourthHit"));
             npcHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcHit"));
             npcSkin = NPCSkin.getNPCSkinFromId(Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcSkin")));
-
+            firstHitDelay = FirstHitDelay.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"firstHitDelay"));
 
         }
 
         playgroundPlayer = new PlaygroundPlayer(this);
+
+        if (firstHitDelay == null) {
+            firstHitDelay = FirstHitDelay.COUNTDOWN;
+        }
+        firstHitDelay.setReceived(false);
 
         blocks = new ArrayList<>();
     }
@@ -477,15 +480,17 @@ public class PlayerEntry {
         if (player.hasPermission("*")) {
             inventory.setItem(new ItemBuilder(Material.IRON_SWORD, 1, (byte) 3)
                     .setName("§8» §6First hit mode")
-                    .setLore("§7Currently selected §8» §d" + firstHitDelay.getName(),
+                    .setLore("§7Currently selected §8» §b§l" + firstHitDelay.getName(),
                             "§cLeft-click §7to toggle mode")
                     .build(), 22, event -> {
 
                 if (event.getClick().isLeftClick()) {
                     if (firstHitDelay == FirstHitDelay.COUNTDOWN) {
                         firstHitDelay = FirstHitDelay.AFTER;
+                        saveData();
                     } else {
                         firstHitDelay = FirstHitDelay.COUNTDOWN;
+                        saveData();
                     }
 
                     openIngameSettings();
@@ -656,6 +661,7 @@ public class PlayerEntry {
         statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcHit",npcHit.toString());
 
         statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcSkin",String.valueOf(npcSkin.getId()));
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"firstHitDelay", firstHitDelay.name());
 
         playgroundPlayer.saveData();
 
