@@ -56,7 +56,7 @@ public class PlayerEntry {
 
     private HitType npcHit = HitType.EASY, firstHit = HitType.EASY, secondHit = HitType.NONE, thirdHit = HitType.NONE, fourthHit = HitType.NONE;
 
-    private FirstHitDelay firstHitDelay;
+    private FirstHitDelay firstHitDelay = FirstHitDelay.COUNTDOWN;
 
 
     private int delay = 3;
@@ -127,8 +127,9 @@ public class PlayerEntry {
             fourthHit= HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"fourthHit"));
             npcHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcHit"));
             npcSkin = NPCSkin.getNPCSkinFromId(Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcSkin")));
-            firstHitDelay = FirstHitDelay.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"firstHitDelay"));
+            //firstHitDelay = FirstHitDelay.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"firstHitDelay"));
 
+            // du hast verkackt
         }
 
         playgroundPlayer = new PlaygroundPlayer(this);

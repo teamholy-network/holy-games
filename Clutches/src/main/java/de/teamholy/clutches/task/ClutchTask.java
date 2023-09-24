@@ -53,6 +53,7 @@ public class ClutchTask {
                                     }
                                 }
 
+
                                 if (playerEntry.getCountdown().get() == 0) {
                                     PlayerUtils.sendBar(player, "§fServer §8» §c§lTeamholy.de");
 
@@ -149,6 +150,7 @@ public class ClutchTask {
         playerEntry.getPre().set(6);
         playerEntry.getCountdown().set(playerEntry.getDelay() + 1);
         playerEntry.getClutchCount().set(0);
+        playerEntry.getFirstHitDelay().setReceived(false);
         playerEntry.getNpcAirHit().set(playerEntry.getNpcAirHits());
         playerEntry.getPlayer().setLevel(0);
         playerEntry.getPlayer().setExp(0);
