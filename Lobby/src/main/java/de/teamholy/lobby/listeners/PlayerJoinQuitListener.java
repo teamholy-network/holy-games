@@ -65,7 +65,7 @@ public class PlayerJoinQuitListener implements Listener {
             player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
         },1);
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> new NPCBuilder("labymod","§6§lWebsite", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("labymod_npc"))
-                .addHolo("§6Link §7yourself with the website","§7to get §e500 coins", "§7Currently §cdisabled§7!").build(player),10);
+                .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player),10);
     }
 
 
