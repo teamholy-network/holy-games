@@ -9,3 +9,4 @@ softdepend: [API,HolographicDisplays]
 commands:
   fly:
   eastern:
+  test1:
