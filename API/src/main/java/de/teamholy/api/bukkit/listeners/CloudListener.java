@@ -48,7 +48,7 @@ public class CloudListener implements Listener {
                             .getClanPlayerHashMap()
                             .put(player.getUniqueId(),BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId())));
 
-                }
+                } else BukkitHolyAPI.getInstance().getBukkitCacheHandler().getClanPlayerHashMap().remove(player.getUniqueId());
 
                 Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> MarkupAPI.updateNameTag(player),10);
             } else if (event.getMessage().equalsIgnoreCase("coins_update")) {
