@@ -29,12 +29,10 @@ public class PlayerNameTagListener implements Listener {
 
         if (playerRank == null) return;
 
-        GameProfile gameProfile = playerEntry.getGameProfileCache().get(player.getUniqueId());
 
-
-        // Get default values from HolyPlayer
         int sortId = playerRank.getSortId();
-        int playersElo = (int) gameProfile.getStat(Gamemodes.KNOCKBACKFFA.toString(), StatsType.ALLTIME, "trophies");
+        int playerElo = 1000;
+        if (playerEntry != null) playerElo = playerEntry.getAlltimeTrophies();
         String prefix = playerRank.getTabPrefix();
         StringBuilder suffixBuilder = new StringBuilder();
         StringBuilder displaySuffixBuilder = new StringBuilder();
@@ -44,22 +42,19 @@ public class PlayerNameTagListener implements Listener {
             sortId = PlayerRank.PLAYER.getSortId();
             prefix = PlayerRank.PLAYER.getTabPrefix();
 
-            suffixBuilder.append(" §8[").append("§7N").append("§8]"); // Did this so we hide the real elo from players
+            suffixBuilder.append(" §8[").append("§7N").append("§8]");
         } else if (player.getName().equalsIgnoreCase("Koboo")) {
             prefix = "§8[§5Koboo§8] §7";
         } else {
-            ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
-            if (playerEntry.getTeamEntry() != null) {
+            Clan clan = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getClanPlayerHashMap().get(player.getUniqueId());
+            if (playerEntry != null && playerEntry.getTeamEntry() != null) {
                 suffixBuilder.append(" §7§o").append(playerEntry.getTeamEntry().getTag());
                 displaySuffixBuilder.append(" §7§o").append(playerEntry.getTeamEntry().getTag());
-            } else if (clanPlayerProfile != null) {
-                Clan clan = BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId());
-                if (clan != null) {
-                    suffixBuilder.append(" §8[").append(clan.getColor()).append(clan.getTag()).append("§8]");
-                }
+            } else if (clan != null) {
+                suffixBuilder.append(" §8[").append(clan.getColor()).append(clan.getTag()).append("§8]");
             }
 
-            suffixBuilder.append(" §8[").append(TrophieLeague.getEloRank(playersElo).getShortName()).append("§8]");
+            suffixBuilder.append(" §8[").append(TrophieLeague.getEloRank(playerElo).getShortName()).append("§8]");
         }
 
 

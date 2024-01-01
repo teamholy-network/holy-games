@@ -4,6 +4,7 @@ import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.CrUtils;
 import de.teamholy.api.events.bukkit.CloudChannelListenEvent;
 import de.dytanic.cloudnet.common.document.gson.JsonDocument;
+import de.teamholy.core.api.entities.clanplayer.ClanPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -38,9 +39,18 @@ public class CloudListener implements Listener {
             } else if (event.getMessage().equalsIgnoreCase("clan_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
                 Player player = Bukkit.getPlayer(uuid);
-                if(player != null && player.isOnline()) {
-                    MarkupAPI.updateNameTag(player);
+
+                ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
+                if (clanPlayerProfile != null) {
+                    BukkitCore.getAPI().getExecutor().execute(() -> BukkitHolyAPI
+                            .getInstance()
+                            .getBukkitCacheHandler()
+                            .getClanPlayerHashMap()
+                            .put(player.getUniqueId(),BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId())));
+
                 }
+
+                Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> MarkupAPI.updateNameTag(player),10);
             } else if (event.getMessage().equalsIgnoreCase("coins_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
                 Player player = Bukkit.getPlayer(uuid);
