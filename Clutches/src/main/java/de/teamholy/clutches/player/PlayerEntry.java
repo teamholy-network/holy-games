@@ -58,6 +58,7 @@ public class PlayerEntry {
 
     private FirstHitDelay firstHitDelay = FirstHitDelay.COUNTDOWN;
 
+    private boolean vanish = false;
 
     private int delay = 3;
     private int npcAirHits = 0;
@@ -744,6 +745,49 @@ public class PlayerEntry {
             }
         }
         scoreboardAPI.build();
+    }
+
+    public void vanishPlayer() {
+
+        if (playerState != PlayerState.LOBBY) {
+            player.sendMessage(Clutches.PREFIX + "You can only use vanish in lobby!");
+            return;
+        }
+
+        if (vanish) {
+            vanish = false;
+            player.spigot().setCollidesWithEntities(false);
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                if (!all.hasPermission("teamholy.team")) {
+                    all.showPlayer(player);
+                } else {
+                    all.sendMessage(Clutches.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() + " §7Isn't in §cVanish §7anymore!");
+                }
+            }
+            player.setAllowFlight(false);
+            player.setFlying(false);
+            performSpawn();
+            player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+            player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        } else {
+            vanish = true;
+            player.spigot().setCollidesWithEntities(false);
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                if (!all.hasPermission("teamholy.team")) {
+                    all.hidePlayer(player);
+                } else {
+                    all.sendMessage(Clutches.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() +  " §7Is now in §aVanish!");
+                }
+            }
+            player.setAllowFlight(true);
+            player.setFlying(true);
+            player.getInventory().setArmorContents(null);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,99999,1));
+            player.getInventory().clear();
+            player.getInventory().setItem(4, new ItemBuilder(Material.EYE_OF_ENDER).setName("§8» §cStalker §8(§7rightclick§8)").build());
+
+        }
+
     }
 
 }
