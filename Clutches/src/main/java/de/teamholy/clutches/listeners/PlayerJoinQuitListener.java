@@ -21,6 +21,14 @@ public class PlayerJoinQuitListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        Clutches.getInstance().getPlayerEntryHandler().values().forEach(all -> {
+            if (all.isVanish()) {
+                if (!player.hasPermission("teamholy.team")) {
+                    player.hidePlayer(all.getPlayer());
+                }
+            }
+        });
+
         Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
             PlayerEntry playerEntry = new PlayerEntry(player);
             Clutches.getInstance().getPlayerEntryHandler().put(player.getUniqueId(), playerEntry);

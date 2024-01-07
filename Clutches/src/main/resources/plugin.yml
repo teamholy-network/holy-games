@@ -11,3 +11,6 @@ commands:
   playworld:
   quit:
   spawn:
+  vanish:
+    aliases:
+      - v

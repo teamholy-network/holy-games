@@ -5,6 +5,7 @@ import de.teamholy.api.interfaces.ILabyMod;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.core.api.entities.clanplayer.ClanPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -23,8 +24,19 @@ public class PlayerJoinListener implements Listener, ILabyMod {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         event.setJoinMessage(null);
+
         PlayerProfile playerProfile = BukkitCore.getAPI().getPlayerService().getRedisCache().get(player.getUniqueId());
+        ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
         BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().put(player.getUniqueId(),PlayerRank.valueOf(playerProfile.getRank()));
+
+        if (clanPlayerProfile != null) {
+            BukkitCore.getAPI().getExecutor().execute(() -> BukkitHolyAPI
+                    .getInstance()
+                    .getBukkitCacheHandler()
+                    .getClanPlayerHashMap()
+                    .put(player.getUniqueId(),BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId())));
+
+        }
 
 
         /*
@@ -42,10 +54,10 @@ public class PlayerJoinListener implements Listener, ILabyMod {
             if (playerProfile.isAutoNick()) {
                 Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> player.chat("/nick"),1);
             } else {
-                Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> MarkupAPI.updateNameTag(player),4);
+                Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> MarkupAPI.updateNameTag(player),7);
             }
         } else {
-            Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> MarkupAPI.updateNameTag(player),4);
+            Bukkit.getScheduler().runTaskLater(BukkitHolyAPI.getInstance(),() -> MarkupAPI.updateNameTag(player),7);
         }
 
     }

@@ -28,14 +28,11 @@ public class PlayerNameTagListener implements Listener {
         String suffix = "";
 
         // Get PlayerProfiles
-        ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
+        Clan clan = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getClanPlayerHashMap().get(player.getUniqueId());
 
         // Check and add clan-tag as suffix if exists
-        if (clanPlayerProfile != null) {
-            Clan clan = BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId());
-            if (clan != null) {
-                suffix = " §8[" + clan.getColor() + clan.getTag() + "§8]";
-            }
+        if (clan != null) {
+            suffix = " §8[" + clan.getColor() + clan.getTag() + "§8]";
         }
 
         if (player.getName().equalsIgnoreCase("Gregorr")) {

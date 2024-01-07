@@ -3,6 +3,7 @@ package de.teamholy.clutches;
 
 import de.teamholy.clutches.arena.ArenaType;
 import de.teamholy.clutches.commands.SpawnCMD;
+import de.teamholy.clutches.commands.VanishCommand;
 import de.teamholy.clutches.map.MapEntry;
 import de.teamholy.clutches.map.MapEntryHandler;
 import de.teamholy.clutches.player.PlayerEntry;
@@ -78,6 +79,7 @@ public class Clutches extends JavaPlugin {
         getCommand("quit").setExecutor(new QuitCommand());
         getCommand("playworld").setExecutor(new PlaygroundCommand());
         getCommand("playgroundpreset").setExecutor(new PresentedPresetCommand());
+        getCommand("vanish").setExecutor(new VanishCommand());
         hologramManager = new HologramManager();
         playgroundManager = new PlaygroundManager(this);
         new ClutchTask();

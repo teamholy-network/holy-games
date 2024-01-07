@@ -14,6 +14,7 @@ public class PlayerQuitListener implements Listener {
         event.setQuitMessage(null);
         Player player = event.getPlayer();
         BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().remove(player.getUniqueId());
+        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getClanPlayerHashMap().remove(player.getUniqueId());
     }
 
 }
