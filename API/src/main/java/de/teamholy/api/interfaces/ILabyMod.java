@@ -58,10 +58,11 @@ public interface ILabyMod {
     }
 
     static void sendLMCMessage(Player player, String key, JsonArray messageContent) {
-        byte[] bytes = getBytesToSend(key, messageContent.toString());
-        PacketDataSerializer pds = new PacketDataSerializer(Unpooled.wrappedBuffer(bytes));
-        PacketPlayOutCustomPayload payloadPacket = new PacketPlayOutCustomPayload("LMC", pds);
-        (((CraftPlayer)player).getHandle()).playerConnection.sendPacket(payloadPacket);
+        byte[] bytes = getBytesToSend( key, messageContent.toString() );
+
+        PacketDataSerializer pds = new PacketDataSerializer( Unpooled.wrappedBuffer( bytes ) );
+        PacketPlayOutCustomPayload payloadPacket = new PacketPlayOutCustomPayload( "labymod3:main", pds );
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket( payloadPacket );
     }
 
     static byte[] getBytesToSend(String messageKey, String messageContents) {

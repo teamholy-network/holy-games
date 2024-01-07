@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation 'com.grinderwolf:slimeworldmanager-api:2.2.1'
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
+
 }
 
 tasks.withType(JavaCompile).configureEach {

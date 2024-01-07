@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class PlayerNameTagListener implements Listener {
-
     @EventHandler
     public void onNameTag(PlayerNameTagEvent event) {
 
@@ -39,6 +38,10 @@ public class PlayerNameTagListener implements Listener {
             }
         }
 
+        if (player.getName().equalsIgnoreCase("Gregorr")) {
+            suffix = suffix + " §a☃";
+        }
+
         // Fake PLAYER rank if we got a nicked player
         if (MarkupAPI.isNicked(player)) {
             sortId = PlayerRank.PLAYER.getSortId();
@@ -49,6 +52,7 @@ public class PlayerNameTagListener implements Listener {
         if(player.getName().equalsIgnoreCase("Koboo")) {
             prefix = "§8[§5Koboo§8] §7";
         }
+
 
         // Set the values into the event
         event.setSortId(sortId);
