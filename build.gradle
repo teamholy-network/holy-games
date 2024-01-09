@@ -42,7 +42,7 @@ subprojects {
     }
 
     dependencies {
-        compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.8.0";
+        compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
         compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
         compileOnly("de.teamholy:holy-core-api:$coreVersion");
         compileOnly "de.teamholy:bukkit-core-api:${coreVersion}"

@@ -109,7 +109,7 @@ public class BukkitHolyAPI extends JavaPlugin {
     private void registerNpcAPI() {
         Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
-        protocolManager.addPacketListener(new ProtocolLibListener());
+        protocolManager.addPacketListener(new ProtocolLibListener(this));
         new UpdateLookTask();
     }
 
