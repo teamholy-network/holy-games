@@ -1,6 +1,5 @@
 package de.teamholy.api.bukkit.npc.listeners;
 
-import com.comphenix.protocol.events.PacketAdapter;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
 import de.teamholy.api.bukkit.npc.event.action.InteractAction;
@@ -13,15 +12,9 @@ import com.comphenix.protocol.events.PacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 
 public class ProtocolLibListener implements PacketListener {
-
-    private final Plugin plugin;
-    public ProtocolLibListener(Plugin plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public ListeningWhitelist getReceivingWhitelist() {
@@ -32,13 +25,14 @@ public class ProtocolLibListener implements PacketListener {
 
     @Override
     public Plugin getPlugin() {
-        return this.plugin;
+        return null;
     }
 
     @Override
     public ListeningWhitelist getSendingWhitelist() {
         return ListeningWhitelist.EMPTY_WHITELIST;
     }
+
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
