@@ -18,7 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /* copyright by Yassino */
-public class PlayerJoinListener implements Listener, ILabyMod {
+public class PlayerJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
@@ -42,12 +42,11 @@ public class PlayerJoinListener implements Listener, ILabyMod {
         /*
         Labymod
          */
-        setMiddleClickActions(player);
-        sendServerBanner(player,"https://media.discordapp.net/attachments/1071527216845963404/1071530957850562640/teamHoly_Banner.png");
-        updateBalanceDisplay(player,EnumBalanceType.CASH,true, (int) playerProfile.getCoins());
-        sendDiscordHook(player);
-        sendCurrentPlayingGameMode(player, true, "§6§lTeamHoly §8» §a" + Wrapper.getInstance().getServiceId().getName());
-
+       // setMiddleClickActions(player);
+       // sendServerBanner(player,"https://media.discordapp.net/attachments/1071527216845963404/1071530957850562640/teamHoly_Banner.png");
+       // updateBalanceDisplay(player,EnumBalanceType.CASH,true, (int) playerProfile.getCoins());
+       // sendDiscordHook(player);
+       // sendCurrentPlayingGameMode(player, true, "§6§lTeamHoly §8» §a" + Wrapper.getInstance().getServiceId().getName());
 
 
         if (!BukkitCore.getInstance().getGroup().toLowerCase().contains("lobby")) {
@@ -97,13 +96,13 @@ public class PlayerJoinListener implements Listener, ILabyMod {
         entry.addProperty( "value", "https://teamholy.de/stats/?player={name}" );
         array.add(entry);
 
-        ILabyMod.sendLMCMessage( player, "user_menu_actions", array );
+       // ILabyMod.sendLMCMessage( player, "user_menu_actions", array );
     }
 
     public void sendServerBanner(Player player, String imageUrl) {
         JsonObject object = new JsonObject();
         object.addProperty("url", imageUrl); // Url of the image
-        ILabyMod.sendLMCMessage(player, "server_banner", object);
+        //ILabyMod.sendLMCMessage(player, "server_banner", object);
     }
 
     public static void updateBalanceDisplay( Player player, EnumBalanceType type, boolean visible, int balance ) {
@@ -116,11 +115,9 @@ public class PlayerJoinListener implements Listener, ILabyMod {
 
         cashObject.addProperty( "icon", "https://i.imgur.com/VwOPXTe.png" );
 
-
-
         economyObject.add(type.getKey(), cashObject);
 
-        ILabyMod.sendLMCMessage( player, "economy", economyObject );
+        //ILabyMod.sendLMCMessage( player, "economy", economyObject );
     }
 
     public enum EnumBalanceType {
@@ -154,7 +151,7 @@ public class PlayerJoinListener implements Listener, ILabyMod {
         obj.addProperty("game_mode", Wrapper.getInstance().getServiceId().getName());
         obj.addProperty("game_startTime", System.currentTimeMillis());
         obj.addProperty("game_endTime", 0L);
-        ILabyMod.sendLMCMessage(player, "discord_rpc", obj);
+        //ILabyMod.sendLMCMessage(player, "discord_rpc", obj);
     }
 
 }

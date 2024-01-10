@@ -16,10 +16,28 @@ import org.bukkit.plugin.Plugin;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 
-public class ProtocolLibListener extends PacketAdapter {
+public class ProtocolLibListener implements PacketListener {
 
+    private final Plugin plugin;
     public ProtocolLibListener(Plugin plugin) {
-        super(plugin, PacketType.Play.Client.USE_ENTITY);
+        this.plugin = plugin;
+    }
+
+    @Override
+    public ListeningWhitelist getReceivingWhitelist() {
+        return ListeningWhitelist.newBuilder()
+                .types(PacketType.Play.Client.USE_ENTITY)
+                .build();
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return this.plugin;
+    }
+
+    @Override
+    public ListeningWhitelist getSendingWhitelist() {
+        return ListeningWhitelist.EMPTY_WHITELIST;
     }
 
     @Override

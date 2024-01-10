@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
-public class UpdateLookTask implements ILabyMod {
+public class UpdateLookTask {
     public UpdateLookTask() {
         (new BukkitRunnable() {
             public void run() {
@@ -50,7 +50,7 @@ public class UpdateLookTask implements ILabyMod {
         array.add(forcedEmote);
 
         // Send to LabyMod using the API
-        ILabyMod.sendLMCMessage( receiver, "emote_api", array );
+        //ILabyMod.sendLMCMessage( receiver, "emote_api", array );
     }
 
 }

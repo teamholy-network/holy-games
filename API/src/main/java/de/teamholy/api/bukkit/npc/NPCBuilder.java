@@ -37,8 +37,10 @@ public class NPCBuilder {
     }
 
     public void build(Player player) {
-        if (BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().isEmpty()) return;
-        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put(name,
-                new NPCEntry(displayName, skin, location, maxSeeRange, maxTargetRange, looker, kickBack).setPlayer(player).addHolo(holoLines));
-    }
+        if (BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()) != null) {
+            BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put(name,
+                    new NPCEntry(displayName, skin, location, maxSeeRange, maxTargetRange, looker, kickBack).setPlayer(player).addHolo(holoLines));
+
+        }
+      }
 }

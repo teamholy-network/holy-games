@@ -31,14 +31,14 @@ public class CloudListener implements Listener {
             if (event.getMessage().equalsIgnoreCase("onlineTime_update")) {
                 Lobby.getInstance().getLobbyPlayerEntryHandler().values().forEach(lobbyPlayer -> {
                     lobbyPlayer.updateOnlineTime();
-                    lobbyPlayer.setLabyModSubtitle();
+                    //lobbyPlayer.setLabyModSubtitle();
                 });
             } else if (event.getMessage().equalsIgnoreCase("clan_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
                 LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(uuid);
                 if (lobbyPlayer != null) {
                     lobbyPlayer.updateClanTagScore();
-                    lobbyPlayer.setLabyModSubtitle();
+                   // lobbyPlayer.setLabyModSubtitle();
                 }
             } else if (event.getMessage().equalsIgnoreCase("rank_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));

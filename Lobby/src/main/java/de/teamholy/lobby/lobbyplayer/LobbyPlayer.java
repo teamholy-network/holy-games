@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /* copyright by Yassino */
 @Getter
 @Setter
-public class LobbyPlayer implements ILabyMod {
+public class LobbyPlayer {
 
     private Player player;
     private ScoreboardAPI scoreboardAPI;
@@ -65,7 +65,7 @@ public class LobbyPlayer implements ILabyMod {
         updateCoinsScore();
         updateRankScore();
 
-        setLabyModSubtitle();
+        //setLabyModSubtitle();
 
         friendEntry = new FriendEntry(player);
         setInventory();
@@ -104,8 +104,8 @@ public class LobbyPlayer implements ILabyMod {
     public void setLabyModSubtitle() {
         Bukkit.getScheduler().runTaskLaterAsynchronously(Lobby.getInstance(), () -> {
             for (LobbyPlayer all : Lobby.getInstance().getLobbyPlayerEntryHandler().values()) {
-                setSubtitle(all.getPlayer(), player.getUniqueId(), "§7Clan §8» " + getClanNameString() + " §8︳ §7Onlinetime §8» §a" + getOnlineTimeString());
-                setSubtitle(player, all.getPlayer().getUniqueId(), "§7Clan §8» " + all.getClanNameString() + " §8︳ §7Onlinetime §8» §a" + all.getOnlineTimeString());
+            //    setSubtitle(all.getPlayer(), player.getUniqueId(), "§7Clan §8» " + getClanNameString() + " §8︳ §7Onlinetime §8» §a" + getOnlineTimeString());
+            //    setSubtitle(player, all.getPlayer().getUniqueId(), "§7Clan §8» " + all.getClanNameString() + " §8︳ §7Onlinetime §8» §a" + all.getOnlineTimeString());
             }
         }, 5);
     }
