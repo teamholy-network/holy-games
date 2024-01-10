@@ -10,6 +10,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -68,19 +69,19 @@ public class HologramHandler {
     }
 
     public void updateHolograms() {
-        gameholograms.forEach((name, hologram) -> {
-            TextLine textLine = (TextLine) hologram.getLine(1);
-            int count = 0;
-            count = Lobby.getInstance().getCloudCacheHandler().getOnlineCount(name);
+        Bukkit.getScheduler().runTaskLater(Lobby.getInstance(), () -> {
+            gameholograms.forEach((name, hologram) -> {
+                TextLine textLine = (TextLine) hologram.getLine(1);
+                int count = 0;
+                count = Lobby.getInstance().getCloudCacheHandler().getOnlineCount(name);
 
-            textLine.setText("§6" + count + " §7" + (count == 1 ? "Player" : "Players"));
-        });
-
-        updateBW();
-        updateBwSpawn();
-        updateRBWSpawn();
-        updateSpec();
-
+                textLine.setText("§6" + count + " §7" + (count == 1 ? "Player" : "Players"));
+            });
+            updateBW();
+            updateBwSpawn();
+            updateRBWSpawn();
+            updateSpec();
+        }, 1L); //synchronous call
     }
 
     public void updateSpec() {
