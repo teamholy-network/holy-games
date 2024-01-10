@@ -44,7 +44,7 @@ subprojects {
     dependencies {
         compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.8.0";
         compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
-        compileOnly("de.teamholy:holy-core-api:$coreVersion");
+        compileOnly "de.teamholy:holy-core-api:$coreVersion"
         compileOnly "de.teamholy:bukkit-core-api:${coreVersion}"
         compileOnly "de.teamholy:bungee-core-api:${coreVersion}"
         compileOnly "de.teamholy:bukkit-markupapi:${coreVersion}"
@@ -60,8 +60,6 @@ subprojects {
         compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.4.0-RELEASE'
         implementation 'com.grinderwolf:slimeworldmanager-api:2.2.1'
         compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
-
-
     }
 }
 

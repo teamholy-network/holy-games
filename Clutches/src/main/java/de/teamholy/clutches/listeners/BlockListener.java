@@ -21,10 +21,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -58,6 +55,10 @@ public class BlockListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onDamage(EntityDamageByBlockEvent event) {
+        event.setCancelled(true); //fix to prevent damage from blocks
+    }
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
