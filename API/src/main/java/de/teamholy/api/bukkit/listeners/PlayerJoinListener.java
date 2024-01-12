@@ -1,7 +1,6 @@
 package de.teamholy.api.bukkit.listeners;
 
 import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.interfaces.ILabyMod;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import de.dytanic.cloudnet.wrapper.Wrapper;

@@ -3,7 +3,6 @@ package de.teamholy.lobby.lobbyplayer;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
-import de.teamholy.api.interfaces.ILabyMod;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.lobby.Lobby;
 import de.dytanic.cloudnet.common.document.gson.JsonDocument;

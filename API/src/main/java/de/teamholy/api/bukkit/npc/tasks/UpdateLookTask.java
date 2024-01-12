@@ -2,9 +2,9 @@ package de.teamholy.api.bukkit.npc.tasks;
 
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.models.NPCPlayer;
-import de.teamholy.api.interfaces.ILabyMod;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import de.teamholy.api.interfaces.ILabyMod;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class UpdateLookTask {
         array.add(forcedEmote);
 
         // Send to LabyMod using the API
-        //ILabyMod.sendLMCMessage( receiver, "emote_api", array );
+        ILabyMod.sendLMCMessage( receiver, "emote_api", array );
     }
 
 }
