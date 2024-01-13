@@ -66,6 +66,10 @@ public class PlaygroundPlayer {
             } else Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().save(settings);
 
             this.inventory = InventoryUtils.inventoryFromString(settings.getInventoryString());
+            if (inventory == null) {
+                inventory = PlaygroundItems.newInventory();
+                settings.setInventoryString(InventoryUtils.inventoryToString(inventory));
+            }
         });
 
 

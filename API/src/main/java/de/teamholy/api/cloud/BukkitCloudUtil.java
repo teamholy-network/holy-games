@@ -13,6 +13,7 @@ import de.teamholy.core.bukkit.BukkitCore;
 import eu.koboo.markup.MarkupAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.Listener;
 
 import java.util.UUID;
