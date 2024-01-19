@@ -2,6 +2,7 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.map.loader.BridgeSchematicLoader;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
@@ -31,7 +32,6 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         playerManagement.addPlayer(player);
 
-
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
             getFreeBridgeForPlayer(playerManagement.getBridgePlayer(player));
         }, 3L);
@@ -49,7 +49,10 @@ public class PlayerJoinListener implements Listener {
             randomMap.setMapPlayer(player.getPlayer());
             player.setMapType(BridgeMapType.SHORT); // standard type!
             player.setMap(randomMap);
-            bridgeMapManagement.getLoader().loadMapForPlayer(player, randomMap);
+
+            BridgeSchematicLoader bridgeSchematicLoader = new BridgeSchematicLoader("test");
+            bridgeSchematicLoader.loadSchematic(player.getPlayer());
+            //bridgeMapManagement.getLoader().loadMapForPlayer(player, randomMap);
         }
 
     }

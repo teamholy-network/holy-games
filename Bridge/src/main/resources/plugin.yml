@@ -1,5 +1,5 @@
 name: Bridge
-main: dev.charon.bridge.Bridge
+main: de.teamholy.bridge.Bridge
 version: 1.0.0
 author: charonxyz, Yassino
 commands:

@@ -164,6 +164,7 @@ public class PlayerManagement {
         bridgeScoreboard.setLine(0, "§f§o{server}");
         bridgeScoreboard.build();
 
+        bridgePlayer.setBridgeScoreboard(bridgeScoreboard);
 
         updateScoreboardForPlayer(player);
     }
