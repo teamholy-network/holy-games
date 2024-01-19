@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class PlayerJoinQuitListener implements Listener {
         final LobbyPlayer[] lobbyPlayer = new LobbyPlayer[1];
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {
             lobbyPlayer[0]  = new LobbyPlayer(player);
-            player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+            //player.teleport();
             Lobby.getInstance().getLobbyPlayerEntryHandler().put(player.getUniqueId(), lobbyPlayer[0]);
             for (PotionEffect effect : player.getActivePotionEffects()) player.removePotionEffect(effect.getType());
             player.getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setLeatherColor(Color.fromBGR(
@@ -68,7 +69,10 @@ public class PlayerJoinQuitListener implements Listener {
                 .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player),10);
     }
 
-
+    @EventHandler
+    public void onSpawnLoc(PlayerSpawnLocationEvent event) {
+        event.setSpawnLocation(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+    }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
