@@ -1,0 +1,6 @@
+name: Bridge
+main: dev.charon.bridge.Bridge
+version: 1.0.0
+author: charonxyz, Yassino
+commands:
+  bridge:

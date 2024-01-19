@@ -40,12 +40,7 @@ public enum ArmorColor {
     }
 
     public static int getId(ArmorColor armorColor) {
-        int i = 0;
-        for (ArmorColor value : values()) {
-            if (value == armorColor) break;
-            i++;
-        }
-        return (i + 8000);
+        return (armorColor.ordinal() + 8000);
     }
 
     public static void buyPerk(Player player, PerkPlayerProfile perkPlayerProfile, ArmorColor armorColor, String name) {

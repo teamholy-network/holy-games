@@ -6,4 +6,5 @@ include 'KnockbackFFA'
 include 'Lobby'
 include 'MLGRush'
 include 'SGFFA'
+include 'Bridge'
 
