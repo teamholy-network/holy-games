@@ -44,71 +44,82 @@ public class BridgeCommand implements CommandExecutor {
         if (args.length > 1) {
             String name = args[1];
 
-            if (args[0].equalsIgnoreCase("create")) {
+            switch (args[0]) {
+                case "create" -> {
+                    String[] split = Arrays.copyOfRange(args, 2, args.length);
+                    String message = String.join(" ", split).replace("&", "§");
 
-                String[] split = Arrays.copyOfRange(args, 2, args.length);
-                String message = String.join(" ", split).replace("&", "§");
+                    ItemStack itemStack = player.getItemInHand();
+                    if (itemStack.getType() == Material.AIR) {
+                        player.sendMessage(Bridge.PREFIX + "§cYou need to hold an item in your hand.");
+                        return true;
+                    }
 
-                ItemStack itemStack = player.getItemInHand();
-                if (itemStack.getType() == Material.AIR) {
-                    player.sendMessage(Bridge.PREFIX + "§cYou need to hold an item in your hand.");
-                    return true;
+                    if (highLeft == null || bottomRight == null) {
+                        player.sendMessage(Bridge.PREFIX + "§cYou need to set the high and bottom location of the map.");
+                        return true;
+                    }
+
+                    if (bridgeMapManagement.getMap(name) != null) {
+                        player.sendMessage(Bridge.PREFIX + "§cA map with this name already exists.");
+                        return true;
+                    }
+
+                    bridgeMapManagement.create(highLeft, bottomRight, endHighLeft, endBottomRight, player.getLocation(), name, message, itemStack);
+                    player.sendMessage(Bridge.PREFIX + "§7You've created a new bridge map with name §e" + name + "§7 and title §e" + message);
                 }
-
-                if (highLeft == null || bottomRight == null) {
-                    player.sendMessage(Bridge.PREFIX + "§cYou need to set the high and bottom location of the map.");
-                    return true;
+                case "sethight" -> {
+                    highLeft = player.getLocation();
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the high location of the map §e" + name + "§7.");
                 }
-
-                if (bridgeMapManagement.getMap(name) != null) {
-                    player.sendMessage(Bridge.PREFIX + "§cA map with this name already exists.");
-                    return true;
+                case "setbottom" -> {
+                    bottomRight = player.getLocation();
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the bottom location of the map §e" + name + "§7.");
                 }
+                case "setspawn" -> {
+                    BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
+                    bridgeMap.getMapPosition().setStart(player.getLocation());
+                    bridgeMapManagement.getLoader().save(bridgeMap);
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the spawn location of the map §e" + name + "§7.");
 
-                bridgeMapManagement.create(highLeft, bottomRight, endHighLeft, endBottomRight, player.getLocation(), name, message, itemStack);
-                player.sendMessage(Bridge.PREFIX + "§7You've created a new bridge map with name §e" + name + "§7 and title §e" + message);
-            } else if (args[0].equalsIgnoreCase("sethigh")) {
-                highLeft = player.getLocation();
-                player.sendMessage(Bridge.PREFIX + "§7You've set the high location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setbottom")) {
-                bottomRight = player.getLocation();
-                player.sendMessage(Bridge.PREFIX + "§7You've set the bottom location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setspawn")) {
-                BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
-                bridgeMap.getMapPosition().setStart(player.getLocation());
-                bridgeMapManagement.getLoader().save(bridgeMap);
-                player.sendMessage(Bridge.PREFIX + "§7You've set the spawn location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setmiddle")) {
-                BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
-                bridgeMap.getMapPosition().setMiddle(player.getLocation());
-                bridgeMapManagement.getLoader().save(bridgeMap);
-                player.sendMessage(Bridge.PREFIX + "§7You've set the middle location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setendstart")) {
-                BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
-                bridgeMap.getMapPosition().setEndStart(player.getLocation());
-                bridgeMapManagement.getLoader().save(bridgeMap);
-                player.sendMessage(Bridge.PREFIX + "§7You've set the end location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setendend")) {
-                endBottomRight = player.getLocation();
-                player.sendMessage(Bridge.PREFIX + "§7You've set the bottom end location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setendhigh")) {
-                endHighLeft = player.getLocation();
-                player.sendMessage(Bridge.PREFIX + "§7You've set the high end location of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("setitem")) {
-                BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
-                bridgeMap.setMaterialName(player.getItemInHand().getType().name());
-                bridgeMapManagement.getLoader().save(bridgeMap);
-                player.sendMessage(Bridge.PREFIX + "§7You've set the item of the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("save")) {
-                bridgeMapManagement.getLoader().save(bridgeMapManagement.getMap(name));
-                player.sendMessage(Bridge.PREFIX + "§7You've saved the map §e" + name + "§7.");
-            } else if (args[0].equalsIgnoreCase("delete")) {
-                BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
-                bridgeMapManagement.getLoader().getMaps().remove(bridgeMap);
-                bridgeMapManagement.getLoader().delete(bridgeMap);
-                player.sendMessage(Bridge.PREFIX + "§7You've deleted the map §e" + name + "§7.");
-            } else {
-                sendHelp(player);
+                }
+                case "setmiddle" -> {
+                    BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
+                    bridgeMap.getMapPosition().setMiddle(player.getLocation());
+                    bridgeMapManagement.getLoader().save(bridgeMap);
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the middle location of the map §e" + name + "§7.");
+                }
+                case "setendstart" -> {
+                    BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
+                    bridgeMap.getMapPosition().setEndStart(player.getLocation());
+                    bridgeMapManagement.getLoader().save(bridgeMap);
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the end location of the map §e" + name + "§7.");
+                }
+                case "setendend" -> {
+                    endBottomRight = player.getLocation();
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the bottom end location of the map §e" + name + "§7.");
+                }
+                case "setendhight" -> {
+                    endHighLeft = player.getLocation();
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the high end location of the map §e" + name + "§7.");
+                }
+                case "setitem" -> {
+                    BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
+                    bridgeMap.setMaterialName(player.getItemInHand().getType().name());
+                    bridgeMapManagement.getLoader().save(bridgeMap);
+                    player.sendMessage(Bridge.PREFIX + "§7You've set the item of the map §e" + name + "§7.");
+                }
+                case "save" -> {
+                    bridgeMapManagement.getLoader().save(bridgeMapManagement.getMap(name));
+                    player.sendMessage(Bridge.PREFIX + "§7You've saved the map §e" + name + "§7.");
+                }
+                case "delete" -> {
+                    BridgeMap bridgeMap = bridgeMapManagement.getMap(name);
+                    bridgeMapManagement.getLoader().getMaps().remove(bridgeMap);
+                    bridgeMapManagement.getLoader().delete(bridgeMap);
+                    player.sendMessage(Bridge.PREFIX + "§7You've deleted the map §e" + name + "§7.");
+                }
+                default -> sendHelp(player);
             }
         } else if (args[0].equalsIgnoreCase("list")) {
 
@@ -116,7 +127,6 @@ public class BridgeCommand implements CommandExecutor {
                 player.sendMessage(Bridge.PREFIX + "§7There are no maps.");
                 return true;
             }
-
 
             player.sendMessage("§7§m-------------------§r §6Bridge Maps §7§m-------------------");
             bridgeMapManagement.getLoader().getMaps().forEach(bridgeMap -> player.sendMessage(" §7- §e" + bridgeMap.getName() + " §8- §7" + bridgeMap.getTitle()));
