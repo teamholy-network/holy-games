@@ -61,6 +61,12 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler
+    public void onDamageEntity(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION)
+            event.setCancelled(true);
+    }
+
+    @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.CREATIVE)
