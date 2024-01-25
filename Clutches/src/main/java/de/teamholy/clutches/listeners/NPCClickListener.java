@@ -73,6 +73,9 @@ public class NPCClickListener implements Listener {
             return;
         if (playerEntry.getPlayerState() == PlayerState.INGAME && (playerEntry.getArenaType() == ArenaType.REDUCE || playerEntry.getArenaType() == ArenaType.EXPERIMENTAL)) {
 
+
+
+
             if (!playerEntry.getFirstHitDelay().isReceived()) {
                 playerEntry.getFirstHitDelay().setReceived(true);
                 playerEntry.getCountdown().set(0);

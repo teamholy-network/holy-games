@@ -20,7 +20,7 @@ public class ClutchTask {
 
 
     public ClutchTask() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Clutches.getInstance(),() -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Clutches.getInstance(), () -> {
 
             for (PlayerEntry playerEntry : Clutches.getInstance().getPlayerEntryHandler().values()) {
 
@@ -42,96 +42,90 @@ public class ClutchTask {
                         }
 
                         if (!playerEntry.isPause()) {
-                            if (playerEntry.getPre().get() == 0 || playerEntry.isSecondRound()) {
 
-                                PlayerUtils.sendBar(player, "");
+                            PlayerUtils.sendBar(player, "");
 
+
+                            if (playerEntry.getArenaType() == ArenaType.REDUCE) {
+                                if (playerEntry.getFirstHitDelay() == FirstHitDelay.AFTER && !playerEntry.getFirstHitDelay().isReceived()) {
+                                    continue;
+                                }
+                            }
+
+
+                            if (playerEntry.getCountdown().get() == 0) {
+                                PlayerUtils.sendBar(player, "§fServer §8» §c§lTeamholy.de");
+                                player.setLevel(0);
+                                player.setExp(0);
 
                                 if (playerEntry.getArenaType() == ArenaType.REDUCE) {
-                                    if (playerEntry.getFirstHitDelay() == FirstHitDelay.AFTER && !playerEntry.getFirstHitDelay().isReceived()) {
-                                        continue;
+
+                                    for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
+                                        if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
+                                            if (npcEntry.getLocation().distance(player.getLocation()) <= 3.7) {
+                                                npcEntry.animation(player, 0);
+                                                player.damage(0);
+                                                player.setVelocity(playerEntry.getVelocity(npcEntry.getLocation().getDirection(), 0.8 * playerEntry.getNpcHit().getKnockback()));
+                                            } else if (playerEntry.getNpcAirHit().get() != 0) {
+                                                npcEntry.animation(player, 0);
+                                                player.damage(0);
+                                                player.setVelocity(playerEntry.getVelocity(npcEntry.getLocation().getDirection(), 0.8 * playerEntry.getNpcHit().getKnockback()));
+                                                playerEntry.getNpcAirHit().getAndDecrement();
+                                            }
+                                        }
                                     }
-                                }
 
+                                } else if (playerEntry.getArenaType() == ArenaType.EXPERIMENTAL) {
 
-                                if (playerEntry.getCountdown().get() == 0) {
-                                    PlayerUtils.sendBar(player, "§fServer §8» §c§lTeamholy.de");
-
-                                    if (playerEntry.getArenaType() == ArenaType.REDUCE) {
-
-                                        for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
-                                            if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
-                                                if (npcEntry.getLocation().distance(player.getLocation()) <= 3.7) {
-                                                    npcEntry.animation(player, 0);
-                                                    player.damage(0);
-                                                    player.setVelocity(playerEntry.getVelocity(npcEntry.getLocation().getDirection(), 0.8 * playerEntry.getNpcHit().getKnockback()));
-                                                } else if (playerEntry.getNpcAirHit().get() != 0) {
-                                                    npcEntry.animation(player, 0);
-                                                    player.damage(0);
-                                                    player.setVelocity(playerEntry.getVelocity(npcEntry.getLocation().getDirection(), 0.8 * playerEntry.getNpcHit().getKnockback()));
-                                                    playerEntry.getNpcAirHit().getAndDecrement();
-                                                }
+                                    for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
+                                        if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
+                                            if (npcEntry.getLocation().distance(player.getLocation()) <= 2.5) {
+                                                npcEntry.animation(player, 0);
+                                                player.damage(0);
+                                                player.setVelocity(playerEntry.getVelocity(npcEntry.getLocation().getDirection(), 0.8 * playerEntry.getNpcHit().getKnockback()));
                                             }
                                         }
+                                    }
 
-                                    } else if (playerEntry.getArenaType() == ArenaType.EXPERIMENTAL) {
+                                } else if (playerEntry.getArenaType() == ArenaType.CLUTCH || playerEntry.getArenaType() == ArenaType.DIAGONAL_CLUTCH) {
 
-                                        for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
-                                            if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
-                                                if (npcEntry.getLocation().distance(player.getLocation()) <= 2.5) {
-                                                    npcEntry.animation(player, 0);
-                                                    player.damage(0);
-                                                    player.setVelocity(playerEntry.getVelocity(npcEntry.getLocation().getDirection(), 0.8 * playerEntry.getNpcHit().getKnockback()));
-                                                }
-                                            }
-                                        }
+                                    player.damage(0);
+                                    Location direction = arenaEntry.getNpc().clone();
+                                    if (playerEntry.getArenaType() == ArenaType.DIAGONAL_CLUTCH) {
+                                        direction.setYaw(47.5F);
+                                    }
 
-                                    } else if (playerEntry.getArenaType() == ArenaType.CLUTCH || playerEntry.getArenaType() == ArenaType.DIAGONAL_CLUTCH) {
-
-                                        player.damage(0);
-                                        Location direction = arenaEntry.getNpc().clone();
-                                        if (playerEntry.getArenaType() == ArenaType.DIAGONAL_CLUTCH) {
-                                            direction.setYaw(47.5F);
-                                        }
-
-                                        if (playerEntry.getClutchCount().get() == 0) {
-                                            player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getFirstHit().getKnockback()));
-                                            playerEntry.getClutchCount().getAndIncrement();
-                                            if (playerEntry.getSecondHit() == HitType.NONE) {
-                                                resetClutch(playerEntry);
-                                            }
-                                        } else
-                                        if (playerEntry.getClutchCount().get() == 1 && (playerEntry.getSecondHit() != HitType.NONE)) {
-                                            player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getSecondHit().getKnockback()));
-                                            playerEntry.getClutchCount().getAndIncrement();
-                                            if (playerEntry.getThirdHit() == HitType.NONE) {
-                                                resetClutch(playerEntry);
-                                            }
-                                        } else
-                                        if (playerEntry.getClutchCount().get() == 2 && (playerEntry.getThirdHit() != HitType.NONE)) {
-                                            player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getThirdHit().getKnockback()));
-                                            playerEntry.getClutchCount().getAndIncrement();
-                                            if (playerEntry.getFirstHit() == HitType.NONE) {
-                                                resetClutch(playerEntry);
-                                            }
-                                        } else
-                                        if (playerEntry.getClutchCount().get() == 3 && (playerEntry.getFourthHit() != HitType.NONE)) {
-                                            player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getFourthHit().getKnockback()));
-                                            playerEntry.getClutchCount().getAndIncrement();
+                                    if (playerEntry.getClutchCount().get() == 0) {
+                                        player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getFirstHit().getKnockback()));
+                                        playerEntry.getClutchCount().getAndIncrement();
+                                        if (playerEntry.getSecondHit() == HitType.NONE) {
                                             resetClutch(playerEntry);
                                         }
-
+                                    } else if (playerEntry.getClutchCount().get() == 1 && (playerEntry.getSecondHit() != HitType.NONE)) {
+                                        player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getSecondHit().getKnockback()));
+                                        playerEntry.getClutchCount().getAndIncrement();
+                                        if (playerEntry.getThirdHit() == HitType.NONE) {
+                                            resetClutch(playerEntry);
+                                        }
+                                    } else if (playerEntry.getClutchCount().get() == 2 && (playerEntry.getThirdHit() != HitType.NONE)) {
+                                        player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getThirdHit().getKnockback()));
+                                        playerEntry.getClutchCount().getAndIncrement();
+                                        if (playerEntry.getFirstHit() == HitType.NONE) {
+                                            resetClutch(playerEntry);
+                                        }
+                                    } else if (playerEntry.getClutchCount().get() == 3 && (playerEntry.getFourthHit() != HitType.NONE)) {
+                                        player.setVelocity(playerEntry.getVelocity(direction.getDirection(), 0.8 * playerEntry.getFourthHit().getKnockback()));
+                                        playerEntry.getClutchCount().getAndIncrement();
+                                        resetClutch(playerEntry);
                                     }
 
-
-                                } else {
-                                    playerEntry.getCountdown().getAndDecrement();
-                                    player.setLevel(playerEntry.getCountdown().get());
-                                    player.setExp((float) playerEntry.getCountdown().get() / playerEntry.getDelay());
                                 }
+
+
                             } else {
-                                playerEntry.getPre().getAndDecrement();
-                                PlayerUtils.sendBar(player, "§fPrecooldown §8» §d" + playerEntry.getPre().get());
+                                playerEntry.getCountdown().getAndDecrement();
+                                player.setLevel(playerEntry.getCountdown().get());
+                                player.setExp((float) playerEntry.getCountdown().get() / playerEntry.getDelay());
                             }
                         } else {
                             PlayerUtils.sendBar(player, "§c§lPAUSE");
@@ -143,11 +137,10 @@ public class ClutchTask {
 
 
             }
-        },0,10);
+        }, 0, 10);
     }
 
     private void resetClutch(PlayerEntry playerEntry) {
-        playerEntry.getPre().set(6);
         playerEntry.getCountdown().set(playerEntry.getDelay() + 1);
         playerEntry.getClutchCount().set(0);
         playerEntry.getFirstHitDelay().setReceived(false);

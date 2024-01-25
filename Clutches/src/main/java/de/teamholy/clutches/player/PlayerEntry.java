@@ -70,7 +70,6 @@ public class PlayerEntry {
     private boolean isPause, isSecondRound;
     private long attackCooldown;
 
-    public AtomicInteger pre = new AtomicInteger(6);
     public AtomicInteger countdown = new AtomicInteger(delay + 1);
     public AtomicInteger clutchCount = new AtomicInteger(0);
     public AtomicInteger npcAirHit = new AtomicInteger(npcAirHits);
@@ -319,7 +318,6 @@ public class PlayerEntry {
     }
 
     public void resetClutch() {
-        getPre().set(6);
         getCountdown().set(getDelay() + 1);
         getClutchCount().set(0);
         firstHitDelay.setReceived(false);

@@ -71,6 +71,7 @@ public class PlayerTask {
                 counter[0]++;
 
                 if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
+                PlayerUtils.sendBar(playgroundPlayer.getPlayer(), "§7Server §8» §c§lTeamholy.de");
 
                 for (int i = counter[0]; i < 28; i++) {
 
