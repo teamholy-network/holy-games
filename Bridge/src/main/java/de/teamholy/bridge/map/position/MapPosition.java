@@ -22,7 +22,8 @@ public class MapPosition implements Cloneable {
     private List<CustomBlock> blocksSpawn;
     private List<CustomBlock> blocksEnd;
 
-    private transient List<Location> transientSpawnLocation = Lists.newArrayList(),
+    private transient List<Location> transientSpawnLocation =
+            Lists.newArrayList(),
             transientEndLocation = Lists.newArrayList();
     private transient Location transientSpawn;
 
