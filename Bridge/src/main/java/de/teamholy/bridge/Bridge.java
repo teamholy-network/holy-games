@@ -38,12 +38,12 @@ import java.util.Objects;
 @Getter
 public class Bridge extends JavaPlugin {
 
+    public static String PREFIX = "§6Bridge §8* §7";
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
     private PlayerManagement playerManagement;
     private BridgeMapManagement mapManagement;
     private BukkitTask bridgeTimer;
-    public static String PREFIX = "§6Bridge §8* §7";
 
     private BridgeSchematicIndex bridgeSchematicIndex;
 
