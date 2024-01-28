@@ -3,6 +3,7 @@ package de.teamholy.bridge.map;
 import de.teamholy.bridge.map.position.MapPosition;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -18,16 +19,18 @@ public class BridgeMap implements Cloneable {
     private String name;
     private String title;
     private String materialName;
-    private MapPosition mapPosition;
+
+    private Location location;
 
     private transient boolean isLoading;
     private transient Player mapPlayer;
     private transient int givenSpace;
     private transient BridgeMapType mapType;
 
-    public BridgeMap(String name, String title) {
+    public BridgeMap(String name, String title, String materialName) {
         this.name = name;
         this.title = title;
+        this.materialName = materialName;
     }
 
     @Override
@@ -37,6 +40,6 @@ public class BridgeMap implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             System.out.println("Error while cloning map " + name + " but skipping it and using the original one");
         }
-        return new BridgeMap(name, title);
+        return new BridgeMap(name, title, materialName);
     }
 }

@@ -1,6 +1,7 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
@@ -36,10 +37,9 @@ public class PlayerMoveListener implements Listener {
             }
             var map = bridgePlayer.getMap().clone();
 
-            var mapPosition = map.getMapPosition().clone();
             var givenSpace = map.getGivenSpace();
-            var highLocation = mapPosition.getHigh().clone().add(givenSpace, 0, 0).add(8, 8, 2).toVector();
-            var bottom = mapPosition.getEndBottom().clone().add(givenSpace, 0, 0).subtract((map.getName().endsWith("-Normal") ? 7 : 1), 10, 2).toVector();
+            var highLocation = map.getLocation().clone().add(givenSpace, 0, 0).add(8, 8, 2).toVector();
+            var bottom =  map.getLocation().clone().add(givenSpace, 0, 0).subtract(5, 10, bridgePlayer.getMap().getMapType() == BridgeMapType.DIAGONAL ? 25 : 5).toVector();
 
             var settings = bridgePlayer.getSettings();
             if (settings.isIslandMoving()) {
@@ -76,8 +76,8 @@ public class PlayerMoveListener implements Listener {
             }
 
             if (!vector.isInAABB(bottom, highLocation)) {
-                if (bridgePlayer.getMap().getMapPosition().getTransientSpawn() != null) {
-                    player.teleport(bridgePlayer.getMap().getMapPosition().getTransientSpawn());
+                if (bridgePlayer.getMap().getLocation() != null) {
+                    player.teleport(bridgePlayer.getMap().getLocation());
                 }
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
@@ -89,12 +89,13 @@ public class PlayerMoveListener implements Listener {
                 playerManagement.getPlayerTime().remove(player.getUniqueId());
             }
 
-            if (player.getLocation().getBlock().getType() == Material.GOLD_PLATE || player.getLocation().clone().subtract(0, 1, 0).getBlock().getType() == Material.DIAMOND_BLOCK) {
+            if (player.getLocation().getBlock().getType() == Material.GOLD_PLATE
+                    || player.getLocation().clone().subtract(0, 1, 0).getBlock().getType() == Material.DIAMOND_BLOCK) {
                 if (!playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
                     return;
                 }
 
-                player.teleport(bridgePlayer.getMap().getMapPosition().getTransientSpawn());
+                player.teleport(bridgePlayer.getMap().getLocation());
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);

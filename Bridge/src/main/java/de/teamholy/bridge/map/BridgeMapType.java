@@ -8,10 +8,9 @@ import org.bukkit.Material;
 @Getter
 public enum BridgeMapType {
 
-    NORMAL("Normal",50, 50,Material.SANDSTONE),
+    LONG("Long",50, 50,Material.SANDSTONE),
     SHORT("Short",25,50, Material.DOUBLE_STONE_SLAB2),
     DIAGONAL("Diagonal",20, 25, Material.SANDSTONE_STAIRS);
-
 
     private String name;
     private int length;

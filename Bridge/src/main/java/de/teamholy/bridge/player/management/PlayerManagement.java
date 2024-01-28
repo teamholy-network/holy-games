@@ -188,11 +188,11 @@ public class PlayerManagement {
 
     private void addBestTime(BridgePlayer bridgePlayer) {
 
-        if (!topPlayer.get(BridgeMapType.NORMAL).containsKey(bridgePlayer)) {
-            topPlayer.get(BridgeMapType.NORMAL).put(bridgePlayer, bridgePlayer.getLocalBestTime());
-        } else if (topPlayer.get(BridgeMapType.NORMAL).get(bridgePlayer) > bridgePlayer.getLocalBestTime()) {
-            topPlayer.get(BridgeMapType.NORMAL).remove(bridgePlayer);
-            topPlayer.get(BridgeMapType.NORMAL).put(bridgePlayer, bridgePlayer.getLocalBestTime());
+        if (!topPlayer.get(BridgeMapType.LONG).containsKey(bridgePlayer)) {
+            topPlayer.get(BridgeMapType.LONG).put(bridgePlayer, bridgePlayer.getLocalBestTime());
+        } else if (topPlayer.get(BridgeMapType.LONG).get(bridgePlayer) > bridgePlayer.getLocalBestTime()) {
+            topPlayer.get(BridgeMapType.LONG).remove(bridgePlayer);
+            topPlayer.get(BridgeMapType.LONG).put(bridgePlayer, bridgePlayer.getLocalBestTime());
         }
 
         updateScoreboardForPlayer(null);
@@ -216,7 +216,7 @@ public class PlayerManagement {
             }
         }
 
-        topPlayer.get(BridgeMapType.NORMAL).entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).limit(5).toList().forEach(bridgePlayerLongEntry -> {
+        topPlayer.get(BridgeMapType.LONG).entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).limit(5).toList().forEach(bridgePlayerLongEntry -> {
 
             if (i.get() < 3) {
                 return;

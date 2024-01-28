@@ -6,6 +6,7 @@ import de.teamholy.bridge.custom.CustomBlock;
 import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.loader.BridgeMapLoader;
+import de.teamholy.bridge.map.loader.BridgeSchematicLoader;
 import de.teamholy.bridge.map.position.BridgeBlockPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.util.ItemBuilder;
@@ -43,7 +44,7 @@ public class BridgeMapManagement {
     }
 
     public void loadMaps() {
-        loader.loadMaps();
+        loader.loadSchematics();
         if (loader.getMaps().isEmpty())
             return;
         if (this.inventory == null) {
@@ -74,7 +75,6 @@ public class BridgeMapManagement {
 
     public void addMap(BridgeMap map) {
         if (map == null) return;
-        if (map.getName().endsWith("-Normal") || map.getName().endsWith("-Inclined")) return;
 
         this.inventory.addItem(new ItemBuilder(Material.valueOf(map.getMaterialName())).name(map.getTitle()).build());
     }
@@ -84,9 +84,10 @@ public class BridgeMapManagement {
     }
 
     public void moveIslandForPlayer(BridgePlayer bridgePlayer, BridgeMap bridgeMap, PlayerMoveEvent event) {
-        var player = bridgePlayer.getPlayer();
+        /*var player = bridgePlayer.getPlayer();
 
         var map = bridgeMap.clone();
+
         var mapPosition = map.getMapPosition().clone();
         var givenSpace = map.getGivenSpace();
 
@@ -141,18 +142,18 @@ public class BridgeMapManagement {
                     }
                 }
             }
-        }
+        }*/
     }
 
     public Inventory getMapSettings(BridgeMap bridgeMap) {
         Inventory inventory = Bukkit.createInventory(null, 9, "§8» §bMap Settings");
         inventory.setItem(3, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§aShort").lore("§8» §7Distance§8: §e" + BridgeMapType.SHORT.getLength()).build());
-        inventory.setItem(4, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§eNormal").lore("§8» §7Distance§8: §e" + BridgeMapType.NORMAL.getLength()).build());
-        inventory.setItem(5, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§cInclined").lore("§8» §7Distance§8: §e" + BridgeMapType.DIAGONAL.getLength()).build());
+        inventory.setItem(4, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§eLong").lore("§8» §7Distance§8: §e" + BridgeMapType.LONG.getLength()).build());
+        inventory.setItem(5, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§cDiagonal").lore("§8» §7Distance§8: §e" + BridgeMapType.DIAGONAL.getLength()).build());
         return inventory;
     }
 
     public BridgeMap getClosestMapToNameWithType(String name, BridgeMapType type) {
-        return loader.getMapTypes().stream().filter(map -> map.getName().equalsIgnoreCase(name + "-" + type.name())).findFirst().orElse(getMap(name.replace("-Normal", "").replace("-Inclined", "")));
+        return loader.getMaps().stream().filter(map -> map.getName().equalsIgnoreCase(name + "-" + type.name())).findFirst().orElse(getMap(name.replace("-Normal", "").replace("-Inclined", "")));
     }
 }

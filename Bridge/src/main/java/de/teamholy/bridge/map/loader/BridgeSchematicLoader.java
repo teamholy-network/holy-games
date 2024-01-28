@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -36,11 +37,11 @@ public class BridgeSchematicLoader {
     private final int x;
     private final Location location;
 
-    public BridgeSchematicLoader(String schematicName) {
+    public BridgeSchematicLoader(String schematicName, BridgeMapType bridgeMapType) {
         this.schematicName = schematicName;
 
         int mineNumber = Bridge.getInstance().getBridgeSchematicIndex().getIndex();
-        int distance = BridgeMapType.mapType("Normal").getDistanceBetweenMaps();
+        int distance = bridgeMapType.getDistanceBetweenMaps();
         x = mineNumber * distance;
         location = new Location(Bukkit.getWorld("world"), x, 100, 0, 180.0f, 0.5f);
         mineNumber++;
@@ -49,16 +50,17 @@ public class BridgeSchematicLoader {
         Bridge.getInstance().saveBridgeSchematicIndex();
     }
 
-    public void loadSchematic(Player player) {
+    public CompletableFuture<Boolean> loadSchematic(Player player) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         File schematicFile = new File(Bridge.getInstance().getDataFolder() + "/schematics", schematicName + ".schematic");
 
         ClipboardFormat format = ClipboardFormat.findByFile(schematicFile);
         if (format == null) {
             player.sendMessage(Bridge.PREFIX + "§cThe Map §e" + schematicName + " §cdoes not exist!");
-            return;
+            completableFuture.complete(false);
         }
 
-        player.sendMessage(Bridge.PREFIX + "§aLoading Map...");
+        player.sendMessage(Bridge.PREFIX + "§aLoading Map \"§e" + schematicName +"§a\"...");
 
         try {
             var reader = format.getReader(new FileInputStream(schematicFile));
@@ -79,19 +81,15 @@ public class BridgeSchematicLoader {
             try {
                 Operations.complete(operation);
                 player.sendMessage(Bridge.PREFIX + "§aMap Loaded! §eTeleporting...");
+                completableFuture.complete(true);
             } catch (WorldEditException ex) {
                 ex.printStackTrace();
             }
 
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> teleportPlayer(player), 2L);
-
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-    }
-
-    private void teleportPlayer(Player player) {
-        player.teleport(location);
-      //  bridgePlayer.setState(BridgePlayer.PlayerState.INGAME);
+        completableFuture.complete(false);
+        return completableFuture;
     }
 }

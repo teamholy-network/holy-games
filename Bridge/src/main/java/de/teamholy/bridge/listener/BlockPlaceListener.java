@@ -1,6 +1,7 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import org.bukkit.GameMode;
@@ -39,11 +40,13 @@ public class BlockPlaceListener implements Listener {
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
 
-            var high = bridgePlayer.getMap().getMapPosition().getHigh().clone().add(0, 3, 0);
+            var high = bridgePlayer.getMap().getLocation().clone().add(0, 3, 0);
             var givenSpace = bridgePlayer.getMap().getGivenSpace();
 
-            var highLocation = bridgePlayer.getMap().getMapPosition().getHigh().clone().add(givenSpace, 0, 0).add(8, 3, 2).toVector();
-            var bottom = bridgePlayer.getMap().getMapPosition().getEndBottom().clone().add(givenSpace, 0, 0).subtract((bridgePlayer.getMap().clone().getName().endsWith("-Normal") ? 7 : 1), 2, 2).toVector();
+            var highLocation = bridgePlayer.getMap().getLocation().clone().add(givenSpace, 0, 0).add(8, 3, 2).toVector();
+            var bottom = bridgePlayer.getMap().getLocation()
+                    .clone().add(givenSpace, 0, 0)
+                    .subtract(5, 2, bridgePlayer.getMap().getMapType() == BridgeMapType.DIAGONAL ? 25 : 5).toVector();
 
             /*
             if (event.getBlock().getLocation().getY() >= high.getY() ||

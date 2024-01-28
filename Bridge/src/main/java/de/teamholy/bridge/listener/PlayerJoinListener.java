@@ -50,9 +50,7 @@ public class PlayerJoinListener implements Listener {
             player.setMapType(BridgeMapType.SHORT); // standard type!
             player.setMap(randomMap);
 
-            BridgeSchematicLoader bridgeSchematicLoader = new BridgeSchematicLoader("test");
-            bridgeSchematicLoader.loadSchematic(player.getPlayer());
-            //bridgeMapManagement.getLoader().loadMapForPlayer(player, randomMap);
+            bridgeMapManagement.getLoader().loadMapForPlayer(player, randomMap);
         }
 
     }

@@ -144,8 +144,8 @@ public class PlayerInventoryListener implements Listener {
 
             var selectedType = switch (clickedItemMeta.getDisplayName()) {
                 case "§aShort" -> BridgeMapType.SHORT;
-                case "§eNormal" -> BridgeMapType.NORMAL;
-                case "§cInclined" -> BridgeMapType.DIAGONAL;
+                case "§eNormal" -> BridgeMapType.LONG;
+                case "§cDiagonal" -> BridgeMapType.DIAGONAL;
                 default -> map.getMapType();
             };
 
