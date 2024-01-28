@@ -60,7 +60,7 @@ public class BridgeSchematicLoader {
             completableFuture.complete(false);
         }
 
-        player.sendMessage(Bridge.PREFIX + "§aLoading Map \"§e" + schematicName +"§a\"...");
+        player.sendMessage(Bridge.PREFIX + "§aLoading Map \"§e" + schematicName + "§a\"...");
 
         try {
             var reader = format.getReader(new FileInputStream(schematicFile));
@@ -78,13 +78,10 @@ public class BridgeSchematicLoader {
                     .ignoreAirBlocks(true)
                     .build();
 
-            try {
-                Operations.complete(operation);
+            Operations.completeSmart(operation, () -> {
                 player.sendMessage(Bridge.PREFIX + "§aMap Loaded! §eTeleporting...");
                 completableFuture.complete(true);
-            } catch (WorldEditException ex) {
-                ex.printStackTrace();
-            }
+            }, true);
 
         } catch (IOException exception) {
             exception.printStackTrace();
