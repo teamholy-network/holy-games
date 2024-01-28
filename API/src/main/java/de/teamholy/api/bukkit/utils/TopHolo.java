@@ -1,120 +1,123 @@
 package de.teamholy.api.bukkit.utils;
 
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
+import com.google.common.collect.Maps;
+import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.api.entities.game.StatsType;
+import de.teamholy.core.api.utility.Gamemodes;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
 /* copyright by Yassino */
 public class TopHolo {
-/*
 
-
-    private final Hologram hologram;
-    private String currentStatsType = IStatsType.ALLTIME;
+    private Hologram hologram;
+    private StatsType statsType = StatsType.ALLTIME;
     private long cooldown = System.currentTimeMillis();
+    private Gamemodes gamemode;
 
-    private final HashMap<String, HashMap<Integer, String>> tops = new HashMap<>();
+    private final HashMap<StatsType, HashMap<Integer,TopPlayer>> top = new HashMap<>();
 
-    public TopHolo(BukkitHolyAPI instance,String collection,String key, String keyHolo) {
-        tops.put(IStatsType.DAILY,new HashMap<>());
-        tops.put(IStatsType.MONTHLY,new HashMap<>());
-        tops.put(IStatsType.ALLTIME,new HashMap<>());
+    public TopHolo(Location location, Gamemodes gamemode, ItemStack itemStack) {
+        top.put(StatsType.ALLTIME, Maps.newHashMap());
+        top.put(StatsType.MONTHLY, Maps.newHashMap());
+        top.put(StatsType.DAILY, Maps.newHashMap());
 
-        hologram = HologramsAPI.createHologram(instance, BukkitHolyAPI.getInstance().getLocationManager().getLocation("topholo"));
-        hologram.appendItemLine(new ItemBuilder(Material.DIAMOND_SWORD).build());
-        for (int i = 1; i < 15; i++) {
-            hologram.appendTextLine("Loading...").setTouchHandler(player -> {
+        this.gamemode = gamemode;
+        hologram = HologramsAPI.createHologram(BukkitHolyAPI.getInstance(), location);
+        hologram.appendItemLine(itemStack);
+        for (int i = 0; i < 15; i++) {
+            hologram.appendTextLine("Loading...").setTouchHandler((player) -> {
                 if (cooldown > System.currentTimeMillis()) {
-                    player.sendMessage("§cplease wait!");
+                    player.sendMessage("§cPlease wait");
                     return;
                 }
-                cooldown = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2);
-                player.playSound(player.getLocation(), Sound.CLICK, 1F, 100F);
-                BukkitHolyAPI.getInstance().getDatabaseHandler().getExecutorService().execute(() -> {
-                    if (currentStatsType.equalsIgnoreCase(IStatsType.DAILY)) {
-                        updateHologram(IStatsType.ALLTIME);
-                    } else if (currentStatsType.equalsIgnoreCase(IStatsType.MONTHLY)) {
-                        updateHologram(IStatsType.DAILY);
-                    } else if (currentStatsType.equalsIgnoreCase(IStatsType.ALLTIME)) {
-                        updateHologram(IStatsType.MONTHLY);
-                    }
-                });
+
+                cooldown = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+                player.playSound(player.getLocation(), Sound.CLICK, 1, 100);
+
+
+
+                switch (statsType) {
+                    case DAILY -> statsType = StatsType.MONTHLY;
+                    case MONTHLY -> statsType = StatsType.ALLTIME;
+                    case ALLTIME -> statsType = StatsType.DAILY;
+                }
+
+
+                updateHologram();
             });
         }
 
-        TextLine clickLine = (TextLine) hologram.getLine(12);
-        clickLine.setText("§f§lClick to toggle type!");
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(instance,() -> {
-            tops.put(IStatsType.ALLTIME,refreshTopTen(IStatsType.ALLTIME));
-            tops.put(IStatsType.MONTHLY,refreshTopTen(IStatsType.MONTHLY));
-            tops.put(IStatsType.DAILY,refreshTopTen(IStatsType.DAILY));
-            updateHologram(IStatsType.ALLTIME);
-        },1,20*60*15);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(BukkitHolyAPI.getInstance(), () -> {
+            top.put(StatsType.ALLTIME, refreshTop(StatsType.ALLTIME));
+            top.put(StatsType.MONTHLY, refreshTop(StatsType.MONTHLY));
+            top.put(StatsType.DAILY, refreshTop(StatsType.DAILY));
+            updateHologram();
+        }, 10, 20 * 60 * 5);
     }
 
-    private void updateHologram(String statsType) {
-        currentStatsType = statsType;
+
+    private void updateHologram() {
         TextLine textLine = (TextLine) hologram.getLine(1);
         textLine.setText("§8§m----------§f§lTOP 10§8§m----------");
-
-        for (int j = 2; j <= 11; j++) {
-            TopPlayer topPlayer = tops.get(statsType).get(j - 1);
-            TextLine playerLine = (TextLine) hologram.getLine(j);
+        for (int i = 2; i < 11; i++) {
+            TopPlayer topPlayer = top.get(statsType).get(i -1);
+            textLine = (TextLine) hologram.getLine(i);
             if (topPlayer != null) {
-                playerLine.setText("§7#§6" + (j - 1) + " §8︳ " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(topPlayer.getUuid()) + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getName(topPlayer.getUuid()) + " §8» §a" + topPlayer.getWins() + " Wins");
+                textLine.setText("§7#" + topPlayer.getRank() + " §8» " + topPlayer.getName() + " §8» §a" + topPlayer.getValue() + " §cTrophies");
             } else {
-                playerLine.setText("§7-/-");
+                textLine.setText("§7-/-");
             }
         }
+
         TextLine lastLine = (TextLine) hologram.getLine(13);
-        if (currentStatsType.equalsIgnoreCase(IStatsType.DAILY)) {
-            lastLine.setText("§7Alltime §8︳ §7Monthly §8︳ §e§lDAILY");
-            ItemLine itemLine = (ItemLine) hologram.getLine(0);
-            itemLine.setItemStack(new ItemBuilder(Material.WOOD_SWORD).build());
-        } else if (currentStatsType.equalsIgnoreCase(IStatsType.MONTHLY)) {
-            lastLine.setText("§7Alltime §8︳ §e§lMONTHLY §8︳ §7Daily");
-            ItemLine itemLine = (ItemLine) hologram.getLine(0);
-            itemLine.setItemStack(new ItemBuilder(Material.IRON_SWORD).build());
-        } else if (currentStatsType.equalsIgnoreCase(IStatsType.ALLTIME)) {
-            lastLine.setText("§e§lALLTIME §8︳ §7Monthly §8︳ §7Daily");
-            ItemLine itemLine = (ItemLine) hologram.getLine(0);
-            itemLine.setItemStack(new ItemBuilder(Material.DIAMOND_SWORD).build());
+        switch (statsType) {
+            case DAILY -> lastLine.setText("§7Alltime §8︳ §7Monthly §8︳ §a§lDAILY");
+            case MONTHLY -> lastLine.setText("§7Alltime §8︳ §e§lMONTHLY §8︳ §7Daily");
+            case ALLTIME -> lastLine.setText("§c§lALLTIME §8︳ §7Monthly §8︳ §7Daily");
         }
         ((TextLine) hologram.getLine(14)).setText("§8§m----------§f§lTOP 10§8§m----------");
+
     }
 
-    private HashMap<Integer, TopPlayer> refreshTopTen(String statsType) {
-        tops.get(statsType).clear();
-        StreamSupport.stream()
-        List<Document> documentList = BukkitHolyAPI.getInstance().getDatabaseHandler().getMongoDatabase().getCollection(ICollections.MLGRUSH).find().into(Lists.newArrayList());
-        HashMap<UUID, Integer> hashMap = new HashMap<>();
-        for (Document document : documentList) {
-            hashMap.put((UUID) document.get("uuid"), document.get(statsType, Document.class).getInteger("won_games"));
-        }
-        int rankValue = 0;
-        Object[] a = hashMap.entrySet().toArray();
-        Arrays.sort(a, (Comparator) (o1, o2) -> ((Map.Entry<UUID, Integer>) o2).getValue().compareTo(((Map.Entry<UUID, Integer>) o1).getValue()));
-        HashMap<Integer, TopPlayer> tempMap = new HashMap<>();
-        for (Object e : a) {
-            rankValue++;
-            UUID uuid1 = ((Map.Entry<UUID, Integer>) e).getKey();
-            int wins = ((Map.Entry<UUID, Integer>) e).getValue();
-            tempMap.put(rankValue,new TopPlayer(wins,uuid1));
-            if (rankValue == 10)
-                break;
-        }
 
-        return tempMap;
+    private void refreshTop(StatsType statsType) {
     }
+
 
     @Getter
     public class TopPlayer {
-        private int wins;
-        private UUID uuid;
+        private final String name;
+        private final int value;
+        private final int rank;
 
-        public TopPlayer(int wins, UUID uuid) {
-            this.wins = wins;
-            this.uuid = uuid;
+        public TopPlayer(String name, int value, int rank) {
+            this.name = name;
+            this.value = value;
+            this.rank = rank;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public int getRank() {
+            return rank;
         }
     }
-*/
 
 }

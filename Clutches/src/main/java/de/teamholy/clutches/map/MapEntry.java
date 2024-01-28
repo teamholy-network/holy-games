@@ -62,7 +62,7 @@ public class MapEntry {
 
 
     public ArenaEntry getFreeArena() {
-        List<ArenaEntry> arenaEntryList = arenaEntryHashMap.values().stream().filter(arenaEntry -> !arenaEntry.isUsed()).filter(arenaEntry -> arenaEntry.getArenaPlayers().size() == 0).collect(Collectors.toList());
+        List<ArenaEntry> arenaEntryList = arenaEntryHashMap.values().stream().filter(arenaEntry -> !arenaEntry.isUsed()).filter(arenaEntry -> arenaEntry.getArenaPlayers().isEmpty()).toList();
         if (arenaEntryList.isEmpty()) {
             return null;
         } else {
