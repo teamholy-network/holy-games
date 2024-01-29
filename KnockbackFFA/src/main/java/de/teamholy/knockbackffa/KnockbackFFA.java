@@ -1,5 +1,8 @@
 package de.teamholy.knockbackffa;
 
+import de.teamholy.api.bukkit.utils.TopHolo;
+import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.knockbackffa.commands.QuitCommand;
 import de.teamholy.knockbackffa.commands.SetupCommand;
 import de.teamholy.knockbackffa.commands.TeamingCommand;
@@ -61,6 +64,7 @@ public class KnockbackFFA extends JavaPlugin {
         registerListener("de.teamholy.knockbackffa.listeners");
         registerMaps();
         startMoveListener();
+        new TopHolo(BukkitHolyAPI.getInstance().getLocationManager().getLocation("topHolo"), Gamemodes.KNOCKBACKFFA, new ItemBuilder(Material.SANDSTONE).build());
         new ArmorColorRainbowTask(this);
     }
 

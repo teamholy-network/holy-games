@@ -2,7 +2,7 @@ name: API
 version: 1.0
 main: de.teamholy.api.BukkitHolyAPI
 
-depend: [ProtocolLib, bukkit-core, SlimeWorldManager]
+depend: [ProtocolLib, bukkit-core, SlimeWorldManager, HolographicDisplays]
 
 commands:
   sudo:
