@@ -4,6 +4,10 @@ import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -20,4 +24,23 @@ public class BlockBreakListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPhysics(BlockPhysicsEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFrom(BlockFromToEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onForm(BlockFormEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent event) {
+        event.setCancelled(true);
+    }
 }

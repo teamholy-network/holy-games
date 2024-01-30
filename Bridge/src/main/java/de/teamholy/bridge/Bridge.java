@@ -12,9 +12,11 @@ import de.teamholy.bridge.map.loader.BridgeSchematicIndex;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.timer.BridgeTimer;
+import de.teamholy.bridge.util.VoidGenerator;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -50,6 +52,15 @@ public class Bridge extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        if (Bukkit.getWorld("world") != null) {
+            Bukkit.unloadWorld("world", false);
+            getLogger().info("Unloaded world");
+
+            Bukkit.createWorld(new WorldCreator("world").generator(new VoidGenerator()));
+            getLogger().info("Created world");
+        }
+
         this.bridgeSchematicIndex = loadBridgeSchematicIndex();
 
         this.playerManagement = new PlayerManagement();
