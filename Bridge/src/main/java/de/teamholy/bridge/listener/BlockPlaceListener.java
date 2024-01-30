@@ -48,9 +48,10 @@ public class BlockPlaceListener implements Listener {
 
             if (event.getPlayer().getInventory().getItemInHand().getType() == event.getBlockPlaced().getType()) {
                 event.getPlayer().getInventory().getItemInHand().setAmount(event.getPlayer().getInventory().getItemInHand().getMaxStackSize());
+                bridgePlayer.addPlacedBlock();
+
             }
 
-            //var blocksPlaced = blocks.size();
         }
     }
 

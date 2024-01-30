@@ -5,6 +5,9 @@ import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.core.api.entities.game.StatsType;
+import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,6 +50,7 @@ public class PlayerQuitListener implements Listener {
         }
 
         bridgePlayer.getBlocks().clear();
+        bridgePlayer.saveStats();
 
         playerManagement.removePlayer(event.getPlayer());
     }

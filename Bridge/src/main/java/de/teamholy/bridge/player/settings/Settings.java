@@ -14,7 +14,6 @@ import org.bukkit.Material;
 @Setter
 public class Settings {
 
-    private boolean islandMoving = false;
     private Material blockMaterial = Material.SANDSTONE;
     private boolean removeBlocks = false;
     private long removalTime = 0;

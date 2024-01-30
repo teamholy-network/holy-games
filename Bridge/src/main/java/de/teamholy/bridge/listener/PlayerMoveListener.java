@@ -43,11 +43,6 @@ public class PlayerMoveListener implements Listener {
             }
             var map = bridgePlayer.getMap().clone();
 
-            var settings = bridgePlayer.getSettings();
-            if (settings.isIslandMoving()) {
-                mapManagement.moveIslandForPlayer(bridgePlayer, map.clone(), event);
-            }
-
             MapPosition mapPosition = map.getMapPosition();
             if (mapPosition == null) return;
 
@@ -82,7 +77,13 @@ public class PlayerMoveListener implements Listener {
                 var best = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()));
 
                 playerManagement.refillBlocks(player);
-                player.sendMessage(Bridge.PREFIX + "§7Your time was §e" + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" + FormatTime.formatTimeManually(best));
+                player.sendMessage(Bridge.PREFIX + "§7Your time was §e"
+                        + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" +
+                        FormatTime.formatTimeManually(best) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
+
+                if (current < best) {
+
+                }
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {
