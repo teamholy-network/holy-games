@@ -97,7 +97,7 @@ public class PlayerInventoryListener implements Listener {
             bridgePlayer.setMap(map);
             player.closeInventory();
 
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, map), 3L);
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, map, false), 3L);
         } else if (view.getTitle().equals("§8» §eSettings")) {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
@@ -117,7 +117,7 @@ public class PlayerInventoryListener implements Listener {
                 } else*/
                 if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Blocks")) {
                     player.openInventory(playerManagement.blocksInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMaps")) {
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Maps")) {
                     player.openInventory(mapManagement.getInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMap Settings")) {
                     player.openInventory(mapManagement.getMapSettingsInventory());
@@ -155,9 +155,9 @@ public class PlayerInventoryListener implements Listener {
             var mapType = map.getMapType();
 
             var selectedType = switch (clickedItemMeta.getDisplayName()) {
-                case "§aShort" -> BridgeMapType.SHORT;
-                case "§eLong" -> BridgeMapType.LONG;
-                case "§cDiagonal" -> BridgeMapType.DIAGONAL;
+                case "§a§lShort" -> BridgeMapType.SHORT;
+                case "§e§lLong" -> BridgeMapType.LONG;
+                case "§c§lDiagonal" -> BridgeMapType.DIAGONAL;
                 default -> map.getMapType();
             };
 
@@ -174,11 +174,11 @@ public class PlayerInventoryListener implements Listener {
 
             bridgePlayer.getBlocks().clear();
             player.closeInventory();
-            player.sendMessage(Bridge.PREFIX + "Changed Map Type to " + clickedItemMeta.getDisplayName());
+            player.sendMessage(Bridge.PREFIX + "Changed type to " + clickedItemMeta.getDisplayName());
 
             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
                     mapManagement.getLoader().loadMapForPlayer(bridgePlayer,
-                            mapManagement.getClosestMapToNameWithType(map.getName(), selectedType)), 3L);
+                            mapManagement.getClosestMapToNameWithType(map.getName(), selectedType), true), 3L);
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);
 

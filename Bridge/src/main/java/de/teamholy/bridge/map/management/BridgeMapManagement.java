@@ -31,7 +31,7 @@ public class BridgeMapManagement {
 
     private Inventory inventory;
     private final BridgeMapLoader loader;
-    private final String title = "§8» §6Map Types";
+    private final String title = "§8» §6Maps";
 
     private final Map<UUID, List<Location>> changedLocations = Maps.newHashMap();
     private final HashMap<BridgeMapType, Inventory> mapSettings = Maps.newHashMap();
@@ -63,11 +63,11 @@ public class BridgeMapManagement {
                 .name("§c§lDiagonal").amount(loader.getMaps().stream().filter(type -> type.getMapType() == BridgeMapType.DIAGONAL).toList().size()).build());
 
         this.mapSettings.put(BridgeMapType.SHORT,
-                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.SHORT), "§8» §aShort Maps"));
+                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.SHORT), "§8» §a§lShort Maps"));
         this.mapSettings.put(BridgeMapType.LONG,
-                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.LONG), "§8» §eLong Maps"));
+                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.LONG), "§8» §e§lLong Maps"));
         this.mapSettings.put(BridgeMapType.DIAGONAL,
-                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.DIAGONAL), "§8» §cDiagonal Maps"));
+                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.DIAGONAL), "§8» §c§lDiagonal Maps"));
     }
 
     private int getInventorySizeByMap(BridgeMapType bridgeMapType) {

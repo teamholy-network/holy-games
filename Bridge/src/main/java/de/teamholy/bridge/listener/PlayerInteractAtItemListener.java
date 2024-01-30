@@ -39,7 +39,7 @@ public class PlayerInteractAtItemListener implements Listener {
             if (item.getItemMeta() != null
                     && item.getItemMeta().getDisplayName() != null) {
 
-                if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§bMaps")) {
+                if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§6Maps")) {
                     player.openInventory(getMapInventory());
                 } else if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§cLeave")) {
                     player.kickPlayer("");

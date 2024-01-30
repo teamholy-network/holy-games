@@ -68,7 +68,7 @@ public class BridgeMapLoader {
         }
     }
 
-    public void loadMapForPlayer(BridgePlayer player, BridgeMap bridgeMap) {
+    public void loadMapForPlayer(BridgePlayer player, BridgeMap bridgeMap, boolean changedType) {
         if (bridgeMap.isLoading()) return;
 
         if (bridgeMap.getMapType() == null) bridgeMap.setMapType(player.getMap().getMapType());
@@ -105,14 +105,14 @@ public class BridgeMapLoader {
 
                     playerManagement.updateScoreboard(player);
 
-                    bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + bridgeMap.getTitle() + " §7with the type §6" + bridgeMap.getMapType().getName() + "§8!");
+                    if (!changedType)
+                        bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + bridgeMap.getTitle() + " §7with the type §6" + bridgeMap.getMapType().getName() + "§8!");
                 }, 3);
             } else {
                 player.getPlayer().sendMessage(Bridge.PREFIX + "§cThe map §e" + bridgeMap.getName() + " §ccould not be loaded!");
             }
         });
     }
-
 
 
     public void unloadMap(BridgePlayer bridgePlayer) {
