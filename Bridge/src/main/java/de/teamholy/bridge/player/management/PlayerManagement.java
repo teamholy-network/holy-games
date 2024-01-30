@@ -190,7 +190,7 @@ public class PlayerManagement {
 
         if (bestTime == 0 || current < bestTime) {
             bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
-            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(current));
+            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType())));
 
             addBestTime(bridgePlayer);
             updateScoreboard(bridgePlayer);
@@ -202,6 +202,7 @@ public class PlayerManagement {
     }
 
     public String checkBestTime(long bestTime) {
+        Bukkit.broadcastMessage("best: " + bestTime);
         return (bestTime == 0) ? "§c-/-" : " §e" + FormatTime.formatTimeManually(bestTime);
     }
 
@@ -226,7 +227,6 @@ public class PlayerManagement {
 
             for (int j = 7; j >= 3; j--) {
                 if (!bridgeScoreboard.contains(j)) bridgeScoreboard.setLine(j, " §cNo one");
-                else bridgeScoreboard.updateLine(j, " §cNo one");
             }
         }
 

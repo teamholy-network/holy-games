@@ -16,6 +16,7 @@ import de.teamholy.bridge.util.VoidGenerator;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -57,7 +58,8 @@ public class Bridge extends JavaPlugin {
             Bukkit.unloadWorld("world", false);
             getLogger().info("Unloaded world");
 
-            Bukkit.createWorld(new WorldCreator("world").generator(new VoidGenerator()));
+            Bukkit.createWorld(new WorldCreator("world").generator(new VoidGenerator()).generateStructures(false));
+            Bukkit.getWorld("world").getBlockAt(0, 70, 0).setType(Material.AIR);
             getLogger().info("Created world");
         }
 

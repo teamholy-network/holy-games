@@ -8,6 +8,7 @@ import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,6 +34,7 @@ public class PlayerMoveListener implements Listener {
                 && (event.getFrom().getBlockZ() == event.getTo().getBlockZ())
                 && (event.getFrom().getWorld() == event.getTo().getWorld()))
             return;*/
+        if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) return;
         var player = event.getPlayer();
 
 
@@ -80,10 +82,6 @@ public class PlayerMoveListener implements Listener {
                 player.sendMessage(Bridge.PREFIX + "§7Your time was §e"
                         + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" +
                         FormatTime.formatTimeManually(best) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
-
-                if (current < best) {
-
-                }
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {
