@@ -16,24 +16,25 @@ import java.util.List;
  **/
 @Getter
 @Setter
-public class MapPosition implements Cloneable {
+public class MapPosition {
 
-    private Location high, bottom, start, middle, endHigh, endBottom, endStart;
-    private List<CustomBlock> blocksSpawn;
-    private List<CustomBlock> blocksEnd;
+    private double minX, minY, minZ, maxX, maxY, maxZ;
 
-    private transient List<Location> transientSpawnLocation =
-            Lists.newArrayList(),
-            transientEndLocation = Lists.newArrayList();
-    private transient Location transientSpawn;
-
-    @Override
-    public MapPosition clone() {
-        try {
-            return (MapPosition) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            System.out.println("Error while cloning map position but skipping it and using the original one");
-        }
-        return null;
+    public MapPosition(final Location first, final Location second) {
+        this.minX = Math.min(first.getX(), second.getX());
+        this.minY = Math.min(first.getY(), second.getY());
+        this.minZ = Math.min(first.getZ(), second.getZ());
+        this.maxX = Math.max(first.getX(), second.getX());
+        this.maxY = Math.max(first.getY(), second.getY());
+        this.maxZ = Math.max(first.getZ(), second.getZ());
     }
+
+    public boolean isInMapPosition(Location location, boolean useY) {
+        double x = location.getX(), y = location.getY(), z = location.getZ();
+        if (useY) {
+            return x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ && z <= maxZ;
+        } else
+            return x >= minX && x <= maxX && z >= minZ && z <= maxZ;
+    }
+
 }
