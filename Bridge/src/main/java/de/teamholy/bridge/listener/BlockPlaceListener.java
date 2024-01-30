@@ -22,7 +22,7 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer().get(event.getPlayer().getUniqueId());
+        BridgePlayer bridgePlayer = playerManagement.getBridgePlayers().get(event.getPlayer().getUniqueId());
 
         if (bridgePlayer.getState() != BridgePlayer.PlayerState.INGAME) {
             event.setCancelled(true);

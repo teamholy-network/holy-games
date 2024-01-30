@@ -31,7 +31,7 @@ public class PlayerInteractAtItemListener implements Listener {
 
         event.setCancelled(!event.getPlayer().isOp());
 
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer().get(player.getUniqueId());
+        BridgePlayer bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (item == null) return;

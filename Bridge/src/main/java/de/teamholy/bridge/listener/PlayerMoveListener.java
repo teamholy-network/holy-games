@@ -36,7 +36,7 @@ public class PlayerMoveListener implements Listener {
         var player = event.getPlayer();
 
 
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer().get(player.getUniqueId());
+        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(player);
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             if (bridgePlayer.getMap() == null) {
                 return;
@@ -78,7 +78,7 @@ public class PlayerMoveListener implements Listener {
                 bridgePlayer.getBlocks().clear();
 
                 var current = (System.currentTimeMillis() - playerManagement.getPlayerTime().remove(player.getUniqueId()));
-                var best = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime());
+                var best = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()));
 
                 playerManagement.refillBlocks(player);
                 player.sendMessage("§7Your time was §e" + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" + FormatTime.formatTimeManually(best));

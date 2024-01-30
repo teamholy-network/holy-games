@@ -27,7 +27,7 @@ public class PlayerQuitListener implements Listener {
         event.setQuitMessage(null);
 
         final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer().get(event.getPlayer().getUniqueId());
+        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             mapManagement.getLoader().unloadMap(bridgePlayer);

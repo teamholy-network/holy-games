@@ -49,15 +49,12 @@ public class PlayerInventoryListener implements Listener {
             var map = mapManagement.getMap(mapName);
             if (map == null) return;
 
-            var bridgePlayer = playerManagement.getBridgePlayer().get(player.getUniqueId());
+            var bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());
 
-            if (bridgePlayer.getMapType() == null) {
-                bridgePlayer.setMapType(BridgeMapType.SHORT); // standard map type
-            }
 
             var oldMap = bridgePlayer.getMap();
-            var copiedMap = mapManagement.getClosestMapToNameWithType(map.getName(), bridgePlayer.getMapType()).clone();
-
+            if (oldMap == null) return;
+            var copiedMap = mapManagement.getClosestMapToNameWithType(map.getName(), oldMap.getMapType()).clone();
 
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
                 if (bridgePlayer.getMap() != null) {
@@ -65,21 +62,18 @@ public class PlayerInventoryListener implements Listener {
                     return;
                 }
             } else {
-                if (oldMap != null) {
-                    if (oldMap.getName().equals(map.getName())) {
-                        player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
-                        return;
-                    }
-
-                    mapManagement.getLoader().unloadMap(bridgePlayer);
-
-                    if (!bridgePlayer.getBlocks().isEmpty()) {
-                        bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
-                    }
-
-                    bridgePlayer.getBlocks().clear();
-                    Bukkit.broadcastMessage("map was not null");
+                if (oldMap.getName().equals(map.getName())) {
+                    player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
+                    return;
                 }
+
+                mapManagement.getLoader().unloadMap(bridgePlayer);
+
+                if (!bridgePlayer.getBlocks().isEmpty()) {
+                    bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
+                }
+
+                bridgePlayer.getBlocks().clear();
             }
 
             if (copiedMap.isLoading()) {
@@ -90,7 +84,6 @@ public class PlayerInventoryListener implements Listener {
             bridgePlayer.setMap(copiedMap);
             player.closeInventory();
 
-            Bukkit.broadcastMessage("Load new map");
             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, copiedMap), 3L);
         } else if (view.getTitle().equals("§8» §eSettings")) {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
@@ -124,7 +117,8 @@ public class PlayerInventoryListener implements Listener {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
             var material = event.getCurrentItem().getType();
 
-            if (material == Material.AIR || material == Material.REDSTONE_COMPARATOR || material == Material.SLIME_BALL) return;
+            if (material == Material.AIR || material == Material.REDSTONE_COMPARATOR || material == Material.SLIME_BALL)
+                return;
 
             if (bridgePlayer.getSettings().getBlockMaterial() == material) return;
 
@@ -166,10 +160,11 @@ public class PlayerInventoryListener implements Listener {
             }
 
             bridgePlayer.getBlocks().clear();
-            bridgePlayer.setMapType(selectedType);
             player.closeInventory();
             player.sendMessage(Bridge.PREFIX + "Changed Map Type to " + clickedItemMeta.getDisplayName());
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer,
+
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
+                    mapManagement.getLoader().loadMapForPlayer(bridgePlayer,
                     mapManagement.getClosestMapToNameWithType(map.getName(), selectedType)), 3L);
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);

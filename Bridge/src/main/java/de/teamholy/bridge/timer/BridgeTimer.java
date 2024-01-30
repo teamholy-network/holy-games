@@ -22,7 +22,7 @@ public class BridgeTimer extends BukkitRunnable {
 
     @Override
     public void run() {
-        playerManagement.getBridgePlayer().values().forEach(bridgePlayer -> {
+        playerManagement.getBridgePlayers().values().forEach(bridgePlayer -> {
             var player = bridgePlayer.getPlayer();
 
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {

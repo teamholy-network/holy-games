@@ -27,9 +27,8 @@ public class BridgePlayer {
     private PlayerState state;
     private HashMap<Block, Long> blocks;
     private ScoreboardAPI bridgeScoreboard;
-    private long localBestTime;
 
-    private BridgeMapType mapType;
+    private HashMap<BridgeMapType, Long> localBestTime;
 
     private Settings settings;
 
@@ -38,9 +37,18 @@ public class BridgePlayer {
         this.state = PlayerState.LOBBY; // initial normal state
         this.blocks = Maps.newHashMap();
         this.settings = new Settings();
+        this.localBestTime = Maps.newHashMap();
     }
 
     public enum PlayerState {
         LOBBY, INGAME, SPECTATOR;
+    }
+
+    public long getLocalBestTime(BridgeMapType mapType) {
+        return localBestTime.getOrDefault(mapType, 0L);
+    }
+
+    public void setLocalBestTime(BridgeMapType mapType, long time) {
+        localBestTime.put(mapType, time);
     }
 }

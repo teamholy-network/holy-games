@@ -33,7 +33,7 @@ public class BridgeMapManagement {
     private final Map<UUID, List<Location>> changedLocations = Maps.newHashMap();
 
     public BridgeMapManagement() {
-        this.loader = new BridgeMapLoader();
+        this.loader = new BridgeMapLoader(this);
         loadMaps();
     }
 

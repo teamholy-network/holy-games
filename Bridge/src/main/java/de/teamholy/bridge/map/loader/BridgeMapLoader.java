@@ -34,11 +34,14 @@ public class BridgeMapLoader {
     private final Gson gson;
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
-    public BridgeMapLoader() {
+    private final BridgeMapManagement mapManagement;
+
+    public BridgeMapLoader(BridgeMapManagement mapManagement) {
         this.gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         Bridge.getInstance().getLogger().log(Level.INFO, "Loading maps...");
         this.maps = Lists.newArrayList();
         this.loadedMaps = Lists.newArrayList();
+        this.mapManagement = mapManagement;
     }
 
     public void loadSchematics() {
@@ -70,7 +73,7 @@ public class BridgeMapLoader {
     public void loadMapForPlayer(BridgePlayer player, BridgeMap bridgeMap) {
         if (bridgeMap.isLoading()) return;
 
-        if (bridgeMap.getMapType() == null) bridgeMap.setMapType(player.getMapType());
+        if (bridgeMap.getMapType() == null) bridgeMap.setMapType(player.getMap().getMapType());
 
         int x = calculateFreeSpaceBetweenMaps(bridgeMap.getMapType());
         bridgeMap.setGivenSpace(x);
@@ -82,7 +85,7 @@ public class BridgeMapLoader {
             bridgeMap.setGivenSpace(newX);
         }
 
-        Bukkit.broadcastMessage("X: " + bridgeMap.getGivenSpace());
+        playerManagement.setScoreboard(player);
 
         bridgeMap.loadMap(mapLocation).thenAccept(loaded -> {
             if (loaded) {
@@ -102,6 +105,8 @@ public class BridgeMapLoader {
                     bukkitPlayer.teleport(mapLocation);
                     playerManagement.prepareIngamePlayer(bukkitPlayer);
 
+                    playerManagement.updateScoreboard(player);
+
                     bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + bridgeMap.getTitle() + " §7with the type §6" + bridgeMap.getMapType().getName() + "§8!");
                 }, 3);
             } else {
@@ -110,7 +115,6 @@ public class BridgeMapLoader {
         });
     }
 
-    private final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
 
 
     public void unloadMap(BridgePlayer bridgePlayer) {
@@ -118,9 +122,7 @@ public class BridgeMapLoader {
 
         BridgeMap bridgeMap = bridgePlayer.getMap();
 
-        if (loadedMaps.remove(bridgeMap)) {
-            Bukkit.broadcastMessage("removed map " + bridgeMap.getName() + " Loc: " + bridgeMap.getLocation().getX() + ", " + bridgeMap.getLocation().getY() + ", " + bridgeMap.getLocation().getZ());
-        }
+        loadedMaps.remove(bridgeMap);
 
         bridgeMap.unloadMap();
 
