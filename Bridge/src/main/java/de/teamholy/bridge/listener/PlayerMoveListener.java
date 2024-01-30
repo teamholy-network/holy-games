@@ -49,6 +49,7 @@ public class PlayerMoveListener implements Listener {
             }
 
             MapPosition mapPosition = map.getMapPosition();
+            if (mapPosition == null) return;
 
             if (!mapPosition.isInMapPosition(event.getTo(), true)) {
                 if (bridgePlayer.getMap().getLocation() != null) {

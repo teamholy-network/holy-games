@@ -44,47 +44,60 @@ public class PlayerInventoryListener implements Listener {
             var clickedItemMeta = clickedItem.getItemMeta();
             if (clickedItemMeta == null) return;
 
+            var selectedInv = switch (clickedItemMeta.getDisplayName()) {
+                case "§a§lShort" -> mapManagement.getMapSettings().get(BridgeMapType.SHORT);
+                case "§e§lLong" -> mapManagement.getMapSettings().get(BridgeMapType.LONG);
+                case "§c§lDiagonal" -> mapManagement.getMapSettings().get(BridgeMapType.DIAGONAL);
+                default -> null;
+            };
+
+            if (selectedInv == null) return;
+
+            player.openInventory(selectedInv);
+        } else if (view.getTitle().endsWith(" Maps")) {
+            event.setCancelled(true);
+
+            var clickedItem = event.getCurrentItem();
+            if (clickedItem == null) return;
+
+            var clickedItemMeta = clickedItem.getItemMeta();
+            if (clickedItemMeta == null) return;
+
             var mapName = ChatColor.stripColor(clickedItemMeta.getDisplayName());
 
             var map = mapManagement.getMap(mapName);
-            if (map == null) return;
+            if (map == null) {
+                player.sendMessage(Bridge.PREFIX + "§cThis map does not exist!");
+                return;
+            }
 
             var bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());
 
+            var currentMap = bridgePlayer.getMap();
+            if (currentMap == null) return;
 
-            var oldMap = bridgePlayer.getMap();
-            if (oldMap == null) return;
-            var copiedMap = mapManagement.getClosestMapToNameWithType(map.getName(), oldMap.getMapType()).clone();
-
-            if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
-                if (bridgePlayer.getMap() != null) {
-                    player.sendMessage(Bridge.PREFIX + "§cThe Map is currently loading!");
-                    return;
-                }
-            } else {
-                if (oldMap.getName().equals(map.getName())) {
-                    player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
-                    return;
-                }
-
-                mapManagement.getLoader().unloadMap(bridgePlayer);
-
-                if (!bridgePlayer.getBlocks().isEmpty()) {
-                    bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
-                }
-
-                bridgePlayer.getBlocks().clear();
+            if (currentMap.getName().equals(map.getName())) {
+                player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
+                return;
             }
 
-            if (copiedMap.isLoading()) {
+            mapManagement.getLoader().unloadMap(bridgePlayer);
+
+            if (!bridgePlayer.getBlocks().isEmpty()) {
+                bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
+            }
+
+            bridgePlayer.getBlocks().clear();
+
+            if (map.isLoading()) {
                 player.sendMessage(Bridge.PREFIX + "§cThe Map is currently loading!");
                 return;
             }
 
-            bridgePlayer.setMap(copiedMap);
+            bridgePlayer.setMap(map);
             player.closeInventory();
 
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, copiedMap), 3L);
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, map), 3L);
         } else if (view.getTitle().equals("§8» §eSettings")) {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
@@ -107,7 +120,7 @@ public class PlayerInventoryListener implements Listener {
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMaps")) {
                     player.openInventory(mapManagement.getInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMap Settings")) {
-                    player.openInventory(mapManagement.getMapSettings(bridgePlayer.getMap().clone()));
+                    player.openInventory(mapManagement.getMapSettingsInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Block Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
                 }
@@ -165,7 +178,7 @@ public class PlayerInventoryListener implements Listener {
 
             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
                     mapManagement.getLoader().loadMapForPlayer(bridgePlayer,
-                    mapManagement.getClosestMapToNameWithType(map.getName(), selectedType)), 3L);
+                            mapManagement.getClosestMapToNameWithType(map.getName(), selectedType)), 3L);
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);
 
@@ -209,18 +222,23 @@ public class PlayerInventoryListener implements Listener {
             var clickedItemMeta = clickedItem.getItemMeta();
             if (clickedItemMeta == null) return;
 
-            if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§c§lClear")) {
-                bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.NONE);
-                player.sendMessage(Bridge.PREFIX + "You cleared the animation!");
-            } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Falling")) {
-                bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.FALLING);
-                player.sendMessage(Bridge.PREFIX + "You set the animation to §6Falling§7!");
-            } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Dropping")) {
-                bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.DROPPING);
-                player.sendMessage(Bridge.PREFIX + "You set the animation to §6Dropping§7!");
-            } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Breaking")) {
-                bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.BREAK);
-                player.sendMessage(Bridge.PREFIX + "You set the animation to §6Breaking§7!");
+            switch (clickedItemMeta.getDisplayName()) {
+                case "§c§lClear" -> {
+                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.NONE);
+                    player.sendMessage(Bridge.PREFIX + "You cleared the animation!");
+                }
+                case "§6Falling" -> {
+                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.FALLING);
+                    player.sendMessage(Bridge.PREFIX + "You set the animation to §6Falling§7!");
+                }
+                case "§6Dropping" -> {
+                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.DROPPING);
+                    player.sendMessage(Bridge.PREFIX + "You set the animation to §6Dropping§7!");
+                }
+                case "§6Breaking" -> {
+                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.BREAK);
+                    player.sendMessage(Bridge.PREFIX + "You set the animation to §6Breaking§7!");
+                }
             }
             player.closeInventory();
         }

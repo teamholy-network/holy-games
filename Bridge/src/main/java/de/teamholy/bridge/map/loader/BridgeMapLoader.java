@@ -51,10 +51,8 @@ public class BridgeMapLoader {
         }
         for (File file : Objects.requireNonNull(mapsFolder.listFiles())) {
             if (file.getName().endsWith(".schematic")) {
-                System.out.println(file.getName());
-
                 String name = file.getName().replace(".schematic", "");
-                BridgeMapType type = BridgeMapType.mapType(file.getName().split("-")[1].replace(".schematic", ""));
+                BridgeMapType type = BridgeMapType.mapType(file.getName().split("-")[1].replace(".schematic", "").toLowerCase());
 
                 if (type == null) return;
 
@@ -65,7 +63,7 @@ public class BridgeMapLoader {
 
                 maps.add(bridgeMap);
 
-                Bridge.getInstance().getLogger().log(Level.INFO, "Loaded map " + bridgeMap.getName());
+                Bridge.getInstance().getLogger().log(Level.INFO, "Loaded map " + bridgeMap.getName() + " with type: " + bridgeMap.getMapType().getName());
             }
         }
     }

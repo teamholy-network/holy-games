@@ -12,10 +12,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -28,9 +31,10 @@ public class BridgeMapManagement {
 
     private Inventory inventory;
     private final BridgeMapLoader loader;
-    private final String title = "§8» §6Bridge Maps";
+    private final String title = "§8» §6Map Types";
 
     private final Map<UUID, List<Location>> changedLocations = Maps.newHashMap();
+    private final HashMap<BridgeMapType, Inventory> mapSettings = Maps.newHashMap();
 
     public BridgeMapManagement() {
         this.loader = new BridgeMapLoader(this);
@@ -44,25 +48,39 @@ public class BridgeMapManagement {
         if (this.inventory == null) {
             registerInventory();
         }
+
         loader.getMaps().forEach(this::addMap);
         System.out.println("Loaded " + loader.getMaps().size() + " maps");
     }
 
     private void registerInventory() {
-        this.inventory = Bukkit.createInventory(null, getInventorySizeByMap(), title);
+        this.inventory = Bukkit.createInventory(null, 9, title);
+        this.inventory.setItem(3, new ItemBuilder(BridgeMapType.SHORT.getIcon())
+                .name("§a§lShort").amount(loader.getMaps().stream().filter(type -> type.getMapType() == BridgeMapType.SHORT).toList().size()).build());
+        this.inventory.setItem(4, new ItemBuilder(BridgeMapType.LONG.getIcon()
+        ).name("§e§lLong").amount(loader.getMaps().stream().filter(type -> type.getMapType() == BridgeMapType.LONG).toList().size()).build());
+        this.inventory.setItem(5, new ItemBuilder(BridgeMapType.DIAGONAL.getIcon())
+                .name("§c§lDiagonal").amount(loader.getMaps().stream().filter(type -> type.getMapType() == BridgeMapType.DIAGONAL).toList().size()).build());
+
+        this.mapSettings.put(BridgeMapType.SHORT,
+                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.SHORT), "§8» §aShort Maps"));
+        this.mapSettings.put(BridgeMapType.LONG,
+                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.LONG), "§8» §eLong Maps"));
+        this.mapSettings.put(BridgeMapType.DIAGONAL,
+                Bukkit.createInventory(null, getInventorySizeByMap(BridgeMapType.DIAGONAL), "§8» §cDiagonal Maps"));
     }
 
-    private int getInventorySizeByMap() {
+    private int getInventorySizeByMap(BridgeMapType bridgeMapType) {
         int size = 9;
-        if (loader.getMaps().size() > 9)
+        if (loader.getMaps().stream().filter(map -> map.getMapType() == bridgeMapType).toList().size() > 9)
             size = 18;
-        if (loader.getMaps().size() > 18)
+        if (loader.getMaps().stream().filter(map -> map.getMapType() == bridgeMapType).toList().size() > 18)
             size = 27;
-        if (loader.getMaps().size() > 27)
+        if (loader.getMaps().stream().filter(map -> map.getMapType() == bridgeMapType).toList().size() > 27)
             size = 36;
-        if (loader.getMaps().size() > 36)
+        if (loader.getMaps().stream().filter(map -> map.getMapType() == bridgeMapType).toList().size() > 36)
             size = 45;
-        if (loader.getMaps().size() > 45)
+        if (loader.getMaps().stream().filter(map -> map.getMapType() == bridgeMapType).toList().size() > 45)
             size = 54;
         return size;
     }
@@ -70,8 +88,21 @@ public class BridgeMapManagement {
     public void addMap(BridgeMap map) {
         if (map == null) return;
 
+        Inventory mapInventory = mapSettings.get(map.getMapType());
+        if (mapInventory == null) return;
 
-        this.inventory.addItem(new ItemBuilder(Material.valueOf(map.getMaterialName())).name(map.getName()).build());
+        ItemStack toAdd = new ItemBuilder(Material.valueOf(map.getMaterialName())).name(colorCodeByType(map.getMapType()) + map.getName()).build();
+        if (mapInventory.firstEmpty() != -1) {
+            if (!mapInventory.contains(toAdd))
+                mapInventory.addItem(toAdd);
+        }
+    }
+
+    private String colorCodeByType(BridgeMapType bridgeMapType) {
+        if (bridgeMapType == BridgeMapType.SHORT) return "§a";
+        if (bridgeMapType == BridgeMapType.LONG) return "§e";
+        if (bridgeMapType == BridgeMapType.DIAGONAL) return "§c";
+        return "§7";
     }
 
     public BridgeMap getMap(String name) {
@@ -140,16 +171,17 @@ public class BridgeMapManagement {
         }*/
     }
 
-    public Inventory getMapSettings(BridgeMap bridgeMap) {
+    public Inventory getMapSettingsInventory() {
         Inventory inventory = Bukkit.createInventory(null, 9, "§8» §bMap Settings");
-        inventory.setItem(3, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§aShort").lore("§8» §7Distance§8: §e" + BridgeMapType.SHORT.getLength()).build());
-        inventory.setItem(4, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§eLong").lore("§8» §7Distance§8: §e" + BridgeMapType.LONG.getLength()).build());
-        inventory.setItem(5, new ItemBuilder(Material.valueOf(bridgeMap.getMaterialName())).name("§cDiagonal").lore("§8» §7Distance§8: §e" + BridgeMapType.DIAGONAL.getLength()).build());
+        inventory.setItem(3, new ItemBuilder(BridgeMapType.SHORT.getIcon()).name("§a§lShort").lore("§8» §7Distance§8: §e" + BridgeMapType.SHORT.getLength()).build());
+        inventory.setItem(4, new ItemBuilder(BridgeMapType.LONG.getIcon()).name("§e§lLong").lore("§8» §7Distance§8: §e" + BridgeMapType.LONG.getLength()).build());
+        inventory.setItem(5, new ItemBuilder(BridgeMapType.DIAGONAL.getIcon()).name("§c§lDiagonal").lore("§8» §7Distance§8: §e" + BridgeMapType.DIAGONAL.getLength()).build());
         return inventory;
     }
 
     public BridgeMap getClosestMapToNameWithType(String name, BridgeMapType type) {
-        return loader.getMaps().stream().filter(map -> map.getName().split("-")[0].equalsIgnoreCase(name.split("-")[0]) && map.getMapType() == type)
+        return loader.getMaps().stream()
+                .filter(map -> map.getName().split("-")[0].equalsIgnoreCase(name.split("-")[0]) && map.getMapType() == type)
                 .findFirst()
                 .orElse(null);
     }

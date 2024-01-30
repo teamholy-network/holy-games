@@ -19,7 +19,7 @@ public enum BridgeMapType {
 
     public static BridgeMapType mapType(String name) {
         for (var value : values()) {
-            if (value.getName().equalsIgnoreCase(name)) {
+            if (value.getName().toLowerCase().equals(name)) {
                 return value;
             }
         }
