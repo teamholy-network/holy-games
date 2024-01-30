@@ -1,12 +1,8 @@
 package de.teamholy.bridge.map.position;
 
-import com.google.common.collect.Lists;
-import de.teamholy.bridge.custom.CustomBlock;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
-
-import java.util.List;
 
 /**
  * Copyright (c) charon, All Rights Reserved
