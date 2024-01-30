@@ -54,7 +54,7 @@ public class PlayerInteractAtItemListener implements Listener {
             if (item.getItemMeta() != null
                     && item.getItemMeta().getDisplayName() != null) {
                 if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§cQuit")) {
-                    bridgePlayer.setState(BridgePlayer.PlayerState.LOBBY);
+           /*         bridgePlayer.setState(BridgePlayer.PlayerState.LOBBY);
                     playerManagement.loadLobbyInventory(player);
                     mapManagement.getLoader().unloadMap(bridgePlayer);
 
@@ -63,6 +63,9 @@ public class PlayerInteractAtItemListener implements Listener {
                     }
 
                     bridgePlayer.getBlocks().clear();
+*/
+                    player.kickPlayer("");
+
                 } else if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§eSettings")) {
                     event.setCancelled(true);
                     playerManagement.ingameSettingsInventory(player);

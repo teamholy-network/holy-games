@@ -29,24 +29,25 @@ public class PlayerQuitListener implements Listener {
         final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
         var map = bridgePlayer.getMap();
-        if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
-            mapManagement.getLoader().unloadMap(bridgePlayer);
+        playerManagement.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
+        playerManagement.getTopPlayer().get(map.getMapType()).remove(playerManagement.getBridgePlayer(event.getPlayer()));
 
-            if (!bridgePlayer.getBlocks().isEmpty()) {
-                bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
-            }
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerManagement.updateScoreboardForPlayer(map.getMapType()), 5);
 
-            if (!mapManagement.getChangedLocations().isEmpty() && mapManagement.getChangedLocations().containsKey(bridgePlayer.getPlayer().getUniqueId())) {
-                for (Location location : mapManagement.getChangedLocations().get(bridgePlayer.getPlayer().getUniqueId())) {
-                    location.getBlock().setType(Material.AIR);
-                }
+        mapManagement.getLoader().unloadMap(bridgePlayer);
+
+        if (!bridgePlayer.getBlocks().isEmpty()) {
+            bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
+        }
+
+        if (!mapManagement.getChangedLocations().isEmpty() && mapManagement.getChangedLocations().containsKey(bridgePlayer.getPlayer().getUniqueId())) {
+            for (Location location : mapManagement.getChangedLocations().get(bridgePlayer.getPlayer().getUniqueId())) {
+                location.getBlock().setType(Material.AIR);
             }
         }
 
         bridgePlayer.getBlocks().clear();
 
-        playerManagement.getTopPlayer().get(BridgeMapType.LONG).remove(playerManagement.getBridgePlayer(event.getPlayer()));
-        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerManagement.updateScoreboardForPlayer(map.getMapType()), 5);
         playerManagement.removePlayer(event.getPlayer());
     }
 

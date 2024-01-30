@@ -67,13 +67,14 @@ public class PlayerManagement {
 
     public void loadLobbyInventory(Player player) {
         preparePlayer(player);
+        /*
         player.setGameMode(GameMode.ADVENTURE);
 
         player.teleport(player.getWorld().getSpawnLocation());
 
         player.getInventory().setItem(2, new ItemBuilder(Material.PAPER).name("§bMaps").build());
         player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§eSettings").build());
-        player.getInventory().setItem(6, new ItemBuilder(Material.SLIME_BALL).name("§cLeave").build());
+        player.getInventory().setItem(6, new ItemBuilder(Material.SLIME_BALL).name("§cLeave").build());*/
     }
 
     public void prepareIngamePlayer(Player player) {
@@ -243,6 +244,10 @@ public class PlayerManagement {
                 var bridgeScoreboard = getScoreboard(player);
                 var bridgePlayer = getBridgePlayer(player);
 
+                if (bridgePlayer.getMap() == null) {
+                    bridgeScoreboard.updateLine(i.get(), " §cNo one");
+                    continue;
+                }
                 if (bridgePlayer.getMap().getMapType() == bridgeMapType) {
                     bridgeScoreboard.updateLine(i.get(), string);
                 }
