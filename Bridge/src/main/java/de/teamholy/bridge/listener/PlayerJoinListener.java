@@ -45,11 +45,6 @@ public class PlayerJoinListener implements Listener {
             var randomMap = bridgeMapManagement.getLoader().getMaps().get(random).clone();
             if (randomMap == null) return;
 
-            randomMap.setMapType(BridgeMapType.SHORT); // standard type!
-            randomMap.setMapPlayer(player.getPlayer());
-            player.setMapType(BridgeMapType.SHORT); // standard type!
-            player.setMap(randomMap);
-
             bridgeMapManagement.getLoader().loadMapForPlayer(player, randomMap);
         }
 

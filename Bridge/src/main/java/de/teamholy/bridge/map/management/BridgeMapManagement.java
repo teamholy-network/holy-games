@@ -1,23 +1,17 @@
 package de.teamholy.bridge.map.management;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import de.teamholy.bridge.custom.CustomBlock;
 import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.loader.BridgeMapLoader;
-import de.teamholy.bridge.map.loader.BridgeSchematicLoader;
-import de.teamholy.bridge.map.position.BridgeBlockPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.util.ItemBuilder;
-import de.teamholy.bridge.map.position.MapPosition;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Map;
@@ -76,7 +70,8 @@ public class BridgeMapManagement {
     public void addMap(BridgeMap map) {
         if (map == null) return;
 
-        this.inventory.addItem(new ItemBuilder(Material.valueOf(map.getMaterialName())).name(map.getTitle()).build());
+
+        this.inventory.addItem(new ItemBuilder(Material.valueOf(map.getMaterialName())).name(map.getName()).build());
     }
 
     public BridgeMap getMap(String name) {
@@ -154,6 +149,8 @@ public class BridgeMapManagement {
     }
 
     public BridgeMap getClosestMapToNameWithType(String name, BridgeMapType type) {
-        return loader.getMaps().stream().filter(map -> map.getName().equalsIgnoreCase(name + "-" + type.name())).findFirst().orElse(getMap(name.replace("-Normal", "").replace("-Inclined", "")));
+        return loader.getMaps().stream().filter(map -> map.getName().split("-")[0].equalsIgnoreCase(name.split("-")[0]) && map.getMapType() == type)
+                .findFirst()
+                .orElse(null);
     }
 }

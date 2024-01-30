@@ -152,12 +152,15 @@ public class PlayerManagement {
             return;
         }
         ScoreboardAPI bridgeScoreboard = new ScoreboardAPI();
-        bridgeScoreboard.createScoreboard(player, "§8» §eBridge");
+        bridgeScoreboard.createScoreboard(player, "§e");
         bridgeScoreboard.setLine(13, "§8§m-----------------");
-        bridgeScoreboard.setLine(12, " §7Best Time");
+        bridgeScoreboard.setLine(12, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ?  bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
         bridgeScoreboard.setLine(11, " §e" + checkBestTime(bridgePlayer.getLocalBestTime()));
         bridgeScoreboard.setLine(10, "§7");
-        bridgeScoreboard.setLine(9, " §6Top 5");
+
+        String top5 = " §6Top 5 §8(§e" + ( bridgePlayer.getMap() != null ?  bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)";
+
+        bridgeScoreboard.setLine(9, top5);
         bridgeScoreboard.setLine(8, "§7§r");
         bridgeScoreboard.setLine(2, "§8");
         bridgeScoreboard.setLine(1, "§8§m-----------------");

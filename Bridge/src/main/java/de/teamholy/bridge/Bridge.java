@@ -64,7 +64,7 @@ public class Bridge extends JavaPlugin {
             playerManagement.getTopPlayer().put(value, new HashMap<>());
         }
 
-      //  mapManagement.getLoader().loadBridgeMapsStartup(20);
+      // mapManagement.getLoader().loadBridgeMapsStartup(20);
     }
 
     @Override
@@ -75,35 +75,7 @@ public class Bridge extends JavaPlugin {
 
     @SneakyThrows
     private BridgeSchematicIndex loadBridgeSchematicIndex() {
-        final Path path = Paths.get(getDataFolder().getAbsolutePath() + "/index.json");
-        if (!Files.exists(path)) {
-            Files.copy(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("index.json")), path);
-            getLogger().info("Created index file!");
-        }
-
-        final BridgeSchematicIndex bridgeSchematicIndex = gson.fromJson(Files.newBufferedReader(path), BridgeSchematicIndex.class);
-        if (bridgeSchematicIndex == null) {
-            getLogger().severe("Could not load index file!");
-        }
-        return bridgeSchematicIndex;
-    }
-
-    @SneakyThrows
-    public void saveBridgeSchematicIndex() {
-        final Path path = Paths.get(getDataFolder().getAbsolutePath() + "/index.json");
-        if (!Files.exists(path)) {
-            Files.copy(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("index.json")), path);
-            getLogger().info("Created index file!");
-        }
-
-        try (FileOutputStream fos = new FileOutputStream(path.toFile()); OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-             JsonWriter writer = new JsonWriter(osw)) {
-            String json = getGson().toJson(bridgeSchematicIndex);
-            JsonElement jsonElement = new JsonParser().parse(json);
-            getGson().toJson(jsonElement, writer);
-
-            getLogger().info("Saved to: " + path.toAbsolutePath());
-        }
+        return new BridgeSchematicIndex(0);
     }
 
     private void loadCommand() {

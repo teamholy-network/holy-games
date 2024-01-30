@@ -63,6 +63,13 @@ public class BridgeMap implements Cloneable {
             editSession.undo(editSession);
         }
         setLocation(location);
+        int distance = (mapType.getLength() + 10);
+        if (mapType == BridgeMapType.DIAGONAL) {
+
+            mapPosition = new MapPosition(location.clone().add(distance, 35, 10), location.clone().subtract(10, 10, distance));
+        } else {
+            mapPosition = new MapPosition(location.clone().add(10, 35, 10), location.clone().subtract(10, 10, distance));
+        }
 
         isLoading = true;
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();

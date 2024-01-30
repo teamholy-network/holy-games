@@ -55,20 +55,21 @@ public class PlayerInventoryListener implements Listener {
                 bridgePlayer.setMapType(BridgeMapType.SHORT); // standard map type
             }
 
+            var oldMap = bridgePlayer.getMap();
             var copiedMap = mapManagement.getClosestMapToNameWithType(map.getName(), bridgePlayer.getMapType()).clone();
 
-            if (copiedMap.isLoading()) {
-                player.sendMessage(Bridge.PREFIX + "§cThe Map is currently loading!");
-                return;
-            }
+
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
                 if (bridgePlayer.getMap() != null) {
                     player.sendMessage(Bridge.PREFIX + "§cThe Map is currently loading!");
                     return;
                 }
             } else {
-                if (bridgePlayer.getMap() != null) {
-                    if (bridgePlayer.getMap().getName().equals(map.getName())) return;
+                if (oldMap != null) {
+                    if (oldMap.getName().equals(map.getName())) {
+                        player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
+                        return;
+                    }
 
                     mapManagement.getLoader().unloadMap(bridgePlayer);
 
@@ -77,15 +78,19 @@ public class PlayerInventoryListener implements Listener {
                     }
 
                     bridgePlayer.getBlocks().clear();
+                    Bukkit.broadcastMessage("map was not null");
                 }
             }
 
-            copiedMap.setMapPlayer(player);
+            if (copiedMap.isLoading()) {
+                player.sendMessage(Bridge.PREFIX + "§cThe Map is currently loading!");
+                return;
+            }
 
-            copiedMap.setMapType(bridgePlayer.getMapType());
             bridgePlayer.setMap(copiedMap);
             player.closeInventory();
 
+            Bukkit.broadcastMessage("Load new map");
             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, copiedMap), 3L);
         } else if (view.getTitle().equals("§8» §eSettings")) {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
@@ -144,20 +149,12 @@ public class PlayerInventoryListener implements Listener {
 
             var selectedType = switch (clickedItemMeta.getDisplayName()) {
                 case "§aShort" -> BridgeMapType.SHORT;
-                case "§eNormal" -> BridgeMapType.LONG;
+                case "§eLong" -> BridgeMapType.LONG;
                 case "§cDiagonal" -> BridgeMapType.DIAGONAL;
                 default -> map.getMapType();
             };
 
-            if (mapType == selectedType) return;
-
-            var closestBridgeMap = mapManagement.getClosestMapToNameWithType(map.getName(), selectedType).clone();
-            if (closestBridgeMap == null) {
-                player.sendMessage(Bridge.PREFIX + "§cNo Map found with this type!");
-                return;
-            }
-
-            if (closestBridgeMap == map) {
+            if (mapType == selectedType) {
                 player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
                 return;
             }
@@ -169,13 +166,11 @@ public class PlayerInventoryListener implements Listener {
             }
 
             bridgePlayer.getBlocks().clear();
-
-            closestBridgeMap.setMapPlayer(player);
-            closestBridgeMap.setMapType(selectedType);
             bridgePlayer.setMapType(selectedType);
             player.closeInventory();
             player.sendMessage(Bridge.PREFIX + "Changed Map Type to " + clickedItemMeta.getDisplayName());
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, closestBridgeMap), 3L);
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer,
+                    mapManagement.getClosestMapToNameWithType(map.getName(), selectedType)), 3L);
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);
 

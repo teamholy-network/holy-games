@@ -2,6 +2,7 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
@@ -27,6 +28,11 @@ public class PlayerMoveListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
+        if ((event.getFrom().getBlockX() == event.getTo().getBlockX())
+                && (event.getFrom().getBlockY() == event.getTo().getBlockY())
+                && (event.getFrom().getBlockZ() == event.getTo().getBlockZ())
+                && (event.getFrom().getWorld() == event.getTo().getWorld()))
+            return;
         var player = event.getPlayer();
 
 
@@ -37,45 +43,14 @@ public class PlayerMoveListener implements Listener {
             }
             var map = bridgePlayer.getMap().clone();
 
-            var givenSpace = map.getGivenSpace();
-            var highLocation = map.getLocation().clone().add(givenSpace, 0, 0).add(8, 8, 2).toVector();
-            var bottom =  map.getLocation().clone().add(givenSpace, 0, 0).subtract(5, 10, bridgePlayer.getMap().getMapType() == BridgeMapType.DIAGONAL ? 25 : 5).toVector();
-
             var settings = bridgePlayer.getSettings();
             if (settings.isIslandMoving()) {
-                if (map.getMapPlayer() != player) {
-                    return;
-                }
                 mapManagement.moveIslandForPlayer(bridgePlayer, map.clone(), event);
             }
-                /*
 
-                for (CustomBlock customBlock : mapPosition.getBlocksEnd()) {
-                    customBlock.setLocation(customBlock.getLocation().clone().add(givenSpace, 0, 0));
-                    var location = customBlock.getLocation();
-                    var block = location.getBlock();
-                    var type = block.getType();
+            MapPosition mapPosition = map.getMapPosition();
 
-                    var newLocation = new Location(location.getWorld(), location.getX(), player.getLocation().subtract(0, 1,0).getY(), location.getZ());
-                    if (type == Material.GOLD_PLATE) {
-                        newLocation = newLocation.add(0, 0.5, 0);
-                    }
-                    var newBlock = newLocation.getBlock();
-                    if (newLocation != location) {
-                        if (type == Material.SANDSTONE) {
-                            block.setType(Material.AIR);
-                            newBlock.setType(type);
-                        }
-                    }
-                }*/
-
-            Vector vector = player.getLocation().toVector();
-
-            if (event.getTo() == null) {
-                Bukkit.broadcastMessage("event.getTo() == null");
-            }
-
-            if (!vector.isInAABB(bottom, highLocation)) {
+            if (!mapPosition.isInMapPosition(event.getTo(), true)) {
                 if (bridgePlayer.getMap().getLocation() != null) {
                     player.teleport(bridgePlayer.getMap().getLocation());
                 }

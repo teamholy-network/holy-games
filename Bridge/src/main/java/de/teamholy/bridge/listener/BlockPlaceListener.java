@@ -54,11 +54,12 @@ public class BlockPlaceListener implements Listener {
                 event.setCancelled(true);
                 return;
             }*/
+            /*
 
             if(!event.getBlock().getLocation().toVector().isInAABB(bottom, highLocation)) {
                 event.setCancelled(true);
                 return;
-            }
+            }*/
 
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
