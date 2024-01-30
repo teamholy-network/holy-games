@@ -1,6 +1,7 @@
 package de.teamholy.bridge.player.management;
 
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
@@ -212,48 +213,42 @@ public class PlayerManagement {
             topPlayer.get(mapType).put(bridgePlayer, bridgePlayer.getLocalBestTime(mapType));
         }
 
-        updateScoreboardForPlayer(mapType);
+        updateScoreboardForPlayer(bridgePlayer.getMap().getMapType());
     }
 
-    public void updateScoreboardForPlayer(BridgeMapType type) {
+    public void updateScoreboardForPlayer(BridgeMapType bridgeMapType) {
         AtomicInteger i = new AtomicInteger(7);
-
-        Bukkit.broadcastMessage("Type: " + type.getName());
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             var bridgeScoreboard = getScoreboard(player);
-            var bridgePlayer = getBridgePlayer(player);
-
-            Bukkit.broadcastMessage("Type Player: " + bridgePlayer.getMap().getMapType().getName());
 
             for (int j = 7; j >= 3; j--) {
-                if (!bridgeScoreboard.contains(j)) {
-                    bridgeScoreboard.setLine(j, " §cNo one");
-                } else {
-                    bridgeScoreboard.updateLine(j, " §cNo one");
-                }
+                if (!bridgeScoreboard.contains(j)) bridgeScoreboard.setLine(j, " §cNo one");
+                else bridgeScoreboard.updateLine(j, " §cNo one");
             }
         }
 
-        topPlayer.get(type).entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).limit(5).toList().forEach(bridgePlayerLongEntry -> {
+        topPlayer.get(bridgeMapType).entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).limit(5).toList().forEach(bridgePlayerLongEntry -> {
 
             if (i.get() < 3) {
                 return;
             }
 
-            String string = " §7" +
-                    bridgePlayerLongEntry.getKey().getPlayer().getName() + " §8* §7" +
-                    FormatTime.formatTimeManually(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgePlayerLongEntry.getKey().getMap().getMapType()));
+            Player playerEntry = bridgePlayerLongEntry.getKey().getPlayer();
+            String string = " "+
+                    BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getUniqueId()) + playerEntry.getName() + " §8* §7" +
+                    FormatTime.formatTimeManually(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 var bridgeScoreboard = getScoreboard(player);
-                bridgeScoreboard.updateLine(i.get(), string);
-                Bukkit.broadcastMessage("i: " + i.get() + " | " + string);
-            }
+                var bridgePlayer = getBridgePlayer(player);
 
+                if (bridgePlayer.getMap().getMapType() == bridgeMapType) {
+                    bridgeScoreboard.updateLine(i.get(), string);
+                }
+            }
             i.getAndDecrement();
         });
-
     }
 
 

@@ -28,11 +28,11 @@ public class PlayerMoveListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if ((event.getFrom().getBlockX() == event.getTo().getBlockX())
+        /*if ((event.getFrom().getBlockX() == event.getTo().getBlockX())
                 && (event.getFrom().getBlockY() == event.getTo().getBlockY())
                 && (event.getFrom().getBlockZ() == event.getTo().getBlockZ())
                 && (event.getFrom().getWorld() == event.getTo().getWorld()))
-            return;
+            return;*/
         var player = event.getPlayer();
 
 
@@ -81,7 +81,7 @@ public class PlayerMoveListener implements Listener {
                 var best = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()));
 
                 playerManagement.refillBlocks(player);
-                player.sendMessage("§7Your time was §e" + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" + FormatTime.formatTimeManually(best));
+                player.sendMessage(Bridge.PREFIX + "§7Your time was §e" + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" + FormatTime.formatTimeManually(best));
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {

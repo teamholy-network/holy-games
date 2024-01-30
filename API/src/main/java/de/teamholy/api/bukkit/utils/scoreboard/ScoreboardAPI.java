@@ -1,6 +1,7 @@
 package de.teamholy.api.bukkit.utils.scoreboard;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -72,6 +73,21 @@ public class ScoreboardAPI {
             team.setSuffix("");
         }
         return this;
+    }
+
+    public List<String> getLine(int line) {
+        Team team = scoreboard.getTeam(ChatColor.values()[line].toString());
+        if (team == null) {
+            return Lists.newArrayList();
+        }
+        List<String> list = new ArrayList<>();
+        if (!team.getPrefix().isEmpty()) {
+            list.add(team.getPrefix());
+        }
+        if (!team.getSuffix().isEmpty()) {
+            list.add(team.getSuffix());
+        }
+        return list;
     }
 
     public ScoreboardAPI updateLine(Team team, String string) {

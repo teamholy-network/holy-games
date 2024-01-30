@@ -40,31 +40,14 @@ public class BlockPlaceListener implements Listener {
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
 
-            var high = bridgePlayer.getMap().getLocation().clone().add(0, 3, 0);
-            var givenSpace = bridgePlayer.getMap().getGivenSpace();
-
-            var highLocation = bridgePlayer.getMap().getLocation().clone().add(givenSpace, 0, 0).add(8, 3, 2).toVector();
-            var bottom = bridgePlayer.getMap().getLocation()
-                    .clone().add(givenSpace, 0, 0)
-                    .subtract(5, 2, bridgePlayer.getMap().getMapType() == BridgeMapType.DIAGONAL ? 25 : 5).toVector();
-
-            /*
-            if (event.getBlock().getLocation().getY() >= high.getY() ||
-                    event.getBlock().getLocation().getY() <= bridgePlayer.getMap().getMapPosition().getEndBottom().getY()) {
-                event.setCancelled(true);
-                return;
-            }*/
-            /*
-
-            if(!event.getBlock().getLocation().toVector().isInAABB(bottom, highLocation)) {
-                event.setCancelled(true);
-                return;
-            }*/
-
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
             if (!playerManagement.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {
                 playerManagement.getPlayerTime().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+            }
+
+            if (event.getPlayer().getInventory().getItemInHand().getType() == event.getBlockPlaced().getType()) {
+                event.getPlayer().getInventory().getItemInHand().setAmount(event.getPlayer().getInventory().getItemInHand().getMaxStackSize());
             }
 
             //var blocksPlaced = blocks.size();
