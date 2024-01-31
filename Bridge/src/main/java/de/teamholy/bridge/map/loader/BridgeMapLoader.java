@@ -69,6 +69,9 @@ public class BridgeMapLoader {
     }
 
     public void loadMapForPlayer(BridgePlayer player, BridgeMap bridgeMap, boolean changedType) {
+        if (mapIsNotFree(bridgeMap)) {
+            bridgeMap = bridgeMap.clone();
+        }
         if (bridgeMap.isLoading()) return;
 
         if (bridgeMap.getMapType() == null) bridgeMap.setMapType(player.getMap().getMapType());
@@ -85,13 +88,14 @@ public class BridgeMapLoader {
 
         playerManagement.setScoreboard(player);
 
+        BridgeMap finalBridgeMap = bridgeMap;
         bridgeMap.loadMap(mapLocation).thenAccept(loaded -> {
             if (loaded) {
 
-                player.setMap(bridgeMap);
+                player.setMap(finalBridgeMap);
 
-                if (!loadedMaps.contains(bridgeMap)) {
-                    loadedMaps.add(bridgeMap);
+                if (!loadedMaps.contains(finalBridgeMap)) {
+                    loadedMaps.add(finalBridgeMap);
                 }
 
                 var bukkitPlayer = player.getPlayer();
@@ -106,10 +110,10 @@ public class BridgeMapLoader {
                     playerManagement.updateScoreboard(player);
 
                     if (!changedType)
-                        bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + bridgeMap.getTitle() + " §7with the type §6" + bridgeMap.getMapType().getName() + "§8!");
+                        bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + finalBridgeMap.getTitle() + " §7with the type §6" + finalBridgeMap.getMapType().getName() + "§8!");
                 }, 3);
             } else {
-                player.getPlayer().sendMessage(Bridge.PREFIX + "§cThe map §e" + bridgeMap.getName() + " §ccould not be loaded!");
+                player.getPlayer().sendMessage(Bridge.PREFIX + "§cThe map §e" + finalBridgeMap.getName() + " §ccould not be loaded!");
             }
         });
     }
@@ -141,6 +145,15 @@ public class BridgeMapLoader {
             if (bridgeMap.getLocation().equals(location)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public boolean mapIsNotFree(BridgeMap bridgeMap) {
+        for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+            if (bridgePlayer.getMap() == null) continue;
+
+            return bridgePlayer.getMap() == bridgeMap;
         }
         return false;
     }

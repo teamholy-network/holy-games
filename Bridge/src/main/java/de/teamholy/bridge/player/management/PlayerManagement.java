@@ -9,6 +9,7 @@ import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
@@ -83,14 +84,14 @@ public class PlayerManagement {
         preparePlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
 
-        player.getInventory().setItem(1, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
+        player.getInventory().setItem(0, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
         player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§eSettings").build());
-        player.getInventory().setItem(7, new ItemBuilder(Material.SLIME_BALL).name("§cQuit").build());
+        player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§cQuit").build());
     }
 
     public void refillBlocks(Player player) {
         var bridgePlayer = getBridgePlayer(player);
-        player.getInventory().setItem(1, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
+        player.getInventory().setItem(0, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
     }
 
     public void ingameSettingsInventory(Player player) {
@@ -161,13 +162,14 @@ public class PlayerManagement {
             return;
         }
 
-        bridgeScoreboard.setLine(13, "§8§m-----------------");
-        bridgeScoreboard.setLine(12, " §7Best Time");
-        bridgeScoreboard.setLine(11, " §c-/-");
-        bridgeScoreboard.setLine(10, "§7");
+        bridgeScoreboard.setLine(14, "§8§m-----------------");
+        bridgeScoreboard.setLine(13, " §7Best Time");
+        bridgeScoreboard.setLine(12, " §c-/-");
+        bridgeScoreboard.setLine(11, "§7");
 
-        bridgeScoreboard.setLine(9, " §6Top 5");
-        bridgeScoreboard.setLine(8, "§7§r");
+        bridgeScoreboard.setLine(10, " §6Top 5");
+        bridgeScoreboard.setLine(9, "§f    §oSession");
+        bridgeScoreboard.setLine(8, "§r");
         bridgeScoreboard.setLine(2, "§8");
         bridgeScoreboard.setLine(1, "§8§m-----------------");
         bridgeScoreboard.setLine(0, "§f§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
@@ -176,11 +178,11 @@ public class PlayerManagement {
 
     public void updateScoreboard(BridgePlayer bridgePlayer) {
         ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
-        bridgeScoreboard.updateLine(12, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
-        bridgeScoreboard.updateLine(11, " §e" + checkBestTime(bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType())));
+        bridgeScoreboard.updateLine(13, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
+        bridgeScoreboard.updateLine(12, " §e" + checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
 
         String top5 = " §6Top 5 §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)";
-        bridgeScoreboard.updateLine(9, top5);
+        bridgeScoreboard.updateLine(10, top5);
 
         updateScoreboardForPlayer(bridgePlayer.getMap().getMapType());
     }
@@ -188,14 +190,36 @@ public class PlayerManagement {
     public long checkBestTime(Player player, long current, long bestTime) {
         var bridgePlayer = getBridgePlayer(player);
 
-        if (bestTime == 0 || current < bestTime) {
+        if (current < bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()) && current < bestTime) {
+            bridgePlayer.setGlobalBestTime(bridgePlayer.getMap().getMapType(), current);
             bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
-            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType())));
+
+            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
 
             addBestTime(bridgePlayer);
             updateScoreboard(bridgePlayer);
 
+            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 30, true);
+            sendActionBar(player, "§a+ §e50 Coins");
+
             bridgePlayer.addWin();
+        } else if (bestTime == 0 || current < bestTime) {
+            bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
+
+            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
+
+            addBestTime(bridgePlayer);
+            updateScoreboard(bridgePlayer);
+
+            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 10, true);
+            sendActionBar(player, "§a+ §e10 Coins");
+
+            bridgePlayer.addWin();
+        }
+
+        if (bridgePlayer.getWins() % 15 == 0) {
+            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 30, true);
+            sendActionBar(player, "§a+ §e30 Coins");
         }
 
         return (bestTime == 0 || current < bestTime) ? current : bestTime;
@@ -226,6 +250,7 @@ public class PlayerManagement {
 
             for (int j = 7; j >= 3; j--) {
                 if (!bridgeScoreboard.contains(j)) bridgeScoreboard.setLine(j, " §cNo one");
+                else bridgeScoreboard.updateLine(j, " §cNo one");
             }
         }
 
@@ -248,8 +273,12 @@ public class PlayerManagement {
                     bridgeScoreboard.updateLine(i.get(), " §cNo one");
                     continue;
                 }
+
                 if (bridgePlayer.getMap().getMapType() == bridgeMapType) {
                     bridgeScoreboard.updateLine(i.get(), string);
+                    if (bridgeScoreboard.getLine(i.get()) != null && !bridgeScoreboard.getLine(i.get()).isEmpty() && bridgeScoreboard.getLine(i.get()).contains(string)) {
+                        Bukkit.broadcastMessage("twice");
+                    }
                 }
             }
             i.getAndDecrement();

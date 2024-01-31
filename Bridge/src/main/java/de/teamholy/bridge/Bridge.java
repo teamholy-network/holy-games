@@ -11,6 +11,7 @@ import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.loader.BridgeSchematicIndex;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.timer.BridgeTimer;
 import de.teamholy.bridge.util.VoidGenerator;
 import lombok.Getter;
@@ -49,6 +50,7 @@ public class Bridge extends JavaPlugin {
     private BukkitTask bridgeTimer;
 
     private BridgeSchematicIndex bridgeSchematicIndex;
+    private SongManager songManager;
 
     @Override
     public void onEnable() {
@@ -63,6 +65,7 @@ public class Bridge extends JavaPlugin {
             getLogger().info("Created world");
         }
 
+        this.songManager = new SongManager();
         this.bridgeSchematicIndex = loadBridgeSchematicIndex();
 
         this.playerManagement = new PlayerManagement();

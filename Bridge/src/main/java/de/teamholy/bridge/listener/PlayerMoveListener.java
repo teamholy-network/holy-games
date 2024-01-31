@@ -76,12 +76,14 @@ public class PlayerMoveListener implements Listener {
                 bridgePlayer.getBlocks().clear();
 
                 var current = (System.currentTimeMillis() - playerManagement.getPlayerTime().remove(player.getUniqueId()));
-                var best = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()));
+                var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()));
+                var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()));
 
                 playerManagement.refillBlocks(player);
-                player.sendMessage(Bridge.PREFIX + "§7Your time was §e"
-                        + FormatTime.formatTimeManually(current) + " §8/ §7Best time: §e" +
-                        FormatTime.formatTimeManually(best) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
+                player.sendMessage(Bridge.PREFIX + "§7Your time was §e" + FormatTime.formatTimeManually(current) +
+                        "\n" + Bridge.PREFIX + "§7Your best §esession-time §7is §e" +
+                        FormatTime.formatTimeManually(bestLocal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName()
+                        + "\n" + Bridge.PREFIX + "§7Your best §aall-time §7is §e" + FormatTime.formatTimeManually(bestGlobal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {

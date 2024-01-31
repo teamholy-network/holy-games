@@ -34,6 +34,8 @@ public class BridgePlayer {
 
     private HashMap<BridgeMapType, Long> localBestTime;
 
+    private HashMap<BridgeMapType, Long> globalBestTime;
+
     private Settings settings;
 
     private long wins = 0L;
@@ -45,6 +47,7 @@ public class BridgePlayer {
         this.blocks = Maps.newHashMap();
         this.settings = new Settings();
         this.localBestTime = Maps.newHashMap();
+        this.globalBestTime = Maps.newHashMap();
 
         registerDatabaseEntry();
     }
@@ -80,14 +83,14 @@ public class BridgePlayer {
             }
 
             if (statsProfile.getSetting(gameKey, "shortBest") != null) {
-                this.localBestTime.put(BridgeMapType.SHORT, Long.valueOf(statsProfile.getSetting(gameKey, "shortBest")));
+                this.globalBestTime.put(BridgeMapType.SHORT, Long.valueOf(statsProfile.getSetting(gameKey, "shortBest")));
             }
 
             if (statsProfile.getSetting(gameKey, "longBest") != null) {
-                this.localBestTime.put(BridgeMapType.LONG, Long.valueOf(statsProfile.getSetting(gameKey, "longBest")));
+                this.globalBestTime.put(BridgeMapType.LONG, Long.valueOf(statsProfile.getSetting(gameKey, "longBest")));
             }
             if (statsProfile.getSetting(gameKey, "diagonalBest") != null) {
-                this.localBestTime.put(BridgeMapType.DIAGONAL, Long.valueOf(statsProfile.getSetting(gameKey, "diagonalBest")));
+                this.globalBestTime.put(BridgeMapType.DIAGONAL, Long.valueOf(statsProfile.getSetting(gameKey, "diagonalBest")));
             }
             if (statsProfile.getSetting(gameKey, "removeBlocks") != null) {
                 this.settings.setRemoveBlocks(Boolean.parseBoolean(statsProfile.getSetting(gameKey, "removeBlocks")));
@@ -114,17 +117,17 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "removalTime", String.valueOf(this.settings.getRemovalTime()));
         statsProfile.setSetting(gameKey, "blockAnimationType", this.settings.getBlockAnimationType().name());
 
-        if (localBestTime != null)  {
-            if (this.localBestTime.get(BridgeMapType.SHORT) != null) {
-                statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.localBestTime.get(BridgeMapType.SHORT)));
+        if (globalBestTime != null)  {
+            if (this.globalBestTime.get(BridgeMapType.SHORT) != null) {
+                statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.globalBestTime.get(BridgeMapType.SHORT)));
             }
 
-            if (this.localBestTime.get(BridgeMapType.LONG) != null) {
-                statsProfile.setSetting(gameKey, "longBest", String.valueOf(this.localBestTime.get(BridgeMapType.LONG)));
+            if (this.globalBestTime.get(BridgeMapType.LONG) != null) {
+                statsProfile.setSetting(gameKey, "longBest", String.valueOf(this.globalBestTime.get(BridgeMapType.LONG)));
             }
 
-            if (this.localBestTime.get(BridgeMapType.DIAGONAL) != null) {
-                statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(this.localBestTime.get(BridgeMapType.DIAGONAL)));
+            if (this.globalBestTime.get(BridgeMapType.DIAGONAL) != null) {
+                statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(this.globalBestTime.get(BridgeMapType.DIAGONAL)));
             }
         }
 
@@ -149,7 +152,15 @@ public class BridgePlayer {
         return localBestTime.getOrDefault(mapType, 0L);
     }
 
+    public long getGlobalBestTime(BridgeMapType mapType) {
+        return globalBestTime.getOrDefault(mapType, 0L);
+    }
+
     public void setLocalBestTime(BridgeMapType mapType, long time) {
         localBestTime.put(mapType, time);
+    }
+
+    public void setGlobalBestTime(BridgeMapType mapType, long time) {
+        globalBestTime.put(mapType, time);
     }
 }
