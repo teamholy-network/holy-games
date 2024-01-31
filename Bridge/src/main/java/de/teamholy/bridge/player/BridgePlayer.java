@@ -53,40 +53,54 @@ public class BridgePlayer {
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
 
         String gameKey = Gamemodes.BRIDGE.toString();
-
         if (!statsProfile.exists(gameKey)) {
-            statsProfile.setStat(gameKey, StatsType.ALLTIME, "wins", 0);
-            statsProfile.setStat(gameKey, StatsType.ALLTIME, "placedBlocks", 0L);
+            /*for (StatsType time : StatsType.values()) {
+                for (Gamemodes.StatKey statKey : Gamemodes.BRIDGE.getStatKeys()) statsProfile.setStat(gameKey, time, statKey.getName(), statKey.getDefaultValue());
+            }*/
 
-            statsProfile.setStat(gameKey, StatsType.ALLTIME, "shortBest", 0L);
-            statsProfile.setStat(gameKey, StatsType.ALLTIME, "longBest", 0L);
-            statsProfile.setStat(gameKey, StatsType.ALLTIME, "diagonalBest", 0L);
+            statsProfile.setSetting(gameKey, "wins", String.valueOf(0L));
+            statsProfile.setSetting(gameKey, "placedBlocks", String.valueOf(0L));
+
+            statsProfile.setSetting(gameKey, "shortBest", String.valueOf(0L));
+            statsProfile.setSetting(gameKey, "longBest", String.valueOf(0L));
+            statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(0L));
 
             statsProfile.setSetting(gameKey, "removeBlocks", "false");
             statsProfile.setSetting(gameKey, "removalTime", "0");
             statsProfile.setSetting(gameKey, "blockAnimationType", "NONE");
 
+            System.out.println("Created new stats profile for " + player.getName());
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
-
         } else {
 
-            this.wins = statsProfile.getStat(gameKey, StatsType.ALLTIME, "wins");
-            this.placedBlocks = statsProfile.getStat(gameKey, StatsType.ALLTIME, "placedBlocks");
+            if (statsProfile.getSetting(gameKey, "wins") != null) {
+                this.wins = Long.parseLong(statsProfile.getSetting(gameKey, "wins"));
+            }
 
-            System.out.println("wins: " + this.wins);
-            if (statsProfile.getStat(gameKey, StatsType.ALLTIME, "shortBest") == 0L) return;
-            System.out.println("shortBest: " + statsProfile.getStat(gameKey, StatsType.ALLTIME, "shortBest"));
-            this.localBestTime.put(BridgeMapType.SHORT, statsProfile.getStat(gameKey, StatsType.ALLTIME, "shortBest"));
+            if (statsProfile.getSetting(gameKey, "placedBlocks") != null) {
+                this.placedBlocks = Long.parseLong(statsProfile.getSetting(gameKey, "placedBlocks"));
+            }
 
-            if (statsProfile.getStat(gameKey, StatsType.ALLTIME, "longBest") == 0L) return;
-            this.localBestTime.put(BridgeMapType.LONG, statsProfile.getStat(gameKey, StatsType.ALLTIME, "longBest"));
+            if (statsProfile.getSetting(gameKey, "shortBest") != null) {
+                this.localBestTime.put(BridgeMapType.SHORT, Long.valueOf(statsProfile.getSetting(gameKey, "shortBest")));
+            }
 
-            if (statsProfile.getStat(gameKey, StatsType.ALLTIME, "diagonalBest") == 0L) return;
-            this.localBestTime.put(BridgeMapType.DIAGONAL, statsProfile.getStat(gameKey, StatsType.ALLTIME, "diagonalBest"));
+            if (statsProfile.getSetting(gameKey, "longBest") != null) {
+                this.localBestTime.put(BridgeMapType.LONG, Long.valueOf(statsProfile.getSetting(gameKey, "longBest")));
+            }
+            if (statsProfile.getSetting(gameKey, "diagonalBest") != null) {
+                this.localBestTime.put(BridgeMapType.DIAGONAL, Long.valueOf(statsProfile.getSetting(gameKey, "diagonalBest")));
+            }
+            if (statsProfile.getSetting(gameKey, "removeBlocks") != null) {
+                this.settings.setRemoveBlocks(Boolean.parseBoolean(statsProfile.getSetting(gameKey, "removeBlocks")));
+            }
+            if (statsProfile.getSetting(gameKey, "removalTime") != null) {
+                this.settings.setRemovalTime(Long.parseLong(statsProfile.getSetting(gameKey, "removalTime")));
+            }
+            if (statsProfile.getSetting(gameKey, "blockAnimationType") != null) {
+                this.settings.setBlockAnimationType(Settings.BlockAnimationType.valueOf(statsProfile.getSetting(gameKey, "blockAnimationType")));
+            }
 
-            this.settings.setRemoveBlocks(Boolean.parseBoolean(statsProfile.getSetting(gameKey, "removeBlocks")));
-            this.settings.setRemovalTime(Long.parseLong(statsProfile.getSetting(gameKey, "removalTime")));
-            this.settings.setBlockAnimationType(Settings.BlockAnimationType.valueOf(statsProfile.getSetting(gameKey, "blockAnimationType")));
         }
     }
 
@@ -95,29 +109,33 @@ public class BridgePlayer {
 
         String gameKey = Gamemodes.BRIDGE.toString();
 
-        statsProfile.setStat(gameKey, StatsType.ALLTIME, "wins", this.wins);
-        statsProfile.setStat(gameKey, StatsType.ALLTIME, "placedBlocks", this.placedBlocks);
+        statsProfile.setSetting(gameKey, "wins", String.valueOf(this.wins));
+        statsProfile.setSetting(gameKey, "placedBlocks", String.valueOf(this.placedBlocks));
 
         statsProfile.setSetting(gameKey, "removeBlocks", String.valueOf(this.settings.isRemoveBlocks()));
         statsProfile.setSetting(gameKey, "removalTime", String.valueOf(this.settings.getRemovalTime()));
         statsProfile.setSetting(gameKey, "blockAnimationType", this.settings.getBlockAnimationType().name());
 
-        if (this.localBestTime.isEmpty()) return;
+        if (localBestTime != null)  {
+            if (this.localBestTime.get(BridgeMapType.SHORT) != null) {
+                statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.localBestTime.get(BridgeMapType.SHORT)));
+                System.out.println("shortBest: " + Long.valueOf(statsProfile.getSetting(gameKey, "shortBest")));
+            }
 
-        if (this.localBestTime.get(BridgeMapType.SHORT) == null || this.localBestTime.get(BridgeMapType.SHORT) == 0L)
-            return;
-        statsProfile.setStat(gameKey, StatsType.ALLTIME, "shortBest", this.localBestTime.get(BridgeMapType.SHORT));
-        System.out.println("saved stats 1");
-        if (this.localBestTime.get(BridgeMapType.LONG) == null || this.localBestTime.get(BridgeMapType.LONG) == 0L)
-            return;
-        statsProfile.setStat(gameKey, StatsType.ALLTIME, "longBest", this.localBestTime.get(BridgeMapType.LONG));
-        System.out.println("saved stats 2");
-        if (this.localBestTime.get(BridgeMapType.DIAGONAL) == null || this.localBestTime.get(BridgeMapType.DIAGONAL) == 0L)
-            return;
-        statsProfile.setStat(gameKey, StatsType.ALLTIME, "diagonalBest", this.localBestTime.get(BridgeMapType.DIAGONAL));
-        System.out.println("saved stats");
+            if (this.localBestTime.get(BridgeMapType.LONG) != null) {
+                statsProfile.setSetting(gameKey, "longBest", String.valueOf(this.localBestTime.get(BridgeMapType.LONG)));
+                System.out.println("longBest: " + this.localBestTime.get(BridgeMapType.LONG));
+            }
 
-        BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
+            if (this.localBestTime.get(BridgeMapType.DIAGONAL) != null) {
+                statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(this.localBestTime.get(BridgeMapType.DIAGONAL)));
+                System.out.println("diagonalBest: " + this.localBestTime.get(BridgeMapType.DIAGONAL));
+            }
+        }
+
+        BukkitCore.getAPI().
+                getGameService().
+                saveEntity(statsProfile, true, true);
     }
 
     public void addWin() {
