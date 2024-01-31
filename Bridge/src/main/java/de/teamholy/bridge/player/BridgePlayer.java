@@ -41,7 +41,7 @@ public class BridgePlayer {
 
     public BridgePlayer(Player player) {
         this.player = player;
-        this.state = PlayerState.LOBBY; // initial normal state
+        this.state = PlayerState.INGAME; // initial normal state -> lobby got removed
         this.blocks = Maps.newHashMap();
         this.settings = new Settings();
         this.localBestTime = Maps.newHashMap();
