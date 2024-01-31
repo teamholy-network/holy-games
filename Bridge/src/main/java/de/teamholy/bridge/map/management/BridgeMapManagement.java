@@ -171,8 +171,8 @@ public class BridgeMapManagement {
         }*/
     }
 
-    public Inventory getMapSettingsInventory() {
-        Inventory inventory = Bukkit.createInventory(null, 9, "§8» §bMap Settings");
+    public Inventory getMapLengthInventory() {
+        Inventory inventory = Bukkit.createInventory(null, 9, "§8» §bMap Length");
         inventory.setItem(3, new ItemBuilder(BridgeMapType.SHORT.getIcon()).name("§a§lShort").lore("§8» §7Distance§8: §e" + BridgeMapType.SHORT.getLength()).build());
         inventory.setItem(4, new ItemBuilder(BridgeMapType.LONG.getIcon()).name("§e§lLong").lore("§8» §7Distance§8: §e" + BridgeMapType.LONG.getLength()).build());
         inventory.setItem(5, new ItemBuilder(BridgeMapType.DIAGONAL.getIcon()).name("§c§lDiagonal").lore("§8» §7Distance§8: §e" + BridgeMapType.DIAGONAL.getLength()).build());

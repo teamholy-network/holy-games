@@ -68,18 +68,15 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "removalTime", "0");
             statsProfile.setSetting(gameKey, "blockAnimationType", "NONE");
 
-            System.out.println("Created new stats profile for " + player.getName());
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
 
             if (statsProfile.getSetting(gameKey, "wins") != null) {
                 this.wins = Long.parseLong(statsProfile.getSetting(gameKey, "wins"));
-                System.out.println("wins: " + this.wins);
             }
 
             if (statsProfile.getSetting(gameKey, "placedBlocks") != null) {
                 this.placedBlocks = Long.parseLong(statsProfile.getSetting(gameKey, "placedBlocks"));
-                System.out.println("placedBlocks: " + this.placedBlocks);
             }
 
             if (statsProfile.getSetting(gameKey, "shortBest") != null) {

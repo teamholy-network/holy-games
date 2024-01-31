@@ -102,7 +102,7 @@ public class PlayerManagement {
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
 
         inventory.setItem(6, new ItemBuilder(Material.PAPER).name("§6Maps").build());
-        inventory.setItem(7, new ItemBuilder(Material.ANVIL).name("§bMap Settings").build());
+        inventory.setItem(7, new ItemBuilder(Material.ANVIL).name("§bMap Length").build());
 
         player.openInventory(inventory);
     }

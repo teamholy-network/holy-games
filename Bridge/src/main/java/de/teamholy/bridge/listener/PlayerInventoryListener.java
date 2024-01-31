@@ -119,8 +119,8 @@ public class PlayerInventoryListener implements Listener {
                     player.openInventory(playerManagement.blocksInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Maps")) {
                     player.openInventory(mapManagement.getInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMap Settings")) {
-                    player.openInventory(mapManagement.getMapSettingsInventory());
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMap Length")) {
+                    player.openInventory(mapManagement.getMapLengthInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Block Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
                 }
@@ -139,7 +139,7 @@ public class PlayerInventoryListener implements Listener {
             player.sendMessage(Bridge.PREFIX + "§cBlock: " + material.name());
             playerManagement.refillBlocks(player);
             player.closeInventory();
-        } else if (view.getTitle().equalsIgnoreCase("§8» §bMap Settings")) {
+        } else if (view.getTitle().equalsIgnoreCase("§8» §bMap Length")) {
             event.setCancelled(true);
             var bridgePlayer = playerManagement.getBridgePlayer(player);
 
