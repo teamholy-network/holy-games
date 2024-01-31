@@ -699,7 +699,7 @@ public class PlayerEntry {
             scoreboardAPI.setLine(8, " §8§m--------------- ");
             scoreboardAPI.setLine(7, "§7");
             scoreboardAPI.setLine(6, " §ftrain your");
-            scoreboardAPI.setLine(5, " §fclutche skills");
+            scoreboardAPI.setLine(5, " §fclutch skills");
             scoreboardAPI.setLine(4, " §fto become the");
             scoreboardAPI.setLine(3, " §cbest §freducer!");
             scoreboardAPI.setLine(2, "§5");
