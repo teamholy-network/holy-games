@@ -28,11 +28,14 @@ public enum BridgeSounds {
 
     WIN_LEVEL_UP(new BridgeSound("win_level_up","§aLevel Up", BridgeSoundType.WIN, Sound.LEVEL_UP, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
 
-    SONG_NEVER_GONNA_GIVE_YOU_UP(
-            new BridgeSound("song_never_gonna_give_you_up",
-            "§aNever Gonna Give You Up", BridgeSoundType.SONG,
+    SONG_7thElement(
+            new BridgeSound("song_7thelement",
+            "§a7thelement", BridgeSoundType.SONG,
             null, 1.0F, 1.0F, 100, PerkRankType.HOLY)),
-    ;
+    SONG_A_Little_Piece_of_Heaven(
+            new BridgeSound("song_alittlepieceofheaven",
+            "§aA Little Piece of Heaven", BridgeSoundType.SONG,
+            null, 1.0F, 1.0F, 100, PerkRankType.HOLY));
 
     private BridgeSound bridgeSound;
 

@@ -22,7 +22,11 @@ public class SongManager {
     public SongManager() {
         this.songs = Lists.newArrayList();
 
-        this.songLoader = new SongLoader(this);
+        try {
+            this.songLoader = new SongLoader(this);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load songs", e);
+        }
     }
 
     public void addSong(BridgeSong song) {
