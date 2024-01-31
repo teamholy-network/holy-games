@@ -65,7 +65,7 @@ public class PlayerInventoryListener implements Listener {
 
             var mapName = ChatColor.stripColor(clickedItemMeta.getDisplayName());
 
-            var map = mapManagement.getMap(mapName);
+            var map = mapManagement.getMap(mapName).clone();
             if (map == null) {
                 player.sendMessage(Bridge.PREFIX + "§cThis map does not exist!");
                 return;
@@ -81,7 +81,7 @@ public class PlayerInventoryListener implements Listener {
                 return;
             }
 
-            mapManagement.getLoader().unloadMap(bridgePlayer);
+            mapManagement.getLoader().unloadMap(bridgePlayer, false);
 
             if (!bridgePlayer.getBlocks().isEmpty()) {
                 bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
@@ -166,7 +166,7 @@ public class PlayerInventoryListener implements Listener {
                 return;
             }
 
-            mapManagement.getLoader().unloadMap(bridgePlayer);
+            mapManagement.getLoader().unloadMap(bridgePlayer, true);
 
             if (!bridgePlayer.getBlocks().isEmpty()) {
                 bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));

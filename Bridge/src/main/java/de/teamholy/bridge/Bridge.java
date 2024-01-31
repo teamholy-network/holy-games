@@ -2,13 +2,9 @@ package de.teamholy.bridge;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
 import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.listener.*;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.map.loader.BridgeSchematicIndex;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
@@ -22,15 +18,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Objects;
 
 
 /**
@@ -49,7 +37,6 @@ public class Bridge extends JavaPlugin {
     private BridgeMapManagement mapManagement;
     private BukkitTask bridgeTimer;
 
-    private BridgeSchematicIndex bridgeSchematicIndex;
     private SongManager songManager;
 
     @Override
@@ -66,7 +53,6 @@ public class Bridge extends JavaPlugin {
         }
 
         this.songManager = new SongManager();
-        this.bridgeSchematicIndex = loadBridgeSchematicIndex();
 
         this.playerManagement = new PlayerManagement();
         this.mapManagement = new BridgeMapManagement();
@@ -89,10 +75,6 @@ public class Bridge extends JavaPlugin {
         bridgeTimer.cancel();
     }
 
-    @SneakyThrows
-    private BridgeSchematicIndex loadBridgeSchematicIndex() {
-        return new BridgeSchematicIndex(0);
-    }
 
     private void loadCommand() {
         Bukkit.getPluginCommand("bridge").setExecutor(new BridgeCommand());

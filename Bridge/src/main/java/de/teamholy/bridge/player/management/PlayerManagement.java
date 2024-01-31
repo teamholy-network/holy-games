@@ -11,18 +11,20 @@ import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.ChatComponentText;
-import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -47,7 +49,7 @@ public class PlayerManagement {
 
     public void addPlayer(Player player) {
         if (!bridgePlayers.containsKey(player.getUniqueId())) {
-            bridgePlayers.put(player.getUniqueId(), new BridgePlayer(player));
+            bridgePlayers.put(player.getUniqueId(), new BridgePlayer(player.getUniqueId()));
         }
         createScoreboard(getBridgePlayer(player));
         loadLobbyInventory(player);
@@ -298,6 +300,7 @@ public class PlayerManagement {
             case FALLING -> blocks.forEach((block, time) -> {
                 FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
                 fallingBlock.setDropItem(false);
+                fallingBlock.setHurtEntities(false);
 
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
                     fallingBlock.remove();
@@ -327,8 +330,21 @@ public class PlayerManagement {
                 }.runTaskTimer(Bridge.getInstance(), 0L, 1L);
             });
             case DROPPING -> blocks.forEach((block, time) -> {
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), block::breakNaturally, 10L);
-                bridgePlayer.getBlocks().remove(block);
+                var item = dropItem(block.getLocation(), new ItemBuilder(block.getType()).amount(1).name(".").data(block.getData()).build());
+                if (item == null) {
+                    block.setType(Material.AIR);
+                    bridgePlayer.getBlocks().remove(block);
+                    Bukkit.broadcastMessage("item is null");
+                    return;
+                }
+
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
+                    item.die();
+
+                    block.setType(Material.AIR);
+                    bridgePlayer.getBlocks().remove(block);
+
+                }, 25L);
             });
             default -> blocks.forEach((block, time) -> {
                 block.setType(Material.AIR);
@@ -340,6 +356,7 @@ public class PlayerManagement {
     public void sendActionBar(Player player, String text) {
         PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(text), (byte) 2);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+
     }
 
     private int getBlockEntityId(Block block) {
@@ -349,4 +366,14 @@ public class PlayerManagement {
                 | (block.getY() & 0xFF);
     }
 
+    private EntityItem dropItem(Location loc, ItemStack item) {
+        if (loc.getChunk().getEntities().length > 64 * 4) return null;
+        EntityItem entity = new EntityItem(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
+        entity.pickupDelay = 10;
+        entity.motX = 0.0D;
+        entity.motY = 0.0D;
+        entity.motZ = 0.0D;
+        ((CraftWorld) loc.getWorld()).getHandle().addEntity(entity);
+        return entity;
+    }
 }

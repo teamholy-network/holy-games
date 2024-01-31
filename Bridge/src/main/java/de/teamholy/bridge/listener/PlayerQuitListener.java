@@ -37,7 +37,7 @@ public class PlayerQuitListener implements Listener {
 
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerManagement.updateScoreboardForPlayer(map.getMapType()), 5);
 
-        mapManagement.getLoader().unloadMap(bridgePlayer);
+        mapManagement.getLoader().unloadMap(bridgePlayer, false);
 
         if (!bridgePlayer.getBlocks().isEmpty()) {
             bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));

@@ -68,34 +68,49 @@ public class BridgeMapLoader {
         }
     }
 
-    public void loadMapForPlayer(BridgePlayer player, BridgeMap bridgeMap, boolean changedType) {
-        if (mapIsNotFree(bridgeMap)) {
-            bridgeMap = bridgeMap.clone();
+    public BridgeMap getMap(String name, BridgeMapType type) {
+        for (BridgeMap bridgeMap : maps) {
+            if (bridgeMap.getName().equalsIgnoreCase(name) && bridgeMap.getMapType() == type) {
+                return bridgeMap;
+            }
         }
+        return null;
+    }
+
+    public void loadMapForPlayer(BridgePlayer player, BridgeMap bridgeMap, boolean changedType) {
         if (bridgeMap.isLoading()) return;
+        if (bridgeMap.getMapType() == null) return;
 
-        if (bridgeMap.getMapType() == null) bridgeMap.setMapType(player.getMap().getMapType());
-
-        int x = calculateFreeSpaceBetweenMaps(bridgeMap.getMapType());
-        bridgeMap.setGivenSpace(x);
+        int x = calculateFreeSpaceBetweenMaps();
+        if (bridgeMap.getGivenSpace() != x)
+            bridgeMap.setGivenSpace(x);
 
         Location mapLocation = new Location(Bukkit.getWorld("world"), x, 100, 0, 180.0f, 0.5f).add(0.5, 0, 0.5);
-        while (locationIsNotFree(mapLocation)) {
-            int newX = calculateFreeSpaceBetweenMaps(bridgeMap.getMapType());
+        /*while (locationIsNotFree(player, mapLocation)) {
+            int newX = calculateFreeSpaceBetweenMaps();
             mapLocation.add(newX, 0, 0);
-            bridgeMap.setGivenSpace(newX);
-        }
+            if (bridgeMap.getGivenSpace() != newX)
+                bridgeMap.setGivenSpace(newX);
+        }*/
 
         playerManagement.setScoreboard(player);
 
-        BridgeMap finalBridgeMap = bridgeMap;
+        /*
+        if (bridgeMap.isInUse()) {
+            Bukkit.broadcastMessage("§cThe map §e" + bridgeMap.getTitle() + " §cis already in use!");
+            return;
+        }*/
+
         bridgeMap.loadMap(mapLocation).thenAccept(loaded -> {
             if (loaded) {
 
-                player.setMap(finalBridgeMap);
+                player.setMap(bridgeMap);
 
-                if (!loadedMaps.contains(finalBridgeMap)) {
-                    loadedMaps.add(finalBridgeMap);
+                if (mapLocation != player.getMapLocation())
+                    player.setMapLocation(mapLocation);
+
+                if (!loadedMaps.contains(bridgeMap)) {
+                    loadedMaps.add(bridgeMap);
                 }
 
                 var bukkitPlayer = player.getPlayer();
@@ -110,17 +125,19 @@ public class BridgeMapLoader {
                     playerManagement.updateScoreboard(player);
 
                     if (!changedType)
-                        bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + finalBridgeMap.getTitle() + " §7with the type §6" + finalBridgeMap.getMapType().getName() + "§8!");
+                        bukkitPlayer.sendMessage(Bridge.PREFIX + "You have joined the map §e" + bridgeMap.getTitle() + " §7with the type §6" + bridgeMap.getMapType().getName() + "§8!");
                 }, 3);
             } else {
-                player.getPlayer().sendMessage(Bridge.PREFIX + "§cThe map §e" + finalBridgeMap.getName() + " §ccould not be loaded!");
+                player.getPlayer().sendMessage(Bridge.PREFIX + "§cThe map §e" + bridgeMap.getName() + " §ccould not be loaded!");
             }
         });
     }
 
 
-    public void unloadMap(BridgePlayer bridgePlayer) {
+    public void unloadMap(BridgePlayer bridgePlayer, boolean changedType) {
         if (bridgePlayer.getMap() == null) return;
+
+        playerManagement.getPlayerTime().remove(bridgePlayer.getPlayer().getUniqueId());
 
         BridgeMap bridgeMap = bridgePlayer.getMap();
 
@@ -137,12 +154,13 @@ public class BridgeMapLoader {
         });
 
         bridgePlayer.setMap(null);
-        playerManagement.getPlayerTime().remove(bridgePlayer.getPlayer().getUniqueId());
     }
 
-    public boolean locationIsNotFree(Location location) {
-        for (BridgeMap bridgeMap : loadedMaps) {
-            if (bridgeMap.getLocation().equals(location)) {
+
+    public boolean locationIsNotFree(BridgePlayer check, Location location) {
+        for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+            if (bridgePlayer.getMapLocation() == null) continue;
+            if (!bridgePlayer.getUuid().equals(check.getUuid()) && bridgePlayer.getMapLocation().equals(location)) {
                 return true;
             }
         }
@@ -151,34 +169,25 @@ public class BridgeMapLoader {
 
     public boolean mapIsNotFree(BridgeMap bridgeMap) {
         for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
-            if (bridgePlayer.getMap() == null) continue;
+            if (bridgePlayer.getMap() == null || bridgePlayer.getMapLocation() == null) continue;
 
-            return bridgePlayer.getMap() == bridgeMap;
+            return bridgePlayer.getMap() == bridgeMap && bridgePlayer.getMap().isInUse();
         }
         return false;
     }
 
-    private int calculateFreeSpaceBetweenMaps(BridgeMapType type) {
-        List<BridgeMap> maps = loadedMaps;
-
-        if (maps.isEmpty()) {
+    private int calculateFreeSpaceBetweenMaps() {
+        if (loadedMaps.isEmpty()) {
             return 0;
         }
 
         int space = 0;
-        int addSpace = type.getDistanceBetweenMaps();
+        int addSpace = 50;
 
-        for (BridgeMap bridgeMap : maps) {
-            Location spawnLoc = bridgeMap.getLocation();
-
-            if (spawnLoc == null) {
-                continue;
-            }
-
-            if (spawnLoc.getWorld().getBlockAt(spawnLoc.getBlockX() + space, spawnLoc.getBlockY() - 1, spawnLoc.getBlockZ()).getType() != Material.AIR) {
+        for (BridgeMap ignored : loadedMaps) {
+            while (Bukkit.getWorld("world").getBlockAt(space, 100 - 2, 0).getType() != Material.AIR) {
                 space += addSpace;
             }
-            /**/
         }
         return space;
     }

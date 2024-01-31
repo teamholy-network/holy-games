@@ -1,8 +1,7 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.map.loader.BridgeSchematicLoader;
+import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
@@ -45,7 +44,9 @@ public class PlayerJoinListener implements Listener {
             var randomMap = bridgeMapManagement.getLoader().getMaps().get(random).clone();
             if (randomMap == null) return;
 
-            bridgeMapManagement.getLoader().loadMapForPlayer(player, randomMap, false);
+            var copiedMap = new BridgeMap(randomMap.getName(), randomMap.getTitle(), randomMap.getMaterialName(), randomMap.getMapType());
+
+            bridgeMapManagement.getLoader().loadMapForPlayer(player, copiedMap, false);
         }
 
     }

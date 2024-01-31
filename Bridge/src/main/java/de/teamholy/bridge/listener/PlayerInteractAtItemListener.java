@@ -20,14 +20,12 @@ import org.bukkit.inventory.ItemStack;
  **/
 public class PlayerInteractAtItemListener implements Listener {
 
+    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         ItemStack item = event.getItem();
-
-        final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
-        final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
         event.setCancelled(!event.getPlayer().isOp());
 

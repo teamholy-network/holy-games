@@ -11,10 +11,13 @@ import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -26,14 +29,18 @@ import java.util.HashMap;
 @Setter
 public class BridgePlayer {
 
+    private final UUID uuid;
     private final Player player;
+
     private BridgeMap map;
+
+    private Location mapLocation;
+
     private PlayerState state;
     private HashMap<Block, Long> blocks;
     private ScoreboardAPI bridgeScoreboard;
 
     private HashMap<BridgeMapType, Long> localBestTime;
-
     private HashMap<BridgeMapType, Long> globalBestTime;
 
     private Settings settings;
@@ -41,8 +48,9 @@ public class BridgePlayer {
     private long wins = 0L;
     private long placedBlocks = 0L;
 
-    public BridgePlayer(Player player) {
-        this.player = player;
+    public BridgePlayer(UUID uuid) {
+        this.uuid = uuid;
+        this.player = Bukkit.getPlayer(uuid);
         this.state = PlayerState.INGAME; // initial normal state -> lobby got removed
         this.blocks = Maps.newHashMap();
         this.settings = new Settings();

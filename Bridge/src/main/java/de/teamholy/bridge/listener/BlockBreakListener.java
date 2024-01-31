@@ -1,12 +1,12 @@
 package de.teamholy.bridge.listener;
 
 import org.bukkit.GameMode;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 /**
@@ -42,5 +42,16 @@ public class BlockBreakListener implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onForm(EntityBlockFormEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onForm(EntityChangeBlockEvent event) {
+        if ((event.getEntity().getType() == EntityType.FALLING_BLOCK))
+            event.setCancelled(true);
     }
 }

@@ -49,8 +49,8 @@ public class PlayerMoveListener implements Listener {
             if (mapPosition == null) return;
 
             if (!mapPosition.isInMapPosition(event.getTo(), true)) {
-                if (bridgePlayer.getMap().getLocation() != null) {
-                    player.teleport(bridgePlayer.getMap().getLocation());
+                if (bridgePlayer.getMapLocation() != null) {
+                    player.teleport(bridgePlayer.getMapLocation());
                 }
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
@@ -68,7 +68,7 @@ public class PlayerMoveListener implements Listener {
                     return;
                 }
 
-                player.teleport(bridgePlayer.getMap().getLocation());
+                player.teleport(bridgePlayer.getMapLocation());
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
