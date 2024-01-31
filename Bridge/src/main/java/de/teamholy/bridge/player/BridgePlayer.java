@@ -54,9 +54,8 @@ public class BridgePlayer {
 
         String gameKey = Gamemodes.BRIDGE.toString();
         if (!statsProfile.exists(gameKey)) {
-            /*for (StatsType time : StatsType.values()) {
-                for (Gamemodes.StatKey statKey : Gamemodes.BRIDGE.getStatKeys()) statsProfile.setStat(gameKey, time, statKey.getName(), statKey.getDefaultValue());
-            }*/
+            statsProfile.setStat(gameKey, StatsType.ALLTIME,"lol",0);
+
 
             statsProfile.setSetting(gameKey, "wins", String.valueOf(0L));
             statsProfile.setSetting(gameKey, "placedBlocks", String.valueOf(0L));
@@ -75,10 +74,12 @@ public class BridgePlayer {
 
             if (statsProfile.getSetting(gameKey, "wins") != null) {
                 this.wins = Long.parseLong(statsProfile.getSetting(gameKey, "wins"));
+                System.out.println("wins: " + this.wins);
             }
 
             if (statsProfile.getSetting(gameKey, "placedBlocks") != null) {
                 this.placedBlocks = Long.parseLong(statsProfile.getSetting(gameKey, "placedBlocks"));
+                System.out.println("placedBlocks: " + this.placedBlocks);
             }
 
             if (statsProfile.getSetting(gameKey, "shortBest") != null) {
@@ -119,17 +120,14 @@ public class BridgePlayer {
         if (localBestTime != null)  {
             if (this.localBestTime.get(BridgeMapType.SHORT) != null) {
                 statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.localBestTime.get(BridgeMapType.SHORT)));
-                System.out.println("shortBest: " + Long.valueOf(statsProfile.getSetting(gameKey, "shortBest")));
             }
 
             if (this.localBestTime.get(BridgeMapType.LONG) != null) {
                 statsProfile.setSetting(gameKey, "longBest", String.valueOf(this.localBestTime.get(BridgeMapType.LONG)));
-                System.out.println("longBest: " + this.localBestTime.get(BridgeMapType.LONG));
             }
 
             if (this.localBestTime.get(BridgeMapType.DIAGONAL) != null) {
                 statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(this.localBestTime.get(BridgeMapType.DIAGONAL)));
-                System.out.println("diagonalBest: " + this.localBestTime.get(BridgeMapType.DIAGONAL));
             }
         }
 

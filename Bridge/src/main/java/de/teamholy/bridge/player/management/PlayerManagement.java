@@ -202,7 +202,6 @@ public class PlayerManagement {
     }
 
     public String checkBestTime(long bestTime) {
-        Bukkit.broadcastMessage("best: " + bestTime);
         return (bestTime == 0) ? "§c-/-" : " §e" + FormatTime.formatTimeManually(bestTime);
     }
 
