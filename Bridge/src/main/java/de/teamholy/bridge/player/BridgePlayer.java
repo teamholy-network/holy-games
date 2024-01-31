@@ -2,11 +2,17 @@ package de.teamholy.bridge.player;
 
 import com.google.common.collect.Maps;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
+import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.bridge.player.settings.sounds.BridgeSound;
+import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
+import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
+import de.teamholy.core.api.entities.player.PlayerProfile;
+import de.teamholy.core.api.manager.CoinManager;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
@@ -48,6 +54,8 @@ public class BridgePlayer {
     private long wins = 0L;
     private long placedBlocks = 0L;
 
+    private PerkPlayerProfile perkPlayerProfile;
+
     public BridgePlayer(UUID uuid) {
         this.uuid = uuid;
         this.player = Bukkit.getPlayer(uuid);
@@ -58,6 +66,8 @@ public class BridgePlayer {
         this.globalBestTime = Maps.newHashMap();
 
         registerDatabaseEntry();
+
+
     }
 
     private void registerDatabaseEntry() {
@@ -65,7 +75,7 @@ public class BridgePlayer {
 
         String gameKey = Gamemodes.BRIDGE.toString();
         if (!statsProfile.exists(gameKey)) {
-            statsProfile.setStat(gameKey, StatsType.ALLTIME,"lol",0);
+            statsProfile.setStat(gameKey, StatsType.ALLTIME, "lol", 0);
 
 
             statsProfile.setSetting(gameKey, "wins", String.valueOf(0L));
@@ -110,6 +120,26 @@ public class BridgePlayer {
                 this.settings.setBlockAnimationType(Settings.BlockAnimationType.valueOf(statsProfile.getSetting(gameKey, "blockAnimationType")));
             }
 
+            if (statsProfile.getSetting(gameKey, "selectedSound") != null) {
+                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "selectedSound")));
+                if (bridgeSound != null) {
+                    this.settings.setCurrentSound(bridgeSound);
+                }
+            }
+        }
+        perkPlayerProfile = BukkitCore.getInstance().getCoreAPI().getPerkPlayerService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getPerkPlayerService().getRepository().findFirstById(player.getUniqueId()));
+
+        loadPerks();
+    }
+
+    private void loadPerks() {
+        for (int id : perkPlayerProfile.getOwnedPerks()) {
+            if (id >= 5000 && id < 6000) {
+                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(id);
+                if (bridgeSound != null) {
+                    settings.getSounds().add(bridgeSound);
+                }
+            }
         }
     }
 
@@ -125,7 +155,10 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "removalTime", String.valueOf(this.settings.getRemovalTime()));
         statsProfile.setSetting(gameKey, "blockAnimationType", this.settings.getBlockAnimationType().name());
 
-        if (globalBestTime != null)  {
+        if (this.settings.getCurrentSound() != null)
+            statsProfile.setSetting(gameKey, "selectedSound", String.valueOf(this.settings.getCurrentSound().getPerkId()));
+
+        if (globalBestTime != null) {
             if (this.globalBestTime.get(BridgeMapType.SHORT) != null) {
                 statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.globalBestTime.get(BridgeMapType.SHORT)));
             }

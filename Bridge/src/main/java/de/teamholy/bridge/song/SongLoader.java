@@ -27,7 +27,7 @@ public class SongLoader {
 
         for (File songFile : Objects.requireNonNull(file.listFiles())) {
             if (songFile.getName().endsWith(".nbs")) {
-                BridgeSong song = new BridgeSong(songFile.getName(), songFile);
+                BridgeSong song = new BridgeSong(songFile.getName().replace(" ", "").replace(".nbs", ""), songFile);
                 songManager.addSong(song);
 
                 System.out.println("Loaded song " + song.getName());

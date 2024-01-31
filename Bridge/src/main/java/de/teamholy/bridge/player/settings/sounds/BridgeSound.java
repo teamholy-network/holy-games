@@ -1,7 +1,5 @@
 package de.teamholy.bridge.player.settings.sounds;
 
-import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
-import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.perks.PerkRankType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +16,8 @@ import javax.annotation.Nullable;
 @Getter
 @AllArgsConstructor
 public class BridgeSound {
+
+    private int perkId;
 
     private String name;
     private String displayName;

@@ -32,4 +32,8 @@ public class SongManager {
     public void addSong(BridgeSong song) {
         this.songs.add(song);
     }
+
+    public BridgeSong getSong(String name) {
+        return this.songs.stream().filter(song -> song.getName().toLowerCase().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
 }

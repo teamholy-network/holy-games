@@ -1,11 +1,19 @@
 package de.teamholy.bridge.player.management;
 
+import com.google.common.collect.Lists;
+import com.xxmicloxx.NoteBlockAPI.model.Song;
+import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
+import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
+import de.teamholy.bridge.player.settings.sounds.BridgeSong;
+import de.teamholy.bridge.player.settings.sounds.BridgeSound;
+import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
+import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.player.settings.Settings;
@@ -27,6 +35,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,6 +100,48 @@ public class PlayerManagement {
         player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§cQuit").build());
     }
 
+    private void createScoreboard(BridgePlayer bridgePlayer) {
+        var player = bridgePlayer.getPlayer();
+        if (getScoreboard(player) != null) {
+            return;
+        }
+        ScoreboardAPI bridgeScoreboard = new ScoreboardAPI();
+        bridgeScoreboard.createScoreboard(player, "§e");
+
+        bridgePlayer.setBridgeScoreboard(bridgeScoreboard);
+    }
+
+    public void setScoreboard(BridgePlayer bridgePlayer) {
+        ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
+        if (bridgeScoreboard.contains(13)) {
+            return;
+        }
+
+        bridgeScoreboard.setLine(14, "§8§m-----------------");
+        bridgeScoreboard.setLine(13, " §7Best Time");
+        bridgeScoreboard.setLine(12, " §c-/-");
+        bridgeScoreboard.setLine(11, "§7");
+
+        bridgeScoreboard.setLine(10, " §6Top 5");
+        bridgeScoreboard.setLine(9, "§f    §oSession");
+        bridgeScoreboard.setLine(8, "§r");
+        bridgeScoreboard.setLine(2, "§8");
+        bridgeScoreboard.setLine(1, "§8§m-----------------");
+        bridgeScoreboard.setLine(0, "§f§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+        bridgeScoreboard.build();
+    }
+
+    public void updateScoreboard(BridgePlayer bridgePlayer) {
+        ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
+        bridgeScoreboard.updateLine(13, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
+        bridgeScoreboard.updateLine(12, " §e" + checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
+
+        String top5 = " §6Top 5 §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)";
+        bridgeScoreboard.updateLine(10, top5);
+
+        updateScoreboardForPlayer(bridgePlayer.getMap().getMapType());
+    }
+
     public void refillBlocks(Player player) {
         var bridgePlayer = getBridgePlayer(player);
         player.getInventory().setItem(0, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
@@ -103,6 +154,7 @@ public class PlayerManagement {
         inventory.setItem(2, new ItemBuilder(Material.ANVIL).amount(1).name("§6Block Settings").build());
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
+        inventory.setItem(4, new ItemBuilder(Material.RECORD_8).name("§6Sound Settings").build());
 
         inventory.setItem(6, new ItemBuilder(Material.PAPER).name("§6Maps").build());
         inventory.setItem(7, new ItemBuilder(Material.ANVIL).name("§bMap Length").build());
@@ -147,53 +199,49 @@ public class PlayerManagement {
         return inventory;
     }
 
-    private void createScoreboard(BridgePlayer bridgePlayer) {
-        var player = bridgePlayer.getPlayer();
-        if (getScoreboard(player) != null) {
-            return;
+    public Inventory openSoundInventory(BridgePlayer bridgePlayer) {
+        Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§8» §6Sound Settings");
+
+        int slot = 0;
+
+        for (BridgeSounds sounds : BridgeSounds.values()) {
+            BridgeSound sound = sounds.getBridgeSound();
+            List<String> lore = getLore(bridgePlayer, sound);
+
+            inventory.setItem(slot,
+                    new ItemBuilder((sound.getSoundType() == BridgeSoundType.SONG ? Material.RECORD_3 : Material.NOTE_BLOCK)).amount(1).name(sound.getDisplayName())
+                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build());
+            slot++;
+            if (slot == 26) {
+                break;
+            }
         }
-        ScoreboardAPI bridgeScoreboard = new ScoreboardAPI();
-        bridgeScoreboard.createScoreboard(player, "§e");
-
-        bridgePlayer.setBridgeScoreboard(bridgeScoreboard);
+        inventory.setItem(inventory.getSize() - 5, new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build());
+        return inventory;
     }
 
-    public void setScoreboard(BridgePlayer bridgePlayer) {
-        ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
-        if (bridgeScoreboard.contains(13)) {
-            return;
+    @Nonnull
+    private static List<String> getLore(BridgePlayer bridgePlayer, BridgeSound sound) {
+        List<String> lore = Lists.newArrayList();
+
+        if (bridgePlayer.getSettings().getSounds().isEmpty() || !bridgePlayer.getSettings().getSounds().contains(sound)) {
+            lore.add("§7This sound costs §e" + sound.getPrice() + " §6coins");
+        } else {
+            if (bridgePlayer.getSettings().getCurrentSound() == sound) {
+                lore.add("§2selected");
+            } else {
+                lore.add("§ayou own this perk, click to select");
+            }
         }
-
-        bridgeScoreboard.setLine(14, "§8§m-----------------");
-        bridgeScoreboard.setLine(13, " §7Best Time");
-        bridgeScoreboard.setLine(12, " §c-/-");
-        bridgeScoreboard.setLine(11, "§7");
-
-        bridgeScoreboard.setLine(10, " §6Top 5");
-        bridgeScoreboard.setLine(9, "§f    §oSession");
-        bridgeScoreboard.setLine(8, "§r");
-        bridgeScoreboard.setLine(2, "§8");
-        bridgeScoreboard.setLine(1, "§8§m-----------------");
-        bridgeScoreboard.setLine(0, "§f§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
-        bridgeScoreboard.build();
+        return lore;
     }
 
-    public void updateScoreboard(BridgePlayer bridgePlayer) {
-        ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
-        bridgeScoreboard.updateLine(13, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
-        bridgeScoreboard.updateLine(12, " §e" + checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
-
-        String top5 = " §6Top 5 §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)";
-        bridgeScoreboard.updateLine(10, top5);
-
-        updateScoreboardForPlayer(bridgePlayer.getMap().getMapType());
-    }
-
-    public long checkBestTime(Player player, long current, long bestTime) {
+    public long checkBestTime(Player player, long current, long bestTime, boolean global) {
         var bridgePlayer = getBridgePlayer(player);
 
-        if (current < bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()) && current < bestTime) {
-            bridgePlayer.setGlobalBestTime(bridgePlayer.getMap().getMapType(), current);
+        if (bestTime == 0 || current < bestTime) {
+            if (global) bridgePlayer.setGlobalBestTime(bridgePlayer.getMap().getMapType(), current);
+
             bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
 
             bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
@@ -201,20 +249,13 @@ public class PlayerManagement {
             addBestTime(bridgePlayer);
             updateScoreboard(bridgePlayer);
 
-            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 30, true);
-            sendActionBar(player, "§a+ §e50 Coins");
-
-            bridgePlayer.addWin();
-        } else if (bestTime == 0 || current < bestTime) {
-            bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
-
-            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
-
-            addBestTime(bridgePlayer);
-            updateScoreboard(bridgePlayer);
-
-            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 10, true);
-            sendActionBar(player, "§a+ §e10 Coins");
+            if (global) {
+                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 50, true);
+                sendActionBar(player, "§a+ §e50 Coins");
+            } else {
+                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 10, true);
+                sendActionBar(player, "§a+ §e10 Coins");
+            }
 
             bridgePlayer.addWin();
         }
@@ -225,6 +266,39 @@ public class PlayerManagement {
         }
 
         return (bestTime == 0 || current < bestTime) ? current : bestTime;
+    }
+
+    public void playSoundPerk(BridgePlayer bridgePlayer, boolean win) {
+        Player bukkitPlayer = bridgePlayer.getPlayer();
+        if (bukkitPlayer == null) {
+            Bukkit.broadcastMessage("player is null");
+            return;
+        }
+
+        var sound = bridgePlayer.getSettings().getCurrentSound();
+
+        if (sound == null) {
+            return;
+        }
+
+        if (win) {
+            if (sound.getSoundType() == BridgeSoundType.SONG) {
+                BridgeSong bridgeSong = Bridge.getInstance().getSongManager().getSong(sound.getName().split("_")[1].toLowerCase());
+                Song song = NBSDecoder.parse(bridgeSong.getFile());
+
+                RadioSongPlayer radioSongPlayer = new RadioSongPlayer(song);
+                radioSongPlayer.addPlayer(bukkitPlayer);
+                radioSongPlayer.setPlaying(true);
+
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), radioSongPlayer::destroy, 20 * 10L);
+            } else {
+                bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
+            }
+        } else {
+            if (sound.getSoundType() != BridgeSoundType.DEATH) return;
+
+            bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
+        }
     }
 
     public String checkBestTime(long bestTime) {
@@ -263,7 +337,7 @@ public class PlayerManagement {
             }
 
             Player playerEntry = bridgePlayerLongEntry.getKey().getPlayer();
-            String string = " "+
+            String string = " " +
                     BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getUniqueId()) + playerEntry.getName() + " §8* §7" +
                     FormatTime.formatTimeManually(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
 

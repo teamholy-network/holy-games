@@ -3,6 +3,7 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
+import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
@@ -123,6 +124,8 @@ public class PlayerInventoryListener implements Listener {
                     player.openInventory(mapManagement.getMapLengthInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Block Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Sound Settings")) {
+                    player.openInventory(playerManagement.openSoundInventory(bridgePlayer));
                 }
             }
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Blocks")) {
@@ -241,6 +244,38 @@ public class PlayerInventoryListener implements Listener {
                 }
             }
             player.closeInventory();
+        } else if (view.getTitle().equalsIgnoreCase("§8» §6Sound Settings")) {
+            event.setCancelled(true);
+
+            var bridgePlayer = playerManagement.getBridgePlayer(player);
+
+            var clickedItem = event.getCurrentItem();
+            if (clickedItem == null) return;
+
+            var clickedItemMeta = clickedItem.getItemMeta();
+            if (clickedItemMeta == null) return;
+
+            if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§c§lClear")) {
+                bridgePlayer.getSettings().setCurrentSound(null);
+                player.sendMessage(Bridge.PREFIX + "You cleared the sound!");
+            } else {
+
+                for (BridgeSounds bridgeSounds : BridgeSounds.values()) {
+                    if (bridgeSounds.getBridgeSound().getDisplayName().equalsIgnoreCase(clickedItemMeta.getDisplayName())) {
+                        var sound = bridgeSounds.getBridgeSound();
+
+                        if (bridgePlayer.getSettings().getSounds().contains(sound)) {
+                            player.sendMessage(Bridge.PREFIX + "You set the sound to §e" + sound.getDisplayName() + "§7!");
+                            bridgePlayer.getSettings().setCurrentSound(sound);
+                            player.closeInventory();
+                        } else {
+                            Bridge.getInstance().getPerkManagement().buyPerk(bridgePlayer, sound);
+                        }
+                        return;
+                    }
+                }
+
+            }
         }
     }
 

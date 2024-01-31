@@ -1,8 +1,13 @@
 package de.teamholy.bridge.player.settings;
 
+import com.google.common.collect.Lists;
+import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -19,6 +24,9 @@ public class Settings {
     private long removalTime = 0;
 
     private BlockAnimationType blockAnimationType = BlockAnimationType.NONE;
+
+    private List<BridgeSound> sounds = Lists.newArrayList();
+    private BridgeSound currentSound = null;
 
     public enum BlockAnimationType {
         NONE,

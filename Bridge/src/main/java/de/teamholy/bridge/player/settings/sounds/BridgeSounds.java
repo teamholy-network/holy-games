@@ -13,33 +13,42 @@ import org.bukkit.Sound;
 @Getter
 public enum BridgeSounds {
 
-    DEATH_WITHER(new BridgeSound("death_wither", "", BridgeSoundType.DEATH, Sound.WITHER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_ENDER_DRAGON(new BridgeSound("death_ender_dragon", "", BridgeSoundType.DEATH, Sound.ENDERDRAGON_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_ENDERMAN(new BridgeSound("death_enderman", "", BridgeSoundType.DEATH, Sound.ENDERMAN_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_GHAST(new BridgeSound("death_ghast", "", BridgeSoundType.DEATH, Sound.GHAST_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_ZOMBIE(new BridgeSound("death_zombie", "", BridgeSoundType.DEATH, Sound.ZOMBIE_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_SKELETON(new BridgeSound("death_skeleton", "", BridgeSoundType.DEATH, Sound.SKELETON_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_SPIDER(new BridgeSound("death_spider", "", BridgeSoundType.DEATH, Sound.SPIDER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_CREEPER(new BridgeSound("death_creeper", "", BridgeSoundType.DEATH, Sound.CREEPER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_BLAZE(new BridgeSound("death_blaze", "", BridgeSoundType.DEATH, Sound.BLAZE_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_IRON_GOLEM(new BridgeSound("death_iron_golem", "", BridgeSoundType.DEATH, Sound.IRONGOLEM_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_VILLAGER(new BridgeSound("death_villager", "", BridgeSoundType.DEATH, Sound.VILLAGER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
-    DEATH_WOLF(new BridgeSound("death_wolf", "", BridgeSoundType.DEATH, Sound.WOLF_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_WITHER(new BridgeSound(5000,"death_wither", "§c§lWither Death", BridgeSoundType.DEATH, Sound.WITHER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_ENDER_DRAGON(new BridgeSound(5001,"death_ender_dragon", "§c§lEnderdragon Death", BridgeSoundType.DEATH, Sound.ENDERDRAGON_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_ENDERMAN(new BridgeSound(5002,"death_enderman", "§c§lEnderman Death", BridgeSoundType.DEATH, Sound.ENDERMAN_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_GHAST(new BridgeSound(5003,"death_ghast", "§c§lGhast Death", BridgeSoundType.DEATH, Sound.GHAST_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_ZOMBIE(new BridgeSound(5004,"death_zombie", "§c§lZombie Death", BridgeSoundType.DEATH, Sound.ZOMBIE_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_SKELETON(new BridgeSound(5005,"death_skeleton", "§c§lSkeleton Death", BridgeSoundType.DEATH, Sound.SKELETON_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_SPIDER(new BridgeSound(5006,"death_spider", "§c§lSpider Death", BridgeSoundType.DEATH, Sound.SPIDER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_CREEPER(new BridgeSound(5007,"death_creeper", "§c§lCreeper Death", BridgeSoundType.DEATH, Sound.CREEPER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_BLAZE(new BridgeSound(5008,"death_blaze", "§c§lBlaze Death", BridgeSoundType.DEATH, Sound.BLAZE_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_IRON_GOLEM(new BridgeSound(5009,"death_iron_golem", "§c§lGolem Death", BridgeSoundType.DEATH, Sound.IRONGOLEM_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_VILLAGER(new BridgeSound(5010,"death_villager", "§c§lVillager Death", BridgeSoundType.DEATH, Sound.VILLAGER_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    DEATH_WOLF(new BridgeSound(5011,"death_wolf", "§c§lWolf Death", BridgeSoundType.DEATH, Sound.WOLF_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
 
-    WIN_LEVEL_UP(new BridgeSound("win_level_up","§aLevel Up", BridgeSoundType.WIN, Sound.LEVEL_UP, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
+    WIN_LEVEL_UP(new BridgeSound(5020,"win_level_up","§a§lLevel Up Win", BridgeSoundType.WIN, Sound.LEVEL_UP, 1.0F, 1.0F, 100, PerkRankType.PLAYER)),
 
     SONG_7thElement(
-            new BridgeSound("song_7thelement",
-            "§a7thelement", BridgeSoundType.SONG,
+            new BridgeSound(5050,"song_7thelement",
+            "§f§l7thelement Song", BridgeSoundType.SONG,
             null, 1.0F, 1.0F, 100, PerkRankType.HOLY)),
     SONG_A_Little_Piece_of_Heaven(
-            new BridgeSound("song_alittlepieceofheaven",
-            "§aA Little Piece of Heaven", BridgeSoundType.SONG,
+            new BridgeSound(5051,"song_alittlepieceofheaven",
+            "§f§lA Little Piece of Heaven Song", BridgeSoundType.SONG,
             null, 1.0F, 1.0F, 100, PerkRankType.HOLY));
 
-    private BridgeSound bridgeSound;
+    private final BridgeSound bridgeSound;
 
     BridgeSounds(BridgeSound bridgeSound) {
         this.bridgeSound = bridgeSound;
+    }
+
+    public static BridgeSound getBridgeSound(int id) {
+        for (BridgeSounds bridgeSounds : values()) {
+            if (bridgeSounds.getBridgeSound().getPerkId() == id) {
+                return bridgeSounds.getBridgeSound();
+            }
+        }
+        return null;
     }
 }
