@@ -199,42 +199,7 @@ public class PlayerManagement {
         return inventory;
     }
 
-    public Inventory openSoundInventory(BridgePlayer bridgePlayer) {
-        Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§8» §6Sound Settings");
 
-        int slot = 0;
-
-        for (BridgeSounds sounds : BridgeSounds.values()) {
-            BridgeSound sound = sounds.getBridgeSound();
-            List<String> lore = getLore(bridgePlayer, sound);
-
-            inventory.setItem(slot,
-                    new ItemBuilder((sound.getSoundType() == BridgeSoundType.SONG ? Material.RECORD_3 : Material.NOTE_BLOCK)).amount(1).name(sound.getDisplayName())
-                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build());
-            slot++;
-            if (slot == 26) {
-                break;
-            }
-        }
-        inventory.setItem(inventory.getSize() - 5, new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build());
-        return inventory;
-    }
-
-    @Nonnull
-    private static List<String> getLore(BridgePlayer bridgePlayer, BridgeSound sound) {
-        List<String> lore = Lists.newArrayList();
-
-        if (bridgePlayer.getSettings().getSounds().isEmpty() || !bridgePlayer.getSettings().getSounds().contains(sound)) {
-            lore.add("§7This sound costs §e" + sound.getPrice() + " §6coins");
-        } else {
-            if (bridgePlayer.getSettings().getCurrentSound() == sound) {
-                lore.add("§2selected");
-            } else {
-                lore.add("§ayou own this perk, click to select");
-            }
-        }
-        return lore;
-    }
 
     public long checkBestTime(Player player, long current, long bestTime, boolean global) {
         var bridgePlayer = getBridgePlayer(player);
@@ -266,39 +231,6 @@ public class PlayerManagement {
         }
 
         return (bestTime == 0 || current < bestTime) ? current : bestTime;
-    }
-
-    public void playSoundPerk(BridgePlayer bridgePlayer, boolean win) {
-        Player bukkitPlayer = bridgePlayer.getPlayer();
-        if (bukkitPlayer == null) {
-            Bukkit.broadcastMessage("player is null");
-            return;
-        }
-
-        var sound = bridgePlayer.getSettings().getCurrentSound();
-
-        if (sound == null) {
-            return;
-        }
-
-        if (win) {
-            if (sound.getSoundType() == BridgeSoundType.SONG) {
-                BridgeSong bridgeSong = Bridge.getInstance().getSongManager().getSong(sound.getName().split("_")[1].toLowerCase());
-                Song song = NBSDecoder.parse(bridgeSong.getFile());
-
-                RadioSongPlayer radioSongPlayer = new RadioSongPlayer(song);
-                radioSongPlayer.addPlayer(bukkitPlayer);
-                radioSongPlayer.setPlaying(true);
-
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), radioSongPlayer::destroy, 20 * 10L);
-            } else {
-                bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
-            }
-        } else {
-            if (sound.getSoundType() != BridgeSoundType.DEATH) return;
-
-            bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
-        }
     }
 
     public String checkBestTime(long bestTime) {

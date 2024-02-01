@@ -3,6 +3,7 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
+import de.teamholy.bridge.player.management.PerkManagement;
 import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
@@ -28,6 +29,7 @@ public class PlayerInventoryListener implements Listener {
 
     private final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+    private final PerkManagement perkManagement = Bridge.getInstance().getPerkManagement();
 
     @EventHandler
     public void onClickInventory(InventoryClickEvent event) {
@@ -125,7 +127,7 @@ public class PlayerInventoryListener implements Listener {
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Block Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Sound Settings")) {
-                    player.openInventory(playerManagement.openSoundInventory(bridgePlayer));
+                    player.openInventory(perkManagement.openSoundInventory(bridgePlayer));
                 }
             }
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Blocks")) {
@@ -269,7 +271,7 @@ public class PlayerInventoryListener implements Listener {
                             bridgePlayer.getSettings().setCurrentSound(sound);
                             player.closeInventory();
                         } else {
-                            Bridge.getInstance().getPerkManagement().buyPerk(bridgePlayer, sound);
+                            perkManagement.buyPerk(bridgePlayer, sound);
                         }
                         return;
                     }

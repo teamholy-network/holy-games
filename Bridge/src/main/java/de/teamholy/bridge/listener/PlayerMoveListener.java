@@ -4,6 +4,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
+import de.teamholy.bridge.player.management.PerkManagement;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
@@ -25,6 +26,7 @@ public class PlayerMoveListener implements Listener {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
     private final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
+    private final PerkManagement perkManagement = Bridge.getInstance().getPerkManagement();
 
 
     @EventHandler
@@ -60,7 +62,7 @@ public class PlayerMoveListener implements Listener {
                 bridgePlayer.getBlocks().clear();
                 playerManagement.refillBlocks(player);
                 playerManagement.getPlayerTime().remove(player.getUniqueId());
-                playerManagement.playSoundPerk(bridgePlayer, false);
+                perkManagement.playSoundPerk(bridgePlayer, false);
             }
 
             if (player.getLocation().getBlock().getType() == Material.GOLD_PLATE
@@ -80,7 +82,7 @@ public class PlayerMoveListener implements Listener {
                 var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()), false);
                 var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()), true);
 
-                playerManagement.playSoundPerk(bridgePlayer, true);
+                perkManagement.playSoundPerk(bridgePlayer, true);
 
                 playerManagement.refillBlocks(player);
                 player.sendMessage(Bridge.PREFIX + "§7Your time was §e" + FormatTime.formatTimeManually(current) +
