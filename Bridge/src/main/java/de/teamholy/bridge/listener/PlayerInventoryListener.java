@@ -4,6 +4,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PerkManagement;
+import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
@@ -126,11 +127,28 @@ public class PlayerInventoryListener implements Listener {
                     player.openInventory(mapManagement.getMapLengthInventory());
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Block Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Sound Settings")) {
-                    player.openInventory(perkManagement.openSoundInventory(bridgePlayer));
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Sounds")) {
+                    player.openInventory(perkManagement.openSoundsPerkInventory());
                 }
             }
-        } else if (view.getTitle().equalsIgnoreCase("§8» §6Blocks")) {
+        } else if (view.getTitle().equals("§8» §6Sound Settings")) {
+            event.setCancelled(true);
+            var clickedItem = event.getCurrentItem();
+            if (clickedItem == null) return;
+
+            var clickedItemMeta = clickedItem.getItemMeta();
+            if (clickedItemMeta == null) return;
+
+            var bridgePlayer = playerManagement.getBridgePlayer(player);
+
+            switch (clickedItemMeta.getDisplayName()) {
+                case "§c§lDeath Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.DEATH));
+                case "§a§lWin Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.WIN));
+                case "§f§lMusic" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.SONG));
+            }
+        }
+
+        else if (view.getTitle().equalsIgnoreCase("§8» §6Blocks")) {
             event.setCancelled(true);
             var bridgePlayer = playerManagement.getBridgePlayer(player);
             var material = event.getCurrentItem().getType();
@@ -246,7 +264,9 @@ public class PlayerInventoryListener implements Listener {
                 }
             }
             player.closeInventory();
-        } else if (view.getTitle().equalsIgnoreCase("§8» §6Sound Settings")) {
+        } else if (view.getTitle().equalsIgnoreCase("§8» §6Death Sound Settings")
+                || view.getTitle().equalsIgnoreCase("§8» §6Win Sound Settings")
+                || view.getTitle().equalsIgnoreCase("§8» §6Music Settings")){
             event.setCancelled(true);
 
             var bridgePlayer = playerManagement.getBridgePlayer(player);

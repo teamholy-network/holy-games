@@ -3,6 +3,7 @@ package de.teamholy.bridge.player.settings.sounds;
 import de.teamholy.core.bukkit.perks.PerkRankType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 
 import javax.annotation.Nullable;
@@ -31,8 +32,7 @@ public class BridgeSound {
     private long price;
     private PerkRankType perkRankType;
 
-    private final String permission = "bridge.sound." + name;
-
+    private Material material;
 
 
 }

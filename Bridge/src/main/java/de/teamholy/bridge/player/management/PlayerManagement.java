@@ -154,7 +154,7 @@ public class PlayerManagement {
         inventory.setItem(2, new ItemBuilder(Material.ANVIL).amount(1).name("§6Block Settings").build());
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
-        inventory.setItem(4, new ItemBuilder(Material.RECORD_8).name("§6Sound Settings").build());
+        inventory.setItem(4, new ItemBuilder(Material.RECORD_8).name("§6Sounds").build());
 
         inventory.setItem(6, new ItemBuilder(Material.PAPER).name("§6Maps").build());
         inventory.setItem(7, new ItemBuilder(Material.ANVIL).name("§bMap Length").build());

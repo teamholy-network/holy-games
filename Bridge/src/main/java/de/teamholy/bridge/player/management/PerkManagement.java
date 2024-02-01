@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,25 +66,25 @@ public class PerkManagement {
         }
     }
 
-    public boolean buyPerk(BridgePlayer bridgePlayer, BridgeSound bridgeSound) {
+    public void buyPerk(BridgePlayer bridgePlayer, BridgeSound bridgeSound) {
         PerkPlayerProfile perkProfile = bridgePlayer.getPerkPlayerProfile();
 
         PlayerProfile playerProfile = (PlayerProfile) BukkitCore.getInstance().getCoreAPI().getPlayerService().getEntity(bridgePlayer.getUuid(), () -> {
-            return (PlayerProfile)((PlayerRepository)BukkitCore.getInstance().getCoreAPI().getPlayerService().getRepository()).findFirstById(bridgePlayer.getUuid());
+            return (PlayerProfile) ((PlayerRepository) BukkitCore.getInstance().getCoreAPI().getPlayerService().getRepository()).findFirstById(bridgePlayer.getUuid());
         });
 
         if (playerProfile == null) {
-            return false;
+            return;
         }
 
         if (perkProfile.getOwnedPerks().contains(bridgeSound.getPerkId())) {
             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou already own this perk!");
-            return false;
+            return;
         }
 
         if (playerProfile.getCoins() < bridgeSound.getPrice()) {
             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou don't have enough coins to buy this perk!");
-            return false;
+            return;
         }
 
         playerProfile.setCoins(playerProfile.getCoins() - bridgeSound.getPrice());
@@ -97,23 +98,72 @@ public class PerkManagement {
         Player bukkitPlayer = bridgePlayer.getPlayer();
         if (bukkitPlayer != null) {
             bukkitPlayer.sendMessage(Bridge.PREFIX + "§7You successfully bought the §e" + bridgeSound.getDisplayName() + " §7perk for §e" + bridgeSound.getPrice() + " §6coins!");
+            bukkitPlayer.sendMessage(Bridge.PREFIX + "§7Automatically selected the perk!");
+            bridgePlayer.getSettings().setCurrentSound(bridgeSound);
             bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.LEVEL_UP, 2.0F, 2.0F);
             bukkitPlayer.closeInventory();
         }
-        return true;
     }
 
-    public Inventory openSoundInventory(BridgePlayer bridgePlayer) {
-        Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§8» §6Sound Settings");
+    public Inventory openSoundsPerkInventory() {
+        Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§8» §6Sound Settings");
 
-        int slot = 0;
+        inventory.setItem(11, new ItemBuilder(Material.SKULL_ITEM).amount(1).name("§c§lDeath Sounds").lore("§7Click to open the death sound settings").build());
+        inventory.setItem(13, new ItemBuilder(Material.NETHER_STAR).amount(1).name("§a§lWin Sounds").lore("§7Click to open the win sound settings").build());
+        inventory.setItem(15, new ItemBuilder(Material.NOTE_BLOCK).amount(1).name("§f§lMusic").lore("§7Click to open the music settings").build());
+
+        return inventory;
+    }
+
+    public Inventory openSoundInventory(BridgePlayer bridgePlayer, BridgeSoundType bridgeSoundType) {
+        int size = 4; // 4 rows by default
+
+        int listSize = Arrays.stream(BridgeSounds.values()).filter(bridgeSounds -> bridgeSounds.getBridgeSound().getSoundType() == bridgeSoundType).toList().size();
+
+        if (listSize > 9 && listSize <= 18) {
+            size =5; // 5 rows if there are more than 9 sounds
+        } else if (listSize > 18) {
+            size = 6; // 6 rows if there are more than 18 sounds
+        }
+
+        Inventory inventory = Bukkit.createInventory(null, 9*size, "§8» §6" + bridgeSoundType.getName() + " Settings");
+
+        int slot = 10;
 
         for (BridgeSounds sounds : BridgeSounds.values()) {
             BridgeSound sound = sounds.getBridgeSound();
+            if (sound.getSoundType() != bridgeSoundType) {
+                continue;
+            }
             List<String> lore = getLore(bridgePlayer, sound);
 
             inventory.setItem(slot,
-                    new ItemBuilder((sound.getSoundType() == BridgeSoundType.SONG ? Material.RECORD_3 : Material.NOTE_BLOCK)).amount(1).name(sound.getDisplayName())
+                    new ItemBuilder(sound.getMaterial()).amount(1).name(sound.getDisplayName())
+                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build());
+            slot++;
+            if (slot > 16 && slot < 19) {
+                slot = 19;
+            } else if (slot == 26) break;
+        }
+        inventory.setItem(inventory.getSize() - 5, new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build());
+        return inventory;
+    }
+
+    public Inventory openSongInventory(BridgePlayer bridgePlayer) {
+        Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§8» §6Song Settings");
+
+        int slot = 0;
+
+        for (BridgeSounds song : BridgeSounds.values()) {
+            BridgeSound sound = song.getBridgeSound();
+            if (sound.getSoundType() != BridgeSoundType.SONG) {
+                continue;
+            }
+
+            List<String> lore = getLore(bridgePlayer, sound);
+
+            inventory.setItem(slot,
+                    new ItemBuilder(Material.RECORD_3).amount(1).name(sound.getDisplayName())
                             .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build());
             slot++;
             if (slot == 26) {
@@ -134,7 +184,10 @@ public class PerkManagement {
             if (bridgePlayer.getSettings().getCurrentSound() == sound) {
                 lore.add("§2selected");
             } else {
-                lore.add("§ayou own this perk, click to select");
+                lore.add("§ayou own this sound");
+                lore.add(" ");
+                lore.add("§7§oright click, to change the event");
+                lore.add("§7§owhere this sound is played");
             }
         }
         return lore;
