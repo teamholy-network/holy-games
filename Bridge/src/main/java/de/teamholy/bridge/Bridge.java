@@ -12,7 +12,6 @@ import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.timer.BridgeTimer;
 import de.teamholy.bridge.util.VoidGenerator;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.WorldCreator;
@@ -97,6 +96,7 @@ public class Bridge extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntitySpawnListener(), this);
         Bukkit.getPluginManager().registerEvents(new WeatherChangeListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDropItemListener(), this);
+
     }
 
     public static Bridge getInstance() {

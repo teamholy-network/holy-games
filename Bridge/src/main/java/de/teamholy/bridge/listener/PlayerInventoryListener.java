@@ -142,9 +142,9 @@ public class PlayerInventoryListener implements Listener {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
 
             switch (clickedItemMeta.getDisplayName()) {
-                case "§c§lDeath Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.DEATH));
-                case "§a§lWin Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.WIN));
-                case "§f§lMusic" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.SONG));
+                case "§c§lDeath Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.DEATH).getInventory());
+                case "§a§lWin Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.WIN).getInventory());
+                case "§f§lMusic" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.SONG).getInventory());
             }
         }
 

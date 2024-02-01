@@ -115,18 +115,19 @@ public class PerkManagement {
         return inventory;
     }
 
-    public Inventory openSoundInventory(BridgePlayer bridgePlayer, BridgeSoundType bridgeSoundType) {
+    public de.teamholy.core.bukkit.utils.Inventory openSoundInventory(BridgePlayer bridgePlayer, BridgeSoundType bridgeSoundType) {
         int size = 4; // 4 rows by default
 
         int listSize = Arrays.stream(BridgeSounds.values()).filter(bridgeSounds -> bridgeSounds.getBridgeSound().getSoundType() == bridgeSoundType).toList().size();
 
         if (listSize > 9 && listSize <= 18) {
-            size =5; // 5 rows if there are more than 9 sounds
+            size = 5; // 5 rows if there are more than 9 sounds
         } else if (listSize > 18) {
             size = 6; // 6 rows if there are more than 18 sounds
         }
 
-        Inventory inventory = Bukkit.createInventory(null, 9*size, "§8» §6" + bridgeSoundType.getName() + " Settings");
+        de.teamholy.core.bukkit.utils.Inventory holyInventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6" + bridgeSoundType.getName() + " Settings", size * 9);
+        holyInventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> event.getPlayer().openInventory(openSoundsPerkInventory()), 1L));
 
         int slot = 10;
 
@@ -137,41 +138,17 @@ public class PerkManagement {
             }
             List<String> lore = getLore(bridgePlayer, sound);
 
-            inventory.setItem(slot,
+            holyInventory.setItem(
                     new ItemBuilder(sound.getMaterial()).amount(1).name(sound.getDisplayName())
-                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build());
+                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build(), slot);
             slot++;
             if (slot > 16 && slot < 19) {
                 slot = 19;
             } else if (slot == 26) break;
         }
-        inventory.setItem(inventory.getSize() - 5, new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build());
-        return inventory;
-    }
+        holyInventory.setItem(new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build(), holyInventory.getInventory().getSize() - 5);
 
-    public Inventory openSongInventory(BridgePlayer bridgePlayer) {
-        Inventory inventory = Bukkit.createInventory(null, 9 * 4, "§8» §6Song Settings");
-
-        int slot = 0;
-
-        for (BridgeSounds song : BridgeSounds.values()) {
-            BridgeSound sound = song.getBridgeSound();
-            if (sound.getSoundType() != BridgeSoundType.SONG) {
-                continue;
-            }
-
-            List<String> lore = getLore(bridgePlayer, sound);
-
-            inventory.setItem(slot,
-                    new ItemBuilder(Material.RECORD_3).amount(1).name(sound.getDisplayName())
-                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build());
-            slot++;
-            if (slot == 26) {
-                break;
-            }
-        }
-        inventory.setItem(inventory.getSize() - 5, new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build());
-        return inventory;
+        return holyInventory;
     }
 
     @Nonnull
