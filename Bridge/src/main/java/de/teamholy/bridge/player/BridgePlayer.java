@@ -89,6 +89,10 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "removalTime", "0");
             statsProfile.setSetting(gameKey, "blockAnimationType", "NONE");
 
+            statsProfile.setSetting(gameKey, "soundDeathEvent", "NONE");
+            statsProfile.setSetting(gameKey, "soundWinEvent", "NONE");
+            statsProfile.setSetting(gameKey, "soundNewRecordEvent", "NONE");
+
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
 
@@ -124,6 +128,27 @@ public class BridgePlayer {
                 BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "selectedSound")));
                 if (bridgeSound != null) {
                     this.settings.setCurrentSound(bridgeSound);
+                }
+            }
+
+            if (statsProfile.getSetting(gameKey, "soundDeathEvent") != null) {
+                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "soundDeathEvent")));
+                if (bridgeSound != null) {
+                    this.settings.getSoundEvents().put(Settings.BridgeSoundEventType.DEATH, bridgeSound);
+                }
+            }
+
+            if (statsProfile.getSetting(gameKey, "soundWinEvent") != null) {
+                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "soundWinEvent")));
+                if (bridgeSound != null) {
+                    this.settings.getSoundEvents().put(Settings.BridgeSoundEventType.WIN, bridgeSound);
+                }
+            }
+
+            if (statsProfile.getSetting(gameKey, "soundNewRecordEvent") != null) {
+                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "soundNewRecordEvent")));
+                if (bridgeSound != null) {
+                    this.settings.getSoundEvents().put(Settings.BridgeSoundEventType.NEW_RECORD, bridgeSound);
                 }
             }
         }
@@ -170,6 +195,18 @@ public class BridgePlayer {
             if (this.globalBestTime.get(BridgeMapType.DIAGONAL) != null) {
                 statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(this.globalBestTime.get(BridgeMapType.DIAGONAL)));
             }
+        }
+
+        if (this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.DEATH) != null) {
+            statsProfile.setSetting(gameKey, "soundDeathEvent", String.valueOf(this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.DEATH).getPerkId()));
+        }
+
+        if (this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.WIN) != null) {
+            statsProfile.setSetting(gameKey, "soundWinEvent", String.valueOf(this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.WIN).getPerkId()));
+        }
+
+        if (this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.NEW_RECORD) != null) {
+            statsProfile.setSetting(gameKey, "soundNewRecordEvent", String.valueOf(this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.NEW_RECORD).getPerkId()));
         }
 
         BukkitCore.getAPI().

@@ -28,10 +28,18 @@ public class Settings {
     private List<BridgeSound> sounds = Lists.newArrayList();
     private BridgeSound currentSound = null;
 
+    private HashMap<BridgeSoundEventType, BridgeSound> soundEvents = new HashMap<>();
+
     public enum BlockAnimationType {
         NONE,
         FALLING,
         DROPPING,
         BREAK;
+    }
+
+    public enum BridgeSoundEventType {
+
+        NEW_RECORD, DEATH, WIN;
+
     }
 }
