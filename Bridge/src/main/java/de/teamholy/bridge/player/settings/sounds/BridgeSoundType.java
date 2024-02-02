@@ -11,8 +11,8 @@ import lombok.Getter;
 @Getter
 public enum BridgeSoundType {
 
-    DEATH("Death Sound"),
-    WIN("Win Sound"),
+    DEATH("Sad Sound"),
+    WIN("Happy Sound"),
     SONG("Music");
 
     private final String name;

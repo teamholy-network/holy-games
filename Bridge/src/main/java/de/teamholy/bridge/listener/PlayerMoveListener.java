@@ -57,12 +57,13 @@ public class PlayerMoveListener implements Listener {
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
+                    if (bridgePlayer.getPlayer().getTicksLived() > 10) perkManagement.playSoundPerk(bridgePlayer, false, false);
+
                 }
 
                 bridgePlayer.getBlocks().clear();
                 playerManagement.refillBlocks(player);
                 playerManagement.getPlayerTime().remove(player.getUniqueId());
-                if (bridgePlayer.getPlayer().getTicksLived() > 10) perkManagement.playSoundPerk(bridgePlayer, false, false);
             }
 
             if (player.getLocation().getBlock().getType() == Material.GOLD_PLATE

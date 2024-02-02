@@ -252,7 +252,8 @@ public class PerkManagement {
         Settings.BridgeSoundEventType glowWin = bridgePlayer.getSettings().getSoundEvents().get(bridgeSound);
 
         holyInventory.setItem(new ItemBuilder(Material.INK_SACK).amount(1).durability(1).name("§c§lPlay on Death")
-                .withGlow(glowWin == Settings.BridgeSoundEventType.DEATH).build(), 11, event -> {
+                .withGlow(glowWin == Settings.BridgeSoundEventType.DEATH)
+                .lore(glowWin == Settings.BridgeSoundEventType.DEATH ? "§aSelected" : "§7Click to select").build(), 11, event -> {
 
             bridgePlayer.getSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != Settings.BridgeSoundEventType.DEATH);
             bridgePlayer.getSettings().getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.DEATH);
@@ -261,7 +262,8 @@ public class PerkManagement {
             bridgePlayer.getPlayer().closeInventory();
         });
         holyInventory.setItem(new ItemBuilder(Material.INK_SACK).amount(1).durability(2).name("§a§lPlay on Win")
-                .withGlow(glowWin == Settings.BridgeSoundEventType.WIN).build(), 13, event -> {
+                .withGlow(glowWin == Settings.BridgeSoundEventType.WIN)
+                .lore(glowWin == Settings.BridgeSoundEventType.WIN ? "§aSelected" : "§7Click to select").build(), 13, event -> {
 
             bridgePlayer.getSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != Settings.BridgeSoundEventType.WIN);
             bridgePlayer.getSettings().getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.WIN);
@@ -272,7 +274,8 @@ public class PerkManagement {
         });
 
         holyInventory.setItem(new ItemBuilder(Material.DIAMOND).amount(1).name("§b§lPlay on Record")
-                .withGlow(glowWin == Settings.BridgeSoundEventType.NEW_RECORD).build(), 15, event -> {
+                .withGlow(glowWin == Settings.BridgeSoundEventType.NEW_RECORD)
+                .lore(glowWin == Settings.BridgeSoundEventType.NEW_RECORD ? "§aSelected" : "§7Click to select").build(), 15, event -> {
 
             bridgePlayer.getSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != Settings.BridgeSoundEventType.NEW_RECORD);
             bridgePlayer.getSettings().getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.NEW_RECORD);
@@ -293,13 +296,15 @@ public class PerkManagement {
             lore.add("§7This sound costs §e" + sound.getPrice() + " §6coins");
         } else {
             if (bridgePlayer.getSettings().getCurrentSound() == sound) {
-                lore.add("§2selected");
-                lore.add(" ");
-                lore.add("§7§oright click, to change the event");
-                lore.add("§7§owhere this sound is played");
+                lore.add("§2Selected");
             } else {
-                lore.add("§ayou own this sound");
+                lore.add("§aYou own this sound!");
             }
+            lore.add(" ");
+            lore.add("§7§oRight click, to change the event");
+            lore.add("§7§owhere this sound is played.");
+            lore.add(" ");
+            lore.add("§c§oOnly plays the sound if it is selected!");
         }
         return lore;
     }
