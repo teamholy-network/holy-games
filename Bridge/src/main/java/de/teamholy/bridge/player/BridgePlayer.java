@@ -89,10 +89,6 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "removalTime", "0");
             statsProfile.setSetting(gameKey, "blockAnimationType", "NONE");
 
-            statsProfile.setSetting(gameKey, "soundDeathEvent", "NONE");
-            statsProfile.setSetting(gameKey, "soundWinEvent", "NONE");
-            statsProfile.setSetting(gameKey, "soundNewRecordEvent", "NONE");
-
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
 
@@ -131,24 +127,23 @@ public class BridgePlayer {
                 }
             }
 
-            if (statsProfile.getSetting(gameKey, "soundDeathEvent") != null) {
-                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "soundDeathEvent")));
-                if (bridgeSound != null) {
-                    this.settings.getSoundEvents().put(Settings.BridgeSoundEventType.DEATH, bridgeSound);
-                }
-            }
+            for (var settingsMap :
+                    statsProfile.getSettingsMap().entrySet()) {
+                if (settingsMap.getKey().equals(gameKey)) {
+                    var value = settingsMap.getValue();
 
-            if (statsProfile.getSetting(gameKey, "soundWinEvent") != null) {
-                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "soundWinEvent")));
-                if (bridgeSound != null) {
-                    this.settings.getSoundEvents().put(Settings.BridgeSoundEventType.WIN, bridgeSound);
-                }
-            }
+                    for (var setting :
+                            value.entrySet()) {
+                        if (setting.getKey().endsWith("_soundEvent")) {
+                            int id = Integer.parseInt(setting.getKey().replace("_soundEvent", ""));
+                            BridgeSound bridgeSound = BridgeSounds.getBridgeSound(id);
+                            if (bridgeSound != null) {
+                                this.settings.getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.valueOf(setting.getValue()));
 
-            if (statsProfile.getSetting(gameKey, "soundNewRecordEvent") != null) {
-                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "soundNewRecordEvent")));
-                if (bridgeSound != null) {
-                    this.settings.getSoundEvents().put(Settings.BridgeSoundEventType.NEW_RECORD, bridgeSound);
+                                System.out.println(bridgeSound + " " + Settings.BridgeSoundEventType.valueOf(setting.getValue()));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -197,16 +192,8 @@ public class BridgePlayer {
             }
         }
 
-        if (this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.DEATH) != null) {
-            statsProfile.setSetting(gameKey, "soundDeathEvent", String.valueOf(this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.DEATH).getPerkId()));
-        }
-
-        if (this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.WIN) != null) {
-            statsProfile.setSetting(gameKey, "soundWinEvent", String.valueOf(this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.WIN).getPerkId()));
-        }
-
-        if (this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.NEW_RECORD) != null) {
-            statsProfile.setSetting(gameKey, "soundNewRecordEvent", String.valueOf(this.settings.getSoundEvents().get(Settings.BridgeSoundEventType.NEW_RECORD).getPerkId()));
+        for (var set : settings.getSoundEvents().entrySet()) {
+            statsProfile.setSetting(gameKey, set.getKey().getPerkId() + "_soundEvent", set.getValue().name());
         }
 
         BukkitCore.getAPI().

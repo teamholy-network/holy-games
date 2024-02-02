@@ -2,6 +2,7 @@ package de.teamholy.bridge.player.settings;
 
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
+import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ public class Settings {
     private List<BridgeSound> sounds = Lists.newArrayList();
     private BridgeSound currentSound = null;
 
-    private HashMap<BridgeSoundEventType, BridgeSound> soundEvents = new HashMap<>();
+    private HashMap<BridgeSound, BridgeSoundEventType> soundEvents = new HashMap<>();
 
     public enum BlockAnimationType {
         NONE,

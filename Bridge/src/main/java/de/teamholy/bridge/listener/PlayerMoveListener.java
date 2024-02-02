@@ -62,7 +62,7 @@ public class PlayerMoveListener implements Listener {
                 bridgePlayer.getBlocks().clear();
                 playerManagement.refillBlocks(player);
                 playerManagement.getPlayerTime().remove(player.getUniqueId());
-                perkManagement.playSoundPerk(bridgePlayer, false);
+                if (bridgePlayer.getPlayer().getTicksLived() > 10) perkManagement.playSoundPerk(bridgePlayer, false, false);
             }
 
             if (player.getLocation().getBlock().getType() == Material.GOLD_PLATE
@@ -82,7 +82,7 @@ public class PlayerMoveListener implements Listener {
                 var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()), false);
                 var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()), true);
 
-                perkManagement.playSoundPerk(bridgePlayer, true);
+                perkManagement.playSoundPerk(bridgePlayer, true, current < bestLocal || current < bestGlobal);
 
                 playerManagement.refillBlocks(player);
                 player.sendMessage(Bridge.PREFIX + "§7Your time was §e" + FormatTime.formatTimeManually(current) +

@@ -6,6 +6,7 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
+import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.bridge.player.settings.sounds.BridgeSong;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
@@ -19,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 
 import javax.annotation.Nonnull;
@@ -33,10 +35,11 @@ import java.util.List;
  **/
 public class PerkManagement {
 
-    public void playSoundPerk(BridgePlayer bridgePlayer, boolean win) {
+    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+
+    public void playSoundPerk(BridgePlayer bridgePlayer, boolean win, boolean record) {
         Player bukkitPlayer = bridgePlayer.getPlayer();
         if (bukkitPlayer == null) {
-            Bukkit.broadcastMessage("player is null");
             return;
         }
 
@@ -46,23 +49,46 @@ public class PerkManagement {
             return;
         }
 
-        if (win) {
-            if (sound.getSoundType() == BridgeSoundType.SONG) {
-                BridgeSong bridgeSong = Bridge.getInstance().getSongManager().getSong(sound.getName().split("_")[1].toLowerCase());
-                Song song = NBSDecoder.parse(bridgeSong.getFile());
+        Settings.BridgeSoundEventType eventType = bridgePlayer.getSettings().getSoundEvents().get(sound);
+        if (eventType == null) return;
 
-                RadioSongPlayer radioSongPlayer = new RadioSongPlayer(song);
-                radioSongPlayer.addPlayer(bukkitPlayer);
-                radioSongPlayer.setPlaying(true);
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), radioSongPlayer::destroy, 20 * 10L);
-            } else {
-                bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
+        switch (eventType) {
+            case WIN -> {
+                if (!win) {
+                    return;
+                }
+                playSound(bukkitPlayer, sound);
             }
-        } else {
-            if (sound.getSoundType() != BridgeSoundType.DEATH) return;
+            case DEATH -> {
+                if (win) {
+                    return;
+                }
+                playSound(bukkitPlayer, sound);
+            }
 
-            bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
+            case NEW_RECORD -> {
+                if (!win && !record || win && !record) {
+                    return;
+                }
+
+                playSound(bukkitPlayer, sound);
+            }
+        }
+    }
+
+    private void playSound(Player player, BridgeSound sound) {
+        if (sound.getSoundType() == BridgeSoundType.SONG) {
+            BridgeSong bridgeSong = Bridge.getInstance().getSongManager().getSong(sound.getName().split("_")[1].toLowerCase());
+            Song song = NBSDecoder.parse(bridgeSong.getFile());
+
+            RadioSongPlayer radioSongPlayer = new RadioSongPlayer(song);
+            radioSongPlayer.addPlayer(player);
+            radioSongPlayer.setPlaying(true);
+
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), radioSongPlayer::destroy, 20 * 10L);
+        } else {
+            player.playSound(player.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
         }
     }
 
@@ -97,20 +123,29 @@ public class PerkManagement {
 
         Player bukkitPlayer = bridgePlayer.getPlayer();
         if (bukkitPlayer != null) {
+            switch (bridgeSound.getSoundType()) {
+                case SONG ->
+                        bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.NEW_RECORD); // default value
+                case DEATH ->
+                        bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.DEATH); // default value
+                case WIN ->
+                        bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.WIN); // default value
+                default -> throw new IllegalStateException("Unexpected value: " + bridgeSound.getSoundType());
+            }
+
             bukkitPlayer.sendMessage(Bridge.PREFIX + "§7You successfully bought the §e" + bridgeSound.getDisplayName() + " §7perk for §e" + bridgeSound.getPrice() + " §6coins!");
             bukkitPlayer.sendMessage(Bridge.PREFIX + "§7Automatically selected the perk!");
             bridgePlayer.getSettings().setCurrentSound(bridgeSound);
             bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.LEVEL_UP, 2.0F, 2.0F);
-            bukkitPlayer.closeInventory();
         }
     }
 
     public Inventory openSoundsPerkInventory() {
         Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§8» §6Sound Settings");
 
-        inventory.setItem(11, new ItemBuilder(Material.SKULL_ITEM).amount(1).name("§c§lDeath Sounds").lore("§7Click to open the death sound settings").build());
-        inventory.setItem(13, new ItemBuilder(Material.NETHER_STAR).amount(1).name("§a§lWin Sounds").lore("§7Click to open the win sound settings").build());
-        inventory.setItem(15, new ItemBuilder(Material.NOTE_BLOCK).amount(1).name("§f§lMusic").lore("§7Click to open the music settings").build());
+        inventory.setItem(11, new ItemBuilder(Material.SKULL_ITEM).amount(1).name("§7Type§8: §cSad Sounds").lore("§7Click to open the sad sound settings").build());
+        inventory.setItem(13, new ItemBuilder(Material.NETHER_STAR).amount(1).name("§7Type§8: §aHappy Sounds").lore("§7Click to open the happy sound settings").build());
+        inventory.setItem(15, new ItemBuilder(Material.NOTE_BLOCK).amount(1).name("§7Type§8: §fMusic").lore("§7Click to open the music settings").build());
 
         return inventory;
     }
@@ -140,15 +175,114 @@ public class PerkManagement {
 
             holyInventory.setItem(
                     new ItemBuilder(sound.getMaterial()).amount(1).name(sound.getDisplayName())
-                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build(), slot);
+                            .withGlow(bridgePlayer.getSettings().getSounds().contains(sound)).lore(lore).build(), slot, event -> {
+
+                        var clickedItem = event.getCurrentItem();
+                        if (clickedItem == null) return;
+
+                        var clickedItemMeta = clickedItem.getItemMeta();
+                        if (clickedItemMeta == null) return;
+
+                        if (event.getClick() == ClickType.LEFT) {
+                            for (BridgeSounds bridgeSounds : BridgeSounds.values()) {
+                                if (bridgeSounds.getBridgeSound().getDisplayName().equalsIgnoreCase(clickedItemMeta.getDisplayName())) {
+                                    var bridgeSound = bridgeSounds.getBridgeSound();
+
+                                    if (bridgePlayer.getSettings().getSounds().contains(bridgeSound)) {
+                                        switch (bridgeSound.getSoundType()) {
+                                            case SONG ->
+                                                    bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.NEW_RECORD); // default value
+                                            case DEATH ->
+                                                    bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.DEATH); // default value
+                                            case WIN ->
+                                                    bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.WIN); // default value
+                                            default ->
+                                                    throw new IllegalStateException("Unexpected value: " + bridgeSound.getSoundType());
+                                        }
+
+                                        bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the sound to §e" + bridgeSound.getDisplayName() + "§7!");
+                                        bridgePlayer.getSettings().setCurrentSound(bridgeSound);
+                                    } else {
+                                        buyPerk(bridgePlayer, bridgeSound);
+                                    }
+
+                                    holyInventory.setOnClose(empty ->
+                                            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType()).getInventory()), 1L));
+
+                                    bridgePlayer.getPlayer().closeInventory();
+
+                                    return;
+                                }
+                            }
+                        } else if (event.getClick() == ClickType.RIGHT) {
+                            if (!bridgePlayer.getSettings().getSounds().contains(sound)) {
+                                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou don't own this sound!");
+                                return;
+                            }
+
+                            /*
+                            if (bridgePlayer.getSettings().getCurrentSound() != sound) {
+                                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou don't have selected this perk!");
+                                return;
+                            }*/
+                            holyInventory.setOnClose(empty -> {
+                            });
+                            bridgePlayer.getPlayer().openInventory(openSoundEventTypeInventory(bridgePlayer, sound));
+                        }
+
+                    });
             slot++;
             if (slot > 16 && slot < 19) {
                 slot = 19;
             } else if (slot == 26) break;
         }
-        holyInventory.setItem(new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build(), holyInventory.getInventory().getSize() - 5);
+        holyInventory.setItem(new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build(), holyInventory.getInventory().getSize() - 5, event -> {
+            bridgePlayer.getSettings().setCurrentSound(null);
+            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You cleared the sound!");
+        });
 
         return holyInventory;
+    }
+
+    public Inventory openSoundEventTypeInventory(BridgePlayer bridgePlayer, BridgeSound bridgeSound) {
+        de.teamholy.core.bukkit.utils.Inventory holyInventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6" + bridgeSound.getDisplayName() + " Settings", 9 * 3);
+
+        holyInventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> event.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType()).getInventory()), 1L));
+
+        Settings.BridgeSoundEventType glowWin = bridgePlayer.getSettings().getSoundEvents().get(bridgeSound);
+
+        holyInventory.setItem(new ItemBuilder(Material.INK_SACK).amount(1).durability(1).name("§c§lPlay on Death")
+                .withGlow(glowWin == Settings.BridgeSoundEventType.DEATH).build(), 11, event -> {
+
+            bridgePlayer.getSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != Settings.BridgeSoundEventType.DEATH);
+            bridgePlayer.getSettings().getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.DEATH);
+
+            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the event of §e" + bridgeSound.getDisplayName() + "§7 to §c§lDeath!");
+            bridgePlayer.getPlayer().closeInventory();
+        });
+        holyInventory.setItem(new ItemBuilder(Material.INK_SACK).amount(1).durability(2).name("§a§lPlay on Win")
+                .withGlow(glowWin == Settings.BridgeSoundEventType.WIN).build(), 13, event -> {
+
+            bridgePlayer.getSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != Settings.BridgeSoundEventType.WIN);
+            bridgePlayer.getSettings().getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.WIN);
+
+            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the event of §e" + bridgeSound.getDisplayName() + "§7 to §a§lWin!");
+
+            bridgePlayer.getPlayer().closeInventory();
+        });
+
+        holyInventory.setItem(new ItemBuilder(Material.DIAMOND).amount(1).name("§b§lPlay on Record")
+                .withGlow(glowWin == Settings.BridgeSoundEventType.NEW_RECORD).build(), 15, event -> {
+
+            bridgePlayer.getSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != Settings.BridgeSoundEventType.NEW_RECORD);
+            bridgePlayer.getSettings().getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.NEW_RECORD);
+
+            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the event of §e" + bridgeSound.getDisplayName() + "§7 to §b§lRecord!");
+
+            bridgePlayer.getPlayer().closeInventory();
+        });
+
+        return holyInventory.getInventory();
     }
 
     @Nonnull
@@ -160,11 +294,11 @@ public class PerkManagement {
         } else {
             if (bridgePlayer.getSettings().getCurrentSound() == sound) {
                 lore.add("§2selected");
-            } else {
-                lore.add("§ayou own this sound");
                 lore.add(" ");
                 lore.add("§7§oright click, to change the event");
                 lore.add("§7§owhere this sound is played");
+            } else {
+                lore.add("§ayou own this sound");
             }
         }
         return lore;

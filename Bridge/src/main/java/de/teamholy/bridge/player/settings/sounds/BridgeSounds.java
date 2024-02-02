@@ -50,7 +50,7 @@ public enum BridgeSounds {
     DEATH_WOLF(new BridgeSound(5011,"death_wolf", "§c§lWolf Death",
             BridgeSoundType.DEATH, Sound.WOLF_DEATH, 1.0F, 1.0F, 100, PerkRankType.PLAYER, Material.BONE)),
 
-    WIN_LEVEL_UP(new BridgeSound(5020,"win_level_up","§a§lLevel Up Win",
+    LEVEL_UP(new BridgeSound(5020,"level_up","§a§lLevel Up",
             BridgeSoundType.WIN, Sound.LEVEL_UP, 1.0F, 1.0F, 100, PerkRankType.PLAYER, Material.EXP_BOTTLE)),
 
     SONG_7thElement(
