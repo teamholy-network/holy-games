@@ -86,12 +86,12 @@ public class BridgeMapLoader {
             bridgeMap.setGivenSpace(x);
 
         Location mapLocation = new Location(Bukkit.getWorld("world"), x, 100, 0, 180.0f, 0.5f).add(0.5, 0, 0.5);
-        /*while (locationIsNotFree(player, mapLocation)) {
+        while (locationIsNotFree(player, mapLocation)) {
             int newX = calculateFreeSpaceBetweenMaps();
             mapLocation.add(newX, 0, 0);
             if (bridgeMap.getGivenSpace() != newX)
                 bridgeMap.setGivenSpace(newX);
-        }*/
+        }
 
         playerManagement.setScoreboard(player);
 
@@ -109,9 +109,7 @@ public class BridgeMapLoader {
                 if (mapLocation != player.getMapLocation())
                     player.setMapLocation(mapLocation);
 
-                if (!loadedMaps.contains(bridgeMap)) {
-                    loadedMaps.add(bridgeMap);
-                }
+                loadedMaps.add(bridgeMap);
 
                 var bukkitPlayer = player.getPlayer();
 
