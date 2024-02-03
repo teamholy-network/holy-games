@@ -39,6 +39,10 @@ public class BlockPlaceListener implements Listener {
         }
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+            if (event.getBlockAgainst().getType() == Material.GOLD_PLATE || event.getBlockPlaced().getLocation().subtract(0, 1, 0).getBlock().getType() == Material.GOLD_PLATE) {
+                event.setCancelled(true);
+                return;
+            }
 
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
