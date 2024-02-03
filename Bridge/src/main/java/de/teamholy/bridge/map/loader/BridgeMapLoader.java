@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -29,7 +30,7 @@ import java.util.logging.Level;
 public class BridgeMapLoader {
 
     private final List<BridgeMap> maps;
-    private final List<BridgeMap> loadedMaps;
+    private final List<UUID> loadedMaps;
 
     private final Gson gson;
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
@@ -61,7 +62,9 @@ public class BridgeMapLoader {
                         name.split("-")[0],
                         type.getIcon().name(), type);
 
-                maps.add(bridgeMap);
+                for (int i= 0; i <= 100; i++) {
+                    maps.add(bridgeMap);
+                }
 
                 Bridge.getInstance().getLogger().log(Level.INFO, "Loaded map " + bridgeMap.getName() + " with type: " + bridgeMap.getMapType().getName());
             }
@@ -109,7 +112,7 @@ public class BridgeMapLoader {
                 if (mapLocation != player.getMapLocation())
                     player.setMapLocation(mapLocation);
 
-                loadedMaps.add(bridgeMap);
+                loadedMaps.add(player.getUuid());
 
                 var bukkitPlayer = player.getPlayer();
 
@@ -139,7 +142,7 @@ public class BridgeMapLoader {
 
         BridgeMap bridgeMap = bridgePlayer.getMap();
 
-        loadedMaps.remove(bridgeMap);
+        loadedMaps.remove(bridgePlayer.getUuid());
 
         bridgeMap.unloadMap();
 
@@ -182,7 +185,7 @@ public class BridgeMapLoader {
         int space = 0;
         int addSpace = 50;
 
-        for (BridgeMap ignored : loadedMaps) {
+        for (UUID ignored : loadedMaps) {
             while (Bukkit.getWorld("world").getBlockAt(space, 100 - 2, 0).getType() != Material.AIR) {
                 space += addSpace;
             }
