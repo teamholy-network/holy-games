@@ -26,6 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.FallingBlock;
@@ -339,13 +340,15 @@ public class PlayerManagement {
 
             });
             case DROPPING -> blocks.forEach((block, time) -> {
-                var item = dropItem(block.getLocation().add(0, 1,0), new ItemStack(block.getType(), 1));
+                if (block.getType() == Material.AIR) return;
+                var toDrop = dropItem(block.getLocation().add(0, 1, 0), new ItemStack(block.getType(), 1, block.getData()));
+
+                if (toDrop == null) return;
 
                 bridgePlayer.getBlocks().remove(block);
+                block.setType(Material.AIR);
 
-                if (item == null) {
-                    Bukkit.broadcastMessage("Error while breaking block");
-                }
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 15L);
 
             });
             default -> blocks.forEach((block, time) -> {
