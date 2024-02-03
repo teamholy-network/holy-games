@@ -1,17 +1,12 @@
 package de.teamholy.bridge.command;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -21,8 +16,6 @@ import java.util.Arrays;
  **/
 public class BridgeCommand implements CommandExecutor {
 
-
-    private Location highLeft, bottomRight, endHighLeft, endBottomRight;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

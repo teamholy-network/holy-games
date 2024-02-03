@@ -334,18 +334,19 @@ public class PlayerManagement {
                             ((CraftPlayer) allPlayer).getHandle().playerConnection.sendPacket(packet);
                         }
                     }
+
                 }.runTaskTimer(Bridge.getInstance(), 0L, 1L);
+
             });
             case DROPPING -> blocks.forEach((block, time) -> {
-                var item = dropItem(block.getLocation(), new ItemBuilder(block.getType()).amount(1).name(".").data(block.getData()).build());
-                block.setType(Material.AIR);
+                var item = dropItem(block.getLocation().add(0, 1,0), new ItemStack(block.getType(), 1));
+
                 bridgePlayer.getBlocks().remove(block);
 
                 if (item == null) {
-                    return;
+                    Bukkit.broadcastMessage("Error while breaking block");
                 }
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), item::die, 25L);
             });
             default -> blocks.forEach((block, time) -> {
                 block.setType(Material.AIR);
@@ -357,7 +358,6 @@ public class PlayerManagement {
     public void sendActionBar(Player player, String text) {
         PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(text), (byte) 2);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-
     }
 
     private int getBlockEntityId(Block block) {
