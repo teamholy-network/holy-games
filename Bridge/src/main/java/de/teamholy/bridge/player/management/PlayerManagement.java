@@ -18,6 +18,7 @@ import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.perks.PerkType;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -91,14 +92,19 @@ public class PlayerManagement {
     }
 
     public void prepareIngamePlayer(Player player) {
-        var bridgePlayer = getBridgePlayer(player);
-
         preparePlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
 
-        player.getInventory().setItem(0, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
-        player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§eSettings").build());
-        player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§cQuit").build());
+        while (true) {
+            var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+            if (perk != null) {
+                player.getInventory().setItem(0, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+                break;
+            }
+        }
+
+        player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§8» §6Settings §8(§7rightclick§8)").build());
+        player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§8» §cQuit §8(§7rightclick§8)").build());
     }
 
     private void createScoreboard(BridgePlayer bridgePlayer) {
@@ -143,39 +149,27 @@ public class PlayerManagement {
         updateScoreboardForPlayer(bridgePlayer.getMap().getMapType());
     }
 
-    public void refillBlocks(Player player) {
-        var bridgePlayer = getBridgePlayer(player);
-        player.getInventory().setItem(0, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(64).name("§6Blocks").build());
-    }
 
     public void ingameSettingsInventory(Player player) {
-        var bridgePlayer = getBridgePlayer(player);
-        Inventory inventory = Bukkit.createInventory(null, 9, "§8» §eSettings");
-        inventory.setItem(1, new ItemBuilder(bridgePlayer.getSettings().getBlockMaterial()).amount(1).name("§6Blocks").build());
-        inventory.setItem(2, new ItemBuilder(Material.ANVIL).amount(1).name("§6Block Settings").build());
+
+        Inventory inventory = Bukkit.createInventory(null, 9*3, "§8» §eSettings");
+
+        for (int i = 0; i < 9*3; i++) {
+            inventory.setItem(i,new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build());
+        }
+
+        inventory.setItem(10, new ItemBuilder(Material.SANDSTONE).amount(1).name("§8» §6Blocks").build());
+        inventory.setItem(11, new ItemBuilder(Material.ANVIL).amount(1).name("§8» §6Block Break Settings").build());
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
-        inventory.setItem(4, new ItemBuilder(Material.RECORD_8).name("§6Sounds").build());
+        inventory.setItem(13, new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build());
 
-        inventory.setItem(6, new ItemBuilder(Material.PAPER).name("§6Maps").build());
-        inventory.setItem(7, new ItemBuilder(Material.ANVIL).name("§bMap Length").build());
+        inventory.setItem(15, new ItemBuilder(Material.PAPER).name("§8» §6Maps").build());
+        inventory.setItem(16, new ItemBuilder(Material.ANVIL).name("§8» §6Map Type").build());
 
         player.openInventory(inventory);
     }
 
-    public Inventory blocksInventory() {
-        Inventory inventory = Bukkit.createInventory(null, 9, "§8» §6Blocks");
-        inventory.setItem(0, new ItemBuilder(Material.SANDSTONE).amount(1).name("§6Sandstone").build());
-        inventory.setItem(1, new ItemBuilder(Material.GLASS).amount(1).name("§6Glass").build());
-        inventory.setItem(2, new ItemBuilder(Material.WOOL).amount(1).name("§6Wool").build());
-        inventory.setItem(3, new ItemBuilder(Material.BARRIER).amount(1).name("§6Barrier").build());
-        inventory.setItem(4, new ItemBuilder(Material.DIRT).amount(1).name("§6Dirt").build());
-        inventory.setItem(5, new ItemBuilder(Material.GRASS).amount(1).name("§6Grass").build());
-        inventory.setItem(6, new ItemBuilder(Material.COBBLESTONE).amount(1).name("§6Cobblestone").build());
-        inventory.setItem(7, new ItemBuilder(Material.STONE).amount(1).name("§6Stone").build());
-        inventory.setItem(8, new ItemBuilder(Material.BEDROCK).amount(1).name("§6Bedrock").build());
-        return inventory;
-    }
 
     public Inventory blockSettingsInventory(BridgePlayer bridgePlayer) {
         Inventory inventory = Bukkit.createInventory(null, 9, "§8» §6Block Settings");
@@ -216,17 +210,17 @@ public class PlayerManagement {
             updateScoreboard(bridgePlayer);
 
             if (global) {
-                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 50, true);
-                sendActionBar(player, "§a+ §e50 Coins");
-            } else {
                 BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 10, true);
                 sendActionBar(player, "§a+ §e10 Coins");
+            } else {
+                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 5, true);
+                sendActionBar(player, "§a+ §e5 Coins");
             }
 
             bridgePlayer.addWin();
         }
 
-        if (bridgePlayer.getWins() % 15 == 0) {
+        if (bridgePlayer.getWins() % 10 == 0) {
             BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 30, true);
             sendActionBar(player, "§a+ §e30 Coins");
         }

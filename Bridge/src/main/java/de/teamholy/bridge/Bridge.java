@@ -91,6 +91,7 @@ public class Bridge extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerCloseListener(), this);
 
         Bukkit.getPluginManager().registerEvents(new FoodLevelChangeListener(), this);
         Bukkit.getPluginManager().registerEvents(new EntitySpawnListener(), this);

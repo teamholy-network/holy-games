@@ -5,10 +5,12 @@ import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PerkManagement;
+import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import org.bukkit.Bukkit;
+import org.bukkit.FireworkEffect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -61,7 +63,7 @@ public class PlayerMoveListener implements Listener {
                 }
 
                 bridgePlayer.getBlocks().clear();
-                playerManagement.refillBlocks(player);
+                playerManagement.prepareIngamePlayer(player);
                 playerManagement.getPlayerTime().remove(player.getUniqueId());
             }
 
@@ -75,21 +77,51 @@ public class PlayerMoveListener implements Listener {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                 }
 
-                player.teleport(bridgePlayer.getMapLocation());
 
                 bridgePlayer.getBlocks().clear();
 
                 var current = (System.currentTimeMillis() - playerManagement.getPlayerTime().remove(player.getUniqueId()));
+
+                var beforeBestLocal = bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType());
+                var beforeBestGlobal = bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType());
+
+                if (current < beforeBestGlobal || beforeBestGlobal == 0) {
+
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+                    player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
+                    player.sendMessage("");
+                    player.sendMessage(" §fYou have beaten your §c§lall-time §frecord!");
+                    player.sendMessage("      §fYour new §2§ltime §fis §e" + FormatTime.formatTimeManually(current));
+                    player.sendMessage("");
+                    player.sendMessage("§8§m----------------------------------");
+
+                } else if (current < beforeBestLocal || beforeBestLocal == 0) {
+
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getRandomEffect());
+                    player.sendMessage("");
+                    player.sendMessage("§aYou have beaten your §2session record! §7(§e" + FormatTime.formatTimeManually(current) + "§7)");
+                    player.sendMessage("");
+
+                } else {
+                    player.sendMessage("§7Your time was §e" + FormatTime.formatTimeManually(current) +
+                            "\n" + Bridge.PREFIX + "§7Your best §2session-time §7is §e" +
+                            FormatTime.formatTimeManually(beforeBestLocal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName()
+                            + "\n" + Bridge.PREFIX + "§7Your best §call-time §7is §e" + FormatTime.formatTimeManually(beforeBestGlobal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
+                }
+
+                player.teleport(bridgePlayer.getMapLocation());
+
                 var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()), false);
                 var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()), true);
 
                 perkManagement.playSoundPerk(bridgePlayer, true, current < bestLocal || current < bestGlobal);
 
-                playerManagement.refillBlocks(player);
-                player.sendMessage(Bridge.PREFIX + "§7Your time was §e" + FormatTime.formatTimeManually(current) +
-                        "\n" + Bridge.PREFIX + "§7Your best §esession-time §7is §e" +
-                        FormatTime.formatTimeManually(bestLocal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName()
-                        + "\n" + Bridge.PREFIX + "§7Your best §aall-time §7is §e" + FormatTime.formatTimeManually(bestGlobal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
+                playerManagement.prepareIngamePlayer(player);
+
+
+
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {

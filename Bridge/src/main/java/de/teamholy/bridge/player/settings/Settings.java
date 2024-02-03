@@ -20,7 +20,6 @@ import java.util.List;
 @Setter
 public class Settings {
 
-    private Material blockMaterial = Material.SANDSTONE;
     private boolean removeBlocks = false;
     private long removalTime = 0;
 
@@ -39,8 +38,6 @@ public class Settings {
     }
 
     public enum BridgeSoundEventType {
-
         NEW_RECORD, DEATH, WIN;
-
     }
 }

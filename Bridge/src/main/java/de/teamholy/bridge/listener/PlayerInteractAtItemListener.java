@@ -5,6 +5,7 @@ import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,6 +32,7 @@ public class PlayerInteractAtItemListener implements Listener {
 
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());
 
+
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (item == null) return;
 
@@ -45,13 +47,14 @@ public class PlayerInteractAtItemListener implements Listener {
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
 
+
             event.setCancelled(false);
 
             if (item == null) return;
 
             if (item.getItemMeta() != null
                     && item.getItemMeta().getDisplayName() != null) {
-                if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§cQuit")) {
+                if (item.getItemMeta().getDisplayName().startsWith("§8» §cQuit")) {
            /*         bridgePlayer.setState(BridgePlayer.PlayerState.LOBBY);
                     playerManagement.loadLobbyInventory(player);
                     mapManagement.getLoader().unloadMap(bridgePlayer);
@@ -61,11 +64,21 @@ public class PlayerInteractAtItemListener implements Listener {
                     }
 
                     bridgePlayer.getBlocks().clear();
-*/
-                    player.kickPlayer("");
 
-                } else if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§eSettings")) {
+*/
+
+                    player.kickPlayer(null);
+
+                } else if (item.getItemMeta().getDisplayName().startsWith("§8» §6Settings")) {
+
+                    if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
+                        player.sendMessage(Bridge.PREFIX + "§cYou can't open the settings while bridging!");
+                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                        return;
+                    }
+
                     event.setCancelled(true);
+
                     playerManagement.ingameSettingsInventory(player);
                 }
             }

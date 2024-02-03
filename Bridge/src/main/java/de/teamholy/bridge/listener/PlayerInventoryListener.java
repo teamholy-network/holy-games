@@ -10,6 +10,9 @@ import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.perks.PerkManager;
+import de.teamholy.core.bukkit.perks.PerkType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -119,15 +122,15 @@ public class PlayerInventoryListener implements Listener {
                     player.sendMessage(Bridge.PREFIX + "§cIsland Moving: " + bridgePlayer.getSettings().isIslandMoving());
                     player.closeInventory();
                 } else*/
-                if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Blocks")) {
-                    player.openInventory(playerManagement.blocksInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Maps")) {
+                if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Blocks")) {
+                    BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player, PerkType.BLOCK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL);
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Maps")) {
                     player.openInventory(mapManagement.getInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§bMap Length")) {
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Map Type")) {
                     player.openInventory(mapManagement.getMapLengthInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Block Settings")) {
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Block Break Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Sounds")) {
+                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Sounds")) {
                     player.openInventory(perkManagement.openSoundsPerkInventory());
                 }
             }
@@ -142,26 +145,15 @@ public class PlayerInventoryListener implements Listener {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
 
             switch (clickedItemMeta.getDisplayName()) {
-                case "§7Type§8: §cSad Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.DEATH).getInventory());
-                case "§7Type§8: §aHappy Sounds" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.WIN).getInventory());
-                case "§7Type§8: §fMusic" -> player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.SONG).getInventory());
+                case "§7Type§8: §cSad Sounds" ->
+                        player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.DEATH).getInventory());
+                case "§7Type§8: §aHappy Sounds" ->
+                        player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.WIN).getInventory());
+                case "§7Type§8: §fMusic" ->
+                        player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.SONG).getInventory());
             }
-        }
 
-        else if (view.getTitle().equalsIgnoreCase("§8» §6Blocks")) {
-            event.setCancelled(true);
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
-            var material = event.getCurrentItem().getType();
 
-            if (material == Material.AIR || material == Material.REDSTONE_COMPARATOR || material == Material.SLIME_BALL)
-                return;
-
-            if (bridgePlayer.getSettings().getBlockMaterial() == material) return;
-
-            bridgePlayer.getSettings().setBlockMaterial(material);
-            player.sendMessage(Bridge.PREFIX + "§cBlock: " + material.name());
-            playerManagement.refillBlocks(player);
-            player.closeInventory();
         } else if (view.getTitle().equalsIgnoreCase("§8» §bMap Length")) {
             event.setCancelled(true);
             var bridgePlayer = playerManagement.getBridgePlayer(player);

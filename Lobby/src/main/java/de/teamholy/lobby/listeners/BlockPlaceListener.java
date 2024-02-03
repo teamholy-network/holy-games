@@ -26,7 +26,9 @@ public class BlockPlaceListener implements Listener {
         Player player = e.getPlayer();
 
         if(player.getGameMode().equals(GameMode.CREATIVE)) {
-            e.setCancelled(false);
+            Bukkit.getScheduler().runTaskLater(Lobby.getInstance(), () -> {
+                    e.getBlock().breakNaturally();
+            }, 20L);
             return;
         }
 
