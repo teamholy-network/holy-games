@@ -304,27 +304,28 @@ public class PlayerManagement {
 
         switch (blockAnimationType) {
             case FALLING -> blocks.forEach((block, time) -> {
+                bridgePlayer.getBlocks().remove(block);
+
                 FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                block.setType(Material.AIR);
+
                 fallingBlock.setDropItem(false);
                 fallingBlock.setHurtEntities(false);
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
-                    fallingBlock.remove();
-                    block.setType(Material.AIR);
-                    bridgePlayer.getBlocks().remove(block);
-                }, 25L);
+
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 15L);
             });
             case BREAK -> blocks.forEach((block, time) -> {
                 BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
+                bridgePlayer.getBlocks().remove(block);
 
                 final AtomicInteger atomicInteger = new AtomicInteger(0);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (atomicInteger.get() == 11) {
+                        if (atomicInteger.get() >= 11) {
                             cancel();
                             block.setType(Material.AIR);
-                            bridgePlayer.getBlocks().remove(block);
                             atomicInteger.set(0);
                         }
 
@@ -337,20 +338,14 @@ public class PlayerManagement {
             });
             case DROPPING -> blocks.forEach((block, time) -> {
                 var item = dropItem(block.getLocation(), new ItemBuilder(block.getType()).amount(1).name(".").data(block.getData()).build());
+                block.setType(Material.AIR);
+                bridgePlayer.getBlocks().remove(block);
+
                 if (item == null) {
-                    block.setType(Material.AIR);
-                    bridgePlayer.getBlocks().remove(block);
-                    Bukkit.broadcastMessage("item is null");
                     return;
                 }
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
-                    item.die();
-
-                    block.setType(Material.AIR);
-                    bridgePlayer.getBlocks().remove(block);
-
-                }, 25L);
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), item::die, 25L);
             });
             default -> blocks.forEach((block, time) -> {
                 block.setType(Material.AIR);

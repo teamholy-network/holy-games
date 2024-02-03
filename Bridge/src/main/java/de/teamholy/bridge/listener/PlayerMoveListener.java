@@ -51,14 +51,13 @@ public class PlayerMoveListener implements Listener {
             if (mapPosition == null) return;
 
             if (!mapPosition.isInMapPosition(event.getTo(), true)) {
-                if (bridgePlayer.getMapLocation() != null) {
-                    player.teleport(bridgePlayer.getMapLocation());
-                }
-
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                     if (bridgePlayer.getPlayer().getTicksLived() > 10) perkManagement.playSoundPerk(bridgePlayer, false, false);
+                }
 
+                if (bridgePlayer.getMapLocation() != null) {
+                    player.teleport(bridgePlayer.getMapLocation());
                 }
 
                 bridgePlayer.getBlocks().clear();
@@ -72,11 +71,12 @@ public class PlayerMoveListener implements Listener {
                     return;
                 }
 
-                player.teleport(bridgePlayer.getMapLocation());
-
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                 }
+
+                player.teleport(bridgePlayer.getMapLocation());
+
                 bridgePlayer.getBlocks().clear();
 
                 var current = (System.currentTimeMillis() - playerManagement.getPlayerTime().remove(player.getUniqueId()));
