@@ -3,9 +3,8 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.management.PerkManagement;
+import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
-import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
@@ -33,7 +32,7 @@ public class PlayerInventoryListener implements Listener {
 
     private final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
-    private final PerkManagement perkManagement = Bridge.getInstance().getPerkManagement();
+    private final SoundPerkManagement soundPerkManagement = Bridge.getInstance().getSoundPerkManagement();
 
     @EventHandler
     public void onClickInventory(InventoryClickEvent event) {
@@ -107,6 +106,7 @@ public class PlayerInventoryListener implements Listener {
             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, map, false), 3L);
         } else if (view.getTitle().equals("§8» §eSettings")) {
             var bridgePlayer = playerManagement.getBridgePlayer(player);
+            var soundPerkInventory = soundPerkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL,1).getInventory();
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
                 event.setCancelled(true);
 
@@ -131,27 +131,22 @@ public class PlayerInventoryListener implements Listener {
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Block Break Settings")) {
                     player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
                 } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Sounds")) {
-                    player.openInventory(perkManagement.openSoundsPerkInventory());
+                    player.openInventory(soundPerkInventory);
                 }
             }
         } else if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
+            var bridgePlayer = playerManagement.getBridgePlayer(player);
+            var soundPerkInventory = soundPerkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL,1).getInventory();
+
+
             var clickedItem = event.getCurrentItem();
             if (clickedItem == null) return;
 
             var clickedItemMeta = clickedItem.getItemMeta();
             if (clickedItemMeta == null) return;
 
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
-
-            switch (clickedItemMeta.getDisplayName()) {
-                case "§7Type§8: §cSad Sounds" ->
-                        player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.DEATH).getInventory());
-                case "§7Type§8: §aHappy Sounds" ->
-                        player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.WIN).getInventory());
-                case "§7Type§8: §fMusic" ->
-                        player.openInventory(perkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.SONG).getInventory());
-            }
+            player.openInventory(soundPerkInventory);
 
 
         } else if (view.getTitle().equalsIgnoreCase("§8» §bMap Length")) {

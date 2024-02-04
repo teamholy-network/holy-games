@@ -5,6 +5,7 @@ import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
@@ -14,6 +15,7 @@ import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.manager.CoinManager;
 import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.api.utility.Pagifier;
 import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +26,8 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
+
+import static de.teamholy.bridge.player.management.SoundPerkManagement.MAX_SOUNDS_PER_PAGE;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -55,6 +59,8 @@ public class BridgePlayer {
     private long placedBlocks = 0L;
 
     private PerkPlayerProfile perkPlayerProfile;
+
+    private Pagifier<BridgeSound> soundPagifier = new Pagifier<>(SoundPerkManagement.MAX_SOUNDS_PER_PAGE);
 
     public BridgePlayer(UUID uuid) {
         this.uuid = uuid;

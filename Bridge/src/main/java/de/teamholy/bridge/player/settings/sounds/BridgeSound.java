@@ -30,9 +30,20 @@ public class BridgeSound {
     private float pitch;
 
     private long price;
+    @Nullable
     private PerkRankType perkRankType;
-
     private Material material;
+
+    @Nullable
+    private String specialText;
+
+    public boolean isBuyable() {
+        return perkRankType == null;
+    }
+
+    public boolean isSpecial() {
+        return specialText != null;
+    }
 
 
 }

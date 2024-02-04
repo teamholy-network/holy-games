@@ -3,7 +3,7 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.management.PerkManagement;
+import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
@@ -26,7 +26,7 @@ public class PlayerMoveListener implements Listener {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
     private final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
-    private final PerkManagement perkManagement = Bridge.getInstance().getPerkManagement();
+    private final SoundPerkManagement soundPerkManagement = Bridge.getInstance().getSoundPerkManagement();
 
 
     @EventHandler
@@ -53,7 +53,7 @@ public class PlayerMoveListener implements Listener {
             if (!mapPosition.isInMapPosition(event.getTo(), true)) {
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
-                    if (bridgePlayer.getPlayer().getTicksLived() > 10) perkManagement.playSoundPerk(bridgePlayer, false, false);
+                    if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkManagement.playSoundPerk(bridgePlayer, false, false);
                 }
 
                 if (bridgePlayer.getMapLocation() != null) {
@@ -114,7 +114,7 @@ public class PlayerMoveListener implements Listener {
                 var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()), false);
                 var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()), true);
 
-                perkManagement.playSoundPerk(bridgePlayer, true, current < bestLocal || current < bestGlobal);
+                soundPerkManagement.playSoundPerk(bridgePlayer, true, current < bestLocal || current < bestGlobal);
 
                 playerManagement.prepareIngamePlayer(player);
 

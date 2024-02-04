@@ -14,8 +14,9 @@ import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
-import de.teamholy.core.api.entities.player.PlayerRepository;
+import de.teamholy.core.api.utility.Pagifier;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.perks.PerkManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,7 +26,10 @@ import org.bukkit.inventory.Inventory;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -33,8 +37,10 @@ import java.util.List;
  * Proprietary and confidential
  * Written by charon
  **/
-public class PerkManagement {
+public class SoundPerkManagement {
 
+    public static final int MAX_SOUNDS_PER_PAGE = 21;
+    private final int radioSongPlayerDestroyDelay = 20 * 5;
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
     public void playSoundPerk(BridgePlayer bridgePlayer, boolean win, boolean record) {
@@ -86,7 +92,7 @@ public class PerkManagement {
             radioSongPlayer.addPlayer(player);
             radioSongPlayer.setPlaying(true);
 
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), radioSongPlayer::destroy, 20 * 10L);
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), radioSongPlayer::destroy, radioSongPlayerDestroyDelay);
         } else {
             player.playSound(player.getLocation(), sound.getBukkitSound(), sound.getVolume(), sound.getPitch());
         }
@@ -95,9 +101,7 @@ public class PerkManagement {
     public void buyPerk(BridgePlayer bridgePlayer, BridgeSound bridgeSound) {
         PerkPlayerProfile perkProfile = bridgePlayer.getPerkPlayerProfile();
 
-        PlayerProfile playerProfile = (PlayerProfile) BukkitCore.getInstance().getCoreAPI().getPlayerService().getEntity(bridgePlayer.getUuid(), () -> {
-            return (PlayerProfile) ((PlayerRepository) BukkitCore.getInstance().getCoreAPI().getPlayerService().getRepository()).findFirstById(bridgePlayer.getUuid());
-        });
+        PlayerProfile playerProfile = BukkitCore.getInstance().getCoreAPI().getPlayerService().getEntity(bridgePlayer.getUuid(), () -> BukkitCore.getInstance().getCoreAPI().getPlayerService().getRepository().findFirstById(bridgePlayer.getUuid()));
 
         if (playerProfile == null) {
             return;
@@ -126,9 +130,9 @@ public class PerkManagement {
             switch (bridgeSound.getSoundType()) {
                 case SONG ->
                         bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.NEW_RECORD); // default value
-                case DEATH ->
+                case SAD ->
                         bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.DEATH); // default value
-                case WIN ->
+                case HAPPY ->
                         bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.WIN); // default value
                 default -> throw new IllegalStateException("Unexpected value: " + bridgeSound.getSoundType());
             }
@@ -140,37 +144,151 @@ public class PerkManagement {
         }
     }
 
-    public Inventory openSoundsPerkInventory() {
-        Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§8» §6Sound Settings");
 
-        inventory.setItem(11, new ItemBuilder(Material.SKULL_ITEM).amount(1).name("§7Type§8: §cSad Sounds").lore("§7Click to open the sad sound settings").build());
-        inventory.setItem(13, new ItemBuilder(Material.NETHER_STAR).amount(1).name("§7Type§8: §aHappy Sounds").lore("§7Click to open the happy sound settings").build());
-        inventory.setItem(15, new ItemBuilder(Material.NOTE_BLOCK).amount(1).name("§7Type§8: §fMusic").lore("§7Click to open the music settings").build());
+    public de.teamholy.core.bukkit.utils.Inventory openSoundInventory(BridgePlayer bridgePlayer, BridgeSoundType bridgeSoundType, PerkManager.SortOptionPerk sortOptionPerk, PerkManager.SortOptionPlayer sortOptionPlayer, int page) {
+        var size = 4; // 4 rows by default
 
-        return inventory;
-    }
+        List<BridgeSound> sounds = Arrays.stream(BridgeSounds.values())
+                .map(BridgeSounds::getBridgeSound)
+                .filter(sound ->
+                        switch (bridgeSoundType) {
+                            case SONG -> sound.getSoundType() == BridgeSoundType.SONG;
+                            case SAD -> sound.getSoundType() == BridgeSoundType.SAD;
+                            case HAPPY -> sound.getSoundType() == BridgeSoundType.HAPPY;
+                            default -> true;
+                        }
+                )
+                .filter(sound ->
+                        switch (sortOptionPlayer) {
+                            case OWNED -> (sound.isBuyable() && bridgePlayer.getSettings().getSounds().contains(sound)
+                                    || (!sound.isBuyable() && bridgePlayer.getPlayer().hasPermission(sound.getPerkRankType().getPermission()))
+                                    || (sound.isSpecial() && bridgePlayer.getSettings().getSounds().contains(sound))
+                            );
+                            case UNOWNED ->
+                                    (sound.isBuyable() && !bridgePlayer.getSettings().getSounds().contains(sound)
+                                            || (!sound.isBuyable() && !bridgePlayer.getPlayer().hasPermission(sound.getPerkRankType().getPermission()))
+                                            || (sound.isSpecial() && !bridgePlayer.getSettings().getSounds().contains(sound)));
+                            default -> true;
+                        }
+                )
+                .filter(sound -> {
+                    switch (sortOptionPerk) {
+                        case COINS -> {
+                            return sound.isBuyable();
+                        }
+                        case RANK -> {
+                            return !sound.isBuyable();
+                        }
+                        case SPECIAL -> {
+                            return sound.isSpecial();
+                        }
+                        default -> {
+                            return true;
+                        }
+                    }
+                })
+                .sorted((sound1, sound2) -> {
+                    switch (sortOptionPerk) {
+                        case COINS -> {
+                            return Integer.compare((int) sound1.getPrice(), (int) sound2.getPrice());
+                        }
+                        case RANK -> {
+                            return sound1.getPerkRankType().compareTo(sound2.getPerkRankType());
+                        }
+                        default -> {
+                            return Comparator.comparing(BridgeSound::getPerkId).compare(sound1, sound2);
+                        }
+                    }
+                })
+                .toList();
 
-    public de.teamholy.core.bukkit.utils.Inventory openSoundInventory(BridgePlayer bridgePlayer, BridgeSoundType bridgeSoundType) {
-        int size = 4; // 4 rows by default
+        var pagifier = bridgePlayer.getSoundPagifier();
+        pagifier.reset();
+        sounds.forEach(pagifier::addItem);
+        sounds.forEach(pagifier::addItem);
 
-        int listSize = Arrays.stream(BridgeSounds.values()).filter(bridgeSounds -> bridgeSounds.getBridgeSound().getSoundType() == bridgeSoundType).toList().size();
 
-        if (listSize > 9 && listSize <= 18) {
-            size = 5; // 5 rows if there are more than 9 sounds
-        } else if (listSize > 18) {
-            size = 6; // 6 rows if there are more than 18 sounds
+        var pageSounds = pagifier.getPage(page);
+
+        if (pageSounds.size() >= 7 && pageSounds.size() <= 14) {
+            size = 5;
+        } else if (pageSounds.size() >= 15) {
+            size = 6;
         }
 
-        de.teamholy.core.bukkit.utils.Inventory holyInventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6" + bridgeSoundType.getName() + " Settings", size * 9);
-        holyInventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> event.getPlayer().openInventory(openSoundsPerkInventory()), 1L));
+        var inventorySize = size * 9;
+
+        de.teamholy.core.bukkit.utils.Inventory holyInventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Sound Perks §e" + (page), inventorySize);
+
+
+        de.teamholy.core.bukkit.utils.ItemBuilder sortPerk = new de.teamholy.core.bukkit.utils.ItemBuilder(Material.HOPPER).setName("§8» §6Sort");
+        de.teamholy.core.bukkit.utils.ItemBuilder sortPlayer = new de.teamholy.core.bukkit.utils.ItemBuilder(Material.DIAMOND).setName("§8» §6Filter");
+        de.teamholy.core.bukkit.utils.ItemBuilder sortType = new de.teamholy.core.bukkit.utils.ItemBuilder(Material.NOTE_BLOCK).setName("§8» §6Sound types");
+
+        sortPerk.setLore(Arrays.stream(PerkManager.SortOptionPerk.values())
+                .map(value -> (sortOptionPerk == value) ? "§a" + value.toString().toLowerCase(Locale.ROOT) : "§7" + value.toString().toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList()));
+
+        sortPlayer.setLore(Arrays.stream(PerkManager.SortOptionPlayer.values())
+                .map(value -> (sortOptionPlayer == value) ? "§a" + value.toString().toLowerCase(Locale.ROOT) : "§7" + value.toString().toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList()));
+
+        sortType.setLore(Arrays.stream(BridgeSoundType.values())
+                .map(value -> (bridgeSoundType == value) ? "§a" + value.toString().toLowerCase(Locale.ROOT) : "§7" + value.toString().toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList()));
+
+        holyInventory.setItem(sortPerk.build(), inventorySize - 9, event -> {
+            var ordinal = sortOptionPerk.ordinal();
+            var length = PerkManager.SortOptionPerk.values().length;
+            PerkManager.SortOptionPerk next = PerkManager.SortOptionPerk.values()[(ordinal + 1) % length];
+            bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.CLICK, 1.0F, 100.0F);
+            bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSoundType, next, sortOptionPlayer, 1).getInventory());
+        });
+
+        holyInventory.setItem(sortPlayer.build(), inventorySize - 8, event -> {
+            var ordinal = sortOptionPlayer.ordinal();
+            var length = PerkManager.SortOptionPlayer.values().length;
+            PerkManager.SortOptionPlayer next = PerkManager.SortOptionPlayer.values()[(ordinal + 1) % length];
+            bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.CLICK, 1.0F, 100.0F);
+            bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSoundType, sortOptionPerk, next, 1).getInventory());
+        });
+
+        holyInventory.setItem(sortType.build(), inventorySize - 7, event -> {
+            var ordinal = bridgeSoundType.ordinal();
+            var length = BridgeSoundType.values().length;
+            BridgeSoundType next = BridgeSoundType.values()[(ordinal + 1) % length];
+            bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.CLICK, 1.0F, 100.0F);
+            bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, next, sortOptionPerk, sortOptionPlayer, 1).getInventory());
+        });
+
+        holyInventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.BARRIER).setName("§8» §cReset all").build(), inventorySize - 5, event -> {
+            bridgePlayer.setSoundPagifier(new Pagifier<>(MAX_SOUNDS_PER_PAGE));
+            bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.ANVIL_BREAK, 1.0F, 100.0F);
+            bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory());
+        });
+
+        if (page > 1) {
+            holyInventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setAttributs().setName("§8» §6Previous page").setSkullMeta(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1Z" +
+                            "GFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==", "").build(), inventorySize - 3, event -> {
+                bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.CHICKEN_EGG_POP, 2.0F, 2.0F);
+                bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSoundType, sortOptionPerk, sortOptionPlayer, page - 1).getInventory());
+            });
+        }
+
+        if (pagifier.getPage(page + 1) != null) {
+            holyInventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setAttributs().setName("§8» §6Next page").setSkullMeta(
+                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMT" +
+                            "I2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19", "").build(), inventorySize - 1, event -> {
+                bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.CHICKEN_EGG_POP, 2.0F, 2.0F);
+                bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSoundType, sortOptionPerk, sortOptionPlayer, page + 1).getInventory());
+            });
+        }
+
 
         int slot = 10;
 
-        for (BridgeSounds sounds : BridgeSounds.values()) {
-            BridgeSound sound = sounds.getBridgeSound();
-            if (sound.getSoundType() != bridgeSoundType) {
-                continue;
-            }
+        for (BridgeSound sound : pageSounds) {
             List<String> lore = getLore(bridgePlayer, sound);
 
             holyInventory.setItem(
@@ -192,9 +310,9 @@ public class PerkManagement {
                                         switch (bridgeSound.getSoundType()) {
                                             case SONG ->
                                                     bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.NEW_RECORD); // default value
-                                            case DEATH ->
+                                            case SAD ->
                                                     bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.DEATH); // default value
-                                            case WIN ->
+                                            case HAPPY ->
                                                     bridgePlayer.getSettings().getSoundEvents().putIfAbsent(bridgeSound, Settings.BridgeSoundEventType.WIN); // default value
                                             default ->
                                                     throw new IllegalStateException("Unexpected value: " + bridgeSound.getSoundType());
@@ -207,7 +325,7 @@ public class PerkManagement {
                                     }
 
                                     holyInventory.setOnClose(empty ->
-                                            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType()).getInventory()), 1L));
+                                            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 0).getInventory()), 1L));
 
                                     bridgePlayer.getPlayer().closeInventory();
 
@@ -225,8 +343,6 @@ public class PerkManagement {
                                 bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou don't have selected this perk!");
                                 return;
                             }*/
-                            holyInventory.setOnClose(empty -> {
-                            });
                             bridgePlayer.getPlayer().openInventory(openSoundEventTypeInventory(bridgePlayer, sound));
                         }
 
@@ -234,12 +350,10 @@ public class PerkManagement {
             slot++;
             if (slot > 16 && slot < 19) {
                 slot = 19;
-            } else if (slot == 26) break;
+            } else if (slot > 25 && slot < 28) {
+                slot = 28;
+            }
         }
-        holyInventory.setItem(new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build(), holyInventory.getInventory().getSize() - 5, event -> {
-            bridgePlayer.getSettings().setCurrentSound(null);
-            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You cleared the sound!");
-        });
 
         return holyInventory;
     }
@@ -247,7 +361,7 @@ public class PerkManagement {
     public Inventory openSoundEventTypeInventory(BridgePlayer bridgePlayer, BridgeSound bridgeSound) {
         de.teamholy.core.bukkit.utils.Inventory holyInventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6" + bridgeSound.getDisplayName() + " Settings", 9 * 3);
 
-        holyInventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> event.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType()).getInventory()), 1L));
+        holyInventory.setOnClose(event -> Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> event.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 0).getInventory()), 1L));
 
         Settings.BridgeSoundEventType glowWin = bridgePlayer.getSettings().getSoundEvents().get(bridgeSound);
 
@@ -293,7 +407,15 @@ public class PerkManagement {
         List<String> lore = Lists.newArrayList();
 
         if (bridgePlayer.getSettings().getSounds().isEmpty() || !bridgePlayer.getSettings().getSounds().contains(sound)) {
-            lore.add("§7This sound costs §e" + sound.getPrice() + " §6coins");
+            if (sound.isBuyable()) {
+                lore.add("§7This sound costs §e" + sound.getPrice() + " §6coins");
+            } else {
+                if (bridgePlayer.getPlayer().hasPermission(sound.getPerkRankType().getPermission())) {
+                    lore.add("§aYou own this sound!");
+                } else {
+                    lore.add("§7Available for " + sound.getPerkRankType().getRankName() + "§7 and above");
+                }
+            }
         } else {
             if (bridgePlayer.getSettings().getCurrentSound() == sound) {
                 lore.add("§2Selected");

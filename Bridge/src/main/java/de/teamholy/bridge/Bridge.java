@@ -6,7 +6,7 @@ import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.listener.*;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
-import de.teamholy.bridge.player.management.PerkManagement;
+import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.timer.BridgeTimer;
@@ -34,7 +34,7 @@ public class Bridge extends JavaPlugin {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
     private PlayerManagement playerManagement;
-    private PerkManagement perkManagement;
+    private SoundPerkManagement soundPerkManagement;
     private BridgeMapManagement mapManagement;
     private BukkitTask bridgeTimer;
 
@@ -56,7 +56,7 @@ public class Bridge extends JavaPlugin {
         this.songManager = new SongManager();
 
         this.playerManagement = new PlayerManagement();
-        this.perkManagement = new PerkManagement();
+        this.soundPerkManagement = new SoundPerkManagement();
         this.mapManagement = new BridgeMapManagement();
 
         loadCommand();
