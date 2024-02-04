@@ -205,7 +205,6 @@ public class SoundPerkManagement {
         var pagifier = bridgePlayer.getSoundPagifier();
         pagifier.reset();
         sounds.forEach(pagifier::addItem);
-        sounds.forEach(pagifier::addItem);
 
 
         var pageSounds = pagifier.getPage(page);
