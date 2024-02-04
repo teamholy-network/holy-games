@@ -81,30 +81,20 @@ public class PlayerManagement {
 
     public void loadLobbyInventory(Player player) {
         preparePlayer(player);
-        /*
-        player.setGameMode(GameMode.ADVENTURE);
-
-        player.teleport(player.getWorld().getSpawnLocation());
-
-        player.getInventory().setItem(2, new ItemBuilder(Material.PAPER).name("§bMaps").build());
-        player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§eSettings").build());
-        player.getInventory().setItem(6, new ItemBuilder(Material.SLIME_BALL).name("§cLeave").build());*/
+        player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§8» §6Settings §8(§7rightclick§8)").build());
+        player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§8» §cQuit §8(§7rightclick§8)").build());
     }
 
     public void prepareIngamePlayer(Player player) {
-        preparePlayer(player);
+      //  preparePlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
 
-        while (true) {
-            var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
-            if (perk != null) {
-                player.getInventory().setItem(0, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
-                break;
-            }
+        var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+        if (perk != null) {
+            player.getInventory().setItem(0, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+        } else {
+            player.getInventory().setItem(0, new ItemBuilder(Material.SANDSTONE).amount(64).name("§8» §6Blocks §8(§7rightclick§8)").build());
         }
-
-        player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§8» §6Settings §8(§7rightclick§8)").build());
-        player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§8» §cQuit §8(§7rightclick§8)").build());
     }
 
     private void createScoreboard(BridgePlayer bridgePlayer) {

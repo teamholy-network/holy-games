@@ -1,22 +1,19 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PerkManagement;
-import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
-import org.bukkit.Bukkit;
-import org.bukkit.FireworkEffect;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.Vector;
+
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -87,7 +84,7 @@ public class PlayerMoveListener implements Listener {
 
                 if (current < beforeBestGlobal || beforeBestGlobal == 0) {
 
-                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+                    de.teamholy.bridge.util.FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
