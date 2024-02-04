@@ -9,6 +9,7 @@ import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -61,6 +62,7 @@ public class PlayerMoveListener implements Listener {
                 }
 
                 bridgePlayer.getBlocks().clear();
+                playerManagement.updateHologram(bridgePlayer,false);
                 playerManagement.prepareIngamePlayer(player);
                 playerManagement.getPlayerTime().remove(player.getUniqueId());
             }
@@ -83,30 +85,29 @@ public class PlayerMoveListener implements Listener {
                 var beforeBestLocal = bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType());
                 var beforeBestGlobal = bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType());
 
-                if (current < beforeBestGlobal || beforeBestGlobal == 0) {
+                playerManagement.sendTitle(player,"§fTime §8» §a" + FormatTime.formatTimeManually(current),"§a+ §e2 Coins",10,20,10);
+                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 2, true);
 
-                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
-                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
-                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+                if (current < beforeBestGlobal) {
+
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
                     player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §c§lall-time §frecord!");
-                    player.sendMessage("      §fYour new §2§ltime §fis §e" + FormatTime.formatTimeManually(current));
+                    player.sendMessage("      §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestGlobal - current) + "§2 difference");
                     player.sendMessage("");
                     player.sendMessage("§8§m----------------------------------");
 
-                } else if (current < beforeBestLocal || beforeBestLocal == 0) {
+                } else if (current < beforeBestLocal) {
 
-                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     player.sendMessage("");
-                    player.sendMessage("§aYou have beaten your §2session record! §7(§e" + FormatTime.formatTimeManually(current) + "§7)");
+                    player.sendMessage(" §fYou have beaten your §2§lsession record!");
+                    player.sendMessage("       §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestLocal - current) + "§2 difference");
                     player.sendMessage("");
 
-                } else {
-                    player.sendMessage("§7Your time was §e" + FormatTime.formatTimeManually(current) +
-                            "\n" + Bridge.PREFIX + "§7Your best §2session-time §7is §e" +
-                            FormatTime.formatTimeManually(beforeBestLocal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName()
-                            + "\n" + Bridge.PREFIX + "§7Your best §call-time §7is §e" + FormatTime.formatTimeManually(beforeBestGlobal) + " §8» " + mapManagement.colorCodeByType(map.getMapType()) + map.getMapType().getName());
                 }
 
                 player.teleport(bridgePlayer.getMapLocation());
@@ -114,9 +115,12 @@ public class PlayerMoveListener implements Listener {
                 var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()), false);
                 var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()), true);
 
+                bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);
+
                 soundPerkManagement.playSoundPerk(bridgePlayer, true, current < bestLocal || current < bestGlobal);
 
                 playerManagement.prepareIngamePlayer(player);
+                playerManagement.updateHologram(bridgePlayer,false);
 
 
 

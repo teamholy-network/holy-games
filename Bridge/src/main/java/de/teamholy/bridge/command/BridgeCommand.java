@@ -1,8 +1,14 @@
 package de.teamholy.bridge.command;
 
+import com.google.common.collect.Lists;
+import de.dytanic.cloudnet.ext.bridge.BridgePlayerManager;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
+import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,19 +39,58 @@ public class BridgeCommand implements CommandExecutor {
         }
 
         BridgeMapManagement bridgeMapManagement = Bridge.getInstance().getMapManagement();
+        PlayerManagement bridgePlayerManager = Bridge.getInstance().getPlayerManagement();
 
-        if (args[0].equalsIgnoreCase("list")) {
+        switch (args[0]) {
+            case "list": {
+                if (bridgeMapManagement.getLoader().getMaps().isEmpty()) {
+                    player.sendMessage(Bridge.PREFIX + "§7There are no maps.");
+                    return true;
+                }
 
-            if (bridgeMapManagement.getLoader().getMaps().isEmpty()) {
-                player.sendMessage(Bridge.PREFIX + "§7There are no maps.");
-                return true;
+                player.sendMessage("§7§m-------------------§r §6Bridge Maps §7§m-------------------");
+                bridgeMapManagement.getLoader().getMaps().forEach(bridgeMap -> player.sendMessage(" §7- §e" + bridgeMap.getName() + " §8- §7" + bridgeMap.getTitle()));
+                player.sendMessage("§7§m-----------------------------------------------------");
             }
 
-            player.sendMessage("§7§m-------------------§r §6Bridge Maps §7§m-------------------");
-            bridgeMapManagement.getLoader().getMaps().forEach(bridgeMap -> player.sendMessage(" §7- §e" + bridgeMap.getName() + " §8- §7" + bridgeMap.getTitle()));
-            player.sendMessage("§7§m-----------------------------------------------------");
-        } else {
-            sendHelp(player);
+            case "deleteStats": {
+                if (!player.hasPermission("*")) return false;
+
+                var bridgePlayer = bridgePlayerManager.getBridgePlayer(player);
+                bridgePlayer.setWins(0);
+                for (var mapTypes : BridgeMapType.values()) {
+                    bridgePlayer.setGlobalBestTime(mapTypes, 0);
+                    bridgePlayer.setLocalBestTime(mapTypes, 0);
+
+                    bridgePlayer.getBestTimes().put(mapTypes, Lists.newArrayList());
+                }
+                bridgePlayer.setPlacedBlocks(0);
+
+
+                player.kickPlayer("§cYour stats have been reset.");
+                return false;
+            }
+
+            case "stats": {
+                var bridgePlayer = bridgePlayerManager.getBridgePlayer(player);
+                player.sendMessage("§7§m-------------------§r §6Bridge Stats §7§m-------------------");
+                player.sendMessage("§7Wins: §e" + bridgePlayer.getWins());
+                player.sendMessage("§7Blocks placed: §e" + bridgePlayer.getPlacedBlocks());
+                for (var mapTypes : BridgeMapType.values()) {
+                    player.sendMessage("§7" + mapTypes.getName() + " best time: §e" + bridgePlayerManager.checkBestTime(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6average time§8: §e" + bridgePlayerManager.checkBestTime(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
+                }
+                player.sendMessage("§7§m-----------------------------------------------------");
+
+                player.getLocation().getWorld().dropItem(player.getLocation(), new ItemBuilder(Material.DIAMOND).setName("§6Stats").setLore("§7Wins: §e" + bridgePlayer.getWins(), "§7Blocks placed: §e" + bridgePlayer.getPlacedBlocks()).build());
+
+                return false;
+            }
+
+
+            default: {
+                player.sendMessage("§cUnknown command. Use /bridge help for help.");
+            }
+
         }
 
         return false;

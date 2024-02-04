@@ -122,6 +122,7 @@ public class BridgeMapLoader {
 
                     bukkitPlayer.teleport(mapLocation);
                     playerManagement.prepareIngamePlayer(bukkitPlayer);
+                    playerManagement.updateHologram(player,true);
 
                     playerManagement.updateScoreboard(player);
 

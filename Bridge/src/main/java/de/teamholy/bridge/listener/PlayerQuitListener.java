@@ -33,6 +33,8 @@ public class PlayerQuitListener implements Listener {
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
         var map = bridgePlayer.getMap();
 
+
+        bridgePlayer.getHologram().delete();
         playerManagement.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
 
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerManagement.updateScoreboardForPlayer(map.getMapType()), 5);

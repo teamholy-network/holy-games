@@ -1,6 +1,12 @@
 package de.teamholy.bridge.player;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMap;
@@ -13,6 +19,7 @@ import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
+import de.teamholy.core.api.entities.skin.SkinProfile;
 import de.teamholy.core.api.manager.CoinManager;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.Pagifier;
@@ -24,7 +31,10 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static de.teamholy.bridge.player.management.SoundPerkManagement.MAX_SOUNDS_PER_PAGE;
@@ -42,6 +52,8 @@ public class BridgePlayer {
     private final UUID uuid;
     private final Player player;
 
+    private Gson gson = new Gson();
+
     private BridgeMap map;
 
     private Location mapLocation;
@@ -57,8 +69,12 @@ public class BridgePlayer {
 
     private long wins = 0L;
     private long placedBlocks = 0L;
+    private Map<BridgeMapType, List<Long>> bestTimes = new HashMap<>();
+
+    private Hologram hologram;
 
     private PerkPlayerProfile perkPlayerProfile;
+    private SkinProfile skinProfile;
 
     private Pagifier<BridgeSound> soundPagifier = new Pagifier<>(SoundPerkManagement.MAX_SOUNDS_PER_PAGE);
 
@@ -78,6 +94,10 @@ public class BridgePlayer {
 
     private void registerDatabaseEntry() {
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
+        skinProfile = BukkitCore.getAPI().getSkinService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getSkinService().getRepository().findFirstById(player.getUniqueId()));
+        for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
+            bestTimes.put(bridgeMapType, Lists.newArrayList());
+        }
 
         String gameKey = Gamemodes.BRIDGE.toString();
         if (!statsProfile.exists(gameKey)) {
@@ -94,6 +114,10 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "removeBlocks", "false");
             statsProfile.setSetting(gameKey, "removalTime", "0");
             statsProfile.setSetting(gameKey, "blockAnimationType", "NONE");
+
+            statsProfile.setSetting(gameKey, "shortBestTimes", gson.toJson(Lists.newArrayList()));
+            statsProfile.setSetting(gameKey, "longBestTimes", gson.toJson(Lists.newArrayList()));
+            statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(Lists.newArrayList()));
 
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
@@ -125,6 +149,19 @@ public class BridgePlayer {
             if (statsProfile.getSetting(gameKey, "blockAnimationType") != null) {
                 this.settings.setBlockAnimationType(Settings.BlockAnimationType.valueOf(statsProfile.getSetting(gameKey, "blockAnimationType")));
             }
+
+            Type listType = new TypeToken<List<Long>>() {
+            }.getType();
+            if (statsProfile.getSetting(gameKey, "shortBestTimes") != null) {
+                this.bestTimes.put(BridgeMapType.SHORT, gson.fromJson(statsProfile.getSetting(gameKey, "shortBestTimes"), listType));
+            }
+            if (statsProfile.getSetting(gameKey, "longBestTimes") != null) {
+                this.bestTimes.put(BridgeMapType.LONG, gson.fromJson(statsProfile.getSetting(gameKey, "longBestTimes"), listType));
+            }
+            if (statsProfile.getSetting(gameKey, "diagonalBestTimes") != null) {
+                this.bestTimes.put(BridgeMapType.DIAGONAL, gson.fromJson(statsProfile.getSetting(gameKey, "diagonalBestTimes"), listType));
+            }
+
 
             if (statsProfile.getSetting(gameKey, "selectedSound") != null) {
                 BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "selectedSound")));
@@ -180,6 +217,10 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "removeBlocks", String.valueOf(this.settings.isRemoveBlocks()));
         statsProfile.setSetting(gameKey, "removalTime", String.valueOf(this.settings.getRemovalTime()));
         statsProfile.setSetting(gameKey, "blockAnimationType", this.settings.getBlockAnimationType().name());
+
+        statsProfile.setSetting(gameKey, "shortBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.SHORT)));
+        statsProfile.setSetting(gameKey, "longBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.LONG)));
+        statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.DIAGONAL)));
 
         if (this.settings.getCurrentSound() != null)
             statsProfile.setSetting(gameKey, "selectedSound", String.valueOf(this.settings.getCurrentSound().getPerkId()));
