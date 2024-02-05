@@ -44,6 +44,11 @@ public class BlockPlaceListener implements Listener {
                 return;
             }
 
+            if (event.getBlock().getType() == Material.REDSTONE_COMPARATOR) {
+                event.setCancelled(true);
+                return;
+            }
+
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
             if (!playerManagement.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {

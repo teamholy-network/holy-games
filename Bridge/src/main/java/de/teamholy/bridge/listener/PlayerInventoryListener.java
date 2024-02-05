@@ -201,56 +201,9 @@ public class PlayerInventoryListener implements Listener {
             if (clickedItemMeta == null) return;
 
             if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Animation")) {
-                player.openInventory(playerManagement.blockAnimationInventory(bridgePlayer));
-            } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§eRemove Timer")) {
-                if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
-                    bridgePlayer.getSettings().setRemoveBlocks(!bridgePlayer.getSettings().isRemoveBlocks());
-                    player.sendMessage(Bridge.PREFIX + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aActivated" : "§cDisabled") + " the Block Timer!");
-                } else if (event.getClick() == ClickType.LEFT) {
-                    bridgePlayer.getSettings().setRemovalTime((bridgePlayer.getSettings().getRemovalTime() + 1) > 8 ? 8 : bridgePlayer.getSettings().getRemovalTime() + 1);
-                    player.sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getSettings().getRemovalTime());
-                } else if (event.getClick() == ClickType.RIGHT) {
-                    bridgePlayer.getSettings().setRemovalTime((bridgePlayer.getSettings().getRemovalTime() - 1) < 1 ? 1 : bridgePlayer.getSettings().getRemovalTime() - 1);
-                    player.sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getSettings().getRemovalTime());
-                }
-                event.getInventory().setItem(5, new ItemBuilder(Material.WATCH).amount(1).name("§eRemove Timer")
-                        .lore("§8» §7Current Time: §e" +
-                                (bridgePlayer.getSettings().getRemovalTime() == 0 ? "Not set" : bridgePlayer.getSettings().getRemovalTime()))
-                        .lore("")
-                        .lore("§7Currently " + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aenabled" : "§cdisabled"))
-                        .lore("§7§oShift Click to enable / disable").build());
+                player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
             }
 
-        } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Animation")) {
-            event.setCancelled(true);
-
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
-
-            var clickedItem = event.getCurrentItem();
-            if (clickedItem == null) return;
-
-            var clickedItemMeta = clickedItem.getItemMeta();
-            if (clickedItemMeta == null) return;
-
-            switch (clickedItemMeta.getDisplayName()) {
-                case "§c§lClear" -> {
-                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.NONE);
-                    player.sendMessage(Bridge.PREFIX + "You cleared the animation!");
-                }
-                case "§6Falling" -> {
-                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.FALLING);
-                    player.sendMessage(Bridge.PREFIX + "You set the animation to §6Falling§7!");
-                }
-                case "§6Dropping" -> {
-                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.DROPPING);
-                    player.sendMessage(Bridge.PREFIX + "You set the animation to §6Dropping§7!");
-                }
-                case "§6Breaking" -> {
-                    bridgePlayer.getSettings().setBlockAnimationType(Settings.BlockAnimationType.BREAK);
-                    player.sendMessage(Bridge.PREFIX + "You set the animation to §6Breaking§7!");
-                }
-            }
-            player.closeInventory();
         }
     }
 

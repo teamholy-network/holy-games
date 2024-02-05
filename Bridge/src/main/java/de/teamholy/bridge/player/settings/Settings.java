@@ -3,6 +3,9 @@ package de.teamholy.bridge.player.settings;
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
+import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.utils.ItemBuilder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -30,11 +33,17 @@ public class Settings {
 
     private HashMap<BridgeSound, BridgeSoundEventType> soundEvents = new HashMap<>();
 
+    @Getter @AllArgsConstructor
     public enum BlockAnimationType {
-        NONE,
-        FALLING,
-        DROPPING,
-        BREAK;
+
+        NONE("None", PerkRankType.PLAYER, new ItemBuilder(Material.BARRIER).setName("§8» §cNone")),
+        DROPPING("Dropping",PerkRankType.PREMIUM, new ItemBuilder(Material.EGG).setName("§8» §aDropping")),
+        FALLING("Falling", PerkRankType.VIP, new ItemBuilder(Material.FEATHER).setName("§8» §bFalling")),
+        BREAK("Break",PerkRankType.HOLY, new ItemBuilder(Material.ANVIL).setName("§8» §4Break"));
+
+        private final String name;
+        private final PerkRankType rankType;
+        private ItemBuilder itemBuilder;
     }
 
     public enum BridgeSoundEventType {

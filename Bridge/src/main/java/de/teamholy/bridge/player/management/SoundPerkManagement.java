@@ -410,7 +410,7 @@ public class SoundPerkManagement {
                 lore.add("§7This sound costs §e" + sound.getPrice() + " §6coins");
             } else {
                 if (bridgePlayer.getPlayer().hasPermission(sound.getPerkRankType().getPermission())) {
-                    lore.add("§aYou own this sound!");
+                    lore.add("§aClick to select");
                 } else {
                     lore.add("§7Available for " + sound.getPerkRankType().getRankName() + "§7 and above");
                 }
@@ -419,7 +419,7 @@ public class SoundPerkManagement {
             if (bridgePlayer.getSettings().getCurrentSound() == sound) {
                 lore.add("§2Selected");
             } else {
-                lore.add("§aYou own this sound!");
+                lore.add("§aClick to select");
             }
             lore.add(" ");
             lore.add("§7§oRight click, to change the event");

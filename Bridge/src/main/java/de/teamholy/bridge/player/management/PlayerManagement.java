@@ -2,44 +2,32 @@ package de.teamholy.bridge.player.management;
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
-import com.google.common.collect.Lists;
-import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
-import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.settings.sounds.BridgeSong;
-import de.teamholy.bridge.player.settings.sounds.BridgeSound;
-import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
-import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
+import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
-import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkType;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -88,7 +76,7 @@ public class PlayerManagement {
     }
 
     public void prepareIngamePlayer(Player player) {
-      //  preparePlayer(player);
+        //  preparePlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
 
         var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
@@ -141,15 +129,15 @@ public class PlayerManagement {
             hologram = HologramsAPI.createHologram(Bridge.getInstance(), holoLocation);
             bridgePlayer.setHologram(hologram);
 
-            hologram.appendItemLine(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM,1, (byte) 3)
-                    .setSkullMeta(bridgePlayer.getSkinProfile().getValue(),bridgePlayer.getSkinProfile().getSignature()).build());
+            hologram.appendItemLine(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
+                    .setSkullMeta(bridgePlayer.getSkinProfile().getValue(), bridgePlayer.getSkinProfile().getSignature()).build());
             hologram.appendTextLine("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
             hologram.appendTextLine("");
             hologram.appendTextLine("§c§lGLOBAL");
             hologram.appendTextLine("§fWins §8» §e" + bridgePlayer.getWins());
             hologram.appendTextLine("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
             hologram.appendTextLine("");
-            hologram.appendTextLine("§6§l"+bridgePlayer.getMap().getMapType());
+            hologram.appendTextLine("§6§l" + bridgePlayer.getMap().getMapType());
             hologram.appendTextLine("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
             hologram.appendTextLine("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
             hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
@@ -164,7 +152,7 @@ public class PlayerManagement {
         }
 
         if (updateMapType) {
-            ((TextLine) hologram.getLine(7)).setText("§6§l"+bridgePlayer.getMap().getMapType());
+            ((TextLine) hologram.getLine(7)).setText("§6§l" + bridgePlayer.getMap().getMapType());
             hologram.teleport(holoLocation);
         }
 
@@ -185,10 +173,10 @@ public class PlayerManagement {
 
     public void ingameSettingsInventory(Player player) {
 
-        Inventory inventory = Bukkit.createInventory(null, 9*3, "§8» §eSettings");
+        Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§8» §eSettings");
 
-        for (int i = 0; i < 9*3; i++) {
-            inventory.setItem(i,new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build());
+        for (int i = 0; i < 9 * 3; i++) {
+            inventory.setItem(i, new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build());
         }
 
         inventory.setItem(10, new ItemBuilder(Material.SANDSTONE).amount(1).name("§8» §6Blocks").build());
@@ -205,28 +193,63 @@ public class PlayerManagement {
 
 
     public Inventory blockSettingsInventory(BridgePlayer bridgePlayer) {
-        Inventory inventory = Bukkit.createInventory(null, 9, "§8» §6Block Settings");
 
-        inventory.setItem(3, new ItemBuilder(Material.BEACON).amount(1).name("§6Animation").build());
-        inventory.setItem(5, new ItemBuilder(Material.WATCH).amount(1).name("§eRemove Timer")
-                .lore("§8» §7Current Time: §e" +
-                        (bridgePlayer.getSettings().getRemovalTime() == 0 ? "Not set" : bridgePlayer.getSettings().getRemovalTime()))
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Block Settings", 9);
+
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
+        }
+
+        var i = 1;
+        for (Settings.BlockAnimationType blockBreakAnimations : Settings.BlockAnimationType.values()) {
+
+            var isSelected = bridgePlayer.getSettings().getBlockAnimationType() == blockBreakAnimations;
+            inventory.setItem(blockBreakAnimations.getItemBuilder().setLore(
+                    (isSelected ? "§2Selected" :
+
+                            bridgePlayer.getPlayer().hasPermission(blockBreakAnimations.getRankType().getPermission()) ? "§aClick to select" :
+                                    "§7Available for " + blockBreakAnimations.getRankType().getRankName() + "§7 and above"
+                    )
+
+
+            ).withGlow(isSelected).build(), i, inventoryClickEvent -> {
+                if (bridgePlayer.getPlayer().hasPermission(blockBreakAnimations.getRankType().getPermission())) {
+                    bridgePlayer.getSettings().setBlockAnimationType(blockBreakAnimations);
+                    bridgePlayer.getPlayer().closeInventory();
+                    bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 2, 2);
+                    bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§7You have selected §e" + blockBreakAnimations.getName());
+                } else {
+                    bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§7You need to be " + blockBreakAnimations.getRankType().getRankName() + "§7 or above to use this feature");
+                }
+            });
+
+            i++;
+        }
+
+        inventory.setItem(new ItemBuilder(Material.WATCH).amount(1).name("§8» §eRemove Blocks while bridging")
+                .lore("")
+                .lore(" §8* §7Current delay: §e" +
+                        (bridgePlayer.getSettings().getRemovalTime() == 0 ? "Not set" : bridgePlayer.getSettings().getRemovalTime() + " §eseconds"))
                 .lore("")
                 .lore("§7Currently " + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aenabled" : "§cdisabled"))
-                .lore("§7§oShift Click to enable / disable").build());
-        return inventory;
+                .lore("§7§oShift Click to enable / disable").build(), 7, event -> {
+
+
+            if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
+                bridgePlayer.getSettings().setRemoveBlocks(!bridgePlayer.getSettings().isRemoveBlocks());
+                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aActivated" : "§cDisabled") + " the Block Timer!");
+            } else if (event.getClick() == ClickType.LEFT) {
+                bridgePlayer.getSettings().setRemovalTime((bridgePlayer.getSettings().getRemovalTime() + 1) > 8 ? 8 : bridgePlayer.getSettings().getRemovalTime() + 1);
+                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getSettings().getRemovalTime());
+            } else if (event.getClick() == ClickType.RIGHT) {
+                bridgePlayer.getSettings().setRemovalTime((bridgePlayer.getSettings().getRemovalTime() - 1) < 1 ? 1 : bridgePlayer.getSettings().getRemovalTime() - 1);
+                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getSettings().getRemovalTime());
+            }
+            bridgePlayer.getPlayer().openInventory(blockSettingsInventory(bridgePlayer));
+
+        });
+        return inventory.getInventory();
     }
-
-    public Inventory blockAnimationInventory(BridgePlayer bridgePlayer) {
-        Inventory inventory = Bukkit.createInventory(null, 9, "§8» §6Block Animation");
-
-        inventory.setItem(3, new ItemBuilder(Material.SAND).amount(1).name("§6Falling").withGlow(bridgePlayer.getSettings().getBlockAnimationType() == Settings.BlockAnimationType.FALLING).build());
-        inventory.setItem(4, new ItemBuilder(Material.DIRT).amount(1).name("§6Dropping").withGlow(bridgePlayer.getSettings().getBlockAnimationType() == Settings.BlockAnimationType.DROPPING).build());
-        inventory.setItem(5, new ItemBuilder(Material.SAND).amount(1).name("§6Breaking").withGlow(bridgePlayer.getSettings().getBlockAnimationType() == Settings.BlockAnimationType.BREAK).build());
-        inventory.setItem(8, new ItemBuilder(Material.BARRIER).amount(1).name("§c§lClear").build());
-        return inventory;
-    }
-
 
 
     public long checkBestTime(Player player, long current, long bestTime, boolean global) {
@@ -360,6 +383,7 @@ public class PlayerManagement {
                         }
 
                         PacketPlayOutBlockBreakAnimation packet = new PacketPlayOutBlockBreakAnimation(getBlockEntityId(block), position, (byte) atomicInteger.getAndIncrement());
+                        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getData());
                         for (Player allPlayer : Bukkit.getOnlinePlayers()) {
                             ((CraftPlayer) allPlayer).getHandle().playerConnection.sendPacket(packet);
                         }
@@ -370,9 +394,8 @@ public class PlayerManagement {
             });
             case DROPPING -> blocks.forEach((block, time) -> {
                 if (block.getType() == Material.AIR) return;
-                var toDrop = dropItem(block.getLocation().add(0, 1, 0), new ItemStack(block.getType(), 1, block.getData()));
 
-                if (toDrop == null) return;
+                var toDrop = dropItem(block.getLocation().add(0, 1, 0), new ItemStack(block.getType(), 1, block.getData()));
 
                 bridgePlayer.getBlocks().remove(block);
                 block.setType(Material.AIR);
@@ -413,10 +436,6 @@ public class PlayerManagement {
     public EntityItem dropItem(Location loc, ItemStack item) {
         if (loc.getChunk().getEntities().length > 64 * 4) return null;
         EntityItem entity = new EntityItem(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
-        entity.pickupDelay = 10;
-        entity.motX = 0.0D;
-        entity.motY = 0.0D;
-        entity.motZ = 0.0D;
         ((CraftWorld) loc.getWorld()).getHandle().addEntity(entity);
         return entity;
     }

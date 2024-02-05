@@ -1,11 +1,18 @@
 package de.teamholy.lobby.commands;
 
+import de.teamholy.core.bukkit.utils.ItemBuilder;
+import net.minecraft.server.v1_8_R3.EntityItem;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class TestCommand implements CommandExecutor {
@@ -18,53 +25,26 @@ public class TestCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 0) {
-            sender.sendMessage("§cUsage: /test <speed>");
-            return true;
-        }
-
-        String args1 = args[1];
-
-        if (args1.equalsIgnoreCase("licht")) {
-            World world = sender.getServer().getWorlds().get(0);
-            Player player = (Player) sender;
-            world.strikeLightning(player.getLocation());
-            return true;
-        }
+        EntityItem entity = dropItem(((Player)sender).getLocation(), new ItemBuilder(Material.DIAMOND).setName("§e§lTest").build());
 
 
 
+        Bukkit.broadcastMessage((entity.isAlive() ? "JA" : "NEIN") + " - " + (entity.isInvisible() ? "JA" : "NEIN"));
+        Bukkit.broadcastMessage(entity.getName() + " - " + entity.getItemStack().getItem().getName());
+        Bukkit.broadcastMessage(entity.getBukkitEntity().getLocation().toString());
 
-
-        int speed;
-        try {
-            speed = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            sender.sendMessage("§cInvalid speed. I need a number");
-            return true;
-        }
-
-        World world = sender.getServer().getWorlds().get(0);
-        world.setStorm(true);
-        world.setThundering(false);
-        world.setTime(13000);
         return true;
     }
 
-    private void transe(World world, int speed) {
-        new BukkitRunnable() {
-            int time = 0;
-            final int targetTime = 13000;
-
-            @Override
-            public void run() {
-                if (time >= targetTime) {
-                    this.cancel();
-                    return;
-                }
-                world.setTime(time);
-                time += speed;
-            }
-        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("Lobby"), 0L, 10L);
+    public EntityItem dropItem(Location loc, ItemStack item) {
+        if (loc.getChunk().getEntities().length > 64 * 4) return null;
+        EntityItem entity = new EntityItem(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
+        entity.pickupDelay = 10;
+        entity.motX = 0.0D;
+        entity.motY = 0.0D;
+        entity.motZ = 0.0D;
+        ((CraftWorld) loc.getWorld()).getHandle().addEntity(entity);
+        return entity;
     }
+
 }

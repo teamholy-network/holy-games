@@ -6,7 +6,7 @@ group = 'de.teamholy'
 version = '1.0'
 
 ext {
-    coreVersion='2.6.1'
+    coreVersion='2.7'
 }
 
 repositories {

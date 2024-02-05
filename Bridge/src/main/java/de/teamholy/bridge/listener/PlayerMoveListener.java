@@ -51,7 +51,7 @@ public class PlayerMoveListener implements Listener {
             MapPosition mapPosition = map.getMapPosition();
             if (mapPosition == null) return;
 
-            if (!mapPosition.isInMapPosition(event.getTo(), true)) {
+            if (!mapPosition.isInMapPosition(event.getTo(), true) && player.getGameMode() != GameMode.CREATIVE) {
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                     if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkManagement.playSoundPerk(bridgePlayer, false, false);

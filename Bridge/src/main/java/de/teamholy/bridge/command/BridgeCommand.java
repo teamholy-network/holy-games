@@ -6,12 +6,14 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.util.VoidGenerator;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import net.minecraft.server.v1_8_R3.EntityItem;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 /**
@@ -41,7 +43,7 @@ public class BridgeCommand implements CommandExecutor {
         BridgeMapManagement bridgeMapManagement = Bridge.getInstance().getMapManagement();
         PlayerManagement bridgePlayerManager = Bridge.getInstance().getPlayerManagement();
 
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
             case "list": {
                 if (bridgeMapManagement.getLoader().getMaps().isEmpty()) {
                     player.sendMessage(Bridge.PREFIX + "§7There are no maps.");
@@ -51,9 +53,12 @@ public class BridgeCommand implements CommandExecutor {
                 player.sendMessage("§7§m-------------------§r §6Bridge Maps §7§m-------------------");
                 bridgeMapManagement.getLoader().getMaps().forEach(bridgeMap -> player.sendMessage(" §7- §e" + bridgeMap.getName() + " §8- §7" + bridgeMap.getTitle()));
                 player.sendMessage("§7§m-----------------------------------------------------");
+
+
+                return true;
             }
 
-            case "deleteStats": {
+            case "deletestats": {
                 if (!player.hasPermission("*")) return false;
 
                 var bridgePlayer = bridgePlayerManager.getBridgePlayer(player);
@@ -71,6 +76,17 @@ public class BridgeCommand implements CommandExecutor {
                 return false;
             }
 
+
+            case "debug": {
+
+                // create a new world and teleport player to it
+                Bukkit.createWorld(new WorldCreator("debug").generateStructures(false));
+                player.teleport(Bukkit.getWorld("debug").getSpawnLocation());
+                player.sendMessage("success");
+
+                return false;
+            }
+
             case "stats": {
                 var bridgePlayer = bridgePlayerManager.getBridgePlayer(player);
                 player.sendMessage("§7§m-------------------§r §6Bridge Stats §7§m-------------------");
@@ -81,7 +97,14 @@ public class BridgeCommand implements CommandExecutor {
                 }
                 player.sendMessage("§7§m-----------------------------------------------------");
 
-                player.getLocation().getWorld().dropItem(player.getLocation(), new ItemBuilder(Material.DIAMOND).setName("§6Stats").setLore("§7Wins: §e" + bridgePlayer.getWins(), "§7Blocks placed: §e" + bridgePlayer.getPlacedBlocks()).build());
+
+                EntityItem entity = bridgePlayerManager.dropItem(player.getLocation(), new ItemBuilder(Material.DIAMOND).setName("§e§lTest").build());
+
+
+                Bukkit.broadcastMessage((entity.isAlive() ? "JA" : "NEIN") + " - " + (entity.isInvisible() ? "JA" : "NEIN"));
+                Bukkit.broadcastMessage(entity.getName() + " - " + entity.getItemStack().getItem().getName());
+                // broadcast location of entity
+                Bukkit.broadcastMessage(entity.getBukkitEntity().getLocation().toString());
 
                 return false;
             }
@@ -98,19 +121,9 @@ public class BridgeCommand implements CommandExecutor {
 
     private void sendHelp(Player player) {
         player.sendMessage("§7§m-------------------§r §6Bridge Help §7§m-------------------");
-        player.sendMessage("§7/bridge help §8- §7Shows this help page.");
-        player.sendMessage("§7/bridge create <name> <title> §8- §7Creates a new bridge map.");
-        player.sendMessage("§7/bridge sethigh <name> §8- §7Sets the spawn location of the map.");
-        player.sendMessage("§7/bridge setbottom <name> §8- §7Sets the spawn location of the map.");
-        player.sendMessage("§7/bridge setspawn <name> §8- §7Sets the spawn location of the map.");
-        player.sendMessage("§7/bridge setmiddle <name> §8- §7Sets the middle location of the map.");
-        player.sendMessage("§7/bridge setendstart <name> §8- §7Sets the start location of the map end.");
-        player.sendMessage("§7/bridge setendend <name> §8- §7Sets the end location of the map end.");
-        player.sendMessage("§7/bridge setendhigh <name> §8- §7Sets the high location of the map end.");
-        player.sendMessage("§7/bridge setitem <name> §8- §7Sets the item of the map.");
-        player.sendMessage("§7/bridge list §8- §7Lists all maps.");
-        player.sendMessage("§7/bridge save <name> §8- §7Saves the map.");
-        player.sendMessage("§7/bridge delete <name> §8- §7Deletes a map.");
-        player.sendMessage("§7§m------------------------------------------------");
+        player.sendMessage(" §7- §e/bridge list §8- §7List all available maps.");
+        player.sendMessage(" §7- §e/bridge stats §8- §7Show your stats.");
+        player.sendMessage(" §7- §e/bridge deletestats §8- §7Delete your stats.");
+        player.sendMessage("§7§m-----------------------------------------------------");
     }
 }
