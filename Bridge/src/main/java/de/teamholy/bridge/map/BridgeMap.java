@@ -9,6 +9,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.io.File;
@@ -74,6 +75,8 @@ public class BridgeMap implements Cloneable {
         File schematicFile = new File(Bridge.getInstance().getDataFolder() + "/schematics", getName() + ".schematic");
 
         ClipboardFormat format = ClipboardFormat.findByFile(schematicFile);
+
+
         if (format == null) {
             System.out.println("Format not found");
             completableFuture.complete(false);

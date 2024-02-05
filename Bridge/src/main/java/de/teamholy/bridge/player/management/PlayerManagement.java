@@ -124,13 +124,12 @@ public class PlayerManagement {
         var holoLocation = bridgePlayer.getMapLocation().clone().add(mapType.getHologramCords().xADD(), mapType.getHologramCords().yADD(), mapType.getHologramCords().zADD());
 
         if (hologram == null) {
-            Bukkit.broadcastMessage("Hologram is null");
-
             hologram = HologramsAPI.createHologram(Bridge.getInstance(), holoLocation);
             bridgePlayer.setHologram(hologram);
 
             hologram.appendItemLine(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
                     .setSkullMeta(bridgePlayer.getSkinProfile().getValue(), bridgePlayer.getSkinProfile().getSignature()).build());
+            hologram.appendTextLine("");
             hologram.appendTextLine("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
             hologram.appendTextLine("");
             hologram.appendTextLine("§c§lGLOBAL");
@@ -143,16 +142,16 @@ public class PlayerManagement {
             hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
 
         } else {
-            ((TextLine) hologram.getLine(1)).setText("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
-            ((TextLine) hologram.getLine(4)).setText("§fWins §8» §e" + bridgePlayer.getWins());
-            ((TextLine) hologram.getLine(5)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
-            ((TextLine) hologram.getLine(8)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
-            ((TextLine) hologram.getLine(9)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
-            ((TextLine) hologram.getLine(10)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
+            ((TextLine) hologram.getLine(2)).setText("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
+            ((TextLine) hologram.getLine(5)).setText("§fWins §8» §e" + bridgePlayer.getWins());
+            ((TextLine) hologram.getLine(6)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
+            ((TextLine) hologram.getLine(9)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
+            ((TextLine) hologram.getLine(10)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
+            ((TextLine) hologram.getLine(11)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
         }
 
         if (updateMapType) {
-            ((TextLine) hologram.getLine(7)).setText("§6§l" + bridgePlayer.getMap().getMapType());
+            ((TextLine) hologram.getLine(8)).setText("§6§l" + bridgePlayer.getMap().getMapType());
             hologram.teleport(holoLocation);
         }
 
@@ -304,46 +303,44 @@ public class PlayerManagement {
     }
 
     public void updateScoreboardForPlayer(BridgeMapType bridgeMapType) {
-        AtomicInteger i = new AtomicInteger(7);
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            var bridgeScoreboard = getScoreboard(player);
+
+        var bridgePlayersFiltered = bridgePlayers
+                .values()
+                .stream()
+                .filter(player -> player.getMap().getMapType() == bridgeMapType)
+                .toList();
+
+        bridgePlayersFiltered.forEach(bridgePlayer -> {
+
+            var bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
 
             for (int j = 7; j >= 3; j--) {
                 if (!bridgeScoreboard.contains(j)) bridgeScoreboard.setLine(j, " §cNo one");
                 else bridgeScoreboard.updateLine(j, " §cNo one");
             }
-        }
-
-        topPlayer.get(bridgeMapType).entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).limit(5).toList().forEach(bridgePlayerLongEntry -> {
-
-            if (i.get() < 3) {
-                return;
-            }
-
-            Player playerEntry = bridgePlayerLongEntry.getKey().getPlayer();
-            String string = " " +
-                    BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getUniqueId()) + playerEntry.getName() + " §8* §7" +
-                    FormatTime.formatTimeManually(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                var bridgeScoreboard = getScoreboard(player);
-                var bridgePlayer = getBridgePlayer(player);
-
-                if (bridgePlayer.getMap() == null) {
-                    bridgeScoreboard.updateLine(i.get(), " §cNo one");
-                    continue;
-                }
-
-                if (bridgePlayer.getMap().getMapType() == bridgeMapType) {
-                    bridgeScoreboard.updateLine(i.get(), string);
-                    if (bridgeScoreboard.getLine(i.get()) != null && !bridgeScoreboard.getLine(i.get()).isEmpty() && bridgeScoreboard.getLine(i.get()).contains(string)) {
-                        Bukkit.broadcastMessage("twice");
-                    }
-                }
-            }
-            i.getAndDecrement();
         });
+
+        bridgePlayersFiltered
+                .forEach(bridgePlayer -> {
+                    AtomicInteger i = new AtomicInteger(7);
+
+                    topPlayer.get(bridgeMapType).entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).limit(5).toList().forEach(bridgePlayerLongEntry -> {
+
+                        if (i.get() < 3) return;
+
+                        var playerEntry = bridgePlayerLongEntry.getKey().getPlayer();
+                        var string = " " +
+                                BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getUniqueId()) + playerEntry.getName() + " §8» §7" +
+                                FormatTime.formatTimeManually(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
+
+                        bridgePlayer.getBridgeScoreboard().updateLine(i.getAndDecrement(), string);
+
+                    });
+
+
+                });
+
     }
 
 
