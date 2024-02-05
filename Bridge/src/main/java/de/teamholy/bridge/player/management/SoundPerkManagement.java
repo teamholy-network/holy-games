@@ -206,6 +206,11 @@ public class SoundPerkManagement {
         pagifier.reset();
         sounds.forEach(pagifier::addItem);
 
+        // testing purposes
+        sounds.forEach(pagifier::addItem);
+        sounds.forEach(pagifier::addItem);
+        sounds.forEach(pagifier::addItem);
+
 
         var pageSounds = pagifier.getPage(page);
 
@@ -236,7 +241,7 @@ public class SoundPerkManagement {
                 .map(value -> (bridgeSoundType == value) ? "§a" + value.toString().toLowerCase(Locale.ROOT) : "§7" + value.toString().toLowerCase(Locale.ROOT))
                 .collect(Collectors.toList()));
 
-        holyInventory.setItem(sortPerk.build(), inventorySize - 9, event -> {
+        holyInventory.setItem(sortPerk.build(), inventorySize - 6, event -> {
             var ordinal = sortOptionPerk.ordinal();
             var length = PerkManager.SortOptionPerk.values().length;
             PerkManager.SortOptionPerk next = PerkManager.SortOptionPerk.values()[(ordinal + 1) % length];
@@ -278,7 +283,7 @@ public class SoundPerkManagement {
         if (pagifier.getPage(page + 1) != null) {
             holyInventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setAttributs().setName("§8» §6Next page").setSkullMeta(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMT" +
-                            "I2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19", "").build(), inventorySize - 1, event -> {
+                            "I2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19", "").build(), inventorySize - 2, event -> {
                 bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.CHICKEN_EGG_POP, 2.0F, 2.0F);
                 bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSoundType, sortOptionPerk, sortOptionPlayer, page + 1).getInventory());
             });

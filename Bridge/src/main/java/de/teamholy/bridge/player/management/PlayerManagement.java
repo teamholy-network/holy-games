@@ -140,16 +140,16 @@ public class PlayerManagement {
             hologram.appendTextLine("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
             hologram.appendTextLine("");
             hologram.appendTextLine("§6§l" + bridgePlayer.getMap().getMapType());
-            hologram.appendTextLine("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
-            hologram.appendTextLine("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
+            hologram.appendTextLine("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
+            hologram.appendTextLine("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
             hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
 
         } else {
             ((TextLine) hologram.getLine(2)).setText("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
             ((TextLine) hologram.getLine(5)).setText("§fWins §8» §e" + bridgePlayer.getWins());
             ((TextLine) hologram.getLine(6)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
-            ((TextLine) hologram.getLine(9)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
-            ((TextLine) hologram.getLine(10)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
+            ((TextLine) hologram.getLine(9)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
+            ((TextLine) hologram.getLine(10)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
             ((TextLine) hologram.getLine(11)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
         }
 
