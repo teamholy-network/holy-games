@@ -1,19 +1,16 @@
 package de.teamholy.bridge.command;
 
 import com.google.common.collect.Lists;
-import de.dytanic.cloudnet.ext.bridge.BridgePlayerManager;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
-import de.teamholy.bridge.util.VoidGenerator;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import net.minecraft.server.v1_8_R3.EntityItem;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 /**

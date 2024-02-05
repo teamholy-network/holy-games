@@ -15,6 +15,7 @@ import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkType;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,6 +31,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -358,7 +361,8 @@ public class PlayerManagement {
 
                 FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
                 block.setType(Material.AIR);
-
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                        () -> getBlocksInRadius(block.getLocation(), 2).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
                 fallingBlock.setDropItem(false);
                 fallingBlock.setHurtEntities(false);
 
@@ -376,6 +380,9 @@ public class PlayerManagement {
                         if (atomicInteger.get() >= 11) {
                             cancel();
                             block.setType(Material.AIR);
+
+                            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                                    () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
                             atomicInteger.set(0);
                         }
 
@@ -397,11 +404,16 @@ public class PlayerManagement {
                 bridgePlayer.getBlocks().remove(block);
                 block.setType(Material.AIR);
 
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                        () -> getBlocksInRadius(block.getLocation(), 2).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 15L);
 
             });
             default -> blocks.forEach((block, time) -> {
                 block.setType(Material.AIR);
+
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                        () -> getBlocksInRadius(block.getLocation(), 2).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
                 bridgePlayer.getBlocks().remove(block);
             });
         }
@@ -410,6 +422,17 @@ public class PlayerManagement {
     public void sendActionBar(Player player, String text) {
         PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(text), (byte) 2);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    public List<Block> getBlocksInRadius(Location center, int radius) {
+        return IntStream.rangeClosed(center.getBlockX() - radius, center.getBlockX() + radius)
+                .boxed()
+                .flatMap(x -> IntStream.rangeClosed(center.getBlockY() - radius, center.getBlockY() + radius)
+                        .mapToObj(y -> Pair.of(x, y)))
+                .flatMap(pair -> IntStream.rangeClosed(center.getBlockZ() - radius, center.getBlockZ() + radius)
+                        .mapToObj(z -> center.getWorld().getBlockAt(pair.getKey(), pair.getValue(), z)))
+                .filter(block -> block.getType() == Material.AIR)
+                .collect(Collectors.toList());
     }
 
     public void sendTitle(Player player, String title, String subtitle, int fadein, int stay, int fadeout) {

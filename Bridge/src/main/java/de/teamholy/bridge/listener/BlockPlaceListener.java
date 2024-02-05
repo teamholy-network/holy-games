@@ -4,6 +4,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.core.bukkit.perks.Perk;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,7 @@ public class BlockPlaceListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+
 
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());

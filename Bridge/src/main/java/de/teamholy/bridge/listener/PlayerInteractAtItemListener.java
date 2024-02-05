@@ -74,6 +74,7 @@ public class PlayerInteractAtItemListener implements Listener {
                     if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
                         player.sendMessage(Bridge.PREFIX + "§cYou can't open the settings while bridging!");
                         player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                        event.setCancelled(true);
                         return;
                     }
 

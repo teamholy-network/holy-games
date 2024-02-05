@@ -197,11 +197,15 @@ public class BridgePlayer {
 
     private void loadPerks() {
         for (int id : perkPlayerProfile.getOwnedPerks()) {
-            if (id >= 5000 && id < 6000) {
+            if (id >= 5000 && id < 5500) {
                 BridgeSound bridgeSound = BridgeSounds.getBridgeSound(id);
                 if (bridgeSound != null) {
                     settings.getSounds().add(bridgeSound);
                 }
+            }
+
+            // TODO: Add map perks
+            if (id > 5500 && id <= 6000) {
             }
         }
     }

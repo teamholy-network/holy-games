@@ -10,11 +10,8 @@ import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.timer.BridgeTimer;
-import de.teamholy.bridge.util.VoidGenerator;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -48,7 +45,7 @@ public class Bridge extends JavaPlugin {
             Bukkit.unloadWorld("world", false);
             getLogger().info("Unloaded world");
 
-            Bukkit.createWorld(new WorldCreator("world").generator(new VoidGenerator()).generateStructures(false));
+            createWorld("world");
             Bukkit.getWorld("world").getBlockAt(0, 70, 0).setType(Material.AIR);
             getLogger().info("Created world");
         }
@@ -98,6 +95,19 @@ public class Bridge extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new WeatherChangeListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDropItemListener(), this);
 
+    }
+
+    private void createWorld(String world1) {
+        World world = Bukkit.getWorld(world1);
+        if (world == null) {
+            world = WorldCreator.name(world1)
+                    .environment(World.Environment.NORMAL)
+                    .type(WorldType.FLAT)
+                    .generatorSettings("3;minecraft:air;127;decoration")
+                    .generateStructures(false).createWorld();
+            world.setTime(6000);
+            world.setGameRuleValue("doDaylightCycle", "false");
+        }
     }
 
     public static Bridge getInstance() {

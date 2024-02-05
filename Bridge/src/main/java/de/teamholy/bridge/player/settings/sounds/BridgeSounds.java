@@ -14,6 +14,8 @@ import org.bukkit.Sound;
 @Getter
 public enum BridgeSounds {
 
+    // ids of sounds max to 5500
+
     DEATH_WITHER(new BridgeSound(5000,"death_wither", "§c§lWither Death",
             BridgeSoundType.SAD, Sound.WITHER_DEATH, 1.0F, 1.0F, 0, PerkRankType.PREMIUM, Material.NETHER_STAR,null)),
 
