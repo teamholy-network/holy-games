@@ -1,4 +1,4 @@
-package de.teamholy.bridge.timer;
+package de.teamholy.bridge.tasks;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;

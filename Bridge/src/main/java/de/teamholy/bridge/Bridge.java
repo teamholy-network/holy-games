@@ -9,7 +9,7 @@ import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
-import de.teamholy.bridge.timer.BridgeTimer;
+import de.teamholy.bridge.tasks.BridgeTimer;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
