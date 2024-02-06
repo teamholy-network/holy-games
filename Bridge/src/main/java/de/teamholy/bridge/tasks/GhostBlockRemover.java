@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 /* copyright by Yassino */
 public class GhostBlockRemover {
 
-    /*@Getter
+    @Getter
     private Queue<Block> blocksToRemove = Lists.newLinkedList();
 
 
@@ -28,7 +28,7 @@ public class GhostBlockRemover {
             public void run() {
 
             }
-        }.runTaskTimer(bridge, 0, 15);
+        }.runTaskTimer(bridge, 0, 10);
 
     }
 
@@ -36,9 +36,13 @@ public class GhostBlockRemover {
     private void removeGhostBlocks() {
         while (!blocksToRemove.isEmpty()) {
 
-            var removeBlocksAtOnce = 1000;
+            var removeBlocksAtOnce = 500;
             for (int i = 0; i < removeBlocksAtOnce; i++) {
                 var block = blocksToRemove.poll();
+                if (block == null) return;
+
+
+
 
 
             }
@@ -59,6 +63,6 @@ public class GhostBlockRemover {
 
     public void scheduleBlockRemoval(Block block) {
         blocksToRemove.add(block);
-    }  */
+    }
 
 }

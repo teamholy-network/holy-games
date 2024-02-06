@@ -9,6 +9,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.bridge.player.settings.sounds.BridgeItems;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
@@ -58,7 +59,7 @@ public class PlayerManagement {
             bridgePlayers.put(player.getUniqueId(), new BridgePlayer(player.getUniqueId()));
         }
         createScoreboard(getBridgePlayer(player));
-        loadLobbyInventory(player);
+        prepareIngamePlayer(player);
     }
 
     public void removePlayer(Player player) {
@@ -74,21 +75,30 @@ public class PlayerManagement {
         player.getInventory().clear();
     }
 
-    public void loadLobbyInventory(Player player) {
-        preparePlayer(player);
-        player.getInventory().setItem(4, new ItemBuilder(Material.REDSTONE_COMPARATOR).name("§8» §6Settings §8(§7rightclick§8)").build());
-        player.getInventory().setItem(8, new ItemBuilder(Material.SLIME_BALL).name("§8» §cQuit §8(§7rightclick§8)").build());
-    }
 
     public void prepareIngamePlayer(Player player) {
-        //  preparePlayer(player);
+        preparePlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
+        BridgePlayer bridgePlayer = getBridgePlayer(player);
 
-        var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
-        if (perk != null) {
-            player.getInventory().setItem(0, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
-        } else {
-            player.getInventory().setItem(0, new ItemBuilder(Material.SANDSTONE).amount(64).name("§8» §6Blocks §8(§7rightclick§8)").build());
+        var i = 0;
+        for (ItemStack content : bridgePlayer.getInventory().getContents()) {
+            if (content != null && content.getType() != null) {
+
+                if (content.getType() == Material.SANDSTONE) {
+                    var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+                    if (perk != null) {
+                        player.getInventory().setItem(i, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+                    } else {
+                        player.getInventory().setItem(i, new ItemBuilder(Material.SANDSTONE).amount(64).name("§8» §6Blocks §8(§7rightclick§8)").build());
+                    }
+                } else {
+                    player.getInventory().setItem(i, content);
+                }
+
+            }
+
+            i++;
         }
     }
 
@@ -191,6 +201,32 @@ public class PlayerManagement {
         inventory.setItem(new ItemBuilder(Material.ANVIL).amount(1).name("§8» §6Block Break Settings").build(), 11, event -> {
             player.openInventory(blockSettingsInventory(getBridgePlayer(player)));
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
+
+        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 12, event -> {
+
+            player.closeInventory();
+
+            de.teamholy.core.bukkit.utils.Inventory sort = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Inventory sort", 9,false);
+            sort.getInventory().setContents(bridgePlayer.getInventory().getContents());
+            player.getInventory().clear();
+
+            sort.setOnClose(inventoryCloseEvent -> {
+                if (BridgeItems.correctInventory(sort.getInventory())) {
+                    bridgePlayer.setInventory(sort.getInventory());
+                    player.sendMessage(Bridge.PREFIX + "Your inventory sort was saved");
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2f, 2f);
+                } else {
+                    bridgePlayer.setInventory(bridgePlayer.createInventory());
+                    player.sendMessage(Bridge.PREFIX + "Your inventory was not saved");
+                    player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2f, 2f);
+                }
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> prepareIngamePlayer(player), 1);
+            });
+
+            player.openInventory(sort.getInventory());
+
+
         });
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
@@ -393,7 +429,7 @@ public class PlayerManagement {
                 FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
                 block.setType(Material.AIR);
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                        () -> getBlocksInRadius(block.getLocation(), 2).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                        () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
                 fallingBlock.setDropItem(false);
                 fallingBlock.setHurtEntities(false);
 
@@ -437,11 +473,13 @@ public class PlayerManagement {
 
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
                         () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 15L);
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 60L);
 
             });
             default -> blocks.forEach((block, time) -> {
                 block.setType(Material.AIR);
+
+
 
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
                         () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);

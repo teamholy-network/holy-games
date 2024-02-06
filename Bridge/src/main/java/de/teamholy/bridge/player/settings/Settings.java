@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.HashMap;

@@ -41,7 +41,7 @@ public class PlayerInteractListener implements Listener {
                         BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(playerEntry.getPlayer(), PerkType.STICK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL);
                     } else if (event.getItem().getType() == Material.ARMOR_STAND) {
 
-                        Inventory inventory = new Inventory("§8» §6Sort shop inventory",3*9, false);
+                        Inventory inventory = new Inventory("§8» §6Sort shop inventory",9, false);
 
                         inventory.getInventory().setContents(playerEntry.getShopInventory().getContents());
                         playerEntry.getPlayer().getInventory().clear();

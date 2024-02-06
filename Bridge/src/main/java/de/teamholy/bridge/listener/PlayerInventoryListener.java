@@ -39,7 +39,7 @@ public class PlayerInventoryListener implements Listener {
         var player = (Player) event.getWhoClicked();
         var view = event.getView();
 
-        event.setCancelled(!player.isOp() && player.getGameMode() != GameMode.CREATIVE);
+        if (!view.getTitle().equalsIgnoreCase("§8» §6Inventory sort")) event.setCancelled(!player.isOp() && player.getGameMode() != GameMode.CREATIVE);
 
         if (view.getTitle().equals(mapManagement.getTitle())) {
             event.setCancelled(true);

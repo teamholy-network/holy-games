@@ -7,12 +7,14 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.bridge.player.settings.sounds.BridgeItems;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.core.api.entities.game.GameProfile;
@@ -30,6 +32,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -66,6 +70,7 @@ public class BridgePlayer {
     private HashMap<BridgeMapType, Long> globalBestTime;
 
     private Settings settings;
+    private Inventory inventory = createInventory();
 
     private long wins = 0L;
     private long placedBlocks = 0L;
@@ -89,6 +94,14 @@ public class BridgePlayer {
         registerDatabaseEntry();
 
 
+    }
+
+    public Inventory createInventory() {
+        inventory = Bukkit.createInventory(null, 9, "inv");
+        for (BridgeItems bridgeItems : BridgeItems.values()) {
+            inventory.setItem(bridgeItems.getSlot(), bridgeItems.getItemStack());
+        }
+        return inventory;
     }
 
     private void registerDatabaseEntry() {
@@ -119,6 +132,7 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(Lists.newArrayList()));
             statsProfile.setSetting(gameKey, "gamesPlayed", String.valueOf(gamesPlayed));
             statsProfile.setSetting(gameKey,"timerPlace", settings.getTimerPlace().name());
+            statsProfile.setSetting(gameKey,"inventory", gson.toJson(inventory.getContents()));
 
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
@@ -171,6 +185,9 @@ public class BridgePlayer {
                 this.gamesPlayed = Long.parseLong(statsProfile.getSetting(gameKey, "gamesPlayed"));
             }
 
+            if (statsProfile.getSetting(gameKey, "inventory") != null && !statsProfile.getSetting(gameKey, "inventory").isEmpty()) {
+                this.inventory = InventoryUtils.inventoryFromString(statsProfile.getSetting(gameKey, "inventory"));
+            }
 
             if (statsProfile.getSetting(gameKey, "selectedSound") != null) {
                 BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "selectedSound")));
@@ -235,6 +252,8 @@ public class BridgePlayer {
 
         statsProfile.setSetting(gameKey, "gamesPlayed", String.valueOf(this.gamesPlayed));
         statsProfile.setSetting(gameKey, "timerPlace", settings.getTimerPlace().name());
+
+        statsProfile.setSetting(gameKey, "inventory", InventoryUtils.inventoryToString(inventory));
 
         if (this.settings.getCurrentSound() != null)
             statsProfile.setSetting(gameKey, "selectedSound", String.valueOf(this.settings.getCurrentSound().getPerkId()));
