@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Settings {
     private long removalTime = 0;
 
     private BlockAnimationType blockAnimationType = BlockAnimationType.NONE;
+    private TimerPlace timerPlace = TimerPlace.ACTION_BAR;
 
     private List<BridgeSound> sounds = Lists.newArrayList();
     private BridgeSound currentSound = null;
@@ -44,6 +46,13 @@ public class Settings {
         private final String name;
         private final PerkRankType rankType;
         private ItemBuilder itemBuilder;
+    }
+
+    @Getter @AllArgsConstructor
+    public enum TimerPlace {
+        ACTION_BAR("Actionbar"), TITLE("Title"), SCOREBOARD("Scoreboard");
+
+        private final String name;
     }
 
     public enum BridgeSoundEventType {

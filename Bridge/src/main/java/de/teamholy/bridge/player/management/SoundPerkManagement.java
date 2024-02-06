@@ -202,13 +202,8 @@ public class SoundPerkManagement {
                 })
                 .toList();
 
-        var pagifier = bridgePlayer.getSoundPagifier();
+        var pagifier = new Pagifier<BridgeSound>(MAX_SOUNDS_PER_PAGE);
         pagifier.reset();
-        sounds.forEach(pagifier::addItem);
-
-        // testing purposes
-        sounds.forEach(pagifier::addItem);
-        sounds.forEach(pagifier::addItem);
         sounds.forEach(pagifier::addItem);
 
 
@@ -266,7 +261,6 @@ public class SoundPerkManagement {
         });
 
         holyInventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.BARRIER).setName("§8» §cReset all").build(), inventorySize - 5, event -> {
-            bridgePlayer.setSoundPagifier(new Pagifier<>(MAX_SOUNDS_PER_PAGE));
             bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.ANVIL_BREAK, 1.0F, 100.0F);
             bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory());
         });

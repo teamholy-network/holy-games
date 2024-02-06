@@ -69,14 +69,13 @@ public class BridgePlayer {
 
     private long wins = 0L;
     private long placedBlocks = 0L;
+    private long gamesPlayed = 0L;
     private Map<BridgeMapType, List<Long>> bestTimes = new HashMap<>();
 
     private Hologram hologram;
 
     private PerkPlayerProfile perkPlayerProfile;
     private SkinProfile skinProfile;
-
-    private Pagifier<BridgeSound> soundPagifier = new Pagifier<>(SoundPerkManagement.MAX_SOUNDS_PER_PAGE);
 
     public BridgePlayer(UUID uuid) {
         this.uuid = uuid;
@@ -118,6 +117,8 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "shortBestTimes", gson.toJson(Lists.newArrayList()));
             statsProfile.setSetting(gameKey, "longBestTimes", gson.toJson(Lists.newArrayList()));
             statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(Lists.newArrayList()));
+            statsProfile.setSetting(gameKey, "gamesPlayed", String.valueOf(gamesPlayed));
+            statsProfile.setSetting(gameKey,"timerPlace", settings.getTimerPlace().name());
 
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
@@ -150,6 +151,10 @@ public class BridgePlayer {
                 this.settings.setBlockAnimationType(Settings.BlockAnimationType.valueOf(statsProfile.getSetting(gameKey, "blockAnimationType")));
             }
 
+            if (statsProfile.getSetting(gameKey, "timerPlace") != null) {
+                this.settings.setTimerPlace(Settings.TimerPlace.valueOf(statsProfile.getSetting(gameKey, "timerPlace")));
+            }
+
             Type listType = new TypeToken<List<Long>>() {
             }.getType();
             if (statsProfile.getSetting(gameKey, "shortBestTimes") != null) {
@@ -160,6 +165,10 @@ public class BridgePlayer {
             }
             if (statsProfile.getSetting(gameKey, "diagonalBestTimes") != null) {
                 this.bestTimes.put(BridgeMapType.DIAGONAL, gson.fromJson(statsProfile.getSetting(gameKey, "diagonalBestTimes"), listType));
+            }
+
+            if (statsProfile.getSetting(gameKey, "gamesPlayed") != null) {
+                this.gamesPlayed = Long.parseLong(statsProfile.getSetting(gameKey, "gamesPlayed"));
             }
 
 
@@ -182,8 +191,6 @@ public class BridgePlayer {
                             BridgeSound bridgeSound = BridgeSounds.getBridgeSound(id);
                             if (bridgeSound != null) {
                                 this.settings.getSoundEvents().put(bridgeSound, Settings.BridgeSoundEventType.valueOf(setting.getValue()));
-
-                                System.out.println(bridgeSound + " " + Settings.BridgeSoundEventType.valueOf(setting.getValue()));
                             }
                         }
                     }
@@ -226,6 +233,9 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "longBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.LONG)));
         statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.DIAGONAL)));
 
+        statsProfile.setSetting(gameKey, "gamesPlayed", String.valueOf(this.gamesPlayed));
+        statsProfile.setSetting(gameKey, "timerPlace", settings.getTimerPlace().name());
+
         if (this.settings.getCurrentSound() != null)
             statsProfile.setSetting(gameKey, "selectedSound", String.valueOf(this.settings.getCurrentSound().getPerkId()));
 
@@ -259,6 +269,8 @@ public class BridgePlayer {
     public void addPlacedBlock() {
         this.placedBlocks++;
     }
+
+    public void addGamesPlayed() { this.gamesPlayed++; }
 
     public enum PlayerState {
         LOBBY, INGAME, SPECTATOR;

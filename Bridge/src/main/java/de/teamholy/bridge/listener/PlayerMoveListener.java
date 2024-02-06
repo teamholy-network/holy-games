@@ -61,6 +61,7 @@ public class PlayerMoveListener implements Listener {
                     player.teleport(bridgePlayer.getMapLocation());
                 }
 
+                playerManagement.getScoreboard(player).updateLine(2, "§8");
                 bridgePlayer.getBlocks().clear();
                 playerManagement.updateHologram(bridgePlayer,false);
                 playerManagement.prepareIngamePlayer(player);
@@ -88,7 +89,7 @@ public class PlayerMoveListener implements Listener {
                 playerManagement.sendTitle(player,"§fTime §8» §a" + FormatTime.formatTimeManually(current),"§a+ §e2 Coins",10,20,10);
                 BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 2, true);
 
-                if (current < beforeBestGlobal) {
+                if (current < beforeBestGlobal || beforeBestGlobal == 0) {
 
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
@@ -96,16 +97,16 @@ public class PlayerMoveListener implements Listener {
                     player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §c§lall-time §frecord!");
-                    player.sendMessage("      §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestGlobal - current) + "§2 difference");
+                    player.sendMessage("      §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + (beforeBestGlobal != 0 ? " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestGlobal - current) + "§2 difference" : ""));
                     player.sendMessage("");
                     player.sendMessage("§8§m----------------------------------");
 
-                } else if (current < beforeBestLocal) {
+                } else if (current < beforeBestLocal || beforeBestLocal == 0) {
 
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §2§lsession record!");
-                    player.sendMessage("       §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestLocal - current) + "§2 difference");
+                    player.sendMessage("       §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + (beforeBestLocal != 0 ? " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestGlobal - current) + "§2 difference" : ""));
                     player.sendMessage("");
 
                 }

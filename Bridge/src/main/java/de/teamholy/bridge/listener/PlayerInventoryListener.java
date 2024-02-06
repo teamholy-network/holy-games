@@ -104,36 +104,6 @@ public class PlayerInventoryListener implements Listener {
             player.closeInventory();
 
             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> mapManagement.getLoader().loadMapForPlayer(bridgePlayer, map, false), 3L);
-        } else if (view.getTitle().equals("§8» §eSettings")) {
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
-            var soundPerkInventory = soundPerkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL,1).getInventory();
-            if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
-                event.setCancelled(true);
-
-                var clickedItem = event.getCurrentItem();
-                if (clickedItem == null) return;
-
-                var clickedItemMeta = clickedItem.getItemMeta();
-                if (clickedItemMeta == null) return;
-
-                /*
-                if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§cIsland Moving")) {
-                    bridgePlayer.getSettings().setIslandMoving(!bridgePlayer.getSettings().isIslandMoving());
-                    player.sendMessage(Bridge.PREFIX + "§cIsland Moving: " + bridgePlayer.getSettings().isIslandMoving());
-                    player.closeInventory();
-                } else*/
-                if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Blocks")) {
-                    BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player, PerkType.BLOCK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL);
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Maps")) {
-                    player.openInventory(mapManagement.getInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Map Type")) {
-                    player.openInventory(mapManagement.getMapLengthInventory());
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Block Break Settings")) {
-                    player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
-                } else if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§8» §6Sounds")) {
-                    player.openInventory(soundPerkInventory);
-                }
-            }
         } else if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
             var bridgePlayer = playerManagement.getBridgePlayer(player);

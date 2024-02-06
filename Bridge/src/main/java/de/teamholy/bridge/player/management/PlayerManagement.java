@@ -9,9 +9,11 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.perks.PerkManager;
 import de.teamholy.core.bukkit.perks.PerkType;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.*;
@@ -137,6 +139,7 @@ public class PlayerManagement {
             hologram.appendTextLine("");
             hologram.appendTextLine("§c§lGLOBAL");
             hologram.appendTextLine("§fWins §8» §e" + bridgePlayer.getWins());
+            hologram.appendTextLine("§fTries §8» §e" + bridgePlayer.getGamesPlayed());
             hologram.appendTextLine("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
             hologram.appendTextLine("");
             hologram.appendTextLine("§6§l" + bridgePlayer.getMap().getMapType());
@@ -145,16 +148,16 @@ public class PlayerManagement {
             hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
 
         } else {
-            ((TextLine) hologram.getLine(2)).setText("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
             ((TextLine) hologram.getLine(5)).setText("§fWins §8» §e" + bridgePlayer.getWins());
-            ((TextLine) hologram.getLine(6)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
-            ((TextLine) hologram.getLine(9)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
-            ((TextLine) hologram.getLine(10)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
-            ((TextLine) hologram.getLine(11)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
+            ((TextLine) hologram.getLine(6)).setText("§fTries §8» §e" + bridgePlayer.getGamesPlayed());
+            ((TextLine) hologram.getLine(7)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
+            ((TextLine) hologram.getLine(10)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
+            ((TextLine) hologram.getLine(11)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
+            ((TextLine) hologram.getLine(12)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
         }
 
         if (updateMapType) {
-            ((TextLine) hologram.getLine(8)).setText("§6§l" + bridgePlayer.getMap().getMapType());
+            ((TextLine) hologram.getLine(9)).setText("§6§l" + bridgePlayer.getMap().getMapType());
             hologram.teleport(holoLocation);
         }
 
@@ -174,23 +177,48 @@ public class PlayerManagement {
 
 
     public void ingameSettingsInventory(Player player) {
+        BridgePlayer bridgePlayer = getBridgePlayer(player);
 
-        Inventory inventory = Bukkit.createInventory(null, 9 * 3, "§8» §eSettings");
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Settings", 5*9);
 
-        for (int i = 0; i < 9 * 3; i++) {
-            inventory.setItem(i, new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build());
+        for (int i = 0; i < 9 * 5; i++) {
+            inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
 
-        inventory.setItem(10, new ItemBuilder(Material.SANDSTONE).amount(1).name("§8» §6Blocks").build());
-        inventory.setItem(11, new ItemBuilder(Material.ANVIL).amount(1).name("§8» §6Block Break Settings").build());
+        inventory.setItem(new ItemBuilder(Material.SANDSTONE).amount(1).name("§8» §6Blocks").build(), 10, event -> {
+            BukkitCore.getInstance().getPerkManager().openSecondPerkInventory(player, PerkType.BLOCK, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL);
+        });
+        inventory.setItem(new ItemBuilder(Material.ANVIL).amount(1).name("§8» §6Block Break Settings").build(), 11, event -> {
+            player.openInventory(blockSettingsInventory(getBridgePlayer(player)));
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
-        inventory.setItem(13, new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build());
+        inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 13, event -> {
+            var soundPerkInventory = Bridge.getInstance().getSoundPerkManagement().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
-        inventory.setItem(15, new ItemBuilder(Material.PAPER).name("§8» §6Maps").build());
-        inventory.setItem(16, new ItemBuilder(Material.ANVIL).name("§8» §6Map Type").build());
+            player.openInventory(soundPerkInventory);
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
 
-        player.openInventory(inventory);
+        inventory.setItem(new ItemBuilder(Material.PAPER).name("§8» §6Maps").build(), 15, event -> {
+            var mapManagement = Bridge.getInstance().getMapManagement();
+            player.openInventory(mapManagement.getInventory());
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
+        ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
+
+        timer.lore(Arrays.stream(Settings.TimerPlace.values())
+                .map(value -> (bridgePlayer.getSettings().getTimerPlace() == value) ? "§a" + value.getName() : "§7" + value.getName())
+                .collect(Collectors.toList()));
+
+        inventory.setItem(timer.build(), 16, event -> {
+            bridgePlayer.getSettings().setTimerPlace(Settings.TimerPlace.values()[(bridgePlayer.getSettings().getTimerPlace().ordinal() + 1) % Settings.TimerPlace.values().length]);
+            ingameSettingsInventory(player);
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
+
+        player.openInventory(inventory.getInventory());
     }
 
 
@@ -230,7 +258,7 @@ public class PlayerManagement {
 
         inventory.setItem(new ItemBuilder(Material.WATCH).amount(1).name("§8» §eRemove Blocks while bridging")
                 .lore("")
-                .lore(" §8* §7Current delay: §e" +
+                .lore(" §8» §7Current delay§8: §e" +
                         (bridgePlayer.getSettings().getRemovalTime() == 0 ? "Not set" : bridgePlayer.getSettings().getRemovalTime() + " §eseconds"))
                 .lore("")
                 .lore("§7Currently " + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aenabled" : "§cdisabled"))
@@ -399,7 +427,7 @@ public class PlayerManagement {
             case DROPPING -> blocks.forEach((block, time) -> {
                 if (block.getType() == Material.AIR) return;
 
-                var toDrop = dropItem(block.getLocation().add(0, 1, 0), new ItemStack(block.getType(), 1, block.getData()));
+                var toDrop = dropItem(block.getLocation().add(0, 1, 0), new de.teamholy.core.bukkit.utils.ItemBuilder(block.getType(), 1, block.getData()).setName(String.valueOf(UUID.randomUUID())).build());
 
                 bridgePlayer.getBlocks().remove(block);
                 block.setType(Material.AIR);
