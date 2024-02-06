@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import java.util.concurrent.*;
 
 
 /**
@@ -33,9 +34,11 @@ public class Bridge extends JavaPlugin {
     private PlayerManagement playerManagement;
     private SoundPerkManagement soundPerkManagement;
     private BridgeMapManagement mapManagement;
-    private BukkitTask bridgeTimer;
+
 
     private SongManager songManager;
+
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
 
     @Override
     public void onEnable() {
@@ -59,7 +62,8 @@ public class Bridge extends JavaPlugin {
         loadCommand();
         loadListener();
 
-        bridgeTimer = new BridgeTimer().runTaskTimer(this, 0, 1);
+        // period 20ms
+        executorService.scheduleAtFixedRate(new BridgeTimer(), 0, 20, TimeUnit.MILLISECONDS);
 
         for (BridgeMapType value : BridgeMapType.values()) {
             playerManagement.getTopPlayer().put(value, new HashMap<>());
@@ -70,8 +74,7 @@ public class Bridge extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-        bridgeTimer.cancel();
+        executorService.shutdown();
     }
 
 

@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -16,7 +17,7 @@ import java.util.HashMap;
  * Proprietary and confidential
  * Written by charon
  **/
-public class BridgeTimer extends BukkitRunnable {
+public class BridgeTimer implements Runnable {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
