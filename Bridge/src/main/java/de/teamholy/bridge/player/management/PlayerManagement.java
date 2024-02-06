@@ -201,7 +201,10 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.PAPER).name("§8» §6Maps").build(), 15, event -> {
+        inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM,1,3)
+                        .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDUyO" +
+                                "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=","")
+                .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 15, event -> {
             var mapManagement = Bridge.getInstance().getMapManagement();
             player.openInventory(mapManagement.getInventory());
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
