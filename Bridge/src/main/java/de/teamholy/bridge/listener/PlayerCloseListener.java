@@ -1,5 +1,7 @@
 package de.teamholy.bridge.listener;
 
+import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkType;
 import org.bukkit.entity.Player;
@@ -22,10 +24,8 @@ public class PlayerCloseListener implements Listener {
         if (inventory == null) return;
         if (!inventory.getName().toLowerCase().contains("perks")) return;
 
-        var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
-        if (perk != null) {
-            player.getInventory().setItem(0, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
-        }
+        Bridge.getInstance().getPlayerManagement().prepareIngamePlayer(player);
+
 
     }
 }

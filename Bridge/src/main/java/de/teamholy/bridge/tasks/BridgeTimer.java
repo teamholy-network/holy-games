@@ -4,8 +4,10 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.util.FormatTime;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public class BridgeTimer implements Runnable {
 
     @Override
     public void run() {
-        playerManagement.getBridgePlayers().values().forEach(bridgePlayer -> {
+        for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
             var player = bridgePlayer.getPlayer();
 
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
@@ -47,12 +49,21 @@ public class BridgeTimer implements Runnable {
 
                     blocks.forEach((block, time) -> {
                         if ((System.currentTimeMillis() - time) / 1000 >= blockTime) {
-                            block.setType(Material.AIR);
+
+                            Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> {
+                                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                                block.setType(Material.AIR);
+                                fallingBlock.setDropItem(false);
+                                fallingBlock.setHurtEntities(false);
+                                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40L);
+                            });
+
+
                             bridgePlayer.getBlocks().remove(block);
                         }
                     });
                 }
             }
-        });
+        };
     }
 }

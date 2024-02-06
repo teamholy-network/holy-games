@@ -56,6 +56,7 @@ public class BlockPlaceListener implements Listener {
             }
 
 
+
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
             if (!playerManagement.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {

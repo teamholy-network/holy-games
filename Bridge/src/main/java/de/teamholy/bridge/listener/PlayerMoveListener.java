@@ -87,6 +87,7 @@ public class PlayerMoveListener implements Listener {
                 var beforeBestGlobal = bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType());
 
                 String newTime = FormatTime.formatTimeManually(current);
+                playerManagement.getScoreboard(player).updateLine(2, "§8");
 
                 playerManagement.sendTitle(player,"§fTime §8» §a" + newTime,"§a+ §e2 Coins",10,20,10);
                 BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 2, true);

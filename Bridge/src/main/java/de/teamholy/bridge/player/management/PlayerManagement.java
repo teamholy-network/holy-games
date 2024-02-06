@@ -2,6 +2,7 @@ package de.teamholy.bridge.player.management;
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
+import com.google.common.collect.Lists;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -31,6 +33,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -189,7 +192,7 @@ public class PlayerManagement {
     public void ingameSettingsInventory(Player player) {
         BridgePlayer bridgePlayer = getBridgePlayer(player);
 
-        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Settings", 5*9);
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Settings", 5 * 9);
 
         for (int i = 0; i < 9 * 5; i++) {
             inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
@@ -207,7 +210,7 @@ public class PlayerManagement {
 
             player.closeInventory();
 
-            de.teamholy.core.bukkit.utils.Inventory sort = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Inventory sort", 9,false);
+            de.teamholy.core.bukkit.utils.Inventory sort = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Inventory sort", 9, false);
             sort.getInventory().setContents(bridgePlayer.getInventory().getContents());
             player.getInventory().clear();
 
@@ -237,9 +240,9 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM,1,3)
-                        .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDUyO" +
-                                "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=","")
+        inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, 3)
+                .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDUyO" +
+                        "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=", "")
                 .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 15, event -> {
             var mapManagement = Bridge.getInstance().getMapManagement();
             player.openInventory(mapManagement.getInventory());
@@ -386,19 +389,21 @@ public class PlayerManagement {
         HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
 
         switch (blockAnimationType) {
-            case FALLING -> blocks.forEach((block, time) -> {
-                bridgePlayer.getBlocks().remove(block);
+            case FALLING -> {
+                blocks.forEach((block, time) -> {
+                    bridgePlayer.getBlocks().remove(block);
 
-                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
-                block.setType(Material.AIR);
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                        () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
-                fallingBlock.setDropItem(false);
-                fallingBlock.setHurtEntities(false);
+                    FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                    block.setType(Material.AIR);
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                    fallingBlock.setDropItem(false);
+                    fallingBlock.setHurtEntities(false);
 
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 15L);
-            });
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 15L);
+                });
+            }
             case BREAK -> blocks.forEach((block, time) -> {
                 BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
                 bridgePlayer.getBlocks().remove(block);
@@ -417,7 +422,6 @@ public class PlayerManagement {
                         }
 
                         PacketPlayOutBlockBreakAnimation packet = new PacketPlayOutBlockBreakAnimation(getBlockEntityId(block), position, (byte) atomicInteger.getAndIncrement());
-                        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getData());
                         for (Player allPlayer : Bukkit.getOnlinePlayers()) {
                             ((CraftPlayer) allPlayer).getHandle().playerConnection.sendPacket(packet);
                         }
@@ -426,22 +430,75 @@ public class PlayerManagement {
                 }.runTaskTimer(Bridge.getInstance(), 0L, 1L);
 
             });
-            case DROPPING -> blocks.forEach((block, time) -> {
-                if (block.getType() == Material.AIR) return;
+            case TNT -> {
+                blocks.forEach((block, time) -> {
+                    bridgePlayer.getBlocks().remove(block);
 
-                var toDrop = dropItem(block.getLocation().add(0, 1, 0), new de.teamholy.core.bukkit.utils.ItemBuilder(block.getType(), 1, block.getData()).setName(String.valueOf(UUID.randomUUID())).build());
+                    FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                    fallingBlock.setDropItem(false);
+                    fallingBlock.setHurtEntities(false);
+                    fallingBlock.setVelocity(new Vector().setX(Math.random() - 0.5).setY(Math.random()).setZ(Math.random() - 0.5));
+                    block.setType(Material.AIR);
 
-                bridgePlayer.getBlocks().remove(block);
-                block.setType(Material.AIR);
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40);
+                });
+            }
+/*            case BLACK_HOLE -> {
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                        () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 60L);
 
-            });
+                double middleX = blocks.keySet().stream().mapToDouble(block -> block.getLocation().getX()).average().orElse(0);
+                double middleY = blocks.keySet().stream().mapToDouble(block -> block.getLocation().getY()).average().orElse(0);
+                double middleZ = blocks.keySet().stream().mapToDouble(block -> block.getLocation().getZ()).average().orElse(0);
+                Location middleLocation = new Location(bridgePlayer.getPlayer().getWorld(), middleX, middleY, middleZ);
+
+
+                middleLocation.getWorld().strikeLightningEffect(middleLocation);
+                List<Block> fireBlock = Lists.newArrayList();
+                blocks.forEach((block, time) -> {
+                    Block aboveBlock = block.getRelative(BlockFace.UP);
+                    if (aboveBlock.getType() == Material.AIR) {
+                        aboveBlock.setType(Material.FIRE);
+                        fireBlock.add(aboveBlock);
+                    }
+                });
+
+
+                List<List<Map.Entry<Block, Long>>> blockGroups = Lists.partition( blocks.entrySet()
+                        .stream()
+                        .sorted(Map.Entry.comparingByValue()).toList(), 5);
+
+                AtomicInteger delay = new AtomicInteger(1);
+                int totalGroups = blockGroups.size();
+                blockGroups.forEach(blockGroup -> {
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
+                        blockGroup.forEach(entry -> {
+                            Block block = entry.getKey();
+                            bridgePlayer.getBlocks().remove(block);
+                            block.setType(Material.AIR);
+                            block.getRelative(BlockFace.UP).setType(Material.AIR);
+                        });
+
+                    }, delay.getAndIncrement());
+                });
+
+            }*/
+            case DROPPING -> {
+                blocks.forEach((block, time) -> {
+                    if (block.getType() == Material.AIR) return;
+
+                    var toDrop = dropItem(block.getLocation().add(0, 1, 0), new de.teamholy.core.bukkit.utils.ItemBuilder(block.getType(), 1, block.getData()).setName(String.valueOf(UUID.randomUUID())).build());
+
+                    bridgePlayer.getBlocks().remove(block);
+                    block.setType(Material.AIR);
+
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 60L);
+
+                });
+            }
             default -> blocks.forEach((block, time) -> {
                 block.setType(Material.AIR);
-
 
 
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
