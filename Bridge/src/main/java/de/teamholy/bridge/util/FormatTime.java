@@ -26,8 +26,7 @@ public class FormatTime {
     }
 
     public static String formatTimeManually(long millis) {
-        final long milliseconds = System.currentTimeMillis() - millis;
-        final float time = milliseconds / 1000.0f;
+        final float time = (millis / 1000.0f);
 
         return String.format("%.2f", time);
     }
