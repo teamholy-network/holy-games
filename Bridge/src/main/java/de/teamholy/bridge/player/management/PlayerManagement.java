@@ -153,17 +153,17 @@ public class PlayerManagement {
             hologram.appendTextLine("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
             hologram.appendTextLine("");
             hologram.appendTextLine("§6§l" + bridgePlayer.getMap().getMapType());
-            hologram.appendTextLine("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
-            hologram.appendTextLine("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
-            hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
+            hologram.appendTextLine("§fBest §2§lsession §ftime §8» §e" + checkBestTimeString(bridgePlayer.getLocalBestTime(mapType)));
+            hologram.appendTextLine("§fBest §c§lall-time §ftime §8» §e" + checkBestTimeString(bridgePlayer.getGlobalBestTime(mapType)));
+            hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTimeString(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
 
         } else {
             ((TextLine) hologram.getLine(5)).setText("§fWins §8» §e" + bridgePlayer.getWins());
             ((TextLine) hologram.getLine(6)).setText("§fTries §8» §e" + bridgePlayer.getGamesPlayed());
             ((TextLine) hologram.getLine(7)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
-            ((TextLine) hologram.getLine(10)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTime(bridgePlayer.getLocalBestTime(mapType)));
-            ((TextLine) hologram.getLine(11)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTime(bridgePlayer.getGlobalBestTime(mapType)));
-            ((TextLine) hologram.getLine(12)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTime(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
+            ((TextLine) hologram.getLine(10)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTimeString(bridgePlayer.getLocalBestTime(mapType)));
+            ((TextLine) hologram.getLine(11)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTimeString(bridgePlayer.getGlobalBestTime(mapType)));
+            ((TextLine) hologram.getLine(12)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTimeString(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
         }
 
         if (updateMapType) {
@@ -177,7 +177,7 @@ public class PlayerManagement {
     public void updateScoreboard(BridgePlayer bridgePlayer) {
         ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
         bridgeScoreboard.updateLine(13, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
-        bridgeScoreboard.updateLine(12, " §e" + checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
+        bridgeScoreboard.updateLine(12, " §e" + checkBestTimeString(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
 
         String top5 = " §6Top 5 §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)";
         bridgeScoreboard.updateLine(10, top5);
@@ -320,61 +320,24 @@ public class PlayerManagement {
         return inventory.getInventory();
     }
 
-
-    public long checkBestTime(Player player, long current, long bestTime, boolean global) {
-        var bridgePlayer = getBridgePlayer(player);
-
-        if (bestTime == 0 || current < bestTime) {
-            if (global) {
-                bridgePlayer.setGlobalBestTime(bridgePlayer.getMap().getMapType(), current);
-            }
-
-            bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
-
-            bridgePlayer.getBridgeScoreboard().setLine(11, checkBestTime(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
-
-            addBestTime(bridgePlayer);
-            updateScoreboard(bridgePlayer);
-
-            if (global) {
-                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 20, true);
-                sendActionBar(player, "§a+ §e20 Coins");
-            } else {
-                BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 10, true);
-                sendActionBar(player, "§a+ §e10 Coins");
-            }
-
-            bridgePlayer.addWin();
-        }
-
-        if (bridgePlayer.getWins() % 10 == 0) {
-            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 30, true);
-            sendActionBar(player, "§a+ §e30 Coins");
-        }
-
-        return (bestTime == 0 || current < bestTime) ? current : bestTime;
-    }
-
-    public String checkBestTime(long bestTime) {
+    public String checkBestTimeString(long bestTime) {
         return (bestTime == 0) ? "§c-/-" : " §e" + FormatTime.formatTimeManually(bestTime);
     }
 
-    private void addBestTime(BridgePlayer bridgePlayer) {
+    public void addBestTime(BridgePlayer bridgePlayer, long localByType) {
         var mapType = bridgePlayer.getMap().getMapType();
 
         if (!topPlayer.get(mapType).containsKey(bridgePlayer)) {
-            topPlayer.get(mapType).put(bridgePlayer, bridgePlayer.getLocalBestTime(mapType));
-        } else if (topPlayer.get(mapType).get(bridgePlayer) > bridgePlayer.getLocalBestTime(mapType)) {
+            topPlayer.get(mapType).put(bridgePlayer, localByType);
+        } else if (topPlayer.get(mapType).get(bridgePlayer) > localByType) {
             topPlayer.get(mapType).remove(bridgePlayer);
-            topPlayer.get(mapType).put(bridgePlayer, bridgePlayer.getLocalBestTime(mapType));
+            topPlayer.get(mapType).put(bridgePlayer, localByType);
         }
 
         updateScoreboardForPlayer(bridgePlayer.getMap().getMapType());
     }
 
     public void updateScoreboardForPlayer(BridgeMapType bridgeMapType) {
-
-
         var bridgePlayersFiltered = bridgePlayers
                 .values()
                 .stream()
@@ -402,7 +365,7 @@ public class PlayerManagement {
                         var playerEntry = bridgePlayerLongEntry.getKey().getPlayer();
                         var string = " " +
                                 BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getUniqueId()) + playerEntry.getName() + " §8» §7" +
-                                FormatTime.formatTimeManually(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
+                                checkBestTimeString(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
 
                         bridgePlayer.getBridgeScoreboard().updateLine(i.getAndDecrement(), string);
 

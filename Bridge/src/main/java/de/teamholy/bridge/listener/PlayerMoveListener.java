@@ -81,15 +81,18 @@ public class PlayerMoveListener implements Listener {
 
                 bridgePlayer.getBlocks().clear();
 
-                var current = (System.currentTimeMillis() - playerManagement.getPlayerTime().remove(player.getUniqueId()));
+                final var current = (System.currentTimeMillis() - playerManagement.getPlayerTime().remove(player.getUniqueId()));
 
                 var beforeBestLocal = bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType());
                 var beforeBestGlobal = bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType());
 
-                playerManagement.sendTitle(player,"§fTime §8» §a" + FormatTime.formatTimeManually(current),"§a+ §e2 Coins",10,20,10);
+                String newTime = FormatTime.formatTimeManually(current);
+
+                playerManagement.sendTitle(player,"§fTime §8» §a" + newTime,"§a+ §e2 Coins",10,20,10);
                 BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 2, true);
 
                 if (current < beforeBestGlobal || beforeBestGlobal == 0) {
+                    String timerDifference = FormatTime.formatTimeManually(beforeBestGlobal - current);
 
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
@@ -97,34 +100,41 @@ public class PlayerMoveListener implements Listener {
                     player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §c§lall-time §frecord!");
-                    player.sendMessage("      §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + (beforeBestGlobal != 0 ? " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestGlobal - current) + "§2 difference" : ""));
+                    player.sendMessage("      §fYour new §atime §fis §e" + newTime + (beforeBestGlobal != 0 ? " §8︳ §a-" + timerDifference + "§2 difference" : ""));
                     player.sendMessage("");
                     player.sendMessage("§8§m----------------------------------");
 
+                    bridgePlayer.setGlobalBestTime(bridgePlayer.getMap().getMapType(), current);
+                    bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
+
+                    playerManagement.addBestTime(bridgePlayer, current);
+
+                    soundPerkManagement.playSoundPerk(bridgePlayer, true, true);
                 } else if (current < beforeBestLocal || beforeBestLocal == 0) {
+                    String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
 
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §2§lsession record!");
-                    player.sendMessage("       §fYour new §atime §fis §e" + FormatTime.formatTimeManually(current) + (beforeBestLocal != 0 ? " §8︳ §a-" + FormatTime.formatTimeManually(beforeBestGlobal - current) + "§2 difference" : ""));
+                    player.sendMessage("       §fYour new §atime §fis §e" + newTime + (beforeBestLocal != 0 ? " §8︳ §a-" + timerDifference + "§2 difference" : ""));
                     player.sendMessage("");
 
+                    bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
+
+                    playerManagement.addBestTime(bridgePlayer, current);
+                    soundPerkManagement.playSoundPerk(bridgePlayer, true, true);
+                } else {
+                    soundPerkManagement.playSoundPerk(bridgePlayer, true, false);
                 }
+                bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);
+
+                bridgePlayer.addWin();
+                playerManagement.updateScoreboard(bridgePlayer);
 
                 player.teleport(bridgePlayer.getMapLocation());
 
-                var bestLocal = playerManagement.checkBestTime(player, current, bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType()), false);
-                var bestGlobal = playerManagement.checkBestTime(player, current, bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType()), true);
-
-                bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);
-
-                soundPerkManagement.playSoundPerk(bridgePlayer, true, current < bestLocal || current < bestGlobal);
-
                 playerManagement.prepareIngamePlayer(player);
                 playerManagement.updateHologram(bridgePlayer,false);
-
-
-
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {

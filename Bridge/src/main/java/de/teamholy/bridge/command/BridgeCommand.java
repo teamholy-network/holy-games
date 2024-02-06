@@ -90,7 +90,7 @@ public class BridgeCommand implements CommandExecutor {
                 player.sendMessage("§7Wins: §e" + bridgePlayer.getWins());
                 player.sendMessage("§7Blocks placed: §e" + bridgePlayer.getPlacedBlocks());
                 for (var mapTypes : BridgeMapType.values()) {
-                    player.sendMessage("§7" + mapTypes.getName() + " best time: §e" + bridgePlayerManager.checkBestTime(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6average time§8: §e" + bridgePlayerManager.checkBestTime(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
+                    player.sendMessage("§7" + mapTypes.getName() + " best time: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6average time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
                 }
                 player.sendMessage("§7§m-----------------------------------------------------");
 

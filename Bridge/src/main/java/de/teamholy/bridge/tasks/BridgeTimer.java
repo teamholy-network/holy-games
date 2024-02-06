@@ -28,12 +28,13 @@ public class BridgeTimer implements Runnable {
 
             if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
                 if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
-                    long playerTime = playerManagement.getPlayerTime().get(player.getUniqueId());
-                    long playerTimeCalc = (System.currentTimeMillis() - playerTime);
+                    long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
+                    String timer = FormatTime.formatTimeManually(playerTime);
+
                     switch (bridgePlayer.getSettings().getTimerPlace()) {
-                        case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + FormatTime.formatTimeManually(playerTimeCalc));
-                        case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + FormatTime.formatTimeManually(playerTimeCalc),0,20,0);
-                        case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "    §7Time §8» §e" + FormatTime.formatTimeManually(playerTimeCalc));
+                        case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
+                        case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer,0,20,0);
+                        case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
                     }
                 }
 

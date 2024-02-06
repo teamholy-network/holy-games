@@ -11,23 +11,26 @@ import java.text.SimpleDateFormat;
  **/
 public class FormatTime {
 
-    private static final DecimalFormat df = new DecimalFormat("##0.00");
+    private static final DecimalFormat df = new DecimalFormat("#.###");
 
-    public static String formatTimeManually(int seconds) {
-        int hours = seconds / 3600;
-        int minutes = (seconds % 3600) / 60;
-        int remainingSeconds = seconds % 60;
-        return df.format(hours) + ":" + df.format(minutes) + ":" + df.format(remainingSeconds);
+    public static long getTimeDiffMillis(final long millis) {
+        return System.currentTimeMillis() - millis;
     }
 
-    public static String getFormatedString(final long millis) {
-        double remainingSeconds = (millis / 1000d);
-        return df.format(remainingSeconds);
+    public static String formatTimeManually(final long millis) {
+        final double time = millis / 1000d;
+
+        return df.format(time);
     }
 
-    public static String formatTimeManually(long millis) {
-        final float time = (millis / 1000.0f);
 
-        return String.format("%.2f", time);
+
+  //  getFormatedString
+    public static String getFormatedString(long millis) {
+        final double time = millis / 1000d;
+        return df.format(time);
     }
+
+
+
 }
