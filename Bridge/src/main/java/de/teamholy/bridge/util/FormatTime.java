@@ -20,7 +20,8 @@ public class FormatTime {
     public static String formatTimeManually(final long millis) {
         final double time = millis / 1000d;
 
-        return df.format(time);
+        //return df.format(time);
+        return String.format("%.2f", time);
     }
 
 
