@@ -41,7 +41,6 @@ public class SoundPerkManagement {
 
     public static final int MAX_SOUNDS_PER_PAGE = 21;
     private final int radioSongPlayerDestroyDelay = 20 * 5;
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
     public void playSoundPerk(BridgePlayer bridgePlayer, boolean win, boolean record) {
         Player bukkitPlayer = bridgePlayer.getPlayer();

@@ -20,8 +20,15 @@ public class FormatTime {
         return df.format(hours) + ":" + df.format(minutes) + ":" + df.format(remainingSeconds);
     }
 
-    public static String formatTimeManually(long millis) {
+    public static String getFormatedString(final long millis) {
         double remainingSeconds = (millis / 1000d);
         return df.format(remainingSeconds);
+    }
+
+    public static String formatTimeManually(long millis) {
+        final long milliseconds = System.currentTimeMillis() - millis;
+        final float time = milliseconds / 1000.0f;
+
+        return String.format("%.2f", time);
     }
 }
