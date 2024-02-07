@@ -372,7 +372,7 @@ public class PlayerManagement {
     }
 
     public String checkBestTimeString(long bestTime) {
-        return (bestTime == 0) ? "§c-/-" : " §e" + FormatTime.formatTimeManually(bestTime);
+        return (bestTime == 0) ? "§c-/-" : FormatTime.formatTimeManually(bestTime);
     }
 
     public void addBestTime(BridgePlayer bridgePlayer, long localByType) {

@@ -86,22 +86,13 @@ public class BridgeCommand implements CommandExecutor {
 
             case "stats": {
                 var bridgePlayer = bridgePlayerManager.getBridgePlayer(player);
-                player.sendMessage("§7§m-------------------§r §6Bridge Stats §7§m-------------------");
-                player.sendMessage("§7Wins: §e" + bridgePlayer.getWins());
-                player.sendMessage("§7Blocks placed: §e" + bridgePlayer.getPlacedBlocks());
+                player.sendMessage("§7§m---------------§r §6Bridge Stats §7§m---------------");
+                player.sendMessage(" §8» §7Wins: §e" + bridgePlayer.getWins());
+                player.sendMessage(" §8» §7Blocks placed: §e" + bridgePlayer.getPlacedBlocks());
                 for (var mapTypes : BridgeMapType.values()) {
-                    player.sendMessage("§7" + mapTypes.getName() + " best time: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6average time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
+                    player.sendMessage(" §8» §7" + mapTypes.getName() + " best time: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6Average time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
                 }
-                player.sendMessage("§7§m-----------------------------------------------------");
-
-
-                EntityItem entity = bridgePlayerManager.dropItem(player.getLocation(), new ItemBuilder(Material.DIAMOND).setName("§e§lTest").build());
-
-
-                Bukkit.broadcastMessage((entity.isAlive() ? "JA" : "NEIN") + " - " + (entity.isInvisible() ? "JA" : "NEIN"));
-                Bukkit.broadcastMessage(entity.getName() + " - " + entity.getItemStack().getItem().getName());
-                // broadcast location of entity
-                Bukkit.broadcastMessage(entity.getBukkitEntity().getLocation().toString());
+                player.sendMessage("§7§m----------------------------------------------");
 
                 return false;
             }
