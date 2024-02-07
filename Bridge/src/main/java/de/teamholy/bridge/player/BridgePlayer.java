@@ -132,7 +132,7 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(Lists.newArrayList()));
             statsProfile.setSetting(gameKey, "gamesPlayed", String.valueOf(gamesPlayed));
             statsProfile.setSetting(gameKey,"timerPlace", settings.getTimerPlace().name());
-            statsProfile.setSetting(gameKey,"inventory", gson.toJson(inventory.getContents()));
+            statsProfile.setSetting(gameKey,"inventory", InventoryUtils.inventoryToString(inventory));
 
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
