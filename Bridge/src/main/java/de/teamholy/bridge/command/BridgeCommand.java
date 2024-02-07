@@ -5,6 +5,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import net.minecraft.server.v1_8_R3.EntityItem;
 import org.bukkit.*;
@@ -87,12 +88,13 @@ public class BridgeCommand implements CommandExecutor {
             case "stats": {
                 var bridgePlayer = bridgePlayerManager.getBridgePlayer(player);
                 player.sendMessage("§7§m---------------§r §6Bridge Stats §7§m---------------");
-                player.sendMessage(" §8» §7Wins: §e" + bridgePlayer.getWins());
-                player.sendMessage(" §8» §7Blocks placed: §e" + bridgePlayer.getPlacedBlocks());
+                player.sendMessage(" §8» §7Wins§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getWins()));
+                player.sendMessage(" §8» §7Tries§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getGamesPlayed()));
+                player.sendMessage(" §8» §7Blocks placed§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getPlacedBlocks()));
                 for (var mapTypes : BridgeMapType.values()) {
-                    player.sendMessage(" §8» §7" + mapTypes.getName() + " best time: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6Average time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
+                    player.sendMessage(" §8» §7" + BridgeMapManagement.colorCodeByType(mapTypes) + mapTypes.getName() + " §6best §7time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6Average time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
                 }
-                player.sendMessage("§7§m----------------------------------------------");
+                player.sendMessage("§7§m------------------------------------------");
 
                 return false;
             }

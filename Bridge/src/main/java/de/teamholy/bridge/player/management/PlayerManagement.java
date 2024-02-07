@@ -157,9 +157,9 @@ public class PlayerManagement {
             hologram.appendTextLine("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
             hologram.appendTextLine("");
             hologram.appendTextLine("§c§lGLOBAL");
-            hologram.appendTextLine("§fWins §8» §e" + bridgePlayer.getWins());
-            hologram.appendTextLine("§fTries §8» §e" + bridgePlayer.getGamesPlayed());
-            hologram.appendTextLine("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
+            hologram.appendTextLine("§fWins §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getWins()));
+            hologram.appendTextLine("§fTries §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getGamesPlayed()));
+            hologram.appendTextLine("§fPlaced blocks §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getPlacedBlocks()));
             hologram.appendTextLine("");
             hologram.appendTextLine("§6§l" + bridgePlayer.getMap().getMapType());
             hologram.appendTextLine("§fBest §2§lsession §ftime §8» §e" + checkBestTimeString(bridgePlayer.getLocalBestTime(mapType)));
@@ -167,9 +167,9 @@ public class PlayerManagement {
             hologram.appendTextLine("§fAverage §c§lall-time §ftime §8» §e" + checkBestTimeString(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
 
         } else {
-            ((TextLine) hologram.getLine(5)).setText("§fWins §8» §e" + bridgePlayer.getWins());
-            ((TextLine) hologram.getLine(6)).setText("§fTries §8» §e" + bridgePlayer.getGamesPlayed());
-            ((TextLine) hologram.getLine(7)).setText("§fPlaced blocks §8» §e" + bridgePlayer.getPlacedBlocks());
+            ((TextLine) hologram.getLine(5)).setText("§fWins §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getWins()));
+            ((TextLine) hologram.getLine(6)).setText("§fTries §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getGamesPlayed()));
+            ((TextLine) hologram.getLine(7)).setText("§fPlaced blocks §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getPlacedBlocks()));
             ((TextLine) hologram.getLine(10)).setText("§fBest §2§lsession §ftime §8» §e" + checkBestTimeString(bridgePlayer.getLocalBestTime(mapType)));
             ((TextLine) hologram.getLine(11)).setText("§fBest §c§lall-time §ftime §8» §e" + checkBestTimeString(bridgePlayer.getGlobalBestTime(mapType)));
             ((TextLine) hologram.getLine(12)).setText("§fAverage §c§lall-time §ftime §8» §e" + checkBestTimeString(getAverageTime(bridgePlayer, bridgePlayer.getMap().getMapType())));
