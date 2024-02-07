@@ -488,6 +488,10 @@ public class PlayerManagement {
                     fallingBlock.setVelocity(new Vector().setX(Math.random() - 0.5).setY(Math.random()).setZ(Math.random() - 0.5));
                     block.setType(Material.AIR);
 
+                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+
+
                     Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40);
                 });
             }
