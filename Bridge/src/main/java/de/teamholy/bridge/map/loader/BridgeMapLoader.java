@@ -59,8 +59,7 @@ public class BridgeMapLoader {
 
                 BridgeMap bridgeMap = new BridgeMap(
                         name,
-                        name.split("-")[0],
-                        type.getIcon().name(), type);
+                        name.split("-")[0], type);
 
                 for (int i= 0; i <= 100; i++) {
                     maps.add(bridgeMap);

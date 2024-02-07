@@ -31,7 +31,6 @@ public class BridgeMap implements Cloneable {
 
     private String name;
     private String title;
-    private String materialName;
 
     private MapPosition mapPosition;
     private EditSession editSession;
@@ -40,10 +39,9 @@ public class BridgeMap implements Cloneable {
     private int givenSpace;
     private BridgeMapType mapType;
 
-    public BridgeMap(String name, String title, String materialName, BridgeMapType bridgeMapType) {
+    public BridgeMap(String name, String title, BridgeMapType bridgeMapType) {
         this.name = name;
         this.title = title;
-        this.materialName = materialName;
         this.mapType = bridgeMapType;
     }
 
@@ -54,7 +52,7 @@ public class BridgeMap implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             System.out.println("Error while cloning map " + name + " but skipping it and using the original one");
         }
-        return new BridgeMap(name, title, materialName, mapType);
+        return new BridgeMap(name, title, mapType);
     }
 
     public CompletableFuture<Boolean> loadMap(Location location) {

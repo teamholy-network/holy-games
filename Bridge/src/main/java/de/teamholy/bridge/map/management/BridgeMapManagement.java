@@ -91,7 +91,7 @@ public class BridgeMapManagement {
         Inventory mapInventory = mapSettings.get(map.getMapType());
         if (mapInventory == null) return;
 
-        ItemStack toAdd = new ItemBuilder(Material.valueOf(map.getMaterialName())).name(colorCodeByType(map.getMapType()) + map.getName()).build();
+        ItemStack toAdd = new ItemBuilder(map.getMapType().getIcon()).name(colorCodeByType(map.getMapType()) + map.getName()).build();
         if (mapInventory.firstEmpty() != -1) {
             if (!mapInventory.contains(toAdd))
                 mapInventory.addItem(toAdd);

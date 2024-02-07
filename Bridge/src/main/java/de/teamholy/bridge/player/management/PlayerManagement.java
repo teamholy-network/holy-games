@@ -296,10 +296,12 @@ public class PlayerManagement {
                 bridgePlayer.getBlocks().clear();
                 player.closeInventory();
                 player.sendMessage(Bridge.PREFIX + "Changed Map length to " + clickedItemMeta.getDisplayName());
+                player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
 
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
                         bridgeMapManagement.getLoader().loadMapForPlayer(bridgePlayer,
                                 bridgeMapManagement.getClosestMapToNameWithType(map.getName(), mapType), true), 3L);
+
             });
 
             if (index++ == 34) return;
