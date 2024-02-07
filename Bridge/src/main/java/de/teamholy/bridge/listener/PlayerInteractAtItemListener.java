@@ -28,6 +28,11 @@ public class PlayerInteractAtItemListener implements Listener {
         final Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
+        if (player.getLocation().getY() <= 96) {
+            event.setCancelled(true);
+            return;
+        }
+
         event.setCancelled(!event.getPlayer().isOp());
 
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());

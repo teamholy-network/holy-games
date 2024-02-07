@@ -40,7 +40,6 @@ public class PlayerMoveListener implements Listener {
         if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) return;
         var player = event.getPlayer();
 
-
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(player);
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             if (bridgePlayer.getMap() == null) {
@@ -77,7 +76,6 @@ public class PlayerMoveListener implements Listener {
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                 }
-
 
                 bridgePlayer.getBlocks().clear();
 

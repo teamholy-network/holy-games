@@ -50,11 +50,13 @@ public class BlockPlaceListener implements Listener {
                 return;
             }
 
-            if(!bridgePlayer.getMap().getMapPosition().isInMapPosition(event.getBlockPlaced().getLocation(), true)) {
+            var map = bridgePlayer.getMap();
+            var position = map.getMapPosition();
+
+            if(!position.isInMapPosition(event.getPlayer().getLocation(), true) || !position.isInMapPosition(event.getBlockPlaced().getLocation(), true)) {
                 event.setCancelled(true);
                 return;
             }
-
 
 
             var blocks = bridgePlayer.getBlocks();
