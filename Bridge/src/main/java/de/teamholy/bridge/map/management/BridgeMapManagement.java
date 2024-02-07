@@ -98,7 +98,7 @@ public class BridgeMapManagement {
         }
     }
 
-    public String colorCodeByType(BridgeMapType bridgeMapType) {
+    public static String colorCodeByType(BridgeMapType bridgeMapType) {
         if (bridgeMapType == BridgeMapType.SHORT) return "§a";
         if (bridgeMapType == BridgeMapType.LONG) return "§e";
         if (bridgeMapType == BridgeMapType.DIAGONAL) return "§c";

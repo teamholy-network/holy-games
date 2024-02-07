@@ -8,8 +8,8 @@ import org.bukkit.Material;
 @Getter
 public enum BridgeMapType {
 
-    LONG("Long",50, 50,Material.SANDSTONE,180, new HologramCords(-4, 5, -2)),
     SHORT("Short",25,50, Material.STONE_SLAB2,180, new HologramCords(-4, 5, -2)),
+    LONG("Long",50, 50,Material.SANDSTONE,180, new HologramCords(-4, 5, -2)),
     DIAGONAL("Diagonal",20, 50, Material.SANDSTONE_STAIRS,-135, new HologramCords(-4, 5, -2));
 
     private String name;

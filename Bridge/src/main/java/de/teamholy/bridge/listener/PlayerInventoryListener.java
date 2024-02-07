@@ -120,45 +120,7 @@ public class PlayerInventoryListener implements Listener {
 
 
         } else if (view.getTitle().equalsIgnoreCase("§8» §bMap Length")) {
-            event.setCancelled(true);
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
 
-            var clickedItem = event.getCurrentItem();
-            if (clickedItem == null) return;
-
-            var clickedItemMeta = clickedItem.getItemMeta();
-            if (clickedItemMeta == null) return;
-
-            var map = bridgePlayer.getMap().clone();
-            if (map == null) return;
-
-            var mapType = map.getMapType();
-
-            var selectedType = switch (clickedItemMeta.getDisplayName()) {
-                case "§a§lShort" -> BridgeMapType.SHORT;
-                case "§e§lLong" -> BridgeMapType.LONG;
-                case "§c§lDiagonal" -> BridgeMapType.DIAGONAL;
-                default -> map.getMapType();
-            };
-
-            if (mapType == selectedType) {
-                player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
-                return;
-            }
-
-            mapManagement.getLoader().unloadMap(bridgePlayer, true);
-
-            if (!bridgePlayer.getBlocks().isEmpty()) {
-                bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
-            }
-
-            bridgePlayer.getBlocks().clear();
-            player.closeInventory();
-            player.sendMessage(Bridge.PREFIX + "Changed type to " + clickedItemMeta.getDisplayName());
-
-            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
-                    mapManagement.getLoader().loadMapForPlayer(bridgePlayer,
-                            mapManagement.getClosestMapToNameWithType(map.getName(), selectedType), true), 3L);
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);
 

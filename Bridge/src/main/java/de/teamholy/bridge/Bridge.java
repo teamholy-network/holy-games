@@ -58,6 +58,7 @@ public class Bridge extends JavaPlugin {
         this.playerManagement = new PlayerManagement();
         this.soundPerkManagement = new SoundPerkManagement();
         this.mapManagement = new BridgeMapManagement();
+        this.playerManagement.setBridgeMapManagement(mapManagement);
 
         loadCommand();
         loadListener();

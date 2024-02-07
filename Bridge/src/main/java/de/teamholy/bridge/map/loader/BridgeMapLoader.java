@@ -33,9 +33,9 @@ public class BridgeMapLoader {
     private final List<UUID> loadedMaps;
 
     private final Gson gson;
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
     private final BridgeMapManagement mapManagement;
+    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
     public BridgeMapLoader(BridgeMapManagement mapManagement) {
         this.gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();

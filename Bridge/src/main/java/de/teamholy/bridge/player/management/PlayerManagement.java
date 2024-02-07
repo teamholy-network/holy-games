@@ -7,7 +7,9 @@ import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.Settings;
 import de.teamholy.bridge.player.settings.sounds.BridgeItems;
@@ -18,6 +20,7 @@ import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import de.teamholy.core.bukkit.perks.PerkType;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.*;
@@ -52,6 +55,9 @@ public class PlayerManagement {
     private final HashMap<UUID, BridgePlayer> bridgePlayers = new HashMap<>();
     private final Map<UUID, Long> playerTime = new HashMap<>();
     private final HashMap<BridgeMapType, HashMap<BridgePlayer, Long>> topPlayer = new HashMap<>();
+
+    @Setter
+    private BridgeMapManagement bridgeMapManagement;
 
     public BridgePlayer getBridgePlayer(Player player) {
         return bridgePlayers.get(player.getUniqueId());
@@ -260,9 +266,49 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
+        int index = 30;
+        for (BridgeMapType mapType : BridgeMapType.values()) {
+            inventory.setItem(new ItemBuilder(mapType.getIcon()).name("§8» " + BridgeMapManagement.colorCodeByType(mapType) + mapType.getName())
+                    .lore("§7Distance§8: §e" + mapType.getLength()).build(), index, event -> {
+
+                event.setCancelled(true);
+
+                var clickedItem = event.getCurrentItem();
+                if (clickedItem == null) return;
+
+                var clickedItemMeta = clickedItem.getItemMeta();
+                if (clickedItemMeta == null) return;
+
+                var map = bridgePlayer.getMap().clone();
+                if (map == null) return;
+
+                if (map.getMapType() == mapType) {
+                    player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
+                    return;
+                }
+
+                bridgeMapManagement.getLoader().unloadMap(bridgePlayer, true);
+
+                if (!bridgePlayer.getBlocks().isEmpty()) {
+                    bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
+                }
+
+                bridgePlayer.getBlocks().clear();
+                player.closeInventory();
+                player.sendMessage(Bridge.PREFIX + "Changed Map length to " + clickedItemMeta.getDisplayName());
+
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
+                        bridgeMapManagement.getLoader().loadMapForPlayer(bridgePlayer,
+                                bridgeMapManagement.getClosestMapToNameWithType(map.getName(), mapType), true), 3L);
+            });
+
+            if (index++ == 34) return;
+        }
+
+
+
         player.openInventory(inventory.getInventory());
     }
-
 
     public Inventory blockSettingsInventory(BridgePlayer bridgePlayer) {
 
