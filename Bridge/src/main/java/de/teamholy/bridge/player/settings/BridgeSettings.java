@@ -2,15 +2,12 @@ package de.teamholy.bridge.player.settings;
 
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
-import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.core.bukkit.perks.PerkRankType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.List;
  **/
 @Getter
 @Setter
-public class Settings {
+public class BridgeSettings {
 
     private boolean removeBlocks = false;
     private long removalTime = 0;

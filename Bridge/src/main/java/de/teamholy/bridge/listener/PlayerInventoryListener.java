@@ -2,16 +2,11 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
-import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
-import de.teamholy.bridge.player.settings.Settings;
-import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
-import de.teamholy.core.bukkit.perks.PerkType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -19,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**

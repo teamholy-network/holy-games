@@ -2,16 +2,14 @@ package de.teamholy.bridge.player.management;
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
-import com.google.common.collect.Lists;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.settings.Settings;
+import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.settings.sounds.BridgeItems;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.util.FormatTime;
@@ -26,7 +24,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -256,12 +253,12 @@ public class PlayerManagement {
         });
         ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
 
-        timer.lore(Arrays.stream(Settings.TimerPlace.values())
-                .map(value -> (bridgePlayer.getSettings().getTimerPlace() == value) ? "§a" + value.getName() : "§7" + value.getName())
+        timer.lore(Arrays.stream(BridgeSettings.TimerPlace.values())
+                .map(value -> (bridgePlayer.getBridgeSettings().getTimerPlace() == value) ? "§a" + value.getName() : "§7" + value.getName())
                 .collect(Collectors.toList()));
 
         inventory.setItem(timer.build(), 16, event -> {
-            bridgePlayer.getSettings().setTimerPlace(Settings.TimerPlace.values()[(bridgePlayer.getSettings().getTimerPlace().ordinal() + 1) % Settings.TimerPlace.values().length]);
+            bridgePlayer.getBridgeSettings().setTimerPlace(BridgeSettings.TimerPlace.values()[(bridgePlayer.getBridgeSettings().getTimerPlace().ordinal() + 1) % BridgeSettings.TimerPlace.values().length]);
             ingameSettingsInventory(player);
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
@@ -321,9 +318,9 @@ public class PlayerManagement {
         }
 
         var i = 1;
-        for (Settings.BlockAnimationType blockBreakAnimations : Settings.BlockAnimationType.values()) {
+        for (BridgeSettings.BlockAnimationType blockBreakAnimations : BridgeSettings.BlockAnimationType.values()) {
 
-            var isSelected = bridgePlayer.getSettings().getBlockAnimationType() == blockBreakAnimations;
+            var isSelected = bridgePlayer.getBridgeSettings().getBlockAnimationType() == blockBreakAnimations;
             inventory.setItem(blockBreakAnimations.getItemBuilder().setLore(
                     (isSelected ? "§2Selected" :
 
@@ -334,7 +331,7 @@ public class PlayerManagement {
 
             ).withGlow(isSelected).build(), i, inventoryClickEvent -> {
                 if (bridgePlayer.getPlayer().hasPermission(blockBreakAnimations.getRankType().getPermission())) {
-                    bridgePlayer.getSettings().setBlockAnimationType(blockBreakAnimations);
+                    bridgePlayer.getBridgeSettings().setBlockAnimationType(blockBreakAnimations);
                     bridgePlayer.getPlayer().closeInventory();
                     bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 2, 2);
                     bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§7You have selected §e" + blockBreakAnimations.getName());
@@ -349,21 +346,21 @@ public class PlayerManagement {
         inventory.setItem(new ItemBuilder(Material.WATCH).amount(1).name("§8» §eRemove Blocks while bridging")
                 .lore("")
                 .lore(" §8» §7Current delay§8: §e" +
-                        (bridgePlayer.getSettings().getRemovalTime() == 0 ? "Not set" : bridgePlayer.getSettings().getRemovalTime() + " §eseconds"))
+                        (bridgePlayer.getBridgeSettings().getRemovalTime() == 0 ? "Not set" : bridgePlayer.getBridgeSettings().getRemovalTime() + " §eseconds"))
                 .lore("")
-                .lore("§7Currently " + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aenabled" : "§cdisabled"))
+                .lore("§7Currently " + (bridgePlayer.getBridgeSettings().isRemoveBlocks() ? "§aenabled" : "§cdisabled"))
                 .lore("§7§oShift Click to enable / disable").build(), 7, event -> {
 
 
             if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
-                bridgePlayer.getSettings().setRemoveBlocks(!bridgePlayer.getSettings().isRemoveBlocks());
-                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + (bridgePlayer.getSettings().isRemoveBlocks() ? "§aActivated" : "§cDisabled") + " the Block Timer!");
+                bridgePlayer.getBridgeSettings().setRemoveBlocks(!bridgePlayer.getBridgeSettings().isRemoveBlocks());
+                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + (bridgePlayer.getBridgeSettings().isRemoveBlocks() ? "§aActivated" : "§cDisabled") + " the Block Timer!");
             } else if (event.getClick() == ClickType.LEFT) {
-                bridgePlayer.getSettings().setRemovalTime((bridgePlayer.getSettings().getRemovalTime() + 1) > 8 ? 8 : bridgePlayer.getSettings().getRemovalTime() + 1);
-                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getSettings().getRemovalTime());
+                bridgePlayer.getBridgeSettings().setRemovalTime((bridgePlayer.getBridgeSettings().getRemovalTime() + 1) > 8 ? 8 : bridgePlayer.getBridgeSettings().getRemovalTime() + 1);
+                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getBridgeSettings().getRemovalTime());
             } else if (event.getClick() == ClickType.RIGHT) {
-                bridgePlayer.getSettings().setRemovalTime((bridgePlayer.getSettings().getRemovalTime() - 1) < 1 ? 1 : bridgePlayer.getSettings().getRemovalTime() - 1);
-                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getSettings().getRemovalTime());
+                bridgePlayer.getBridgeSettings().setRemovalTime((bridgePlayer.getBridgeSettings().getRemovalTime() - 1) < 1 ? 1 : bridgePlayer.getBridgeSettings().getRemovalTime() - 1);
+                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "Changed the removal time to §e" + bridgePlayer.getBridgeSettings().getRemovalTime());
             }
             bridgePlayer.getPlayer().openInventory(blockSettingsInventory(bridgePlayer));
 
@@ -433,7 +430,7 @@ public class PlayerManagement {
     }
 
     public void spawnBlockAnimation(BridgePlayer bridgePlayer) {
-        var blockAnimationType = bridgePlayer.getSettings().getBlockAnimationType();
+        var blockAnimationType = bridgePlayer.getBridgeSettings().getBlockAnimationType();
         HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
 
         switch (blockAnimationType) {
