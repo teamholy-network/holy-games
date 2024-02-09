@@ -3,7 +3,6 @@ package de.teamholy.bridge.command;
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
@@ -38,24 +37,9 @@ public class BridgeCommand implements CommandExecutor {
             return true;
         }
 
-        BridgeMapManagement bridgeMapManagement = Bridge.getInstance().getMapManagement();
         PlayerManagement bridgePlayerManager = Bridge.getInstance().getPlayerManagement();
 
         switch (args[0].toLowerCase()) {
-            case "list": {
-                if (bridgeMapManagement.getLoader().getMaps().isEmpty()) {
-                    player.sendMessage(Bridge.PREFIX + "§7There are no maps.");
-                    return true;
-                }
-
-                player.sendMessage("§7§m-------------------§r §6Bridge Maps §7§m-------------------");
-                bridgeMapManagement.getLoader().getMaps().forEach(bridgeMap -> player.sendMessage(" §7- §e" + bridgeMap.getName() + " §8- §7" + bridgeMap.getTitle()));
-                player.sendMessage("§7§m-----------------------------------------------------");
-
-
-                return true;
-            }
-
             case "deletestats": {
                 if (!player.hasPermission("*")) return false;
 
@@ -91,9 +75,6 @@ public class BridgeCommand implements CommandExecutor {
                 player.sendMessage(" §8» §7Wins§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getWins()));
                 player.sendMessage(" §8» §7Tries§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getGamesPlayed()));
                 player.sendMessage(" §8» §7Blocks placed§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getPlacedBlocks()));
-                for (var mapTypes : BridgeMapType.values()) {
-                    player.sendMessage(" §8» §7" + BridgeMapManagement.colorCodeByType(mapTypes) + mapTypes.getName() + " §6best §7time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayer.getGlobalBestTime(mapTypes)) + " §8| §6Average time§8: §e" + bridgePlayerManager.checkBestTimeString(bridgePlayerManager.getAverageTime(bridgePlayer, mapTypes)));
-                }
                 player.sendMessage("§7§m------------------------------------------");
 
                 return false;

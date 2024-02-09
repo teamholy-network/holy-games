@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.listener.*;
+import de.teamholy.bridge.map.BridgeMapLoader;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
@@ -33,7 +33,7 @@ public class Bridge extends JavaPlugin {
 
     private PlayerManagement playerManagement;
     private SoundPerkManagement soundPerkManagement;
-    private BridgeMapManagement mapManagement;
+    private BridgeMapLoader bridgeMapLoader;
 
 
     private SongManager songManager;
@@ -50,8 +50,7 @@ public class Bridge extends JavaPlugin {
 
         this.playerManagement = new PlayerManagement();
         this.soundPerkManagement = new SoundPerkManagement();
-        this.mapManagement = new BridgeMapManagement();
-        this.playerManagement.setBridgeMapManagement(mapManagement);
+        this.bridgeMapLoader = new BridgeMapLoader();
 
         loadCommand();
         loadListener();

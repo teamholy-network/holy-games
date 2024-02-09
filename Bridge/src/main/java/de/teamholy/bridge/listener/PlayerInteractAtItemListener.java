@@ -2,7 +2,6 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -44,10 +43,9 @@ public class PlayerInteractAtItemListener implements Listener {
             if (item.getItemMeta() != null
                     && item.getItemMeta().getDisplayName() != null) {
 
-                if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§6Maps")) {
-                    player.openInventory(getMapInventory());
-                } else if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§cLeave")) {
-                    player.kickPlayer("");
+
+                if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§cLeave")) {
+                    player.kickPlayer(null);
                 }
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
@@ -91,8 +89,5 @@ public class PlayerInteractAtItemListener implements Listener {
         }
     }
 
-    private Inventory getMapInventory() {
-        return Bridge.getInstance().getMapManagement().getInventory();
-    }
 
 }
