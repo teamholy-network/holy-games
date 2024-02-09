@@ -4,6 +4,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
+import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.map.management.BridgeMapManagement;
@@ -53,7 +54,7 @@ public class PlayerMoveListener implements Listener {
             if (!mapPosition.isInMapPosition(event.getTo(), true) && player.getGameMode() != GameMode.CREATIVE) {
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
-                    if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkManagement.playSoundPerk(bridgePlayer, false, false);
+                    if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
                 }
 
                 if (bridgePlayer.getMapLocation() != null) {
@@ -108,7 +109,7 @@ public class PlayerMoveListener implements Listener {
 
                     playerManagement.addBestTime(bridgePlayer, current);
 
-                    soundPerkManagement.playSoundPerk(bridgePlayer, true, true);
+                    soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
                 } else if (current < beforeBestLocal || beforeBestLocal == 0) {
                     String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
 
@@ -121,9 +122,10 @@ public class PlayerMoveListener implements Listener {
                     bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
 
                     playerManagement.addBestTime(bridgePlayer, current);
-                    soundPerkManagement.playSoundPerk(bridgePlayer, true, true);
+                    soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+
                 } else {
-                    soundPerkManagement.playSoundPerk(bridgePlayer, true, false);
+                    soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
                 }
                 bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);
 

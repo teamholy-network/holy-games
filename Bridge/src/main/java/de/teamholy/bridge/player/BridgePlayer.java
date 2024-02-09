@@ -179,13 +179,6 @@ public class BridgePlayer {
                 this.inventory = InventoryUtils.inventoryFromString(statsProfile.getSetting(gameKey, "inventory"));
             }
 
-            if (statsProfile.getSetting(gameKey, "selectedSound") != null) {
-                BridgeSound bridgeSound = BridgeSounds.getBridgeSound(Integer.parseInt(statsProfile.getSetting(gameKey, "selectedSound")));
-                if (bridgeSound != null) {
-                    this.bridgeSettings.setCurrentSound(bridgeSound);
-                }
-            }
-
             for (var settingsMap :
                     statsProfile.getSettingsMap().entrySet()) {
                 if (settingsMap.getKey().equals(gameKey)) {
@@ -198,6 +191,13 @@ public class BridgePlayer {
                             BridgeSound bridgeSound = BridgeSounds.getBridgeSound(id);
                             if (bridgeSound != null) {
                                 this.bridgeSettings.getSoundEvents().put(bridgeSound, BridgeSettings.BridgeSoundEventType.valueOf(setting.getValue()));
+                            }
+                        }
+                        if (setting.getValue().endsWith("_selectedSound")) {
+                            int id = Integer.parseInt(setting.getValue().replace("_selectedSound", ""));
+                            BridgeSound bridgeSound = BridgeSounds.getBridgeSound(id);
+                            if (bridgeSound != null) {
+                                this.bridgeSettings.getCurrentSounds().put(BridgeSettings.BridgeSoundEventType.valueOf(setting.getKey()), bridgeSound);
                             }
                         }
                     }
@@ -245,9 +245,6 @@ public class BridgePlayer {
 
         statsProfile.setSetting(gameKey, "inventory", InventoryUtils.inventoryToString(inventory));
 
-        if (this.bridgeSettings.getCurrentSound() != null)
-            statsProfile.setSetting(gameKey, "selectedSound", String.valueOf(this.bridgeSettings.getCurrentSound().getPerkId()));
-
         if (globalBestTime != null) {
             if (this.globalBestTime.get(BridgeMapType.SHORT) != null) {
                 statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.globalBestTime.get(BridgeMapType.SHORT)));
@@ -264,6 +261,10 @@ public class BridgePlayer {
 
         for (var set : bridgeSettings.getSoundEvents().entrySet()) {
             statsProfile.setSetting(gameKey, set.getKey().getPerkId() + "_soundEvent", set.getValue().name());
+        }
+
+        for (var set : bridgeSettings.getCurrentSounds().entrySet()) {
+            statsProfile.setSetting(gameKey, set.getKey().name(), set.getValue().getPerkId() + "_selectedSound");
         }
 
         BukkitCore.getAPI().

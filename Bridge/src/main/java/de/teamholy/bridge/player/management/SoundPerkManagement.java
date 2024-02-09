@@ -42,44 +42,26 @@ public class SoundPerkManagement {
     public static final int MAX_SOUNDS_PER_PAGE = 21;
     private final int radioSongPlayerDestroyDelay = 20 * 5;
 
-    public void playSoundPerk(BridgePlayer bridgePlayer, boolean win, boolean record) {
+    public void playSoundPerk(BridgePlayer bridgePlayer, BridgeSettings.BridgeSoundEventType eventType) {
         Player bukkitPlayer = bridgePlayer.getPlayer();
         if (bukkitPlayer == null) {
             return;
         }
+        if (eventType == null) return;
 
-        var sound = bridgePlayer.getBridgeSettings().getCurrentSound();
+        var sounds = bridgePlayer.getBridgeSettings().getCurrentSounds();
+
+        if (sounds.isEmpty()) {
+            return;
+        }
+
+        var sound = sounds.get(eventType);
 
         if (sound == null) {
             return;
         }
 
-        BridgeSettings.BridgeSoundEventType eventType = bridgePlayer.getBridgeSettings().getSoundEvents().get(sound);
-        if (eventType == null) return;
-
-
-        switch (eventType) {
-            case WIN -> {
-                if (!win) {
-                    return;
-                }
-                playSound(bukkitPlayer, sound);
-            }
-            case DEATH -> {
-                if (win) {
-                    return;
-                }
-                playSound(bukkitPlayer, sound);
-            }
-
-            case NEW_RECORD -> {
-                if (!win && !record || win && !record) {
-                    return;
-                }
-
-                playSound(bukkitPlayer, sound);
-            }
-        }
+        playSound(bukkitPlayer, sound);
     }
 
     private void playSound(Player player, BridgeSound sound) {
@@ -136,13 +118,17 @@ public class SoundPerkManagement {
                 default -> throw new IllegalStateException("Unexpected value: " + bridgeSound.getSoundType());
             }
 
+            BridgeSettings.BridgeSoundEventType bridgeSoundEventType = bridgePlayer.getBridgeSettings().getSoundEvents().get(bridgeSound);
+
+            if (bridgeSoundEventType == null) {
+                return;
+            }
             bukkitPlayer.sendMessage(Bridge.PREFIX + "§7You successfully bought the §e" + bridgeSound.getDisplayName() + " §7perk for §e" + bridgeSound.getPrice() + " §6coins!");
-            bukkitPlayer.sendMessage(Bridge.PREFIX + "§7Automatically selected the perk!");
-            bridgePlayer.getBridgeSettings().setCurrentSound(bridgeSound);
+            bukkitPlayer.sendMessage(Bridge.PREFIX + "§7Automatically selected the perk as play on §e" + bridgeSoundEventType.getName() + "§7!");
+            bridgePlayer.getBridgeSettings().getCurrentSounds().put(bridgeSoundEventType, bridgeSound);
             bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.LEVEL_UP, 2.0F, 2.0F);
         }
     }
-
 
     public de.teamholy.core.bukkit.utils.Inventory openSoundInventory(BridgePlayer bridgePlayer, BridgeSoundType bridgeSoundType, PerkManager.SortOptionPerk sortOptionPerk, PerkManager.SortOptionPlayer sortOptionPlayer, int page) {
         var size = 4; // 4 rows by default
@@ -207,6 +193,10 @@ public class SoundPerkManagement {
 
 
         var pageSounds = pagifier.getPage(page);
+
+        if (pageSounds == null) {
+
+        }
 
         if (pageSounds.size() >= 7 && pageSounds.size() <= 14) {
             size = 5;
@@ -315,8 +305,16 @@ public class SoundPerkManagement {
                                                     throw new IllegalStateException("Unexpected value: " + bridgeSound.getSoundType());
                                         }
 
-                                        bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the sound to §e" + bridgeSound.getDisplayName() + "§7!");
-                                        bridgePlayer.getBridgeSettings().setCurrentSound(bridgeSound);
+                                        BridgeSettings.BridgeSoundEventType bridgeSoundEventType = bridgePlayer.getBridgeSettings().getSoundEvents().get(bridgeSound);
+                                        if (bridgeSoundEventType == null) {
+                                            return;
+                                        }
+
+                                        bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You've selected the sound for " + bridgeSoundEventType.getName() + "§7 to §e" + bridgeSound.getDisplayName() + "§7!");
+                                        if (bridgePlayer.getBridgeSettings().getCurrentSounds().containsValue(bridgeSound)) {
+                                            bridgePlayer.getBridgeSettings().getCurrentSounds().entrySet().removeIf(entry -> entry.getValue() == bridgeSound);
+                                        }
+                                        bridgePlayer.getBridgeSettings().getCurrentSounds().put(bridgeSoundEventType, bridgeSound);
                                     } else {
                                         buyPerk(bridgePlayer, bridgeSound);
                                     }
@@ -414,7 +412,7 @@ public class SoundPerkManagement {
                 }
             }
         } else {
-            if (bridgePlayer.getBridgeSettings().getCurrentSound() == sound) {
+            if (bridgePlayer.getBridgeSettings().getCurrentSounds().containsValue(sound)) {
                 lore.add("§2Selected");
             } else {
                 lore.add("§aClick to select");

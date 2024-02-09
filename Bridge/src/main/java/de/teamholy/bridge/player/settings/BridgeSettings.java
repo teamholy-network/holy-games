@@ -1,5 +1,6 @@
 package de.teamholy.bridge.player.settings;
 
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.core.bukkit.perks.PerkRankType;
@@ -29,8 +30,8 @@ public class BridgeSettings {
     private TimerPlace timerPlace = TimerPlace.ACTION_BAR;
 
     private List<BridgeSound> sounds = Lists.newArrayList();
-    private BridgeSound currentSound = null;
 
+    private HashMap<BridgeSoundEventType, BridgeSound> currentSounds = new HashMap<>();
     private HashMap<BridgeSound, BridgeSoundEventType> soundEvents = new HashMap<>();
 
     @Getter @AllArgsConstructor
@@ -56,7 +57,13 @@ public class BridgeSettings {
         private final String name;
     }
 
+    @Getter
+    @AllArgsConstructor
     public enum BridgeSoundEventType {
-        NEW_RECORD, DEATH, WIN;
+        NEW_RECORD("§b§lRecord"), DEATH("§c§lDeath"), WIN("§a§lWin");
+
+        private final String name;
+
+
     }
 }
