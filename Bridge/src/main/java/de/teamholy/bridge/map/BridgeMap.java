@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,18 +31,17 @@ public class BridgeMap implements Cloneable {
     private final int id = new Random().nextInt(1000000);
 
     private String name;
-    private String title;
-
     private MapPosition mapPosition;
     private EditSession editSession;
 
-    private boolean isLoading, inUse;
     private int givenSpace;
     private BridgeMapType mapType;
+    private boolean isUsed = false;
 
-    public BridgeMap(String name, String title, BridgeMapType bridgeMapType) {
+    private BridgeMapSkin bridgeMapSkin;
+
+    public BridgeMap(String name, BridgeMapType bridgeMapType) {
         this.name = name;
-        this.title = title;
         this.mapType = bridgeMapType;
     }
 
@@ -52,13 +52,10 @@ public class BridgeMap implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             System.out.println("Error while cloning map " + name + " but skipping it and using the original one");
         }
-        return new BridgeMap(name, title, mapType);
+        return new BridgeMap(name, mapType);
     }
 
-    public CompletableFuture<Boolean> loadMap(Location location) {
-        if (editSession != null) {
-            editSession.undo(editSession);
-        }
+    public CompletableFuture<Boolean> loadMap(Location location, File schematicFile) {
 
         int distance = (mapType.getLength() + 10);
         if (mapType == BridgeMapType.DIAGONAL) {
@@ -67,10 +64,8 @@ public class BridgeMap implements Cloneable {
             mapPosition = new MapPosition(location.clone().add(10, 35, 10), location.clone().subtract(10, 2, distance));
         }
 
-        isLoading = true;
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-        File schematicFile = new File(Bridge.getInstance().getDataFolder() + "/schematics", getName() + ".schematic");
 
         ClipboardFormat format = ClipboardFormat.findByFile(schematicFile);
 
@@ -82,7 +77,7 @@ public class BridgeMap implements Cloneable {
         }
 
         try {
-            var bukkitWorld = FaweAPI.getWorld("world");
+            var bukkitWorld = FaweAPI.getWorld(mapType.getName());
             BlockVector vector = new BlockVector(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
             Schematic schematic = format.load(schematicFile);
@@ -91,26 +86,12 @@ public class BridgeMap implements Cloneable {
             setEditSession(editSession);
 
             completableFuture.complete(true);
-            isLoading = false;
-            inUse = true;
         } catch (IOException exception) {
             exception.printStackTrace();
             completableFuture.complete(false);
         }
+
         return completableFuture;
-    }
-
-    public void unloadMap() {
-        givenSpace = 0;
-
-        if (editSession != null) {
-            editSession.undo(editSession);
-        }
-
-        isLoading = false;
-        inUse = false;
-
-        editSession = null;
     }
 
 }

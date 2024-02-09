@@ -44,14 +44,7 @@ public class Bridge extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
-        if (Bukkit.getWorld("world") != null) {
-            Bukkit.unloadWorld("world", false);
-            getLogger().info("Unloaded world");
 
-            createWorld("world");
-            Bukkit.getWorld("world").getBlockAt(0, 70, 0).setType(Material.AIR);
-            getLogger().info("Created world");
-        }
 
         this.songManager = new SongManager();
 
@@ -101,7 +94,7 @@ public class Bridge extends JavaPlugin {
 
     }
 
-    private void createWorld(String world1) {
+    public void createWorld(String world1) {
         World world = Bukkit.getWorld(world1);
         if (world == null) {
             world = WorldCreator.name(world1)

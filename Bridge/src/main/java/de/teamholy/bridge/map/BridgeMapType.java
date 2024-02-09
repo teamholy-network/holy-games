@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public enum BridgeMapType {
 
-    SHORT("Short",25,50,
+    SHORT("Short",25,25,
             new ItemBuilder(Material.SKULL_ITEM, 1, 3)
             .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3Rl" +
                     "eHR1cmUvNWEyZjY3NTAwYTY1ZjNjZTc5ZDM0ZWMxNTBkZTkzZGY4ZjYwZWJlNTJlMjQ4ZjVlMWNkYjY5YjA3MjYyNTZmNyJ9fX0=", "")
             .build(),180, new HologramCords(-4, 5, -2)),
-    LONG("Long",50, 50,
+    LONG("Long",50, 25,
             new ItemBuilder(Material.SKULL_ITEM, 1, 3)
                     .setSkullMeta(
                             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3R" +

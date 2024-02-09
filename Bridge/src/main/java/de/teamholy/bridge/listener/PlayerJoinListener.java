@@ -1,11 +1,7 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMap;
-import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,24 +27,8 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         playerManagement.addPlayer(player);
 
-        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
-            getFreeBridgeForPlayer(playerManagement.getBridgePlayer(player));
-        }, 3L);
+        // todo give map to player
     }
 
-    private void getFreeBridgeForPlayer(BridgePlayer player) {
-        final BridgeMapManagement bridgeMapManagement = Bridge.getInstance().getMapManagement();
-
-        if (player.getMap() == null) {
-            var random = ThreadLocalRandom.current().nextInt(bridgeMapManagement.getLoader().getMaps().size() - 1);
-            var randomMap = bridgeMapManagement.getLoader().getMaps().get(random).clone();
-            if (randomMap == null) return;
-
-            var copiedMap = new BridgeMap(randomMap.getName(), randomMap.getTitle(), randomMap.getMapType());
-
-            bridgeMapManagement.getLoader().loadMapForPlayer(player, copiedMap, false);
-        }
-
-    }
 
 }

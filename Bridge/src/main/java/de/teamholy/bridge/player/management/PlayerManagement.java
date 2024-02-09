@@ -53,9 +53,6 @@ public class PlayerManagement {
     private final Map<UUID, Long> playerTime = new HashMap<>();
     private final HashMap<BridgeMapType, HashMap<BridgePlayer, Long>> topPlayer = new HashMap<>();
 
-    @Setter
-    private BridgeMapManagement bridgeMapManagement;
-
     public BridgePlayer getBridgePlayer(Player player) {
         return bridgePlayers.get(player.getUniqueId());
     }
@@ -247,8 +244,6 @@ public class PlayerManagement {
                 .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDUyO" +
                         "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=", "")
                 .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 15, event -> {
-            var mapManagement = Bridge.getInstance().getMapManagement();
-            player.openInventory(mapManagement.getInventory());
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
         ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
@@ -265,26 +260,16 @@ public class PlayerManagement {
 
         int index = 30;
         for (BridgeMapType mapType : BridgeMapType.values()) {
-            inventory.setItem(new ItemBuilder(mapType.getIcon()).name("§8» " + BridgeMapManagement.colorCodeByType(mapType) + mapType.getName())
+            inventory.setItem(new ItemBuilder(mapType.getIcon()).name("§8» " + mapType.getName())
                     .lore("§7Distance§8: §e" + mapType.getLength()).build(), index, event -> {
 
-                event.setCancelled(true);
 
-                var clickedItem = event.getCurrentItem();
-                if (clickedItem == null) return;
-
-                var clickedItemMeta = clickedItem.getItemMeta();
-                if (clickedItemMeta == null) return;
-
-                var map = bridgePlayer.getMap().clone();
-                if (map == null) return;
-
-                if (map.getMapType() == mapType) {
-                    player.sendMessage(Bridge.PREFIX + "§cYou are already on this map!");
+                if (bridgePlayer.getMap().getMapType() == mapType) {
+                    player.sendMessage(Bridge.PREFIX + "§cYou are already on this maptype!");
                     return;
                 }
 
-                bridgeMapManagement.getLoader().unloadMap(bridgePlayer, true);
+
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
@@ -292,12 +277,11 @@ public class PlayerManagement {
 
                 bridgePlayer.getBlocks().clear();
                 player.closeInventory();
-                player.sendMessage(Bridge.PREFIX + "Changed Map length to " + clickedItemMeta.getDisplayName());
+                player.sendMessage(Bridge.PREFIX + "Changed Map length to " + mapType.getName());
                 player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
 
-                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () ->
-                        bridgeMapManagement.getLoader().loadMapForPlayer(bridgePlayer,
-                                bridgeMapManagement.getClosestMapToNameWithType(map.getName(), mapType), true), 3L);
+
+                // todo change player map
 
             });
 
