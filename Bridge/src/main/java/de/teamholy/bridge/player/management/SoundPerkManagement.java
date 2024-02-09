@@ -194,15 +194,15 @@ public class SoundPerkManagement {
 
         var pageSounds = pagifier.getPage(page);
 
-        if (pageSounds == null) {
-
+        if (pageSounds != null) {
+            if (pageSounds.size() >= 7 && pageSounds.size() <= 14) {
+                size = 5;
+            } else if (pageSounds.size() >= 15) {
+                size = 6;
+            }
         }
 
-        if (pageSounds.size() >= 7 && pageSounds.size() <= 14) {
-            size = 5;
-        } else if (pageSounds.size() >= 15) {
-            size = 6;
-        }
+
 
         var inventorySize = size * 9;
 
@@ -320,7 +320,7 @@ public class SoundPerkManagement {
                                     }
 
                                     holyInventory.setOnClose(empty ->
-                                            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 0).getInventory()), 1L));
+                                            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, bridgeSound.getSoundType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory()), 1L));
 
                                     bridgePlayer.getPlayer().closeInventory();
 
