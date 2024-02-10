@@ -20,6 +20,7 @@ import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.perks.Perk;
 import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
@@ -360,13 +361,24 @@ public class PlayerEntry {
             if (itemStack != null && itemStack.getType() != null) {
                 if (itemStack.getType() == Material.STICK) {
                     if (arenaType == ArenaType.REDUCE || arenaType == ArenaType.EXPERIMENTAL) {
-                        player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.STICK).setUnbreakable().setEnchantments(Enchantment.KNOCKBACK, 1).build());
+
+
+                        var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.STICK);
+                        if (perk == null) {
+                            player.getInventory().setItem(slot, new ItemBuilder(Material.STICK, 1, (byte) 0).setUnbreakable().setEnchantments(Enchantment.KNOCKBACK, 1).setName("§8» §6Stick").build());
+                        } else player.getInventory().setItem(slot, perk.setUnbreakable().setEnchantments(Enchantment.KNOCKBACK, 1).setName("§8» §6Stick").build());
+
                     } else {
-                        player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
+                        var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+                        if (perk == null) {
+                            player.getInventory().setItem(slot, new ItemBuilder(Material.SANDSTONE, 64, (byte) 0).setName("§8» §6Block").build());
+                        } else player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
                     }
                 } else if (itemStack.getType() == Material.SANDSTONE) {
-
-                    player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
+                    var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+                    if (perk == null) {
+                        player.getInventory().setItem(slot, new ItemBuilder(Material.SANDSTONE, 64, (byte) 0).setName("§8» §6Block").build());
+                    } else player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
 
                 } else {
                     this.player.getInventory().setItem(slot, itemStack);
