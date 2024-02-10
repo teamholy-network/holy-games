@@ -6,6 +6,7 @@ import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.BridgeSettings;
@@ -204,7 +205,7 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 12, event -> {
+        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 13, event -> {
 
             player.closeInventory();
 
@@ -231,7 +232,7 @@ public class PlayerManagement {
         });
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
-        inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 13, event -> {
+        inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 15, event -> {
             var soundPerkInventory = Bridge.getInstance().getSoundPerkManagement().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
             player.openInventory(soundPerkInventory);
@@ -241,7 +242,9 @@ public class PlayerManagement {
         inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, 3)
                 .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDUyO" +
                         "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=", "")
-                .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 15, event -> {
+                .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 33, event -> {
+
+            player.openInventory(Bridge.getInstance().getBridgeMapSkinPerkManagment().openMapInventory(bridgePlayer, bridgePlayer.getMap().getMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL,1).getInventory());
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
         ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
@@ -256,9 +259,12 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        int index = 30;
+        int index = 29;
         for (BridgeMapType mapType : BridgeMapType.values()) {
-            inventory.setItem(new ItemBuilder(mapType.getIcon()).name("§8» " + mapType.getName())
+            inventory.setItem(new ItemBuilder(mapType.getIcon())
+
+                    .amount(mapType.getLength())
+                    .name("§8» §6" + mapType.getName())
                     .lore("§7Distance§8: §e" + mapType.getLength()).build(), index, event -> {
 
 
@@ -268,24 +274,30 @@ public class PlayerManagement {
                 }
 
 
-
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
                 }
 
+
+                if (Bridge.getInstance().getBridgeMapLoader().getFreeMap(mapType) == null) {
+                    player.sendMessage(Bridge.PREFIX + "§cNo map found for you, please try again later.");
+                    return;
+                } else Bridge.getInstance().getBridgeMapLoader().resetMap(bridgePlayer.getMap());
+
+
                 bridgePlayer.getBlocks().clear();
                 player.closeInventory();
-                player.sendMessage(Bridge.PREFIX + "Changed Map length to " + mapType.getName());
+                player.sendMessage(Bridge.PREFIX + "Changed Map type to §6" + mapType.getName());
                 player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
 
 
-                // todo change player map
+                Bridge.getInstance().getBridgeMapLoader().findMapForPlayer(mapType, bridgePlayer);
+
 
             });
 
             if (index++ == 34) return;
         }
-
 
 
         player.openInventory(inventory.getInventory());
@@ -567,7 +579,6 @@ public class PlayerManagement {
     }
 
     private int getBlockEntityId(Block block) {
-        // There will be some overlap here, but these effects are very localized, so it should be OK.
         return ((block.getX() & 0xFFF) << 20)
                 | ((block.getZ() & 0xFFF) << 8)
                 | (block.getY() & 0xFF);

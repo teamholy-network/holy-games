@@ -2,6 +2,8 @@ package de.teamholy.bridge.player.settings;
 
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
+import de.teamholy.bridge.map.BridgeMapSkin;
+import de.teamholy.bridge.map.BridgeMapSkins;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.core.bukkit.perks.PerkRankType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
@@ -30,6 +32,7 @@ public class BridgeSettings {
     private TimerPlace timerPlace = TimerPlace.ACTION_BAR;
 
     private List<BridgeSound> sounds = Lists.newArrayList();
+    private List<BridgeMapSkin> mapSkins = Lists.newArrayList();
 
     private HashMap<BridgeSoundEventType, BridgeSound> currentSounds = new HashMap<>();
     private HashMap<BridgeSound, BridgeSoundEventType> soundEvents = new HashMap<>();

@@ -45,5 +45,9 @@ public class BridgeSound {
         return specialText != null;
     }
 
+    public boolean isRankSound() {
+        return perkRankType != null;
+    }
+
 
 }

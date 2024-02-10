@@ -44,6 +44,7 @@ public class HologramHandler {
         gameholograms.put("KnockbackFFA",createHologram(new ItemBuilder(Material.SANDSTONE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa")));
         gameholograms.put("Clutches",createHologram(new ItemBuilder(Material.RED_SANDSTONE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches")));
         gameholograms.put("SGFFA",createHologram(new ItemBuilder(Material.IRON_SWORD).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa")));
+        gameholograms.put("Bridge",createHologram(new ItemBuilder(Material.IRON_PICKAXE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("bridge")));
 
 
 

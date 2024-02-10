@@ -8,17 +8,20 @@ import lombok.Getter;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.List;
 
 /* copyright by Yassino */
 
 @Getter @AllArgsConstructor
 public class BridgeMapSkin {
 
+    private int id;
+
     private File schematic;
     private BridgeMapType bridgeMapType;
 
     private String name;
-    private String description;
+    private List<String> description;
 
     private ItemBuilder item;
 
@@ -30,6 +33,7 @@ public class BridgeMapSkin {
     private boolean isDefault;
 
     public boolean isBuyable() {
+        if (isDefault) return false;
         return rankType == null && specialText == null;
     }
 

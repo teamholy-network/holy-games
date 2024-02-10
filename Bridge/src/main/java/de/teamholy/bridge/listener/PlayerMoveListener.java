@@ -7,7 +7,6 @@ import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
-import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 
 import de.teamholy.core.bukkit.BukkitCore;
@@ -27,7 +26,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class PlayerMoveListener implements Listener {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
-    private final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
     private final SoundPerkManagement soundPerkManagement = Bridge.getInstance().getSoundPerkManagement();
 
 
@@ -52,14 +50,16 @@ public class PlayerMoveListener implements Listener {
             if (mapPosition == null) return;
 
             if (!mapPosition.isInMapPosition(event.getTo(), true) && player.getGameMode() != GameMode.CREATIVE) {
+
+                if (bridgePlayer.getMapLocation() != null) {
+                    player.teleport(bridgePlayer.getMapLocation());
+                }
+
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                     if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
                 }
 
-                if (bridgePlayer.getMapLocation() != null) {
-                    player.teleport(bridgePlayer.getMapLocation());
-                }
 
                 playerManagement.getScoreboard(player).updateLine(2, "§8");
                 bridgePlayer.getBlocks().clear();
@@ -97,6 +97,7 @@ public class PlayerMoveListener implements Listener {
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation().add(0,-3,0), FireworkUtil.getBlowupRandomEffect());
+                    player.teleport(bridgePlayer.getMapLocation());
                     player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §c§lall-time §frecord!");
@@ -114,6 +115,7 @@ public class PlayerMoveListener implements Listener {
                     String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
 
                     FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+                    player.teleport(bridgePlayer.getMapLocation());
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §2§lsession record!");
                     player.sendMessage("       §fYour new §atime §fis §e" + newTime + (beforeBestLocal != 0 ? " §8︳ §a-" + timerDifference + "§2 difference" : ""));
@@ -125,14 +127,13 @@ public class PlayerMoveListener implements Listener {
                     soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
 
                 } else {
+                    player.teleport(bridgePlayer.getMapLocation());
                     soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
                 }
                 bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);
 
                 bridgePlayer.addWin();
                 playerManagement.updateScoreboard(bridgePlayer);
-
-                player.teleport(bridgePlayer.getMapLocation());
 
                 playerManagement.prepareIngamePlayer(player);
                 playerManagement.updateHologram(bridgePlayer,false);

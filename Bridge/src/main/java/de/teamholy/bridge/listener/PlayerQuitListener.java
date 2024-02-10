@@ -2,8 +2,8 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.map.managment.BridgeMapManagment;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.map.management.BridgeMapManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
@@ -24,12 +24,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerQuitListener implements Listener {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+    private final BridgeMapManagment bridgeMapManagment = Bridge.getInstance().getBridgeMapLoader();
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
 
-        final BridgeMapManagement mapManagement = Bridge.getInstance().getMapManagement();
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
         var map = bridgePlayer.getMap();
 
@@ -39,20 +39,17 @@ public class PlayerQuitListener implements Listener {
 
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerManagement.updateScoreboardForPlayer(map.getMapType()), 5);
 
-        mapManagement.getLoader().unloadMap(bridgePlayer, false);
 
         if (!bridgePlayer.getBlocks().isEmpty()) {
             bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
         }
 
-        if (!mapManagement.getChangedLocations().isEmpty() && mapManagement.getChangedLocations().containsKey(bridgePlayer.getPlayer().getUniqueId())) {
-            for (Location location : mapManagement.getChangedLocations().get(bridgePlayer.getPlayer().getUniqueId())) {
-                location.getBlock().setType(Material.AIR);
-            }
-        }
 
         bridgePlayer.getBlocks().clear();
         bridgePlayer.saveStats();
+
+        bridgeMapManagment.resetMap(map);
+
 
         playerManagement.removePlayer(event.getPlayer());
     }

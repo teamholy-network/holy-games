@@ -11,21 +11,13 @@ import org.bukkit.inventory.ItemStack;
 public enum BridgeMapType {
 
     SHORT("Short",25,25,
-            new ItemBuilder(Material.SKULL_ITEM, 1, 3)
-            .setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3Rl" +
-                    "eHR1cmUvNWEyZjY3NTAwYTY1ZjNjZTc5ZDM0ZWMxNTBkZTkzZGY4ZjYwZWJlNTJlMjQ4ZjVlMWNkYjY5YjA3MjYyNTZmNyJ9fX0=", "")
+            new ItemBuilder(Material.WOOD_STEP, 1)
             .build(),180, new HologramCords(-4, 5, -2)),
     LONG("Long",50, 25,
-            new ItemBuilder(Material.SKULL_ITEM, 1, 3)
-                    .setSkullMeta(
-                            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3R" +
-                                    "leHR1cmUvNjY1NWVmZTA0MTExOTA4NmYxYmJmNmJiMmQ2NWQzYTQ0ZmE0ODkwOGQyODQ4NjA5ZjI4YmZjMDBkMmVlZjg1In19fQ==", "")
+            new ItemBuilder(Material.WOOD, 1)
                     .build(),180, new HologramCords(-4, 5, -2)),
     DIAGONAL("Diagonal",20, 50,
-            new ItemBuilder(Material.SKULL_ITEM, 1, 3)
-            .setSkullMeta(
-                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv" +
-                            "NmE0MDY3NWQzMzNhZGNjYTc1YjM1YjZiYTI5YjRmZDdlNWVhZWI5OTgzOTUyOTUzODViNDk0MTI4NzE1ZGFiMyJ9fX0=", "")
+            new ItemBuilder(Material.WOOD_STAIRS, 1)
             .build(),-135, new HologramCords(-4, 5, -2));
 
     private String name;

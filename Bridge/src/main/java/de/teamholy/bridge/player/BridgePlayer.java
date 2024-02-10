@@ -8,6 +8,8 @@ import com.google.gson.reflect.TypeToken;
 import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.map.BridgeMap;
+import de.teamholy.bridge.map.BridgeMapSkin;
+import de.teamholy.bridge.map.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.settings.sounds.BridgeItems;
@@ -28,10 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -71,6 +70,8 @@ public class BridgePlayer {
 
     private PerkPlayerProfile perkPlayerProfile;
     private SkinProfile skinProfile;
+
+    private long cooldown = System.currentTimeMillis();
 
     public BridgePlayer(UUID uuid) {
         this.uuid = uuid;
@@ -220,6 +221,10 @@ public class BridgePlayer {
 
             // TODO: Add map perks
             if (id > 5500 && id <= 6000) {
+                Arrays.stream(BridgeMapSkins.values())
+                        .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin().getId() == id)
+                        .toList()
+                        .forEach(bridgeMapSkins -> bridgeSettings.getMapSkins().add(bridgeMapSkins.getBridgeMapSkin()));
             }
         }
     }

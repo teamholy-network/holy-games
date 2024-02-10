@@ -87,29 +87,28 @@ public class PlayerEntry {
         createInv();
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
         if (!statsProfile.exists(Gamemodes.CLUTCHES.toString())) {
-            statsProfile.setStat(Gamemodes.CLUTCHES.toString(), StatsType.ALLTIME,"lol",0);
+            statsProfile.setStat(Gamemodes.CLUTCHES.toString(), StatsType.ALLTIME, "lol", 0);
 
 
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"invsort",InventoryUtils.inventoryToString(inventory));
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "invsort", InventoryUtils.inventoryToString(inventory));
 
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"delay", String.valueOf(delay));
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcSkin",String.valueOf(npcSkin.getId()));
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcAirHits", String.valueOf(npcAirHits));
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"multiReduceNpcDistance",String.valueOf(multiReduceNpcDistance));
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "delay", String.valueOf(delay));
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "npcSkin", String.valueOf(npcSkin.getId()));
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "npcAirHits", String.valueOf(npcAirHits));
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "multiReduceNpcDistance", String.valueOf(multiReduceNpcDistance));
 
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"firstHit",HitType.EASY.name());
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"secondHit",HitType.NONE.name());
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"thirdHit",HitType.NONE.name());
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"fourthHit",HitType.NONE.name());
-            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcHit",HitType.EASY.name());
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "firstHit", HitType.EASY.name());
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "secondHit", HitType.NONE.name());
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "thirdHit", HitType.NONE.name());
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "fourthHit", HitType.NONE.name());
+            statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "npcHit", HitType.EASY.name());
             statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "firstHitDelay", "COUNTDOWN");
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
 
         } else {
 
 
-
-            String inventory = statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"invsort");
+            String inventory = statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "invsort");
             if (inventory.isEmpty()) {
                 createInv();
             } else {
@@ -117,16 +116,16 @@ public class PlayerEntry {
             }
 
 
-            delay = Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"delay"));
-            npcAirHits = Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcAirHits"));
-            multiReduceNpcDistance = Double.parseDouble(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"multiReduceNpcDistance"));
+            delay = Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "delay"));
+            npcAirHits = Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "npcAirHits"));
+            multiReduceNpcDistance = Double.parseDouble(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "multiReduceNpcDistance"));
 
-            firstHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"firstHit"));
-            secondHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"secondHit"));
-            thirdHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"thirdHit"));
-            fourthHit= HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"fourthHit"));
-            npcHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcHit"));
-            npcSkin = NPCSkin.getNPCSkinFromId(Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"npcSkin")));
+            firstHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "firstHit"));
+            secondHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "secondHit"));
+            thirdHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "thirdHit"));
+            fourthHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "fourthHit"));
+            npcHit = HitType.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "npcHit"));
+            npcSkin = NPCSkin.getNPCSkinFromId(Integer.parseInt(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(), "npcSkin")));
             //firstHitDelay = FirstHitDelay.valueOf(statsProfile.getSetting(Gamemodes.CLUTCHES.toString(),"firstHitDelay"));
 
             // du hast verkackt
@@ -179,14 +178,14 @@ public class PlayerEntry {
         player.teleport(getSpectateArena().getPlayerSpawn());
 
         if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.REDUCE) {
-            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true,false).setPlayer(playerEntry.player);
+            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true, false).setPlayer(playerEntry.player);
             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
             npcEntry.update();
             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
         } else if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.EXPERIMENTAL) {
             for (int j = 0; j < 10; j++) {
                 Location location = new Location(getSpectateArena().getNpc().getWorld(), getSpectateArena().getNpc().getX() + (j * spectateArena.getArenaPlayers().get(0).getMultiReduceNpcDistance()), getSpectateArena().getNpc().getY(), getSpectateArena().getNpc().getZ());
-                NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), location, 100, 20, true,false).setPlayer(playerEntry.player);
+                NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), location, 100, 20, true, false).setPlayer(playerEntry.player);
                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                 npcEntry.update();
                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
@@ -262,7 +261,7 @@ public class PlayerEntry {
                         if (arenaType == ArenaType.REDUCE) {
 
 
-                            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), getArenaEntry().getNpc(), 100, 20, true,false).setPlayer(player);
+                            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), getArenaEntry().getNpc(), 100, 20, true, false).setPlayer(player);
                             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                             npcEntry.update();
                             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
@@ -273,7 +272,7 @@ public class PlayerEntry {
 
                             for (int j = 0; j < 10; j++) {
                                 Location location = new Location(getArenaEntry().getNpc().getWorld(), getArenaEntry().getNpc().getX() + (j * getMultiReduceNpcDistance()), getArenaEntry().getNpc().getY(), getArenaEntry().getNpc().getZ());
-                                NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), location, 100, 20, true,false).setPlayer(player);
+                                NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), location, 100, 20, true, false).setPlayer(player);
                                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                                 npcEntry.update();
                                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
@@ -357,31 +356,23 @@ public class PlayerEntry {
     public void setIngameItems() {
         player.getInventory().clear();
         int slot = 0;
-        if (!(BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.STICK) == null)) {
-            for (ItemStack itemStack : inventory.getContents()) {
-                if (itemStack != null && itemStack.getType() != null) {
-                    if (itemStack.getType() == Material.STICK) {
-                        if (arenaType == ArenaType.REDUCE || arenaType == ArenaType.EXPERIMENTAL) {
-                            player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.STICK).setUnbreakable().setEnchantments(Enchantment.KNOCKBACK, 1).build());
-                        } else {
-
-                            player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
-
-                        }
-                    } else if (itemStack.getType() == Material.SANDSTONE) {
-
-                        player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
-
+        for (ItemStack itemStack : inventory.getContents()) {
+            if (itemStack != null && itemStack.getType() != null) {
+                if (itemStack.getType() == Material.STICK) {
+                    if (arenaType == ArenaType.REDUCE || arenaType == ArenaType.EXPERIMENTAL) {
+                        player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.STICK).setUnbreakable().setEnchantments(Enchantment.KNOCKBACK, 1).build());
                     } else {
-                        this.player.getInventory().setItem(slot, itemStack);
+                        player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
                     }
+                } else if (itemStack.getType() == Material.SANDSTONE) {
+
+                    player.getInventory().setItem(slot, BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).setAmount(64).build());
+
+                } else {
+                    this.player.getInventory().setItem(slot, itemStack);
                 }
-                slot++;
             }
-        } else {
-            System.out.println(player.getName() + " items sind null");
-            createInv();
-            player.kickPlayer("§cError! §eplease rejoin");
+            slot++;
         }
     }
 
@@ -430,7 +421,7 @@ public class PlayerEntry {
         });
 
 
-        inventory.setItem(new ItemBuilder(Material.STICK, npcAirHits, (byte) 0).setName("§8» §6Air NPC hit").setLore("§7ignores the hit range &" , "§7hits you §b" + npcAirHits + " §7times in the air", "§crightclick §7-1", "§aleftclick §7+1").build(), 4, event -> {
+        inventory.setItem(new ItemBuilder(Material.STICK, npcAirHits, (byte) 0).setName("§8» §6Air NPC hit").setLore("§7ignores the hit range &", "§7hits you §b" + npcAirHits + " §7times in the air", "§crightclick §7-1", "§aleftclick §7+1").build(), 4, event -> {
 
             if (event.getClick().isRightClick()) {
                 if (getNpcAirHits() <= 0) {
@@ -455,7 +446,7 @@ public class PlayerEntry {
         });
 
         DecimalFormat df = new DecimalFormat("0.0");
-        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM,1, (byte) 3).setName("§8» §6Multireduce NPC distance").setLore("§7every npc has a §b" + df.format(multiReduceNpcDistance) + " §7blocks distance", "§crightclick §7-0.1", "§aleftclick §7+0.1").build(), 21, event -> {
+        inventory.setItem(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setName("§8» §6Multireduce NPC distance").setLore("§7every npc has a §b" + df.format(multiReduceNpcDistance) + " §7blocks distance", "§crightclick §7-0.1", "§aleftclick §7+0.1").build(), 21, event -> {
 
             if (event.getClick().isRightClick()) {
                 if (getMultiReduceNpcDistance() <= 1) {
@@ -499,8 +490,6 @@ public class PlayerEntry {
 
             });
         }
-
-
 
 
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS, 1, (byte) getHitInt(npcHit)).setName("§8» §6Reduce-NPC hit").setLore("§7Currently selected §8» §d" + npcHit.getString()).build(), 3, event -> {
@@ -607,18 +596,18 @@ public class PlayerEntry {
             }
 
             int i = 0;
-            for(NPCSkin npcSkin : NPCSkin.values()) {
-                ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM,1, (byte) 3).setName("§8» §6" + npcSkin.getName());
+            for (NPCSkin npcSkin : NPCSkin.values()) {
+                ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setName("§8» §6" + npcSkin.getName());
                 SkinEntry skinEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getSkinEntryHashMap().get(npcSkin.getUuid());
-                itemBuilder.setSkullMeta(skinEntry.getValue(),skinEntry.getSignature());
+                itemBuilder.setSkullMeta(skinEntry.getValue(), skinEntry.getSignature());
 
                 if (npcSkin == this.npcSkin) {
                     itemBuilder.setLore("§2selected");
-                    itemBuilder.setEnchantments(Enchantment.DURABILITY,1);
+                    itemBuilder.setEnchantments(Enchantment.DURABILITY, 1);
                     itemBuilder.setAttributs();
                 }
 
-                npcSkinInventory.setItem(itemBuilder.build(),i,event1 -> {
+                npcSkinInventory.setItem(itemBuilder.build(), i, event1 -> {
                     player.closeInventory();
                     setNpcSkin(npcSkin);
                     player.sendMessage(Clutches.PREFIX + "selected §6" + npcSkin.getName());
@@ -649,19 +638,19 @@ public class PlayerEntry {
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
 
 
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"invsort",InventoryUtils.inventoryToString(inventory));
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"delay",String.valueOf(delay));
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcAirHits", String.valueOf(npcAirHits));
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"multiReduceNpcDistance",String.valueOf(multiReduceNpcDistance));
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "invsort", InventoryUtils.inventoryToString(inventory));
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "delay", String.valueOf(delay));
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "npcAirHits", String.valueOf(npcAirHits));
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "multiReduceNpcDistance", String.valueOf(multiReduceNpcDistance));
 
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"firstHit",firstHit.toString());
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"secondHit",secondHit.toString());
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"thirdHit",thirdHit.toString());
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"fourthHit",fourthHit.toString());
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcHit",npcHit.toString());
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "firstHit", firstHit.toString());
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "secondHit", secondHit.toString());
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "thirdHit", thirdHit.toString());
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "fourthHit", fourthHit.toString());
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "npcHit", npcHit.toString());
 
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"npcSkin",String.valueOf(npcSkin.getId()));
-        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(),"firstHitDelay", firstHitDelay.name());
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "npcSkin", String.valueOf(npcSkin.getId()));
+        statsProfile.setSetting(Gamemodes.CLUTCHES.toString(), "firstHitDelay", firstHitDelay.name());
 
         playgroundPlayer.saveData();
 
@@ -704,32 +693,31 @@ public class PlayerEntry {
             scoreboardAPI.setLine(3, " §cbest §freducer!");
             scoreboardAPI.setLine(2, "§5");
             scoreboardAPI.setLine(1, " §8§m--------------- ");
-            scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+            scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
         } else if (playerState == PlayerState.SPECTATE) {
             scoreboardAPI.setLine(5, " §8§m--------------- ");
-            scoreboardAPI.setLine(4,"§2");
+            scoreboardAPI.setLine(4, "§2");
             scoreboardAPI.setLine(3, " §7Arena§8: §b" + arenaEntry.getMapEntry().getName());
             scoreboardAPI.setLine(2, "§5");
             scoreboardAPI.setLine(1, " §8§m--------------- ");
-            scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+            scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
         } else {
             if (arenaType == ArenaType.REDUCE || arenaType == ArenaType.EXPERIMENTAL) {
 
                 scoreboardAPI.setLine(7, " §8§m--------------- ");
-                scoreboardAPI.setLine(6,"§1");
+                scoreboardAPI.setLine(6, "§1");
                 scoreboardAPI.setLine(5, " §7Arena§8: §b" + arenaEntry.getMapEntry().getName());
                 scoreboardAPI.setLine(4, "§2");
                 scoreboardAPI.setLine(3, " §7NPC hit§8: §b" + npcHit.getString());
                 scoreboardAPI.setLine(2, "§3");
                 scoreboardAPI.setLine(1, " §8§m--------------- ");
-                scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+                scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
 
             } else {
 
 
-
                 scoreboardAPI.setLine(11, " §8§m--------------- ");
-                scoreboardAPI.setLine(10,"§1");
+                scoreboardAPI.setLine(10, "§1");
                 scoreboardAPI.setLine(9, " §7Arena§8: §b" + arenaEntry.getMapEntry().getName());
                 scoreboardAPI.setLine(8, " §7Mode§8: §b" + arenaType.getName());
                 scoreboardAPI.setLine(7, "§2");
@@ -739,7 +727,7 @@ public class PlayerEntry {
                 scoreboardAPI.setLine(3, " §7Fourth hit§8: §b" + fourthHit.getString());
                 scoreboardAPI.setLine(2, "§3");
                 scoreboardAPI.setLine(1, " §8§m--------------- ");
-                scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
+                scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
             }
         }
         scoreboardAPI.build();
@@ -774,13 +762,13 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.hidePlayer(player);
                 } else {
-                    all.sendMessage(Clutches.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() +  " §7Is now in §aVanish!");
+                    all.sendMessage(Clutches.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() + " §7Is now in §aVanish!");
                 }
             }
             player.setAllowFlight(true);
             player.setFlying(true);
             player.getInventory().setArmorContents(null);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,99999,1));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 99999, 1));
             player.getInventory().clear();
             player.getInventory().setItem(4, new ItemBuilder(Material.EYE_OF_ENDER).setName("§8» §cStalker §8(§7rightclick§8)").build());
 

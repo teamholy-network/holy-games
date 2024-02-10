@@ -7,26 +7,28 @@ import lombok.Getter;
 import org.bukkit.Material;
 
 import java.io.File;
+import java.util.Arrays;
 
 /* copyright by Yassino */
 @Getter @AllArgsConstructor
 public enum BridgeMapSkins {
 
-    TREE_SHORT(new BridgeMapSkin(new File(pathToSchematic() + "/Tree-Short.schematic"),
+    TREE_SHORT(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Short.schematic"),
             BridgeMapType.SHORT,
-            "Tree",
-            "Default Teamholy bridge map",
+            "Tree", Arrays.asList(" §7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
-    TREE_DIAGONAL(new BridgeMapSkin(new File(pathToSchematic() + "/Tree-Diagonal.schematic"),
-            BridgeMapType.DIAGONAL,"Tree","Default Teamholy bridge map",
+    TREE_DIAGONAL(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Diagonal.schematic"),
+            BridgeMapType.DIAGONAL,
+            "Tree",Arrays.asList(" §7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
-    TREE_LONG(new BridgeMapSkin(
+    TREE_LONG(new BridgeMapSkin(0,
             new File(pathToSchematic() + "/Tree-Long.schematic"),
-            BridgeMapType.LONG,"Tree","Default Teamholy bridge map",
+            BridgeMapType.LONG,
+            "Tree",Arrays.asList(" §7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true));
 

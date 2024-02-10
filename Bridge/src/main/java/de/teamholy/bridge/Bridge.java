@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.listener.*;
-import de.teamholy.bridge.map.BridgeMapLoader;
+import de.teamholy.bridge.map.managment.BridgeMapManagment;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.player.management.BridgeMapSkinPerkManagment;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
@@ -13,7 +14,6 @@ import de.teamholy.bridge.tasks.BridgeTimer;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.concurrent.*;
@@ -33,7 +33,8 @@ public class Bridge extends JavaPlugin {
 
     private PlayerManagement playerManagement;
     private SoundPerkManagement soundPerkManagement;
-    private BridgeMapLoader bridgeMapLoader;
+    private BridgeMapManagment bridgeMapLoader;
+    private BridgeMapSkinPerkManagment bridgeMapSkinPerkManagment;
 
 
     private SongManager songManager;
@@ -50,7 +51,8 @@ public class Bridge extends JavaPlugin {
 
         this.playerManagement = new PlayerManagement();
         this.soundPerkManagement = new SoundPerkManagement();
-        this.bridgeMapLoader = new BridgeMapLoader();
+        this.bridgeMapLoader = new BridgeMapManagment();
+        this.bridgeMapSkinPerkManagment = new BridgeMapSkinPerkManagment();
 
         loadCommand();
         loadListener();

@@ -3,17 +3,12 @@ package de.teamholy.bridge.map;
 import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.schematic.Schematic;
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -32,7 +27,8 @@ public class BridgeMap implements Cloneable {
 
     private String name;
     private MapPosition mapPosition;
-    private EditSession editSession;
+
+    private Location spawnLocation;
 
     private int givenSpace;
     private BridgeMapType mapType;
@@ -55,43 +51,47 @@ public class BridgeMap implements Cloneable {
         return new BridgeMap(name, mapType);
     }
 
-    public CompletableFuture<Boolean> loadMap(Location location, File schematicFile) {
+    public void loadMap(boolean firstPaste, Location location, BridgeMapSkin bridgeMapSkin) {
 
-        int distance = (mapType.getLength() + 10);
-        if (mapType == BridgeMapType.DIAGONAL) {
-            mapPosition = new MapPosition(location.clone().add(distance, 35, 10), location.clone().subtract(10, 2, distance));
-        } else {
-            mapPosition = new MapPosition(location.clone().add(10, 35, 10), location.clone().subtract(10, 2, distance));
+
+        if (firstPaste) {
+            int distance = (mapType.getLength() + 10);
+            if (mapType == BridgeMapType.DIAGONAL) {
+                mapPosition = new MapPosition(location.clone().add(distance, 35, 10), location.clone().subtract(10, 2, distance));
+            } else {
+                mapPosition = new MapPosition(location.clone().add(10, 35, 10), location.clone().subtract(10, 2, distance));
+            }
+
         }
+
+        this.bridgeMapSkin = bridgeMapSkin;
+
+        this.spawnLocation = location.clone().add(0.5,0,0.5);
 
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
 
-        ClipboardFormat format = ClipboardFormat.findByFile(schematicFile);
+        ClipboardFormat format = ClipboardFormat.findByFile(bridgeMapSkin.getSchematic());
 
 
         if (format == null) {
             System.out.println("Format not found");
             completableFuture.complete(false);
-            return completableFuture;
+            return;
         }
 
         try {
             var bukkitWorld = FaweAPI.getWorld(mapType.getName());
             BlockVector vector = new BlockVector(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
-            Schematic schematic = format.load(schematicFile);
+            Schematic schematic = format.load(bridgeMapSkin.getSchematic());
 
-            EditSession editSession = schematic.paste(bukkitWorld, vector, true, false, null);
-            setEditSession(editSession);
+            schematic.paste(bukkitWorld, vector, true, false, null);
 
-            completableFuture.complete(true);
         } catch (IOException exception) {
             exception.printStackTrace();
-            completableFuture.complete(false);
         }
 
-        return completableFuture;
     }
 
 }

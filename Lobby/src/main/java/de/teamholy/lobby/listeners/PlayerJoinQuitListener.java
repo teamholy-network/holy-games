@@ -35,7 +35,7 @@ public class PlayerJoinQuitListener implements Listener {
         Player player = event.getPlayer();
         player.setGameMode(GameMode.SURVIVAL);
         player.setFoodLevel(20);
-        player.sendTitle("","§c§kN§c §oNEW §cgamemode §a§lPlayground§c §c§kd");
+        player.sendTitle("","§c§kN§c §oNEW §cgamemode §e§lBridge§c §c§kd");
 
         final LobbyPlayer[] lobbyPlayer = new LobbyPlayer[1];
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {
@@ -51,6 +51,7 @@ public class PlayerJoinQuitListener implements Listener {
             lobbyPlayer[0].createNPC("§b§lClutches", UUID.fromString("878d7127-9a83-4480-86e4-43cdde07b11a"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches"));
             lobbyPlayer[0].createNPC("§e§lKnockbackFFA", UUID.fromString("2552774a-1364-4407-b7e3-d2f66d93605c"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa"));
             lobbyPlayer[0].createNPC("§a§lSGFFA", UUID.fromString("bef28b0b-cb18-412c-98ec-2c6b33ac3933"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa"));
+            lobbyPlayer[0].createNPC("§e§lBridge", UUID.fromString("f33ce1c3-6e0f-41f9-b2c8-0af8a015b1fb"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("bridge"));
 
             new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("dfdb6c61-4060-4d8c-af20-1b21c4fc65a4"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bedwars")).build(player);
 

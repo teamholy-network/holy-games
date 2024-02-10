@@ -244,9 +244,9 @@ public class LobbyPlayer {
     }
 
     public void openGamesInventory() {
-        Inventory inventory = new Inventory("§8» §6Games", 9 * 3);
+        Inventory inventory = new Inventory("§8» §6Games", 9 * 4);
 
-        for (int i = 0; i < 9 * 3; i++) {
+        for (int i = 0; i < 9 * 4; i++) {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
 
@@ -265,7 +265,7 @@ public class LobbyPlayer {
                         , " "
                         , "§8» §7Click to §6§nconnect"
                 )
-                .build(), 12, (event) -> openGameSubInventory("MLGRush", Material.STICK));
+                .build(), 21, (event) -> openGameSubInventory("MLGRush", Material.STICK));
         inventory.setItem(new ItemBuilder(Material.RED_SANDSTONE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Clutches")))
                 .setName("§8» §6Clutches §8x §6Reduce §8/ §aPlayground")
                 .setLore("§c§lNEW MODE §a§lPLAYGROUND! ",
@@ -324,6 +324,20 @@ public class LobbyPlayer {
                         , "§8» §7Click to §6§nconnect"
                 )
                 .build(), 16, (event) -> openGameSubInventory("SGFFA", Material.IRON_SWORD));
+
+        inventory.setItem(new ItemBuilder(Material.IRON_PICKAXE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Bridge")))
+                .setName("§c§lNEW §8» §6Bridge §8/ §6Fastbuilders")
+                .setLore(" "
+                        , " §7Practice your building skills "
+                        , " §7by fast building a §ebridge §7to the end island. "
+                        , " §7Best way to practice your §atelly§8, §emoonwalk§8, §cgodbridge§8.... "
+                        , " "
+                        , " §fSingleplayer "
+                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Bridge") + " §7players"
+                        , " "
+                        , "§8» §7Click to §6§nconnect"
+                )
+                .build(), 12, (event) -> openGameSubInventory("Bridge", Material.IRON_PICKAXE));
 
 
         player.openInventory(inventory.getInventory());

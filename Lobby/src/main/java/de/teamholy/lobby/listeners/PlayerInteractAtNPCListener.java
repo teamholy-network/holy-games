@@ -42,6 +42,7 @@ public class PlayerInteractAtNPCListener implements Listener {
             case "bedwars&rush" -> lobbyPlayer.getPlayer().teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn"));
             case "website" -> lobbyPlayer.executeBungeeCommand("link");
             case "namemc" -> lobbyPlayer.executeBungeeCommand("vote");
+            case "bridge" -> lobbyPlayer.openGameSubInventory("Bridge", Material.IRON_PICKAXE);
             default -> {
             }
 

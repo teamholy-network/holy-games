@@ -19,19 +19,7 @@ public class FireworkUtil {
     private static Method fireworkGetHandle;
 
     public static Firework playFirework(World world, Location location, FireworkEffect fireworkEffect) {
-        Firework firework = (Firework) world.spawn(location, Firework.class);
-        Object nmsWorld = null;
-        Object nmsFirework = null;
-        try {
-            nmsWorld = getNMSObject(world, worldGetHandle);
-            nmsFirework = getNMSObject(firework, fireworkGetHandle);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        if (nmsWorldBroadcastEntityEffect == null) {
-            nmsWorldBroadcastEntityEffect = getMethod(nmsWorld.getClass(), "broadcastEntityEffect");
-        }
+        Firework firework = world.spawn(location, Firework.class);
 
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.clearEffects();
@@ -39,43 +27,18 @@ public class FireworkUtil {
         fireworkMeta.addEffect(fireworkEffect);
         firework.setFireworkMeta(fireworkMeta);
 
-        try {
-            nmsWorldBroadcastEntityEffect.invoke(nmsWorld, nmsFirework, (byte) 17);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
         return firework;
     }
 
-    private static Object getNMSObject(Object obj, Method method) throws Exception {
-        if (method == null) {
-            method = getMethod(obj.getClass(), "getHandle");
-        }
-        return method.invoke(obj);
-    }
-
-    private static Method getMethod(Class<?> cl, String methodName) {
-        for (Method method : cl.getMethods()) {
-            if (method.getName().equals(methodName)) {
-                return method;
-            }
-        }
-        return null;
-    }
-
     public static FireworkEffect getRandomEffect() {
-        Random generator = new Random();
-        int type = generator.nextInt(9) + 1;
-        return generateFireworkEffect(type, FireworkEffect.Type.BALL);
+        return generateFireworkEffect(FireworkEffect.Type.BALL);
     }
 
     public static FireworkEffect getBlowupRandomEffect() {
-        Random generator = new Random();
-        int type = generator.nextInt(6) + 1;
-        return generateFireworkEffect(type, FireworkEffect.Type.BALL_LARGE);
+        return generateFireworkEffect(FireworkEffect.Type.BALL_LARGE);
     }
 
-    private static FireworkEffect generateFireworkEffect(int type, FireworkEffect.Type effectType) {
+    private static FireworkEffect generateFireworkEffect(FireworkEffect.Type effectType) {
         Color primaryColor = getRandomColor();
         Color fadeColor = getRandomColor();
 
@@ -83,6 +46,7 @@ public class FireworkUtil {
                 .with(effectType)
                 .withColor(primaryColor)
                 .withFade(fadeColor)
+                .flicker(true)
                 .build();
     }
 
