@@ -28,7 +28,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         if (!event.getPlayer().hasPermission("teamholy.team")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST,"\n §f§lRELEASE of §e§lBRIDGE \n     §bToday §cplease wait!");
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST,"\n §f§lRELEASE of §e§lBRIDGE \n     §bToday §cplease wait a few hours!");
         }
 
     }
