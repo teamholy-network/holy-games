@@ -65,6 +65,9 @@ public class BridgePlayer {
     private long placedBlocks = 0L;
     private long gamesPlayed = 0L;
     private Map<BridgeMapType, List<Long>> bestTimes = new HashMap<>();
+    private Map<BridgeMapType, BridgeMapSkin> selectedSkins = new HashMap<>();
+
+    private boolean preview = false;
 
     private Hologram hologram;
 
@@ -100,6 +103,7 @@ public class BridgePlayer {
         skinProfile = BukkitCore.getAPI().getSkinService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getSkinService().getRepository().findFirstById(player.getUniqueId()));
         for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
             bestTimes.put(bridgeMapType, Lists.newArrayList());
+            selectedSkins.put(bridgeMapType, BridgeMapSkins.getDefaultSkin(bridgeMapType));
         }
 
         String gameKey = Gamemodes.BRIDGE.toString();

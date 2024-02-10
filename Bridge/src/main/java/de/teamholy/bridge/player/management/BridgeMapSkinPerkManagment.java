@@ -10,11 +10,16 @@ import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.util.ItemBuilder;
+import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
+import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.Pagifier;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
 import javax.annotation.Nonnull;
@@ -22,12 +27,53 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /* copyright by Yassino */
 public class BridgeMapSkinPerkManagment {
 
     public static final int MAX_MAPS_PER_PAGE = 21;
+
+    public void buyPerk(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
+        PerkPlayerProfile perkProfile = bridgePlayer.getPerkPlayerProfile();
+
+        PlayerProfile playerProfile = BukkitCore.getInstance().getCoreAPI().getPlayerService().getEntity(bridgePlayer.getUuid(), () -> BukkitCore.getInstance().getCoreAPI().getPlayerService().getRepository().findFirstById(bridgePlayer.getUuid()));
+
+        if (playerProfile == null) {
+            return;
+        }
+
+
+        if (perkProfile.getOwnedPerks().contains(bridgeMapSkin.getId())) {
+            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou already own this perk!");
+            return;
+        }
+
+        if (playerProfile.getCoins() < bridgeMapSkin.getPrice()) {
+            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou don't have enough coins to buy this perk!");
+            return;
+        }
+
+        playerProfile.setCoins(playerProfile.getCoins() - bridgeMapSkin.getPrice());
+        perkProfile.getOwnedPerks().add(bridgeMapSkin.getId());
+        BukkitCore.getInstance().getPerkCache().getPerkPlayerProfileHashMap().put(bridgePlayer.getUuid(), perkProfile);
+        BukkitCore.getAPI().getPerkPlayerService().saveEntity(perkProfile, true, true);
+        BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile, true, true);
+
+        for (BridgeMapSkins bridgeMapSkins : Arrays.stream(BridgeMapSkins.values()).filter(map -> map.getBridgeMapSkin().getId() == bridgeMapSkin.getId()).toList()) {
+            bridgePlayer.getBridgeSettings().getMapSkins().add(bridgeMapSkins.getBridgeMapSkin());
+        }
+
+
+        Player bukkitPlayer = bridgePlayer.getPlayer();
+        if (bukkitPlayer != null) {
+            bukkitPlayer.sendMessage(Bridge.PREFIX + "§7You successfully bought the §e" + bridgeMapSkin.getName() + " §7map for §e" + bridgeMapSkin.getPrice() + " §6coins!");
+            openMapInventory(bridgePlayer, bridgeMapSkin.getBridgeMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.OWNED, 1);
+            bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.LEVEL_UP, 2.0F, 2.0F);
+        }
+    }
+
 
     public de.teamholy.core.bukkit.utils.Inventory openMapInventory(BridgePlayer bridgePlayer, BridgeMapType bridgeMapType, PerkManager.SortOptionPerk sortOptionPerk, PerkManager.SortOptionPlayer sortOptionPlayer, int page) {
         var size = 4; // 4 rows by default
@@ -37,15 +83,15 @@ public class BridgeMapSkinPerkManagment {
                 .filter(map -> map.getBridgeMapType() == bridgeMapType)
                 .filter(map ->
                         switch (sortOptionPlayer) {
-                            case OWNED -> (map.isBuyable() && bridgePlayer.getBridgeSettings().getSounds().contains(map)
-                                    || (!map.isBuyable() && bridgePlayer.getPlayer().hasPermission(map.getRankType().getPermission()))
-                                    || (map.isSpecial() && bridgePlayer.getBridgeSettings().getSounds().contains(map)
-                                    && map.isDefault())
+                            case OWNED -> (map.isBuyable() && bridgePlayer.getBridgeSettings().getMapSkins().contains(map)
+                                    || (map.isRank() && bridgePlayer.getPlayer().hasPermission(map.getRankType().getPermission()))
+                                    || (map.isSpecial() && bridgePlayer.getBridgeSettings().getMapSkins().contains(map)
+                                    || map.isDefault())
                             );
                             case UNOWNED ->
-                                    (map.isBuyable() && !bridgePlayer.getBridgeSettings().getSounds().contains(map)
-                                            || (!map.isBuyable() && !bridgePlayer.getPlayer().hasPermission(map.getRankType().getPermission()))
-                                            || (map.isSpecial() && !bridgePlayer.getBridgeSettings().getSounds().contains(map)));
+                                    (map.isBuyable() && !bridgePlayer.getBridgeSettings().getMapSkins().contains(map)
+                                            || (map.isRank() && !bridgePlayer.getPlayer().hasPermission(map.getRankType().getPermission()))
+                                            || (map.isSpecial() && !bridgePlayer.getBridgeSettings().getMapSkins().contains(map)));
                             default -> true;
                         }
                 )
@@ -55,7 +101,7 @@ public class BridgeMapSkinPerkManagment {
                             return map.isBuyable();
                         }
                         case RANK -> {
-                            return !map.isBuyable();
+                            return map.isRank();
                         }
                         case SPECIAL -> {
                             return map.isSpecial();
@@ -161,16 +207,68 @@ public class BridgeMapSkinPerkManagment {
 
             holyInventory.setItem(
                     map.getItem().name("§8» §6" + map.getName())
-                            .withGlow(bridgePlayer.getBridgeSettings().getMapSkins().contains(map))
+                            .withGlow(bridgePlayer.getSelectedSkins().get(bridgeMapType) == map)
                             .lore(getLore(bridgePlayer, map))
                             .build(), slot, event -> {
 
+                        if (doOwn(bridgePlayer, map)) {
 
-                        if (event.getClick() == ClickType.LEFT) {
+                            var bridgeMap = bridgePlayer.getMap();
+                            if (bridgeMap.getBridgeMapSkin() == map) {
+                                return;
+                            }
 
-                        } else if (event.getClick() == ClickType.RIGHT) {
+                            if (bridgePlayer.getCooldown() > System.currentTimeMillis()) {
+                                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou have to wait a few seconds before you can change your map skin again.");
+                                return;
+                            }
 
+
+
+                            bridgeMap.setBridgeMapSkin(map);
+                            bridgePlayer.getSelectedSkins().put(bridgeMapType, map);
+                            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation().add(-0.5,0,-0.5), map, true);
+                            bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 2.0F, 2.0F);
+                            bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
+                            bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation());
+                            bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§aYou have successfully selected the map skin §e" + map.getName() + "§a.");
+                            bridgePlayer.getPlayer().closeInventory();
+                        } else {
+                            if (event.isLeftClick()) {
+
+                                if (map.isBuyable()) {
+                                    buyPerk(bridgePlayer, map);
+                                } else if (map.isRank()) {
+                                    bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou need the rank " + map.getRankType().getRankName() + "§c to select this map skin.");
+                                } else if (map.isSpecial()) {
+                                    bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cThis map skin is not available for you.");
+                                }
+                            } else if (event.isRightClick()) {
+
+                                if (bridgePlayer.getCooldown() > System.currentTimeMillis()) {
+                                    bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§cYou have to wait a few seconds before you preview again.");
+                                    return;
+                                }
+
+                                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
+
+                                var bridgeMap = bridgePlayer.getMap();
+                                bridgeMap.loadMap(false, bridgeMap.getSpawnLocation().add(-0.5,0,-0.5), map, true);
+
+                                bridgePlayer.getPlayer().closeInventory();
+                                bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§aYou can now preview the map skin §e" + map.getName() + "§a.");
+
+                                bridgePlayer.getPlayer().setAllowFlight(true);
+                                bridgePlayer.getPlayer().setFlying(true);
+                                bridgePlayer.getPlayer().teleport(bridgeMap.getSpawnLocation());
+                                bridgePlayer.setPreview(true);
+
+                                bridgePlayer.getPlayer().getInventory().clear();
+                                bridgePlayer.getPlayer().getInventory().setItem(4, new ItemBuilder(Material.BARRIER).name("§8» §6Leave preview").build());
+
+                            }
                         }
+
 
                     });
             slot++;
@@ -189,27 +287,25 @@ public class BridgeMapSkinPerkManagment {
     private static List<String> getLore(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
         List<String> lore = Lists.newArrayList();
 
-        var own = ((bridgeMapSkin.isBuyable() || bridgeMapSkin.isSpecial()) && bridgePlayer.getBridgeSettings().getSounds().contains(bridgeMapSkin))
-                || (bridgeMapSkin.isRank()) && bridgePlayer.getPlayer().hasPermission(bridgeMapSkin.getRankType().getPermission())
-                || bridgeMapSkin.isDefault();
 
-        if (!own) {
+        if (!doOwn(bridgePlayer, bridgeMapSkin)) {
             if (bridgeMapSkin.isBuyable()) {
-                lore.add("§7This sound costs §e" + bridgeMapSkin.getPrice() + " §6coins");
+                lore.add("§7This map costs §e" + bridgeMapSkin.getPrice() + " §6coins");
             } else if (bridgeMapSkin.isRank()) {
                 lore.add("§7Available for " + bridgeMapSkin.getRankType().getRankName() + "§7 and above");
             } else if (bridgeMapSkin.isSpecial()) {
                 lore.add(bridgeMapSkin.getSpecialText());
-            } else {
-                lore.add(" ");
-                lore.addAll(bridgeMapSkin.getDescription());
             }
+
+            lore.add(" ");
+            lore.addAll(bridgeMapSkin.getDescription());
+            lore.add(" ");
+            lore.add("§7§oRight click, to preview");
+            lore.add(" ");
         } else {
 
 
-            if (((bridgeMapSkin.isSpecial() || bridgeMapSkin.isBuyable()) && bridgePlayer.getBridgeSettings().getCurrentSounds().containsValue(bridgeMapSkin))
-                    || bridgeMapSkin.isRank() && bridgePlayer.getPlayer().hasPermission(bridgeMapSkin.getRankType().getPermission()))   {
-
+            if (bridgePlayer.getSelectedSkins().get(bridgeMapSkin.getBridgeMapType()) == bridgeMapSkin){
                 lore.add("§2Selected");
             } else {
                 lore.add("§aClick to select");
@@ -218,10 +314,14 @@ public class BridgeMapSkinPerkManagment {
             lore.add(" ");
             lore.addAll(bridgeMapSkin.getDescription());
             lore.add(" ");
-            lore.add("§7Right click, to preview");
-            lore.add(" ");
         }
         return lore;
+    }
+
+    private static boolean doOwn(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
+        return  (bridgeMapSkin.isBuyable() && bridgePlayer.getBridgeSettings().getMapSkins().contains(bridgeMapSkin))
+                || (bridgeMapSkin.isRank()) && bridgePlayer.getPlayer().hasPermission(bridgeMapSkin.getRankType().getPermission())
+                || bridgeMapSkin.isDefault();
     }
 
 

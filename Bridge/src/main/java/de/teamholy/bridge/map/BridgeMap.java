@@ -29,6 +29,7 @@ public class BridgeMap implements Cloneable {
     private MapPosition mapPosition;
 
     private Location spawnLocation;
+    private Location pasteLocation;
 
     private int givenSpace;
     private BridgeMapType mapType;
@@ -51,10 +52,11 @@ public class BridgeMap implements Cloneable {
         return new BridgeMap(name, mapType);
     }
 
-    public void loadMap(boolean firstPaste, Location location, BridgeMapSkin bridgeMapSkin) {
+    public void loadMap(boolean firstPaste, Location location, BridgeMapSkin bridgeMapSkin, boolean pasteAir) {
 
 
         if (firstPaste) {
+            pasteLocation = location.clone();
             int distance = (mapType.getLength() + 10);
             if (mapType == BridgeMapType.DIAGONAL) {
                 mapPosition = new MapPosition(location.clone().add(distance, 35, 10), location.clone().subtract(10, 2, distance));
@@ -82,11 +84,11 @@ public class BridgeMap implements Cloneable {
 
         try {
             var bukkitWorld = FaweAPI.getWorld(mapType.getName());
-            BlockVector vector = new BlockVector(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+            BlockVector vector = new BlockVector(pasteLocation.getX(), pasteLocation.getY(), pasteLocation.getZ());
 
             Schematic schematic = format.load(bridgeMapSkin.getSchematic());
 
-            schematic.paste(bukkitWorld, vector, true, false, null);
+            schematic.paste(bukkitWorld, vector, true, pasteAir, null);
 
         } catch (IOException exception) {
             exception.printStackTrace();

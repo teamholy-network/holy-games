@@ -81,6 +81,8 @@ public class PlayerManagement {
     public void prepareIngamePlayer(Player player) {
         preparePlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
+        player.setAllowFlight(false);
+        player.setFlying(false);
         BridgePlayer bridgePlayer = getBridgePlayer(player);
 
         var i = 0;

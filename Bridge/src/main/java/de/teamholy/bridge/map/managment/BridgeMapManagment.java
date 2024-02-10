@@ -64,7 +64,7 @@ public class BridgeMapManagment {
                     if (schematicIndex < MAP_COUNT) {
                         BridgeMap bridgeMap = new BridgeMap(bridgeMapType.toString() + "-" + schematicIndex, bridgeMapType);
                         bridgeMap.loadMap(true, new Location(Bukkit.getWorld(bridgeMapType.getName()), xCord, 102, 0),
-                                BridgeMapSkins.getDefaultSkin(bridgeMapType));
+                                BridgeMapSkins.getDefaultSkin(bridgeMapType),false);
                         maps.add(bridgeMap);
 
                         xCord += bridgeMapType.getDistanceBetweenMaps();
@@ -113,7 +113,7 @@ public class BridgeMapManagment {
     public void resetMap(BridgeMap bridgeMap) {
         bridgeMap.setUsed(false);
         if (!bridgeMap.getBridgeMapSkin().isDefault()) {
-            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), BridgeMapSkins.getDefaultSkin(bridgeMap.getMapType()));
+            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), BridgeMapSkins.getDefaultSkin(bridgeMap.getMapType()), true);
         }
     }
 

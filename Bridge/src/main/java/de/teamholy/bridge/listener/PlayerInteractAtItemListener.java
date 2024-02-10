@@ -47,6 +47,7 @@ public class PlayerInteractAtItemListener implements Listener {
                 if (item.getItemMeta().getDisplayName().equalsIgnoreCase("§cLeave")) {
                     player.kickPlayer(null);
                 }
+
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
 
@@ -84,6 +85,17 @@ public class PlayerInteractAtItemListener implements Listener {
                     event.setCancelled(true);
 
                     playerManagement.ingameSettingsInventory(player);
+                } else if (item.getItemMeta().getDisplayName().toLowerCase().contains("leave preview")) {
+                    playerManagement.prepareIngamePlayer(player);
+                    player.teleport(bridgePlayer.getMapLocation());
+                    bridgePlayer.getMap()
+                            .loadMap(
+                                    false,
+                                    bridgePlayer.getMapLocation().add(-0.5,0,-0.5),
+                                    bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()),
+                                    true);
+
+                    bridgePlayer.setPreview(false);
                 }
             }
         }

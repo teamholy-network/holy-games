@@ -55,6 +55,19 @@ public class PlayerMoveListener implements Listener {
                     player.teleport(bridgePlayer.getMapLocation());
                 }
 
+                if (bridgePlayer.isPreview()) {
+                    playerManagement.prepareIngamePlayer(player);
+                    bridgePlayer.getMap()
+                            .loadMap(
+                                    false,
+                                    bridgePlayer.getMapLocation().add(-0.5,0,-0.5),
+                                    bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()),
+                                    true);
+
+                    bridgePlayer.setPreview(false);
+                    return;
+                }
+
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     playerManagement.spawnBlockAnimation(bridgePlayer);
                     if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
