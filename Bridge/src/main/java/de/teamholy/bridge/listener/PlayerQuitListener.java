@@ -31,6 +31,9 @@ public class PlayerQuitListener implements Listener {
         event.setQuitMessage(null);
 
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
+
+        if (bridgePlayer == null) return;
+
         var map = bridgePlayer.getMap();
 
 

@@ -127,7 +127,7 @@ public class PlayerMoveListener implements Listener {
                 } else if (current < beforeBestLocal || beforeBestLocal == 0) {
                     String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
 
-                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
+//                    FireworkUtil.playFirework(player.getWorld(),player.getLocation(), FireworkUtil.getBlowupRandomEffect());
                     player.teleport(bridgePlayer.getMapLocation());
                     player.sendMessage("");
                     player.sendMessage(" §fYou have beaten your §2§lsession record!");

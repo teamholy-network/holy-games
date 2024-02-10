@@ -127,7 +127,7 @@ public class PlayerManagement {
         bridgeScoreboard.setLine(14, "§8§m-----------------");
         bridgeScoreboard.setLine(13, " §7Best Time");
         bridgeScoreboard.setLine(12, " §c-/-");
-        bridgeScoreboard.setLine(11, "§7");
+        bridgeScoreboard.setLine(11, "§1");
 
         bridgeScoreboard.setLine(10, " §6Top 5");
         bridgeScoreboard.setLine(9, "§f    §oSession");

@@ -23,45 +23,52 @@ public class BridgeTimer implements Runnable {
 
     @Override
     public void run() {
-        for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
-            var player = bridgePlayer.getPlayer();
+        try {
 
-            if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
-                if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
-                    long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
-                    String timer = FormatTime.formatTimeManually(playerTime);
+            for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+                var player = bridgePlayer.getPlayer();
 
-                    switch (bridgePlayer.getBridgeSettings().getTimerPlace()) {
-                        case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
-                        case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer,0,20,0);
-                        case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
+                if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+                    if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
+                        long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
+                        String timer = FormatTime.formatTimeManually(playerTime);
+
+                        switch (bridgePlayer.getBridgeSettings().getTimerPlace()) {
+                            case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
+                            case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer,0,20,0);
+                            case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
+                        }
+                    }
+
+                    if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
+                        long blockTime = bridgePlayer.getBridgeSettings().getRemovalTime();
+                        HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
+
+
+                        if (blocks.isEmpty() || blockTime < 1) return;
+
+                        blocks.forEach((block, time) -> {
+                            if ((System.currentTimeMillis() - time) / 1000 >= blockTime) {
+
+                                Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> {
+                                    FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                                    block.setType(Material.AIR);
+                                    fallingBlock.setDropItem(false);
+                                    fallingBlock.setHurtEntities(false);
+                                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40L);
+                                });
+
+
+                                bridgePlayer.getBlocks().remove(block);
+                            }
+                        });
                     }
                 }
+            };
 
-                if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
-                    long blockTime = bridgePlayer.getBridgeSettings().getRemovalTime();
-                    HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
-                    if (blocks.isEmpty() || blockTime < 1) return;
-
-                    blocks.forEach((block, time) -> {
-                        if ((System.currentTimeMillis() - time) / 1000 >= blockTime) {
-
-                            Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> {
-                                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
-                                block.setType(Material.AIR);
-                                fallingBlock.setDropItem(false);
-                                fallingBlock.setHurtEntities(false);
-                                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40L);
-                            });
-
-
-                            bridgePlayer.getBlocks().remove(block);
-                        }
-                    });
-                }
-            }
-        };
     }
 }
