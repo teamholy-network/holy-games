@@ -413,7 +413,7 @@ public class SoundPerkManagement {
                 lore.add(bridgeSound.getSpecialText());
             }
         } else {
-            if (((bridgeSound.isSpecial() || bridgeSound.isBuyable()) && bridgePlayer.getBridgeSettings().getCurrentSounds().containsValue(bridgeSound)) || bridgeSound.isRankSound() && bridgePlayer.getPlayer().hasPermission(bridgeSound.getPerkRankType().getPermission()))   {
+            if (bridgePlayer.getBridgeSettings().getCurrentSounds().containsValue(bridgeSound)) {
                 lore.add("§2Selected");
             } else {
                 lore.add("§aClick to select");
