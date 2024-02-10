@@ -91,7 +91,7 @@ public class PlayerInteractAtItemListener implements Listener {
                     bridgePlayer.getMap()
                             .loadMap(
                                     false,
-                                    bridgePlayer.getMapLocation().add(-0.5,0,-0.5),
+                                    bridgePlayer.getMapLocation().clone().add(-0.5,0,-0.5),
                                     bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()),
                                     true);
 
