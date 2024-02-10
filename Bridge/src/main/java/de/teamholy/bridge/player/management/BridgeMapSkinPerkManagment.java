@@ -218,7 +218,7 @@ public class BridgeMapSkinPerkManagment {
             lore.add(" ");
             lore.addAll(bridgeMapSkin.getDescription());
             lore.add(" ");
-            lore.add("§7§oRight click, to preview");
+            lore.add("§7Right click, to preview");
             lore.add(" ");
         }
         return lore;

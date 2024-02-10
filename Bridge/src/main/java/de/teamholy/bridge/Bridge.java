@@ -2,6 +2,8 @@ package de.teamholy.bridge;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.dytanic.cloudnet.driver.CloudNetDriver;
+import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
 import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.listener.*;
 import de.teamholy.bridge.map.managment.BridgeMapManagment;
@@ -63,6 +65,8 @@ public class Bridge extends JavaPlugin {
         for (BridgeMapType value : BridgeMapType.values()) {
             playerManagement.getTopPlayer().put(value, new HashMap<>());
         }
+
+        BukkitCloudNetHelper.setMaxPlayers(BridgeMapManagment.MAP_COUNT);
 
       // mapManagement.getLoader().loadBridgeMapsStartup(20);
     }

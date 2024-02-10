@@ -15,20 +15,20 @@ public enum BridgeMapSkins {
 
     TREE_SHORT(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Short.schematic"),
             BridgeMapType.SHORT,
-            "Tree", Arrays.asList(" §7Default §6Teamholy §7bridge map"),
+            "Tree", Arrays.asList("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
     TREE_DIAGONAL(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Diagonal.schematic"),
             BridgeMapType.DIAGONAL,
-            "Tree",Arrays.asList(" §7Default §6Teamholy §7bridge map"),
+            "Tree",Arrays.asList("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
     TREE_LONG(new BridgeMapSkin(0,
             new File(pathToSchematic() + "/Tree-Long.schematic"),
             BridgeMapType.LONG,
-            "Tree",Arrays.asList(" §7Default §6Teamholy §7bridge map"),
+            "Tree",Arrays.asList("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true));
 

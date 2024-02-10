@@ -29,7 +29,7 @@ import java.util.logging.Level;
 public class BridgeMapManagment {
 
     private final List<BridgeMap> maps;
-    private int pasteCount = 30;
+    public static int MAP_COUNT = 30;
 
     public static boolean MAPS_PASTED = false;
 
@@ -41,7 +41,7 @@ public class BridgeMapManagment {
         this.gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         for (BridgeMapType value : BridgeMapType.values()) {
             Bridge.getInstance().createWorld(value.getName());
-            Bridge.getInstance().getLogger().log(Level.INFO, "created world");
+            Bridge.getInstance().getLogger().log(Level.INFO, "created world " + value.getName());
         }
 
 
@@ -51,17 +51,17 @@ public class BridgeMapManagment {
 
     public void loadSchematics() {
         new BukkitRunnable() {
+
             int mapTypeIndex = 0;
             int schematicIndex = 0;
             int xCord = 0;
-
 
             @Override
             public void run() {
                 if (mapTypeIndex < BridgeMapType.values().length) {
                     BridgeMapType bridgeMapType = BridgeMapType.values()[mapTypeIndex];
 
-                    if (schematicIndex < pasteCount) {
+                    if (schematicIndex < MAP_COUNT) {
                         BridgeMap bridgeMap = new BridgeMap(bridgeMapType.toString() + "-" + schematicIndex, bridgeMapType);
                         bridgeMap.loadMap(true, new Location(Bukkit.getWorld(bridgeMapType.getName()), xCord, 102, 0),
                                 BridgeMapSkins.getDefaultSkin(bridgeMapType));
@@ -91,8 +91,6 @@ public class BridgeMapManagment {
 
 
     public void findMapForPlayer(BridgeMapType bridgeMapType, BridgePlayer bridgePlayer) {
-
-
         BridgeMap bridgeMap = getFreeMap(bridgeMapType);
 
         if (bridgeMap == null) {
