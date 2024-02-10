@@ -252,6 +252,7 @@ public class SoundPerkManagement {
 
         holyInventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.BARRIER).setName("§8» §cReset all").build(), inventorySize - 5, event -> {
             bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.ANVIL_BREAK, 1.0F, 100.0F);
+            bridgePlayer.getBridgeSettings().getCurrentSounds().clear();
             bridgePlayer.getPlayer().openInventory(openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory());
         });
 
@@ -364,7 +365,9 @@ public class SoundPerkManagement {
                 .withGlow(glowWin == BridgeSettings.BridgeSoundEventType.DEATH)
                 .lore(glowWin == BridgeSettings.BridgeSoundEventType.DEATH ? "§aSelected" : "§7Click to select").build(), 11, event -> {
 
-            bridgePlayer.getBridgeSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != BridgeSettings.BridgeSoundEventType.DEATH);
+            bridgePlayer.getBridgeSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() == BridgeSettings.BridgeSoundEventType.DEATH);
+            bridgePlayer.getBridgeSettings().getCurrentSounds().entrySet().removeIf(entry -> entry.getKey() != null && entry.getKey() == BridgeSettings.BridgeSoundEventType.DEATH);
+
             bridgePlayer.getBridgeSettings().getSoundEvents().put(bridgeSound, BridgeSettings.BridgeSoundEventType.DEATH);
 
             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the event of §e" + bridgeSound.getDisplayName() + "§7 to §c§lDeath!");
@@ -374,7 +377,9 @@ public class SoundPerkManagement {
                 .withGlow(glowWin == BridgeSettings.BridgeSoundEventType.WIN)
                 .lore(glowWin == BridgeSettings.BridgeSoundEventType.WIN ? "§aSelected" : "§7Click to select").build(), 13, event -> {
 
-            bridgePlayer.getBridgeSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != BridgeSettings.BridgeSoundEventType.WIN);
+            bridgePlayer.getBridgeSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() == BridgeSettings.BridgeSoundEventType.WIN);
+            bridgePlayer.getBridgeSettings().getCurrentSounds().entrySet().removeIf(entry -> entry.getKey() != null && entry.getKey() == BridgeSettings.BridgeSoundEventType.WIN);
+
             bridgePlayer.getBridgeSettings().getSoundEvents().put(bridgeSound, BridgeSettings.BridgeSoundEventType.WIN);
 
             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the event of §e" + bridgeSound.getDisplayName() + "§7 to §a§lWin!");
@@ -386,7 +391,9 @@ public class SoundPerkManagement {
                 .withGlow(glowWin == BridgeSettings.BridgeSoundEventType.NEW_RECORD)
                 .lore(glowWin == BridgeSettings.BridgeSoundEventType.NEW_RECORD ? "§aSelected" : "§7Click to select").build(), 15, event -> {
 
-            bridgePlayer.getBridgeSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() != BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+            bridgePlayer.getBridgeSettings().getSoundEvents().entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue() == BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+            bridgePlayer.getBridgeSettings().getCurrentSounds().entrySet().removeIf(entry -> entry.getKey() != null && entry.getKey() == BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+
             bridgePlayer.getBridgeSettings().getSoundEvents().put(bridgeSound, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
 
             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "You set the event of §e" + bridgeSound.getDisplayName() + "§7 to §b§lRecord!");
