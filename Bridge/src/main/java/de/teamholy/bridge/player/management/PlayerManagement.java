@@ -61,7 +61,7 @@ public class PlayerManagement {
             bridgePlayers.put(player.getUniqueId(), new BridgePlayer(player.getUniqueId()));
         }
         createScoreboard(getBridgePlayer(player));
-        prepareIngamePlayer(player);
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> prepareIngamePlayer(player), 10);
     }
 
     public void removePlayer(Player player) {
