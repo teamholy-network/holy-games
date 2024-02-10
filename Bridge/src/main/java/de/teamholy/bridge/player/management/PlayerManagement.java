@@ -65,6 +65,7 @@ public class PlayerManagement {
     }
 
     public void removePlayer(Player player) {
+        playerTime.remove(player.getUniqueId());
         bridgePlayers.remove(player.getUniqueId());
     }
 
