@@ -45,6 +45,11 @@ public class BlockPlaceListener implements Listener {
                 return;
             }
 
+            if (bridgePlayer.isPreview() && event.getBlock().getType() == Material.BARRIER) {
+                event.setCancelled(true);
+                return;
+            }
+
             if (event.getBlock().getType() == Material.REDSTONE_COMPARATOR) {
                 event.setCancelled(true);
                 return;

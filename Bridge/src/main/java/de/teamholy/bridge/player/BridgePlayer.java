@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sk89q.jchronic.handlers.SySmSdHandler;
 import de.teamholy.api.bukkit.utils.InventoryUtils;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.map.BridgeMap;
@@ -129,6 +130,13 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey,"timerPlace", bridgeSettings.getTimerPlace().name());
             statsProfile.setSetting(gameKey,"inventory", InventoryUtils.inventoryToString(inventory));
 
+            statsProfile.setSetting(gameKey, "shortSelected", Arrays.stream(BridgeMapSkins.values())
+                    .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.SHORT)).findFirst().get().toString());
+            statsProfile.setSetting(gameKey, "longSelected", Arrays.stream(BridgeMapSkins.values())
+                    .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.LONG)).findFirst().get().toString());
+            statsProfile.setSetting(gameKey, "diagonalSelected", Arrays.stream(BridgeMapSkins.values())
+                    .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.DIAGONAL)).findFirst().get().toString());
+
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
 
@@ -183,6 +191,21 @@ public class BridgePlayer {
             if (statsProfile.getSetting(gameKey, "inventory") != null && !statsProfile.getSetting(gameKey, "inventory").isEmpty()) {
                 this.inventory = InventoryUtils.inventoryFromString(statsProfile.getSetting(gameKey, "inventory"));
             }
+
+            if (statsProfile.getSetting(gameKey, "shortSelected") != null) {
+                this.selectedSkins.put(BridgeMapType.SHORT, BridgeMapSkins.valueOf(statsProfile.getSetting(gameKey, "shortSelected")).getBridgeMapSkin());
+            }
+
+            if (statsProfile.getSetting(gameKey, "longSelected") != null) {
+                this.selectedSkins.put(BridgeMapType.LONG, BridgeMapSkins.valueOf(statsProfile.getSetting(gameKey, "longSelected")).getBridgeMapSkin());
+            }
+
+            if (statsProfile.getSetting(gameKey, "diagonalSelected") != null) {
+                this.selectedSkins.put(BridgeMapType.DIAGONAL, BridgeMapSkins.valueOf(statsProfile.getSetting(gameKey, "diagonalSelected")).getBridgeMapSkin());
+            }
+
+
+
 
             for (var settingsMap :
                     statsProfile.getSettingsMap().entrySet()) {
@@ -253,6 +276,14 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "timerPlace", bridgeSettings.getTimerPlace().name());
 
         statsProfile.setSetting(gameKey, "inventory", InventoryUtils.inventoryToString(inventory));
+
+        statsProfile.setSetting(gameKey, "shortSelected", Arrays.stream(BridgeMapSkins.values())
+                .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.SHORT)).findFirst().get().toString());
+        statsProfile.setSetting(gameKey, "longSelected", Arrays.stream(BridgeMapSkins.values())
+                .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.LONG)).findFirst().get().toString());
+        statsProfile.setSetting(gameKey, "diagonalSelected", Arrays.stream(BridgeMapSkins.values())
+                .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.DIAGONAL)).findFirst().get().toString());
+
 
         if (globalBestTime != null) {
             if (this.globalBestTime.get(BridgeMapType.SHORT) != null) {

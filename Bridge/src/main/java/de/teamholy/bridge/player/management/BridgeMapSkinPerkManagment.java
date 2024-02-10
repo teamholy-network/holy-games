@@ -227,9 +227,9 @@ public class BridgeMapSkinPerkManagment {
 
                             bridgeMap.setBridgeMapSkin(map);
                             bridgePlayer.getSelectedSkins().put(bridgeMapType, map);
-                            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation().add(-0.5,0,-0.5), map, true);
+                            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), map, true);
                             bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 2.0F, 2.0F);
-                            bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
+                            bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
                             bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation());
                             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§aYou have successfully selected the map skin §e" + map.getName() + "§a.");
                             bridgePlayer.getPlayer().closeInventory();
@@ -250,21 +250,21 @@ public class BridgeMapSkinPerkManagment {
                                     return;
                                 }
 
-                                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
+                                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
 
                                 var bridgeMap = bridgePlayer.getMap();
-                                bridgeMap.loadMap(false, bridgeMap.getSpawnLocation().add(-0.5,0,-0.5), map, true);
+                                bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), map, true);
 
                                 bridgePlayer.getPlayer().closeInventory();
                                 bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§aYou can now preview the map skin §e" + map.getName() + "§a.");
 
                                 bridgePlayer.getPlayer().setAllowFlight(true);
                                 bridgePlayer.getPlayer().setFlying(true);
-                                bridgePlayer.getPlayer().teleport(bridgeMap.getSpawnLocation());
+                                bridgePlayer.getPlayer().teleport(new Location(Bukkit.getWorld(bridgeMap.getMapType().name()), bridgeMap.getSpawnLocation().getX(), bridgeMap.getSpawnLocation().getY() + 5, bridgeMap.getSpawnLocation().getZ(), bridgeMap.getMapType().getSpawnYaw(), 0));
                                 bridgePlayer.setPreview(true);
 
                                 bridgePlayer.getPlayer().getInventory().clear();
-                                bridgePlayer.getPlayer().getInventory().setItem(4, new ItemBuilder(Material.BARRIER).name("§8» §6Leave preview").build());
+                                bridgePlayer.getPlayer().getInventory().setItem(4, new ItemBuilder(Material.MAGMA_CREAM).name("§8» §6Leave preview").build());
 
                             }
                         }

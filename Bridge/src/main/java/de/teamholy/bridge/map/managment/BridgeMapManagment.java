@@ -103,7 +103,9 @@ public class BridgeMapManagment {
         bridgePlayer.setMapLocation(new Location(Bukkit.getWorld(bridgeMap.getMapType().getName()), bridgeMap.getSpawnLocation().getX(), bridgeMap.getSpawnLocation().getY(), bridgeMap.getSpawnLocation().getZ(), bridgeMap.getMapType().getSpawnYaw(), 0));
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation()), 2);
 
-
+        if (!bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()).isDefault()) {
+            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()), true);
+        }
         playerManagement.prepareIngamePlayer(bridgePlayer.getPlayer());
         playerManagement.updateHologram(bridgePlayer, true);
         playerManagement.setScoreboard(bridgePlayer);

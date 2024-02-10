@@ -35,6 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -276,6 +277,11 @@ public class PlayerManagement {
                     return;
                 }
 
+                if (bridgePlayer.getCooldown() > System.currentTimeMillis()) {
+                    player.sendMessage(Bridge.PREFIX + "§cPlease wait before changing the maptype again!");
+                    return;
+                }
+
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
@@ -286,6 +292,8 @@ public class PlayerManagement {
                     player.sendMessage(Bridge.PREFIX + "§cNo map found for you, please try again later.");
                     return;
                 } else Bridge.getInstance().getBridgeMapLoader().resetMap(bridgePlayer.getMap());
+
+                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
 
 
                 bridgePlayer.getBlocks().clear();
