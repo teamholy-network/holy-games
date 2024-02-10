@@ -29,7 +29,7 @@ import java.util.logging.Level;
 public class BridgeMapManagment {
 
     private final List<BridgeMap> maps;
-    public static int MAP_COUNT = 30;
+    public static int MAP_COUNT = 50;
 
     public static boolean MAPS_PASTED = false;
 

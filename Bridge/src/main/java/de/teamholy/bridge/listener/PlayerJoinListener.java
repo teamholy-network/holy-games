@@ -27,10 +27,6 @@ public class PlayerJoinListener implements Listener {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST,"§cThe server is still starting, please try again in a few seconds.");
         }
 
-        if (!event.getPlayer().hasPermission("teamholy.team")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST,"\n §f§lRELEASE of §e§lBRIDGE \n     §bToday §cplease wait a few hours!");
-        }
-
     }
 
 
