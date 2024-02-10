@@ -1,8 +1,8 @@
 package de.teamholy.bridge.map;
 
 import com.boydti.fawe.object.schematic.Schematic;
-import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -69,7 +69,7 @@ public class BridgeMapSkinPerkManagment {
         Player bukkitPlayer = bridgePlayer.getPlayer();
         if (bukkitPlayer != null) {
             bukkitPlayer.sendMessage(Bridge.PREFIX + "§7You successfully bought the §e" + bridgeMapSkin.getName() + " §7map for §e" + bridgeMapSkin.getPrice() + " §6coins!");
-            openMapInventory(bridgePlayer, bridgeMapSkin.getBridgeMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.OWNED, 1);
+            bukkitPlayer.closeInventory();
             bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.LEVEL_UP, 2.0F, 2.0F);
         }
     }
@@ -206,9 +206,9 @@ public class BridgeMapSkinPerkManagment {
         for (BridgeMapSkin map : pageMaps) {
 
             holyInventory.setItem(
-                    map.getItem().name("§8» §6" + map.getName())
+                    map.getItem().setName("§8» §6" + map.getName())
                             .withGlow(bridgePlayer.getSelectedSkins().get(bridgeMapType) == map)
-                            .lore(getLore(bridgePlayer, map))
+                            .setLore(getLore(bridgePlayer, map))
                             .build(), slot, event -> {
 
                         if (doOwn(bridgePlayer, map)) {

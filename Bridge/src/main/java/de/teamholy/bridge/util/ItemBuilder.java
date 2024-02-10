@@ -1,5 +1,8 @@
 package de.teamholy.bridge.util;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -11,8 +14,10 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -23,6 +28,8 @@ import java.util.List;
 public class ItemBuilder {
 
     protected ItemStack is;
+    private static String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    private static Class<?> skullMetaClass;
 
     public ItemBuilder(Material mat) {
         this.is = new ItemStack(mat);
@@ -144,6 +151,27 @@ public class ItemBuilder {
         ItemMeta meta  = this.is.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         this.is.setItemMeta(meta);
+        return this;
+    }
+
+    public ItemBuilder setSkullMeta(String value, String signature) {
+        if (this.is.getType() != Material.SKULL_ITEM) {
+            this.is.setType(Material.SKULL_ITEM);
+            this.is.setDurability((short)3);
+        }
+
+        try {
+            SkullMeta skullMeta = (SkullMeta)this.is.getItemMeta();
+            GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+            gameProfile.getProperties().put("textures", new Property("textures", value, signature));
+            Field profileField = skullMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(skullMeta, gameProfile);
+            this.is.setItemMeta(skullMeta);
+        } catch (Exception var6) {
+            var6.printStackTrace();
+        }
+
         return this;
     }
 
