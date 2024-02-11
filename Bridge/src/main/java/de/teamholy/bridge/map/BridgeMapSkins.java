@@ -9,6 +9,7 @@ import org.bukkit.Material;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 /* copyright by Yassino */
 @Getter @AllArgsConstructor
@@ -16,75 +17,75 @@ public enum BridgeMapSkins {
 
     TREE_SHORT(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Short.schematic"),
             BridgeMapType.SHORT,
-            "Tree", Arrays.asList("§7Default §6Teamholy §7bridge map"),
+            "Tree", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
     TREE_DIAGONAL(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Diagonal.schematic"),
             BridgeMapType.DIAGONAL,
-            "Tree",Arrays.asList("§7Default §6Teamholy §7bridge map"),
+            "Tree", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
     TREE_LONG(new BridgeMapSkin(0,
             new File(pathToSchematic() + "/Tree-Long.schematic"),
             BridgeMapType.LONG,
-            "Tree",Arrays.asList("§7Default §6Teamholy §7bridge map"),
+            "Tree", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
             0,null,null,true)),
 
 
     ROCKS_SHORT(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-Short.schematic"),
     BridgeMapType.SHORT,
-            "Rocks", Arrays.asList("§7Default §6Teamholy §7bridge map"),
+            "Rocks", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.STONE),
             0,null, PerkRankType.PREMIUM,false)),
 
 
     ROCKS_LONG(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-Long.schematic"),
             BridgeMapType.LONG,
-            "Rocks", Arrays.asList("§7Default §6Teamholy §7bridge map"),
+            "Rocks", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.STONE),
             0,null,PerkRankType.PREMIUM,false)),
 
     ROCKS_DIAGONAL(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-Diagonal.schematic"),
             BridgeMapType.DIAGONAL,
-            "Rocks", Arrays.asList("§7Default §6Teamholy §7bridge map"),
+            "Rocks", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.STONE),
             0,null,PerkRankType.PREMIUM,false)),
 
 
     Cypherpunk_SHORT(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-Short.schematic"),
     BridgeMapType.SHORT,
-            "Cypherpunk", Arrays.asList("§7Welcome to the §6new §bworld"),
+            "Cypherpunk", List.of("§7Welcome to the §6new §bworld"),
             new ItemBuilder(Material.ANVIL),
             300,null, null,false)),
 
     Cypherpunk_LONG(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-Long.schematic"),
     BridgeMapType.LONG,
-            "Cypherpunk", Arrays.asList("§7Welcome to the §6new §bworld"),
+            "Cypherpunk", List.of("§7Welcome to the §6new §bworld"),
             new ItemBuilder(Material.ANVIL),
             300,null, null,false)),
 
     Cypherpunk_DIAGONAL(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-Diagonal.schematic"),
     BridgeMapType.DIAGONAL,
-            "Cypherpunk", Arrays.asList("§7Welcome to the §6new §bworld"),
+            "Cypherpunk", List.of("§7Welcome to the §6new §bworld"),
             new ItemBuilder(Material.ANVIL),
             300,null, null,false)),
 
     CUBES_SHORT(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-Short.schematic"),
     BridgeMapType.SHORT,
-            "Cubes", Arrays.asList("§7Uhhh some §6cubes §7i guess?"),
+            "Cubes", List.of("§7Uhhh some §6cubes §7i guess?"),
             new ItemBuilder(Material.HARD_CLAY,1,3),
             0,null, PerkRankType.PREMIUM,false)),
     CUBES_LONG(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-Long.schematic"),
     BridgeMapType.LONG,
-            "Cubes", Arrays.asList("§7Uhhh some §6cubes §7i guess?"),
+            "Cubes", List.of("§7Uhhh some §6cubes §7i guess?"),
             new ItemBuilder(Material.HARD_CLAY,1,3),
             0,null, PerkRankType.PREMIUM,false)),
     CUBES_DIAGONAL(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-Diagonal.schematic"),
     BridgeMapType.DIAGONAL,
-            "Cubes", Arrays.asList("§7Uhhh some §6cubes §7i guess?"),
+            "Cubes", List.of("§7Uhhh some §6cubes §7i guess?"),
             new ItemBuilder(Material.HARD_CLAY,1,3),
             0,null, PerkRankType.PREMIUM,false)),
 
