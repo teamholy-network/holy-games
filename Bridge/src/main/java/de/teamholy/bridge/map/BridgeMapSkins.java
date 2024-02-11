@@ -92,8 +92,7 @@ public enum BridgeMapSkins {
     BridgeMapType.SHORT,
             "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
-                            "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19"
+                    getYassinoSkinTexture()
                     ,""),
             400,null, null,false)),
 
@@ -101,8 +100,7 @@ public enum BridgeMapSkins {
             BridgeMapType.LONG,
             "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
-                            "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19"
+                    getYassinoSkinTexture()
                     ,""),
             400,null, null,false)),
 
@@ -110,43 +108,42 @@ public enum BridgeMapSkins {
             BridgeMapType.DIAGONAL,
             "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
-                            "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19"
+                    getYassinoSkinTexture()
                     ,""),
             400,null, null,false)),
 
     CHARONXYZ_LONG(new BridgeMapSkin(5553,new File(pathToSchematic() + "/charonxyz-Long.schematic"),
             BridgeMapType.LONG,
-            "§bcharonxyz", Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
+            "§bcharonxyz",
+            Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    "ewogICJ0aW1lc3RhbXAiIDogMTcwNzY3MzIyNDI5NywKICAicHJvZmlsZUlkIiA6ICJkMDhjYmJkNzVlNjU0M2UxYWQ1ODZlZDkw" +
-                            "YTU2MDgxOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJjaGFyb254eXoiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1" +
-                            "cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU5MWVmMDY0M2NmMTEzMGFmYmE5MWZlZjY4ZTQxOT" +
-                            "I5ZjFkMzdjYjllMDc5YWU4MWU0N2M2ZTZlZTFlMmVmZSIKICAgIH0sCiAgICAiQ0FQRSIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjM0MGMwZTAzZGQyNGExMWIxNWE4YjMzYzJhN2U5ZTMyYWJiMjA1MWIyNDgxZDBiYTdkZWZkNjM1Y2E3YTkzMyIKICAgIH0KICB9Cn0="
-                    ,""),
+                    getCharonxyzSkinTexture(),""),
             400,null, null,false)),
     CHARONXYZ_DIAGONAL(new BridgeMapSkin(5553,new File(pathToSchematic() + "/charonxyz-Diagonal.schematic"),
     BridgeMapType.DIAGONAL,
-            "§bcharonxyz", Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
+            "§bcharonxyz",
+            Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    "ewogICJ0aW1lc3RhbXAiIDogMTcwNzY3MzIyNDI5NywKICAicHJvZmlsZUlkIiA6ICJkMDhjYmJkNzVlNjU0M2UxYWQ1ODZlZDkw" +
-                            "YTU2MDgxOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJjaGFyb254eXoiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1" +
-                            "cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU5MWVmMDY0M2NmMTEzMGFmYmE5MWZlZjY4ZTQxOT" +
-                            "I5ZjFkMzdjYjllMDc5YWU4MWU0N2M2ZTZlZTFlMmVmZSIKICAgIH0sCiAgICAiQ0FQRSIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjM0MGMwZTAzZGQyNGExMWIxNWE4YjMzYzJhN2U5ZTMyYWJiMjA1MWIyNDgxZDBiYTdkZWZkNjM1Y2E3YTkzMyIKICAgIH0KICB9Cn0="
-                            ,""),
+                    getCharonxyzSkinTexture() ,""),
             400,null, null,false)),
-    CHARONXYZ_SHORT(new BridgeMapSkin(5553,new File(pathToSchematic() + "/charonxyz-Short.schematic"),
+    CHARONXYZ_SHORT(new BridgeMapSkin(5553,
+            new File(pathToSchematic() + "/charonxyz-Short.schematic"),
     BridgeMapType.SHORT,
-            "§bcharonxyz", Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
+            "§bcharonxyz",
+            Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    "ewogICJ0aW1lc3RhbXAiIDogMTcwNzY3MzIyNDI5NywKICAicHJvZmlsZUlkIiA6ICJkMDhjYmJkNzVlNjU0M2UxYWQ1ODZlZDkw" +
-                            "YTU2MDgxOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJjaGFyb254eXoiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1" +
-                            "cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU5MWVmMDY0M2NmMTEzMGFmYmE5MWZlZjY4ZTQxOT" +
-                            "I5ZjFkMzdjYjllMDc5YWU4MWU0N2M2ZTZlZTFlMmVmZSIKICAgIH0sCiAgICAiQ0FQRSIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjM0MGMwZTAzZGQyNGExMWIxNWE4YjMzYzJhN2U5ZTMyYWJiMjA1MWIyNDgxZDBiYTdkZWZkNjM1Y2E3YTkzMyIKICAgIH0KICB9Cn0="
-                            ,""),
+                    getCharonxyzSkinTexture(),""),
             400,null, null,false));
 
-    private BridgeMapSkin bridgeMapSkin;
+    private final BridgeMapSkin bridgeMapSkin;
+
+    @Getter
+    private static final String charonxyzSkinTexture = "ewogICJ0aW1lc3RhbXAiIDogMTcwNzY3MzIyNDI5NywKICAicHJvZmlsZUlkIiA6ICJkMDhjYmJkNzVlNjU0M2UxYWQ1ODZlZDkw" +
+            "YTU2MDgxOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJjaGFyb254eXoiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1" +
+            "cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDU5MWVmMDY0M2NmMTEzMGFmYmE5MWZlZjY4ZTQxOT" +
+            "I5ZjFkMzdjYjllMDc5YWU4MWU0N2M2ZTZlZTFlMmVmZSIKICAgIH0sCiAgICAiQ0FQRSIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjM0MGMwZTAzZGQyNGExMWIxNWE4YjMzYzJhN2U5ZTMyYWJiMjA1MWIyNDgxZDBiYTdkZWZkNjM1Y2E3YTkzMyIKICAgIH0KICB9Cn0="
+            , yassinoSkinTexture = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
+            "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19";
 
     private static String pathToSchematic() {
         return Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics";
