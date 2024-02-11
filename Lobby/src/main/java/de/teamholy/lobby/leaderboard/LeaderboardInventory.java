@@ -51,7 +51,6 @@ public class LeaderboardInventory {
                     scoredSortedSet.entryRangeReversed(0, 4).forEach(o -> {
                         ScoredEntry<UUID> scoredEntry = (ScoredEntry<UUID>) o;
 
-                        System.out.println(scoredEntry.getScore());
                         if (scoredEntry.getScore() > 1000) {
                             TopEntry topEntry = new TopEntry();
 
@@ -65,7 +64,6 @@ public class LeaderboardInventory {
 
                             topEntryList.add(topEntry);
 
-                            System.out.println(playerProfile.getPlayerName() + " - " + statsType + " - " + value + " - " + scoredEntry.getScore());
                         }
 
                     });

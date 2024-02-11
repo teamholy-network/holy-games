@@ -39,6 +39,7 @@ public class CloudListener implements Listener {
             } else if (event.getMessage().equalsIgnoreCase("clan_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
                 Player player = Bukkit.getPlayer(uuid);
+                if (player == null) return;
 
                 ClanPlayerProfile clanPlayerProfile = BukkitCore.getAPI().getClanPlayerService().getRedisCache().get(player.getUniqueId());
                 if (clanPlayerProfile != null) {
