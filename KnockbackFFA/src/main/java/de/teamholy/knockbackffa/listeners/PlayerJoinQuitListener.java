@@ -29,6 +29,7 @@ public class PlayerJoinQuitListener implements Listener {
         Player player = event.getPlayer();
         KnockbackFFA.getInstance().getCacheHandler().getMapEntrys().values().forEach(MapEntry::updateSign);
         player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        player.setLevel(0);
 
         KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().values().forEach(playerEntry -> {
             if (playerEntry.getPlayerState() == PlayerState.SPECTATE) {

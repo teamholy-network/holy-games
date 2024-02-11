@@ -90,7 +90,7 @@ public enum BridgeMapSkins {
 
     YASSINO_SHORT(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-Short.schematic"),
     BridgeMapType.SHORT,
-            "§4Yassino", Arrays.asList("§7The §agreat §bdeveloper" , "§7of this §agreat §egamemode"),
+            "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
                             "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19"
@@ -99,7 +99,7 @@ public enum BridgeMapSkins {
 
     YASSINO_LONG(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-Long.schematic"),
             BridgeMapType.LONG,
-            "§4Yassino", Arrays.asList("§7The §agreat §bdeveloper" , "§7of this §agreat §egamemode"),
+            "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
                             "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19"
@@ -108,7 +108,7 @@ public enum BridgeMapSkins {
 
     YASSINO_DIAGONAL(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-Diagonal.schematic"),
             BridgeMapType.DIAGONAL,
-            "§4Yassino", Arrays.asList("§7The §agreat §bdeveloper" , "§7of this §agreat §egamemode"),
+            "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
                     "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6XC9cL3RleHR1cmVzLm1pbmVjcmFmdC5uZXRcL3RleHR1cmVcL2YxZjliZjFmZmQ1Nm" +
                             "JhMzBmMjZhMGYwZmM2MzY4ZjBhYzRlMzZjMTFlNmE4MmQ4NDRiZGMzNWVlNTM2YzE0ZjUifX19"
