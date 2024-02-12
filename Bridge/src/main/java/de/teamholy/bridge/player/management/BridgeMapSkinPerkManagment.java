@@ -204,7 +204,7 @@ public class BridgeMapSkinPerkManagment {
             holyInventory.setItem(
                     map.getItem().setName("§8» §6" + map.getName())
                             .withGlow(bridgePlayer.getSelectedSkins().get(bridgeMapType) == map)
-                            .setLore(getLore(bridgePlayer, map))
+                            .setLore(getLore(bridgePlayer, map, bridgeMapType))
                             .build(), slot, event -> {
 
                         if (doOwn(bridgePlayer, map)) {
@@ -280,7 +280,7 @@ public class BridgeMapSkinPerkManagment {
 
 
     @Nonnull
-    private static List<String> getLore(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
+    private static List<String> getLore(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin, BridgeMapType bridgeMapType) {
         List<String> lore = Lists.newArrayList();
 
 
@@ -300,7 +300,7 @@ public class BridgeMapSkinPerkManagment {
             lore.add(" ");
         } else {
 
-            if (bridgePlayer.getSelectedSkins().containsValue(bridgeMapSkin)) {
+            if (bridgePlayer.getSelectedSkins().get(bridgeMapType).equals(bridgeMapSkin)) {
                 lore.add("§2Selected");
             } else {
                 lore.add("§aClick to select");
