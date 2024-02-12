@@ -7,6 +7,7 @@ import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.lobby.bedwars.BedwarsServerInventory;
 import de.teamholy.lobby.bedwars.BedwarsSpectateInventory;
 import de.teamholy.lobby.commands.FlyCommand;
+import de.teamholy.lobby.commands.SpawnCommand;
 import de.teamholy.lobby.commands.TestCommand;
 import de.teamholy.lobby.handlers.HologramHandler;
 import de.teamholy.lobby.handlers.StatsResetHandler;
@@ -83,6 +84,7 @@ public class Lobby extends JavaPlugin {
         },20,20);
 
         getCommand("fly").setExecutor(new FlyCommand());
+        getCommand("spawn").setExecutor(new SpawnCommand());
         getCommand("test1").setExecutor(new TestCommand());
         CloudNetDriver.getInstance().getEventManager().registerListener(new CloudListener());
         Bukkit.getPluginManager().registerEvents(bedwarsServerInventory,this);
