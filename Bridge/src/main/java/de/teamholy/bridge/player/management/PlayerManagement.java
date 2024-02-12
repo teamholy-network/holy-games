@@ -247,6 +247,10 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
+        inventory.setItem(new ItemBuilder(Material.ENDER_PEARL).name("§8» §6Offset spawn").build(), 4, event -> {
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
+
         ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
 
         timer.lore(Arrays.stream(BridgeSettings.TimerPlace.values())
