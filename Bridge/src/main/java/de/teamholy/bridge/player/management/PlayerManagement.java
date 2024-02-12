@@ -259,7 +259,7 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.EYE_OF_ENDER).name("§8» §7Spectate Players").build(), 16, event -> {
+        inventory.setItem(new ItemBuilder(Material.EYE_OF_ENDER).name("§8» §6Spectate").build(), 16, event -> {
             openSpectateInventory(player);
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
