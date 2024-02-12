@@ -48,8 +48,6 @@ public class PlayerSpectateListener implements Listener {
                 if (bridgePlayer.getToSpectate().getUniqueId().equals(player.getUniqueId())) {
                     playerManagement.startSpectating(bridgePlayer.getPlayer(), player);
                 }
-            } else {
-                playerManagement.stopSpectating(bridgePlayer.getPlayer(), true);
             }
         }
     }
