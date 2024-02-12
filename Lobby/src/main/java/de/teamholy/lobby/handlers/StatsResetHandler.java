@@ -37,13 +37,15 @@ public class StatsResetHandler {
             ItemBuilder bw = new ItemBuilder(Material.BED).setName("§8» §6Bedwars");
             ItemBuilder rbw = new ItemBuilder(Material.BLAZE_ROD).setName("§8» §6Rush-Bedwars");
             ItemBuilder sgffa = new ItemBuilder(Material.IRON_SWORD).setName("§8» §6SGFFA");
+            ItemBuilder bridge = new ItemBuilder(Material.DIAMOND_PICKAXE).setName("§8» §6Bridge");
 
             inventory.setItem(new ItemBuilder(Material.PAPER).setName("§6You currently have §a" + tokens + " §6statsreset tokens!").setLore("§7Click on the mode where you want to delete your stats").build(), 4);
-            inventory.setItem(mlgrush.build(), 11, clickEvent -> openStatsResetConfirm(player, playerProfile, mlgrush, Gamemodes.MLGRUSH));
-            inventory.setItem(kbffa.build(), 12, clickEvent -> openStatsResetConfirm(player, playerProfile, kbffa,Gamemodes.KNOCKBACKFFA));
-            inventory.setItem(bw.build(), 13, clickEvent -> openStatsResetConfirm(player, playerProfile, bw, Gamemodes.BEDWARS));
+            inventory.setItem(mlgrush.build(), 10, clickEvent -> openStatsResetConfirm(player, playerProfile, mlgrush, Gamemodes.MLGRUSH));
+            inventory.setItem(kbffa.build(), 11, clickEvent -> openStatsResetConfirm(player, playerProfile, kbffa,Gamemodes.KNOCKBACKFFA));
+            inventory.setItem(bw.build(), 12, clickEvent -> openStatsResetConfirm(player, playerProfile, bw, Gamemodes.BEDWARS));
             inventory.setItem(sgffa.build(), 14, clickEvent -> openStatsResetConfirm(player, playerProfile, sgffa, Gamemodes.SGFFA));
             inventory.setItem(rbw.build(), 15, clickEvent -> openStatsResetConfirm(player, playerProfile, rbw, Gamemodes.RUSHBW));
+            inventory.setItem(bridge.build(), 16, clickEvent -> openStatsResetConfirm(player, playerProfile, bridge, Gamemodes.BRIDGE));
         }
 
         player.openInventory(inventory.getInventory());
