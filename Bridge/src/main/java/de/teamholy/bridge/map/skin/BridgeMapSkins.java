@@ -16,126 +16,41 @@ import java.util.List;
 @Getter @AllArgsConstructor
 public enum BridgeMapSkins {
 
-    TREE_SHORT(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Short.schematic"),
-            BridgeMapType.SHORT,
+    TREE(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-%type%.schematic"),
+
             "Tree", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.SAPLING),
-            0,null,null,true)),
+            0,null,null,true, BridgeMapType.SHORT, BridgeMapType.LONG, BridgeMapType.DIAGONAL)),
 
-    TREE_DIAGONAL(new BridgeMapSkin(0,new File(pathToSchematic() + "/Tree-Diagonal.schematic"),
-            BridgeMapType.DIAGONAL,
-            "Tree", List.of("§7Default §6Teamholy §7bridge map"),
-            new ItemBuilder(Material.SAPLING),
-            0,null,null,true)),
-
-    TREE_LONG(new BridgeMapSkin(0,
-            new File(pathToSchematic() + "/Tree-Long.schematic"),
-            BridgeMapType.LONG,
-            "Tree", List.of("§7Default §6Teamholy §7bridge map"),
-            new ItemBuilder(Material.SAPLING),
-            0,null,null,true)),
-
-
-    ROCKS_SHORT(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-Short.schematic"),
-    BridgeMapType.SHORT,
+    ROCKS(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-%type%.schematic"),
             "Rocks", List.of("§7Default §6Teamholy §7bridge map"),
             new ItemBuilder(Material.STONE),
-            0,null, PerkRankType.PREMIUM,false)),
+            0,null, PerkRankType.PREMIUM,false, BridgeMapType.SHORT, BridgeMapType.LONG, BridgeMapType.DIAGONAL)),
 
-
-    ROCKS_LONG(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-Long.schematic"),
-            BridgeMapType.LONG,
-            "Rocks", List.of("§7Default §6Teamholy §7bridge map"),
-            new ItemBuilder(Material.STONE),
-            0,null,PerkRankType.PREMIUM,false)),
-
-    ROCKS_DIAGONAL(new BridgeMapSkin(1,new File(pathToSchematic() + "/Rocks-Diagonal.schematic"),
-            BridgeMapType.DIAGONAL,
-            "Rocks", List.of("§7Default §6Teamholy §7bridge map"),
-            new ItemBuilder(Material.STONE),
-            0,null,PerkRankType.PREMIUM,false)),
-
-
-    Cypherpunk_SHORT(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-Short.schematic"),
-    BridgeMapType.SHORT,
+    Cypherpunk(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-%type%.schematic"),
             "Cypherpunk", List.of("§7Welcome to the §6new §bworld"),
             new ItemBuilder(Material.ANVIL),
-            300,null, null,false)),
+            300,null, null,false, BridgeMapType.SHORT, BridgeMapType.LONG, BridgeMapType.DIAGONAL)),
 
-    Cypherpunk_LONG(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-Long.schematic"),
-    BridgeMapType.LONG,
-            "Cypherpunk", List.of("§7Welcome to the §6new §bworld"),
-            new ItemBuilder(Material.ANVIL),
-            300,null, null,false)),
-
-    Cypherpunk_DIAGONAL(new BridgeMapSkin(5550,new File(pathToSchematic() + "/Cypherpunk-Diagonal.schematic"),
-    BridgeMapType.DIAGONAL,
-            "Cypherpunk", List.of("§7Welcome to the §6new §bworld"),
-            new ItemBuilder(Material.ANVIL),
-            300,null, null,false)),
-
-    CUBES_SHORT(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-Short.schematic"),
-    BridgeMapType.SHORT,
+    CUBES(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-%type%.schematic"),
             "Cubes", List.of("§7Uhhh some §6cubes §7i guess?"),
             new ItemBuilder(Material.HARD_CLAY,1,3),
-            0,null, PerkRankType.PREMIUM,false)),
-    CUBES_LONG(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-Long.schematic"),
-    BridgeMapType.LONG,
-            "Cubes", List.of("§7Uhhh some §6cubes §7i guess?"),
-            new ItemBuilder(Material.HARD_CLAY,1,3),
-            0,null, PerkRankType.PREMIUM,false)),
-    CUBES_DIAGONAL(new BridgeMapSkin(5551,new File(pathToSchematic() + "/Cubes-Diagonal.schematic"),
-    BridgeMapType.DIAGONAL,
-            "Cubes", List.of("§7Uhhh some §6cubes §7i guess?"),
-            new ItemBuilder(Material.HARD_CLAY,1,3),
-            0,null, PerkRankType.PREMIUM,false)),
+            0,null, PerkRankType.PREMIUM,false, BridgeMapType.SHORT, BridgeMapType.LONG, BridgeMapType.DIAGONAL)),
 
-    YASSINO_SHORT(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-Short.schematic"),
-    BridgeMapType.SHORT,
+    YASSINO(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-%type%.schematic"),
             "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
                     getYassinoSkinTexture()
                     ,""),
-            400,null, null,false)),
+            400,null, null,false, BridgeMapType.SHORT, BridgeMapType.LONG, BridgeMapType.DIAGONAL)),
 
-    YASSINO_LONG(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-Long.schematic"),
-            BridgeMapType.LONG,
-            "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
-            new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    getYassinoSkinTexture()
-                    ,""),
-            400,null, null,false)),
-
-    YASSINO_DIAGONAL(new BridgeMapSkin(5552,new File(pathToSchematic() + "/Yassino-Diagonal.schematic"),
-            BridgeMapType.DIAGONAL,
-            "§4Yassino", Arrays.asList("§7The §agreat §4Admin" , "§7of this §agreat §6network"),
-            new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    getYassinoSkinTexture()
-                    ,""),
-            400,null, null,false)),
-
-    CHARONXYZ_LONG(new BridgeMapSkin(5553,new File(pathToSchematic() + "/charonxyz-Long.schematic"),
-            BridgeMapType.LONG,
+    CHARONXYZ(new BridgeMapSkin(5553,new File(pathToSchematic() + "/charonxyz-%type%.schematic"),
             "§bcharonxyz",
             Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
             new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
                     getCharonxyzSkinTexture(),""),
-            400,null, null,false)),
-    CHARONXYZ_DIAGONAL(new BridgeMapSkin(5553,new File(pathToSchematic() + "/charonxyz-Diagonal.schematic"),
-    BridgeMapType.DIAGONAL,
-            "§bcharonxyz",
-            Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
-            new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    getCharonxyzSkinTexture() ,""),
-            400,null, null,false)),
-    CHARONXYZ_SHORT(new BridgeMapSkin(5553,
-            new File(pathToSchematic() + "/charonxyz-Short.schematic"),
-    BridgeMapType.SHORT,
-            "§bcharonxyz",
-            Arrays.asList("§7The §agreat §bDeveloper" , "§7of this §agreat §6gamemode"),
-            new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta(
-                    getCharonxyzSkinTexture(),""),
-            400,null, null,false));
+            400,null, null,false, BridgeMapType.SHORT, BridgeMapType.LONG, BridgeMapType.DIAGONAL)),
+    ;
 
     private final BridgeMapSkin bridgeMapSkin;
 
@@ -153,11 +68,23 @@ public enum BridgeMapSkins {
 
     public static BridgeMapSkin getDefaultSkin(BridgeMapType bridgeMapType) {
         for (BridgeMapSkins value : values()) {
-            if (value.getBridgeMapSkin().getBridgeMapType() == bridgeMapType && value.getBridgeMapSkin().isDefault()) {
+            for (BridgeMapType mapType : value.getBridgeMapSkin().getBridgeMapTypes()) {
+                if (mapType == bridgeMapType && value.getBridgeMapSkin().isDefault()) {
+                    return value.getBridgeMapSkin();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static BridgeMapSkin getById(int id) {
+        for (BridgeMapSkins value : values()) {
+            if (value.getBridgeMapSkin().getId() == id) {
                 return value.getBridgeMapSkin();
             }
         }
         return null;
     }
+
 
 }

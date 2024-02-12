@@ -4,12 +4,14 @@ import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.schematic.Schematic;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -73,8 +75,8 @@ public class BridgeMap implements Cloneable {
 
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
 
-
-        ClipboardFormat format = ClipboardFormat.findByFile(bridgeMapSkin.getSchematic());
+        File file = new File(Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics/" + bridgeMapSkin.getSchematic().getName().replace("%type%", mapType.getName()));
+        ClipboardFormat format = ClipboardFormat.findByFile(file);
 
 
         if (format == null) {
@@ -87,7 +89,7 @@ public class BridgeMap implements Cloneable {
             var bukkitWorld = FaweAPI.getWorld(mapType.getName());
             BlockVector vector = new BlockVector(pasteLocation.getBlockX(), pasteLocation.getBlockY(), pasteLocation.getBlockZ());
 
-            Schematic schematic = format.load(bridgeMapSkin.getSchematic());
+            Schematic schematic = format.load(file);
 
             schematic.paste(bukkitWorld, vector, true, pasteAir, null);
 

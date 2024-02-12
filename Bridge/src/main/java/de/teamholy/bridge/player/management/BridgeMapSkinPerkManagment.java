@@ -76,7 +76,7 @@ public class BridgeMapSkinPerkManagment {
 
         List<BridgeMapSkin> maps = Arrays.stream(BridgeMapSkins.values())
                 .map(BridgeMapSkins::getBridgeMapSkin)
-                .filter(map -> map.getBridgeMapType() == bridgeMapType)
+                .filter(map -> Arrays.stream(map.getBridgeMapTypes()).anyMatch(type -> type == bridgeMapType))
                 .filter(map ->
                         switch (sortOptionPlayer) {
                             case OWNED -> (map.isBuyable() && bridgePlayer.getBridgeSettings().getMapSkins().contains(map)
@@ -300,12 +300,18 @@ public class BridgeMapSkinPerkManagment {
             lore.add(" ");
         } else {
 
-
-            if (bridgePlayer.getSelectedSkins().get(bridgeMapSkin.getBridgeMapType()) == bridgeMapSkin){
+            if (bridgePlayer.getSelectedSkins().containsValue(bridgeMapSkin)) {
                 lore.add("§2Selected");
             } else {
                 lore.add("§aClick to select");
             }
+
+            /*
+            if (bridgePlayer.getSelectedSkins().get(bridgeMapSkin.getBridgeMapType()) == bridgeMapSkin){
+                lore.add("§2Selected");
+            } else {
+                lore.add("§aClick to select");
+            }*/
 
             lore.add(" ");
             lore.addAll(bridgeMapSkin.getDescription());
