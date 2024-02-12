@@ -3,9 +3,12 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
@@ -18,17 +21,36 @@ public class PlayerSpectateListener implements Listener {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        var player = event.getPlayer();
+
+        if (!playerManagement.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+                if (bridgePlayer.getToSpectate() != null) {
+                    for (Player bukkit : Bukkit.getOnlinePlayers()) {
+                        if (bukkit == bridgePlayer.getPlayer()) {
+                            player.hidePlayer(bukkit);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @EventHandler
     public void onChangeWorldEvent(PlayerChangedWorldEvent event) {
         var player = event.getPlayer();
 
-        var bridgePlayer = playerManagement.getBridgePlayer(player);
-
-        if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
-            var toSpectate = bridgePlayer.getToSpectate();
-            if (toSpectate == null) {
-                playerManagement.stopSpectating(player, true);
-            } else playerManagement.startSpectating(player, toSpectate);
+        for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+            if (bridgePlayer.getToSpectate() != null) {
+                if (bridgePlayer.getToSpectate().getUniqueId().equals(player.getUniqueId())) {
+                    playerManagement.startSpectating(bridgePlayer.getPlayer(), player);
+                }
+            } else {
+                playerManagement.stopSpectating(bridgePlayer.getPlayer(), true);
+            }
         }
     }
 
