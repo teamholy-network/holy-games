@@ -50,15 +50,21 @@ public class PlayerInteractAtItemListener implements Listener {
 
             }
         } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
-            event.setCancelled(false);
+            if (event.getClickedBlock() != null) {
+                event.setCancelled(true);
+            }
 
             if (item == null) return;
 
             if (item.getItemMeta() != null
                     && item.getItemMeta().getDisplayName() != null) {
                 if (item.getItemMeta().getDisplayName().startsWith("§8» §cLeave Spectator")) {
+                    event.setCancelled(false);
+
                     playerManagement.stopSpectating(player, true);
                 }
+            } else {
+                event.setCancelled(true);
             }
         }
         else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {

@@ -31,12 +31,13 @@ public class PlayerInventoryListener implements Listener {
         var player = (Player) event.getWhoClicked();
         var view = event.getView();
 
-        if (!view.getTitle().equalsIgnoreCase("§8» §6Inventory sort")) event.setCancelled(!player.isOp() && player.getGameMode() != GameMode.CREATIVE);
+        if (!view.getTitle().equalsIgnoreCase("§8» §6Inventory sort"))
+            event.setCancelled(!player.isOp() && player.getGameMode() != GameMode.CREATIVE);
 
-         if (view.getTitle().equals("§8» §6Sound Settings")) {
+        if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
             var bridgePlayer = playerManagement.getBridgePlayer(player);
-            var soundPerkInventory = soundPerkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL,1).getInventory();
+            var soundPerkInventory = soundPerkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
 
             var clickedItem = event.getCurrentItem();

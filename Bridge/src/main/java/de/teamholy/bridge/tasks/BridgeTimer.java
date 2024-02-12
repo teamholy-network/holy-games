@@ -1,13 +1,17 @@
 package de.teamholy.bridge.tasks;
 
+import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FormatTime;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
@@ -33,11 +37,7 @@ public class BridgeTimer implements Runnable {
                         long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
                         String timer = FormatTime.formatTimeManually(playerTime);
 
-                        switch (bridgePlayer.getBridgeSettings().getTimerPlace()) {
-                            case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
-                            case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer,0,20,0);
-                            case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
-                        }
+                        displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
                     }
 
                     if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
@@ -63,6 +63,18 @@ public class BridgeTimer implements Runnable {
                             }
                         });
                     }
+                } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
+                    if (bridgePlayer.getToSpectate() != null) {
+                        var toSpectate = bridgePlayer.getToSpectate();
+                        if (toSpectate.isOnline()) {
+                            if (playerManagement.getPlayerTime().containsKey(toSpectate.getUniqueId())) {
+                                long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(toSpectate.getUniqueId()));
+                                String timer = FormatTime.formatTimeManually(playerTime);
+
+                                displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
+                            }
+                        }
+                    }
                 }
             };
 
@@ -70,5 +82,28 @@ public class BridgeTimer implements Runnable {
             e.printStackTrace();
         }
 
+    }
+    private void displayTimer(BridgePlayer bridgePlayer, String timer, BridgeSettings.TimerPlace timerPlace) {
+        var player = bridgePlayer.getPlayer();
+
+        if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
+            var toSpec = bridgePlayer.getToSpectate();
+
+            if (toSpec != null && toSpec.isOnline()) {
+                var rankColor = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(toSpec.getUniqueId());
+
+                switch (timerPlace) {
+                    case ACTION_BAR -> playerManagement.sendActionBar(player, rankColor + toSpec.getName() + " §8» §e" + timer);
+                    case TITLE -> playerManagement.sendTitle(player, "", rankColor + toSpec.getName() + " §8» §e" + timer,0,20,0);
+                    case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, rankColor + toSpec.getName() + " §8» §e" + timer);
+                }
+            }
+        } else {
+            switch (timerPlace) {
+                case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
+                case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer,0,20,0);
+                case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
+            }
+        }
     }
 }

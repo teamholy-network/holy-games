@@ -405,6 +405,8 @@ public class PlayerManagement {
         player.getInventory().clear();
         prepareIngamePlayer(player);
 
+        getScoreboard(player).updateLine(2, "§8");
+
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (onlinePlayer != player) {
                 onlinePlayer.showPlayer(player);
