@@ -2,6 +2,7 @@ package de.teamholy.bridge.player.management;
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.dytanic.cloudnet.wrapper.Wrapper;
@@ -247,9 +248,47 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.ENDER_PEARL).name("§8» §6Offset spawn §8(§cX§7,§cZ§8)").lore("§c§oSoon").build(), 12, event -> {
+        String colorOffset = (bridgePlayer.getBridgeSettings().getOffsetZ() >= 0 ? "§a+" : "§c");
+
+
+        inventory.setItem(new ItemBuilder(Material.ENDER_PEARL).name("§8» §6Offset spawn §8(§cZ§8)")
+                .lore(Arrays.
+                        asList("§7Current offset§8: " + colorOffset + bridgePlayer.getBridgeSettings().getOffsetZ(),
+                                "",
+                                "§f§o- is forwards",
+                                "§f§o+ is backwards",
+                                "",
+                                "§7§oLeftclick to increase §6offset",
+                                "§7§oRightclick to decrease §6offset")).build(), 12, event -> {
+
+            int currentOffset = bridgePlayer.getBridgeSettings().getOffsetZ();
+
+            Location mapLoc = bridgePlayer.getUneditedLocation().clone();
+
+            if (event.getClick() == ClickType.LEFT || event.getClick() == ClickType.SHIFT_LEFT) {
+                if (currentOffset >= 3) return;
+                bridgePlayer.getBridgeSettings().setOffsetZ(bridgePlayer.getBridgeSettings().getOffsetZ() + 1);
+            } else if (event.getClick() == ClickType.RIGHT || event.getClick() == ClickType.SHIFT_RIGHT) {
+                if (currentOffset <= -1) return;
+                bridgePlayer.getBridgeSettings().setOffsetZ(bridgePlayer.getBridgeSettings().getOffsetZ() - 1);
+            }
+
+            String newColorOffset = (bridgePlayer.getBridgeSettings().getOffsetZ() >= 0 ? "§a+" : "§c");
+            inventory.getInventory().getItem(12).getItemMeta().setLore(Lists.newArrayList());
+            inventory.setItem(new ItemBuilder(Material.ENDER_PEARL).name("§8» §6Offset spawn §8(§cZ§8)")
+                    .lore(Arrays.
+                            asList("§7Current offset§8: " + newColorOffset + bridgePlayer.getBridgeSettings().getOffsetZ(),
+                                    "",
+                                    "§f§o- is forwards",
+                                    "§f§o+ is backwards",
+                                    "",
+                                    "§7§oLeftclick to increase §6offset",
+                                    "§7§oRightclick to decrease §6offset")).build(), 12);
+            player.updateInventory();
+            bridgePlayer.setMapLocation(mapLoc.clone().add(0, 0, bridgePlayer.getBridgeSettings().getOffsetZ()));
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
+
 
         ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
 
@@ -416,21 +455,6 @@ public class PlayerManagement {
         if (teleport) player.teleport(bridgePlayer.getMapLocation());
 
         //  player.removePotionEffect(PotionEffectType.INVISIBILITY);
-    }
-
-    private void applyGhostlyAppearance(Player player) {
-        // Use reflection to modify player's game profile (requires CraftBukkit)
-        GameProfile profile = ((CraftPlayer) player).getProfile();
-
-        // Create a new Property with transparent texture
-        Property property = new Property("textures", "base64TextureData");
-        profile.getProperties().put("textures", property);
-
-        // Refresh player's appearance
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            onlinePlayer.hidePlayer(player);
-            onlinePlayer.showPlayer(player);
-        }
     }
 
     public Inventory blockSettingsInventory(BridgePlayer bridgePlayer) {

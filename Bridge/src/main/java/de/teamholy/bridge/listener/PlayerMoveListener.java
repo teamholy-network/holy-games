@@ -55,9 +55,11 @@ public class PlayerMoveListener implements Listener {
                 MapPosition mapPosition = map.getMapPosition();
                 if (mapPosition == null) return;
 
-                if (!mapPosition.isInMapPosition(event.getTo(), true) && player.getGameMode() != GameMode.CREATIVE) {
-                    if (bridgePlayer.getMapLocation() != null) {
-                        player.teleport(toSpectate.getMapLocation());
+                if (!player.hasPermission("teamholy.team")) {
+                    if (!mapPosition.isInMapPosition(event.getTo(), true) && player.getGameMode() != GameMode.CREATIVE) {
+                        if (bridgePlayer.getMapLocation() != null) {
+                            player.teleport(toSpectate.getMapLocation());
+                        }
                     }
                 }
             }

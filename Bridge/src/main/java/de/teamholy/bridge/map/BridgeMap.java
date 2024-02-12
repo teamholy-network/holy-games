@@ -60,6 +60,7 @@ public class BridgeMap implements Cloneable {
 
         if (firstPaste) {
             this.pasteLocation = location.clone();
+
             this.spawnLocation = location.clone().add(0.5,0,0.5);
             int distance = (mapType.getLength() + 10);
             if (mapType == BridgeMapType.DIAGONAL) {

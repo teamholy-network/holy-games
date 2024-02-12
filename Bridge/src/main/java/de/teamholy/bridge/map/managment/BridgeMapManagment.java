@@ -99,7 +99,14 @@ public class BridgeMapManagment {
         bridgeMap.setUsed(true);
         bridgePlayer.setState(BridgePlayer.PlayerState.INGAME);
         bridgePlayer.setMap(bridgeMap);
-        bridgePlayer.setMapLocation(new Location(Bukkit.getWorld(bridgeMap.getMapType().getName()), bridgeMap.getSpawnLocation().getX(), bridgeMap.getSpawnLocation().getY(), bridgeMap.getSpawnLocation().getZ(), bridgeMap.getMapType().getSpawnYaw(), 0));
+        Location location = new Location(Bukkit.getWorld(bridgeMap.getMapType().getName()),
+                bridgeMap.getSpawnLocation().getX(), bridgeMap.getSpawnLocation().getY(),
+                bridgeMap.getSpawnLocation().getZ(), bridgeMap.getMapType().getSpawnYaw(), 0);
+
+        bridgePlayer.setUneditedLocation(location);
+
+        bridgePlayer.setMapLocation(
+                location.clone().add(0, 0, bridgePlayer.getBridgeSettings().getOffsetZ()));
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation()), 2);
 
         if (!bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()).isDefault()) {

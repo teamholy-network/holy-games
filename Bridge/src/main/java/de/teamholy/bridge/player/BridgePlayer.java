@@ -51,6 +51,8 @@ public class BridgePlayer {
 
     private Location mapLocation;
 
+    private Location uneditedLocation;
+
     private PlayerState state;
     private HashMap<Block, Long> blocks;
     private ScoreboardAPI bridgeScoreboard;
@@ -138,6 +140,7 @@ public class BridgePlayer {
             statsProfile.setSetting(gameKey, "diagonalSelected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
                     .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.DIAGONAL)).findFirst().get().getBridgeMapSkin().getId()));
 
+            statsProfile.setSetting(gameKey, "offsetZ", String.valueOf(bridgeSettings.getOffsetZ()));
 
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
@@ -218,6 +221,10 @@ public class BridgePlayer {
                 } else {
                     this.selectedSkins.put(BridgeMapType.DIAGONAL, BridgeMapSkins.valueOf(statsProfile.getSetting(gameKey, "diagonalSelected").split("_")[0]).getBridgeMapSkin());
                 }
+            }
+
+            if (statsProfile.getSetting(gameKey, "offsetZ") != null) {
+                this.bridgeSettings.setOffsetZ(Integer.parseInt(statsProfile.getSetting(gameKey, "offsetZ")));
             }
 
             for (var settingsMap :
@@ -306,6 +313,7 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "diagonalSelected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
                 .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.DIAGONAL)).findFirst().get().getBridgeMapSkin().getId()));
 
+        statsProfile.setSetting(gameKey, "offsetZ", String.valueOf(bridgeSettings.getOffsetZ()));
 
         if (globalBestTime != null) {
             if (this.globalBestTime.get(BridgeMapType.SHORT) != null) {

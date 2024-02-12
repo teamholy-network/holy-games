@@ -35,6 +35,8 @@ public class BridgeSettings {
     private HashMap<BridgeSoundEventType, BridgeSound> currentSounds = new HashMap<>();
     private HashMap<BridgeSound, BridgeSoundEventType> soundEvents = new HashMap<>();
 
+    private int offsetZ = 0;
+
     @Getter @AllArgsConstructor
     public enum BlockAnimationType {
 
@@ -43,7 +45,8 @@ public class BridgeSettings {
         FALLING("Falling", PerkRankType.PREMIUM, new ItemBuilder(Material.FEATHER).setName("§8» §bFalling")),
         BREAK("Break",PerkRankType.VIP, new ItemBuilder(Material.ANVIL).setName("§8» §cBreak")),
         TNT("Explosion",PerkRankType.HOLY, new ItemBuilder(Material.TNT).setName("§8» §4Explosion"));
-        //BLACK_HOLE("Lightning",PerkRankType.HOLY, new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQ2NWMxMjE5NThjMDUyMmUzZGNjYjNkMTRkN" +
+        //BLACK_HOLE("Lightning",PerkRankType.HOLY,
+        // new ItemBuilder(Material.SKULL_ITEM,1,3).setSkullMeta("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQ2NWMxMjE5NThjMDUyMmUzZGNjYjNkMTRkN" +
                // "jg2MTJkNjMxN2NkMzgwYjBlNjQ2YjYxYjc0MjBiOTA0YWYwMiJ9fX0=","").setName("§8» §bLightning"));
 
         private final String name;
