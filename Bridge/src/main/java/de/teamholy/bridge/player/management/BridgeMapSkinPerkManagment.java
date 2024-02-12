@@ -2,13 +2,10 @@ package de.teamholy.bridge.player.management;
 
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMap;
-import de.teamholy.bridge.map.BridgeMapSkin;
-import de.teamholy.bridge.map.BridgeMapSkins;
+import de.teamholy.bridge.map.skin.BridgeMapSkin;
+import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.settings.BridgeSettings;
-import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
@@ -20,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

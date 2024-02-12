@@ -5,6 +5,7 @@ import com.boydti.fawe.object.schematic.Schematic;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import de.teamholy.bridge.map.position.MapPosition;
+import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;

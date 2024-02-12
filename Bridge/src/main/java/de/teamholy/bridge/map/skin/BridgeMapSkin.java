@@ -1,6 +1,7 @@
-package de.teamholy.bridge.map;
+package de.teamholy.bridge.map.skin;
 
 import com.boydti.fawe.object.schematic.Schematic;
+import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.core.bukkit.perks.PerkRankType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.AllArgsConstructor;

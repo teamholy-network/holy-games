@@ -5,13 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMap;
-import de.teamholy.bridge.map.BridgeMapSkins;
+import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
