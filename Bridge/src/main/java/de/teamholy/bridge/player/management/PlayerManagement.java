@@ -352,7 +352,21 @@ public class PlayerManagement {
         player.openInventory(inventory.getInventory());
     }
 
+    public boolean isPlayerBeingSpectated(Player player) {
+        return bridgePlayers.values().stream().anyMatch(bridgePlayer -> bridgePlayer.getToSpectate() == player);
+    }
+
+    public Player getPlayerWhoSpectates(Player player) {
+        return bridgePlayers.values().stream().filter(bridgePlayer -> bridgePlayer.getToSpectate() == player).findFirst().map(BridgePlayer::getPlayer).orElse(null);
+    }
+
     public void startSpectating(Player player, Player target) {
+        var playerWhoSpectates = getPlayerWhoSpectates(player);
+
+        if (playerWhoSpectates != null) {
+            stopSpectating(playerWhoSpectates, true); // stop the player who is spectating the player
+        }
+
         BridgePlayer bridgePlayer = getBridgePlayer(player);
         bridgePlayer.setToSpectate(target);
         bridgePlayer.setState(BridgePlayer.PlayerState.SPECTATOR);
@@ -368,12 +382,10 @@ public class PlayerManagement {
         player.getInventory().clear();
         player.getInventory().setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§8» §cLeave Spectator").build());
 
-      //  player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
+        //  player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (onlinePlayer != player) {
-                onlinePlayer.hidePlayer(player);
-            }
+            onlinePlayer.hidePlayer(player);
         }
         player.teleport(target);
     }
@@ -397,7 +409,7 @@ public class PlayerManagement {
 
         if (teleport) player.teleport(bridgePlayer.getMapLocation());
 
-      //  player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        //  player.removePotionEffect(PotionEffectType.INVISIBILITY);
     }
 
     private void applyGhostlyAppearance(Player player) {
