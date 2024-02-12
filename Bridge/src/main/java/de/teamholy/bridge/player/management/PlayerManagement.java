@@ -147,7 +147,7 @@ public class PlayerManagement {
     public void updateHologram(BridgePlayer bridgePlayer, boolean updateMapType) {
         var hologram = bridgePlayer.getHologram();
         var mapType = bridgePlayer.getMap().getMapType();
-        var holoLocation = bridgePlayer.getMapLocation().clone().add(mapType.getHologramCords().xADD(), mapType.getHologramCords().yADD(), mapType.getHologramCords().zADD());
+        var holoLocation = bridgePlayer.getUneditedLocation().clone().add(mapType.getHologramCords().xADD(), mapType.getHologramCords().yADD(), mapType.getHologramCords().zADD());
 
         if (hologram == null) {
             hologram = HologramsAPI.createHologram(Bridge.getInstance(), holoLocation);
