@@ -2,6 +2,8 @@ package de.teamholy.bridge.player.management;
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
@@ -31,6 +33,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -209,7 +213,7 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 13, event -> {
+        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 12, event -> {
 
             player.closeInventory();
 
@@ -236,10 +240,27 @@ public class PlayerManagement {
         });
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
-        inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 15, event -> {
+        inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 14, event -> {
             var soundPerkInventory = Bridge.getInstance().getSoundPerkManagement().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
             player.openInventory(soundPerkInventory);
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
+
+        ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
+
+        timer.lore(Arrays.stream(BridgeSettings.TimerPlace.values())
+                .map(value -> (bridgePlayer.getBridgeSettings().getTimerPlace() == value) ? "§a" + value.getName() : "§7" + value.getName())
+                .collect(Collectors.toList()));
+
+        inventory.setItem(timer.build(), 15, event -> {
+            bridgePlayer.getBridgeSettings().setTimerPlace(BridgeSettings.TimerPlace.values()[(bridgePlayer.getBridgeSettings().getTimerPlace().ordinal() + 1) % BridgeSettings.TimerPlace.values().length]);
+            ingameSettingsInventory(player);
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
+
+        inventory.setItem(new ItemBuilder(Material.EYE_OF_ENDER).name("§8» §7Spectate Players").build(), 16, event -> {
+            openSpectateInventory(player);
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
@@ -248,20 +269,10 @@ public class PlayerManagement {
                         "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=", "")
                 .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 33, event -> {
 
-            player.openInventory(Bridge.getInstance().getBridgeMapSkinPerkManagment().openMapInventory(bridgePlayer, bridgePlayer.getMap().getMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL,1).getInventory());
+            player.openInventory(Bridge.getInstance().getBridgeMapSkinPerkManagment().openMapInventory(bridgePlayer, bridgePlayer.getMap().getMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory());
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
-        ItemBuilder timer = new ItemBuilder(Material.WATCH).name("§8» §6Timer place");
 
-        timer.lore(Arrays.stream(BridgeSettings.TimerPlace.values())
-                .map(value -> (bridgePlayer.getBridgeSettings().getTimerPlace() == value) ? "§a" + value.getName() : "§7" + value.getName())
-                .collect(Collectors.toList()));
-
-        inventory.setItem(timer.build(), 16, event -> {
-            bridgePlayer.getBridgeSettings().setTimerPlace(BridgeSettings.TimerPlace.values()[(bridgePlayer.getBridgeSettings().getTimerPlace().ordinal() + 1) % BridgeSettings.TimerPlace.values().length]);
-            ingameSettingsInventory(player);
-            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
-        });
 
         int index = 29;
         for (BridgeMapType mapType : BridgeMapType.values()) {
@@ -312,6 +323,96 @@ public class PlayerManagement {
 
 
         player.openInventory(inventory.getInventory());
+    }
+
+    private void openSpectateInventory(Player player) {
+        if (Bukkit.getOnlinePlayers().size() < 2) {
+            player.sendMessage(Bridge.PREFIX + "§cNo players to spectate");
+            return;
+        }
+
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Spectate", 6 * 9);
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer == player) continue;
+            var bridgePlayer = getBridgePlayer(onlinePlayer);
+            if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) continue;
+            inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, 3)
+                    .setSkullOwner(onlinePlayer.getName())
+                    .setName("§8» §6" + onlinePlayer.getName())
+                    .setLore("§7Click to spectate").build(), inventory.getInventory().firstEmpty(), event -> {
+
+                startSpectating(player, onlinePlayer);
+
+                player.sendMessage(Bridge.PREFIX + "§7You are now spectating §6" + onlinePlayer.getName());
+                player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+            });
+        }
+
+        player.openInventory(inventory.getInventory());
+    }
+
+    public void startSpectating(Player player, Player target) {
+        BridgePlayer bridgePlayer = getBridgePlayer(player);
+        bridgePlayer.setToSpectate(target);
+        bridgePlayer.setState(BridgePlayer.PlayerState.SPECTATOR);
+        player.setGameMode(GameMode.ADVENTURE);
+        player.setAllowFlight(true);
+        player.setFlying(true);
+        player.spigot().setCollidesWithEntities(false);
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setFireTicks(0);
+        player.setExp(0);
+        player.setLevel(0);
+        player.getInventory().clear();
+        player.getInventory().setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§8» §cLeave Spectator").build());
+
+      //  player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer != player) {
+                onlinePlayer.hidePlayer(player);
+            }
+        }
+        player.teleport(target);
+    }
+
+    public void stopSpectating(Player player, boolean teleport) {
+        BridgePlayer bridgePlayer = getBridgePlayer(player);
+        bridgePlayer.setToSpectate(null);
+        bridgePlayer.setState(BridgePlayer.PlayerState.INGAME);
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setAllowFlight(false);
+        player.setFlying(false);
+        player.spigot().setCollidesWithEntities(true);
+        player.getInventory().clear();
+        prepareIngamePlayer(player);
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer != player) {
+                onlinePlayer.showPlayer(player);
+            }
+        }
+
+        if (teleport) player.teleport(bridgePlayer.getMapLocation());
+
+      //  player.removePotionEffect(PotionEffectType.INVISIBILITY);
+    }
+
+    private void applyGhostlyAppearance(Player player) {
+        // Use reflection to modify player's game profile (requires CraftBukkit)
+        GameProfile profile = ((CraftPlayer) player).getProfile();
+
+        // Create a new Property with transparent texture
+        Property property = new Property("textures", "base64TextureData");
+        profile.getProperties().put("textures", property);
+
+        // Refresh player's appearance
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            onlinePlayer.hidePlayer(player);
+            onlinePlayer.showPlayer(player);
+        }
     }
 
     public Inventory blockSettingsInventory(BridgePlayer bridgePlayer) {

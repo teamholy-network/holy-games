@@ -40,7 +40,29 @@ public class PlayerMoveListener implements Listener {
         var player = event.getPlayer();
 
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(player);
-        if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+        if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
+            var bukkitToSpectate = bridgePlayer.getToSpectate();
+            if (bukkitToSpectate == null) {
+                playerManagement.stopSpectating(player, true);
+            } else {
+                var toSpectate = playerManagement.getBridgePlayer(bukkitToSpectate);
+                if (toSpectate == null) {
+                    playerManagement.stopSpectating(player, true);
+                    return;
+                }
+                var map = toSpectate.getMap().clone();
+
+                MapPosition mapPosition = map.getMapPosition();
+                if (mapPosition == null) return;
+
+                if (!mapPosition.isInMapPosition(event.getTo(), true) && player.getGameMode() != GameMode.CREATIVE) {
+                    if (bridgePlayer.getMapLocation() != null) {
+                        player.teleport(toSpectate.getMapLocation());
+                    }
+                }
+            }
+        }
+        else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             if (bridgePlayer.getMap() == null) {
                 return;
             }

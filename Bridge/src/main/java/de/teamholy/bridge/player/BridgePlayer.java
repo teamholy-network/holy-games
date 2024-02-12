@@ -77,6 +77,8 @@ public class BridgePlayer {
 
     private long cooldown = System.currentTimeMillis();
 
+    private Player toSpectate = null;
+
     public BridgePlayer(UUID uuid) {
         this.uuid = uuid;
         this.player = Bukkit.getPlayer(uuid);

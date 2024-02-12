@@ -27,15 +27,15 @@ public class PlayerInteractAtItemListener implements Listener {
         final Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
-        if (player.getLocation().getY() <= 96) {
-            event.setCancelled(true);
-            return;
+        var bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());
+        if (bridgePlayer.getToSpectate() == null) {
+            if (player.getLocation().getY() <= 96) {
+                event.setCancelled(true);
+                return;
+            }
         }
 
         event.setCancelled(!event.getPlayer().isOp());
-
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayers().get(player.getUniqueId());
-
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
             if (item == null) return;
@@ -49,7 +49,19 @@ public class PlayerInteractAtItemListener implements Listener {
                 }
 
             }
-        } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+        } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
+            event.setCancelled(false);
+
+            if (item == null) return;
+
+            if (item.getItemMeta() != null
+                    && item.getItemMeta().getDisplayName() != null) {
+                if (item.getItemMeta().getDisplayName().startsWith("§8» §cLeave Spectator")) {
+                    playerManagement.stopSpectating(player, true);
+                }
+            }
+        }
+        else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
 
 
             event.setCancelled(false);
