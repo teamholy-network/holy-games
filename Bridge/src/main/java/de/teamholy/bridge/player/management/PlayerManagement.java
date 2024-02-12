@@ -213,7 +213,7 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 12, event -> {
+        inventory.setItem(new ItemBuilder(Material.ARMOR_STAND).amount(1).name("§8» §6Inventory sort").build(), 13, event -> {
 
             player.closeInventory();
 
@@ -247,7 +247,7 @@ public class PlayerManagement {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
-        inventory.setItem(new ItemBuilder(Material.ENDER_PEARL).name("§8» §6Offset spawn").build(), 4, event -> {
+        inventory.setItem(new ItemBuilder(Material.ENDER_PEARL).name("§8» §6Offset spawn §8(§cX§7,§cZ§8)").lore("§c§oSoon").build(), 12, event -> {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
