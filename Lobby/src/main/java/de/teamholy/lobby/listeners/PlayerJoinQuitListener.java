@@ -51,15 +51,15 @@ public class PlayerJoinQuitListener implements Listener {
         },1);
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {
 
-            new NPCBuilder("mlgrush","§6§lMLGRush", UUID.fromString("1cff8006-9714-4231-997c-7b37a69dfff0"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("mlgrush")).build(player);
-            new NPCBuilder("clutches","§b§lClutches", UUID.fromString("878d7127-9a83-4480-86e4-43cdde07b11a"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches")).build(player);
-            new NPCBuilder("knockbackffa","§e§lKnockbackFFA", UUID.fromString("2552774a-1364-4407-b7e3-d2f66d93605c"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa")).build(player);
-            new NPCBuilder("sgffa","§a§lSGFFA", UUID.fromString("bef28b0b-cb18-412c-98ec-2c6b33ac3933"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa")).build(player);
+            new NPCBuilder("mlgrush","§6§lMLGRush", UUID.fromString("03c55754-08fc-4a12-a451-e517c89a3f91"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("mlgrush")).build(player);
+            new NPCBuilder("clutches","§b§lClutches", UUID.fromString("1dd0cc8f-5271-4d49-b774-16dc36877017"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches")).build(player);
+            new NPCBuilder("knockbackffa","§e§lKnockbackFFA", UUID.fromString("2646aecf-ddcc-4f3a-bedd-3b2c8d386350"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa")).build(player);
+            new NPCBuilder("sgffa","§a§lSGFFA", UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa")).build(player);
             new NPCBuilder("bridge","§e§lBridge", UUID.fromString("d08cbbd7-5e65-43e1-ad58-6ed90a560818"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bridge")).build(player);
 
-            new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("dfdb6c61-4060-4d8c-af20-1b21c4fc65a4"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bedwars")).build(player);
+            new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bedwars")).build(player);
 
-            new NPCBuilder("bedwars_spawn","§c§lBedwars", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_bw")).build(player);
+            new NPCBuilder("bedwars_spawn","§c§lBedwars", UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_bw")).build(player);
             new NPCBuilder("rush_spawn","§c§lRushBW", UUID.fromString("7414ffe4-6355-4877-8103-1ff6e0432e61"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_rbw")).build(player);
 
             new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
@@ -80,7 +80,7 @@ public class PlayerJoinQuitListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
         Player player = event.getPlayer();
-        LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().remove(player.getUniqueId());
+       Lobby.getInstance().getLobbyPlayerEntryHandler().remove(player.getUniqueId());
     }
 
 }

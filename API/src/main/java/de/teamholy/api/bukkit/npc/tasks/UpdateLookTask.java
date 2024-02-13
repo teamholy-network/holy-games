@@ -21,9 +21,8 @@ public class UpdateLookTask {
                         npcPlayerEntry.getNpcs().values().forEach(npcEntry -> {
                             Player player = npcEntry.getPlayer();
 
-                            if (npcEntry.isInRange(player)) {
+                            if (npcEntry.isInRange(player))
                                 npcEntry.updateSkin();
-                            }
 
                             if (npcEntry.isLooker() && player != null && npcEntry.getLocation().getWorld().getUID().equals(player.getWorld().getUID()) && npcEntry.getLocation().distance(player.getLocation()) <= npcEntry.getMaxTargetRange()) {
                                 npcEntry.createTargetLocation(player);

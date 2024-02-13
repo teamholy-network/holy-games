@@ -13,11 +13,11 @@ import java.util.UUID;
 /* copyright by Yassino */
 public class NPCBuilder {
 
-    private String name, displayName;
-    private UUID skin;
-    private int maxSeeRange, maxTargetRange;
-    private boolean looker, kickBack;
-    private Location location;
+    private final String name, displayName;
+    private final UUID skin;
+    private final int maxSeeRange, maxTargetRange;
+    private final boolean looker, kickBack;
+    private final Location location;
     private final List<String> holoLines = new ArrayList<>();
 
     public NPCBuilder(String name, String displayName, UUID skin, int maxSeeRange, int maxTargetRange, boolean looker, boolean kickBack, Location location) {
@@ -39,7 +39,7 @@ public class NPCBuilder {
     public void build(Player player) {
         if (BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()) != null) {
             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put(name,
-                    new NPCEntry(displayName, skin, location, maxSeeRange, maxTargetRange, looker, kickBack).setPlayer(player).addHolo(holoLines));
+                    new NPCEntry(displayName, this.skin, location, maxSeeRange, maxTargetRange, looker, kickBack).setPlayer(player).addHolo(holoLines));
 
         }
       }

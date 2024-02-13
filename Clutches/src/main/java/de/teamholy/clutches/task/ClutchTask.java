@@ -59,7 +59,6 @@ public class ClutchTask {
                                 player.setExp(0);
 
                                 if (playerEntry.getArenaType() == ArenaType.REDUCE) {
-
                                     for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
                                         if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
                                             if (npcEntry.getLocation().distance(player.getLocation()) <= 3.7) {
@@ -74,7 +73,6 @@ public class ClutchTask {
                                             }
                                         }
                                     }
-
                                 } else if (playerEntry.getArenaType() == ArenaType.EXPERIMENTAL) {
 
                                     for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {

@@ -1,6 +1,7 @@
 package de.teamholy.clutches.listeners;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.bukkit.npc.NPCBuilder;
 import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
@@ -41,15 +42,21 @@ public class PlayerJoinQuitListener implements Listener {
         }, 1);
 
         Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), () -> {
-            BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("playground", new NPCEntry("§a§lPLAYGROUND", UUID.fromString("04042384-cf5e-4f58-a128-6a87ede461b4"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("playground"), 100, 20, true, true).setPlayer(player));
+            if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("playground") != null)
+                new NPCBuilder("playground", "§a§lPLAYGROUND", UUID.fromString("04042384-cf5e-4f58-a128-6a87ede461b4"), 50, 10, true, true, BukkitHolyAPI.getInstance().getLocationManager().getLocation("playground")).build(player);
+
             if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("reduce") != null)
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduce", new NPCEntry("§f§lREDUCE", UUID.fromString("aa89e99d-843a-4ab2-8221-4fe9bcafd8a8"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("reduce"), 100, 20, true, true).setPlayer(player));
+                new NPCBuilder("reduce", "§f§lREDUCE", UUID.fromString("aa89e99d-843a-4ab2-8221-4fe9bcafd8a8"), 50, 10, true, true, BukkitHolyAPI.getInstance().getLocationManager().getLocation("reduce")).build(player);
+
             if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutch") != null) //"§d" + Bridge.getInstance().getDiagonal().size() + playerEntry.getLanguage().getTranslationByKey("player")
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("clutch", new NPCEntry("§f§lCLUTCH", UUID.fromString("765542b0-aa7c-4b9b-818b-36b3d4a4f85f"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutch"), 100, 20, true, true).setPlayer(player));
+                new NPCBuilder("clutch", "§f§lCLUTCH", UUID.fromString("765542b0-aa7c-4b9b-818b-36b3d4a4f85f"), 50, 10, true, true, BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutch")).build(player);
+
             if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("multireduce") != null) //"§d" + Bridge.getInstance().getDiagonal().size() + playerEntry.getLanguage().getTranslationByKey("player")
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("multireduce", new NPCEntry("§f§lMULTIREDUCE", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("multireduce"), 100, 20, true,true).setPlayer(player));
+                new NPCBuilder("multireduce", "§f§lMULTIREDUCE", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"), 50, 10, true, true, BukkitHolyAPI.getInstance().getLocationManager().getLocation("multireduce")).build(player);
+
             if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("diagonalclutch") != null) //"§d" + Bridge.getInstance().getDiagonal().size() + playerEntry.getLanguage().getTranslationByKey("player")
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("diagonalclutch", new NPCEntry("§f§lDIAGONAL", UUID.fromString("03c55754-08fc-4a12-a451-e517c89a3f91"), BukkitHolyAPI.getInstance().getLocationManager().getLocation("diagonalclutch"), 100, 20, true,true).setPlayer(player));
+                new NPCBuilder("diagonalclutch", "§f§lDIAGONAL", UUID.fromString("03c55754-08fc-4a12-a451-e517c89a3f91"), 50, 10, true, true, BukkitHolyAPI.getInstance().getLocationManager().getLocation("diagonalclutch")).build(player);
+
         }, 10);
     }
 

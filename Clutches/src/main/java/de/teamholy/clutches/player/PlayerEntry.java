@@ -179,9 +179,13 @@ public class PlayerEntry {
         player.teleport(getSpectateArena().getPlayerSpawn());
 
         if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.REDUCE) {
+
             NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true, false).setPlayer(playerEntry.player);
             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
             npcEntry.update();
+
+            Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
+
             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
         } else if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.EXPERIMENTAL) {
             for (int j = 0; j < 10; j++) {
@@ -189,6 +193,8 @@ public class PlayerEntry {
                 NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), location, 100, 20, true, false).setPlayer(playerEntry.player);
                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                 npcEntry.update();
+                Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
+
                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
             }
         }
@@ -267,6 +273,7 @@ public class PlayerEntry {
                             npcEntry.update();
                             BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
 
+                            Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
 
                         } else if (arenaType == ArenaType.EXPERIMENTAL) {
 
@@ -277,6 +284,8 @@ public class PlayerEntry {
                                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                                 npcEntry.update();
                                 BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
+
+                                Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
                             }
                         }
 

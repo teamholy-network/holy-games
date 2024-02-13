@@ -47,6 +47,8 @@ public class NPCEntry extends Reflection {
             this.displayName = displayName;
         }
 
+        this.skinUUID = skinUUID;
+
         this.uuid = new UUID(new Random().nextLong(), 0);
         this.gameProfile = new GameProfile(uuid, this.displayName);
 
@@ -104,14 +106,24 @@ public class NPCEntry extends Reflection {
         return gameProfile.getProperties().get("textures") != null;
     }
 
-    public void updateSkin() {
-        setSkin(skinUUID);
+    int updateTry = 0;
 
-        update();
+    public void updateSkin() {
+        if (updateTry > 15) {
+            return;
+        }
+
+        if (!hasSkin())
+            setSkin(skinUUID);
+
+        updateTry++;
     }
 
     public void setSkin(UUID uuid) {
-        if (uuid == null) return;
+        if (uuid == null) {
+            System.out.println("NPC Skin UUID is null");
+            return;
+        }
         SkinEntry skinEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getSkinEntryHashMap().get(uuid);
 
         PropertyMap properties = this.gameProfile.getProperties();
@@ -137,10 +149,13 @@ public class NPCEntry extends Reflection {
     public void spawn() {
         if (!this.isInRange(player) && this.players.contains(player)) {
             this.remove();
+            updateTry = 0;
+
         }
 
-
         if (this.isInRange(player) && !this.players.contains(player)) {
+            updateTry = 0;
+
             DataWatcher dataWatcher = new DataWatcher(null);
             dataWatcher.a(6, (float) 20);
             dataWatcher.a(10, (byte) 127);
@@ -179,9 +194,12 @@ public class NPCEntry extends Reflection {
         if (player == null) return;
         if (!this.isInRange(player) && this.players.contains(player)) {
             this.remove();
+            updateTry = 0;
         }
 
         if (this.isInRange(player) && !this.players.contains(player)) {
+            updateTry = 0;
+
             DataWatcher dataWatcher = new DataWatcher(null);
             dataWatcher.a(6, (float) 20);
             dataWatcher.a(10, (byte) 127);
