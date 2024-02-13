@@ -1,6 +1,7 @@
 package de.teamholy.lobby.lobbyplayer;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.api.bukkit.npc.NPCBuilder;
 import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.core.api.entities.game.GameProfile;
@@ -82,7 +83,11 @@ public class LobbyPlayer {
     }
 
     public void createNPC(String name, UUID uuid, Location location) {
-        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put(ChatColor.stripColor(name), new NPCEntry(name, uuid, location, 100, 10, true, true).setPlayer(player));
+        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap()
+                .get(player.getUniqueId()).getNpcs().put(ChatColor.stripColor(name),
+                        new NPCEntry(name, uuid, location, 100, 10, true, true).setPlayer(player));
+
+
     }
 
     private String getOnlineTimeFormated(Long millis) {

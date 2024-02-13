@@ -47,11 +47,15 @@ public class PlayerJoinQuitListener implements Listener {
                     lobbyPlayer[0].getPlayerRank().getBlue(), lobbyPlayer[0].getPlayerRank().getGreen(), lobbyPlayer[0].getPlayerRank().getRed()
             )).build());
             player.playSound(player.getLocation(),Sound.VILLAGER_YES,50f,50f);
-            lobbyPlayer[0].createNPC("§6§lMLGRush", UUID.fromString("1cff8006-9714-4231-997c-7b37a69dfff0"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("mlgrush"));
-            lobbyPlayer[0].createNPC("§b§lClutches", UUID.fromString("878d7127-9a83-4480-86e4-43cdde07b11a"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches"));
-            lobbyPlayer[0].createNPC("§e§lKnockbackFFA", UUID.fromString("2552774a-1364-4407-b7e3-d2f66d93605c"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa"));
-            lobbyPlayer[0].createNPC("§a§lSGFFA", UUID.fromString("bef28b0b-cb18-412c-98ec-2c6b33ac3933"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa"));
-            lobbyPlayer[0].createNPC("§e§lBridge", UUID.fromString("f33ce1c3-6e0f-41f9-b2c8-0af8a015b1fb"),BukkitHolyAPI.getInstance().getLocationManager().getLocation("bridge"));
+           // player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+        },1);
+        Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {
+
+            new NPCBuilder("mlgrush","§6§lMLGRush", UUID.fromString("1cff8006-9714-4231-997c-7b37a69dfff0"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("mlgrush")).build(player);
+            new NPCBuilder("clutches","§b§lClutches", UUID.fromString("878d7127-9a83-4480-86e4-43cdde07b11a"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches")).build(player);
+            new NPCBuilder("knockbackffa","§e§lKnockbackFFA", UUID.fromString("2552774a-1364-4407-b7e3-d2f66d93605c"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa")).build(player);
+            new NPCBuilder("sgffa","§a§lSGFFA", UUID.fromString("bef28b0b-cb18-412c-98ec-2c6b33ac3933"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa")).build(player);
+            new NPCBuilder("bridge","§e§lBridge", UUID.fromString("d08cbbd7-5e65-43e1-ad58-6ed90a560818"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bridge")).build(player);
 
             new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("dfdb6c61-4060-4d8c-af20-1b21c4fc65a4"),50,10,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bedwars")).build(player);
 
@@ -61,13 +65,10 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
             new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("cac3bd6a-b55f-4bfd-8c2b-537dc06375a6"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
 
+            new NPCBuilder("labymod","§6§lWebsite", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("labymod_npc"))
+                    .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player);
 
-
-
-            player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
-        },1);
-        Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> new NPCBuilder("labymod","§6§lWebsite", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("labymod_npc"))
-                .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player),10);
+        },5);
     }
 
     @EventHandler

@@ -1,5 +1,6 @@
 package de.teamholy.api.bukkit.npc.models;
 
+import com.mojang.authlib.properties.PropertyMap;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.utils.Reflection;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.server.v1_8_R3.*;
 import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
@@ -45,7 +47,7 @@ public class NPCEntry extends Reflection {
             this.displayName = displayName;
         }
 
-        this.uuid = new UUID(new Random().nextLong(),0);
+        this.uuid = UUID.randomUUID();//new UUID(new Random().nextLong(), 0);
         this.gameProfile = new GameProfile(uuid, this.displayName);
 
         this.entityId = new Random().nextInt(10000000);
@@ -56,6 +58,7 @@ public class NPCEntry extends Reflection {
 
         this.looker = looker;
         this.kickBack = kickBack;
+
         setSkin(skinUUID);
     }
 
@@ -66,7 +69,7 @@ public class NPCEntry extends Reflection {
 
     public NPCEntry addHolo(List<String> lines) {
         if (lines.isEmpty()) return this;
-        Location locationTemp = new Location(location.getWorld(),location.getX(),location.getY(),location.getZ());
+        Location locationTemp = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
         double i = 0;
         switch (lines.size()) {
             case 1:
@@ -82,7 +85,7 @@ public class NPCEntry extends Reflection {
                 i = 3.4;
                 break;
         }
-        hologram = HologramsAPI.createHologram(BukkitHolyAPI.getInstance(),locationTemp.add(0,i,0));
+        hologram = HologramsAPI.createHologram(BukkitHolyAPI.getInstance(), locationTemp.add(0, i, 0));
         hologram.getVisibilityManager().showTo(player);
         hologram.getVisibilityManager().setVisibleByDefault(false);
         for (String line : lines) {
@@ -96,14 +99,26 @@ public class NPCEntry extends Reflection {
         return this;
     }
 
+    private boolean hasSkin() {
+        return gameProfile.getProperties().get("textures") != null;
+    }
+
+    public void updateSkin() {
+        setSkin(skinUUID);
+
+        update();
+    }
+
     public void setSkin(UUID uuid) {
         SkinEntry skinEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getSkinEntryHashMap().get(uuid);
+        PropertyMap properties = this.gameProfile.getProperties();
+
         if (skinEntry != null) {
-            gameProfile.getProperties().put("textures", new Property("textures", skinEntry.getValue(), skinEntry.getSignature()));
+            properties.put("textures", new Property("textures", skinEntry.getValue(), skinEntry.getSignature()));
         } else {
             skinEntry = new SkinEntry();
             skinEntry.setUuid(uuid);
-            skinEntry.fetch(temp -> gameProfile.getProperties().put("textures", new Property("textures", temp.getValue(), temp.getSignature())));
+            skinEntry.fetch(temp -> properties.put("textures", new Property("textures", temp.getValue(), temp.getSignature())));
         }
     }
 
@@ -114,7 +129,9 @@ public class NPCEntry extends Reflection {
 
 
     public void spawn() {
-        if(!this.isInRange(player) && this.players.contains(player)) { this.remove(); }
+        if (!this.isInRange(player) && this.players.contains(player)) {
+            this.remove();
+        }
 
 
         if (this.isInRange(player) && !this.players.contains(player)) {
@@ -153,7 +170,9 @@ public class NPCEntry extends Reflection {
     }
 
     public void update() {
-        if(!this.isInRange(player) && this.players.contains(player)) { this.remove(); }
+        if (!this.isInRange(player) && this.players.contains(player)) {
+            this.remove();
+        }
 
         if (this.isInRange(player) && !this.players.contains(player)) {
             DataWatcher dataWatcher = new DataWatcher(null);
@@ -327,11 +346,7 @@ public class NPCEntry extends Reflection {
     }
 
     public boolean isInRange(Player player) {
-        if (this.location != null && this.location.getWorld().getUID().equals(player.getWorld().getUID()) && this.location.distance(player.getLocation()) <= this.maxSeeRange) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.location != null && this.location.getWorld().getUID().equals(player.getWorld().getUID()) && this.location.distance(player.getLocation()) <= this.maxSeeRange;
     }
 
     private int intMaker(double value) {

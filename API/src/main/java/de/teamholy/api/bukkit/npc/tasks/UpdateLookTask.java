@@ -20,6 +20,11 @@ public class UpdateLookTask {
                     for (NPCPlayer npcPlayerEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().values()) {
                         npcPlayerEntry.getNpcs().values().forEach(npcEntry -> {
                             Player player = npcEntry.getPlayer();
+
+                            if (npcEntry.isInRange(player)) {
+                                npcEntry.updateSkin();
+                            }
+
                             if (npcEntry.isLooker() && player != null && npcEntry.getLocation().getWorld().getUID().equals(player.getWorld().getUID()) && npcEntry.getLocation().distance(player.getLocation()) <= npcEntry.getMaxTargetRange()) {
                                 npcEntry.createTargetLocation(player);
                             }
