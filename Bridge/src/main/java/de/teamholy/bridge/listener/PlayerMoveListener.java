@@ -63,8 +63,10 @@ public class PlayerMoveListener implements Listener {
                     }
                 }
             }
+            return;
         }
-        else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+
+        if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             if (bridgePlayer.getMap() == null) {
                 return;
             }
@@ -174,10 +176,6 @@ public class PlayerMoveListener implements Listener {
 
                 playerManagement.prepareIngamePlayer(player);
                 playerManagement.updateHologram(bridgePlayer,false);
-            }
-        } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.LOBBY) {
-            if (event.getTo().getX() <= player.getWorld().getSpawnLocation().getX() - 100) {
-                player.teleport(player.getWorld().getSpawnLocation());
             }
         }
     }

@@ -3,7 +3,9 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.managment.BridgeMapManagment;
+import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,6 +49,18 @@ public class PlayerJoinListener implements Listener {
         playerManagement.addPlayer(player);
 
         Bridge.getInstance().getBridgeMapLoader().findMapForPlayer(BridgeMapType.SHORT, playerManagement.getBridgePlayer(player));
+
+        if (!playerManagement.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+                if (bridgePlayer.getToSpectate() != null) {
+                    for (Player bukkit : Bukkit.getOnlinePlayers()) {
+                        if (bukkit == bridgePlayer.getPlayer()) {
+                            player.hidePlayer(bukkit);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 

@@ -76,33 +76,34 @@ public class BridgeTimer implements Runnable {
                         }
                     }
                 }
-            };
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
     private void displayTimer(BridgePlayer bridgePlayer, String timer, BridgeSettings.TimerPlace timerPlace) {
         var player = bridgePlayer.getPlayer();
 
-        if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
-            var toSpec = bridgePlayer.getToSpectate();
-
-            if (toSpec != null && toSpec.isOnline()) {
-                var rankColor = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(toSpec.getUniqueId());
-
-                switch (timerPlace) {
-                    case ACTION_BAR -> playerManagement.sendActionBar(player, rankColor + toSpec.getName() + " §8» §e" + timer);
-                    case TITLE -> playerManagement.sendTitle(player, "", rankColor + toSpec.getName() + " §8» §e" + timer,0,20,0);
-                    case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, rankColor + toSpec.getName() + " §8» §e" + timer);
-                }
-            }
-        } else {
+        if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             switch (timerPlace) {
                 case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
-                case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer,0,20,0);
+                case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer, 0, 20, 0);
                 case SCOREBOARD -> playerManagement.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
+            }
+        } else {
+            var toSpec = bridgePlayer.getToSpectate();
+            var rankColor = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(toSpec.getUniqueId());
+
+            switch (timerPlace) {
+                case ACTION_BAR ->
+                        playerManagement.sendActionBar(player, rankColor + toSpec.getName() + " §8» §e" + timer);
+                case TITLE ->
+                        playerManagement.sendTitle(player, "", rankColor + toSpec.getName() + " §8» §e" + timer, 0, 20, 0);
+                case SCOREBOARD ->
+                        playerManagement.getScoreboard(player).updateLine(2, rankColor + toSpec.getName() + " §8» §e" + timer);
             }
         }
     }

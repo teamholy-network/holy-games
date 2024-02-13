@@ -30,6 +30,7 @@ public class PlayerQuitListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
 
+        var player = event.getPlayer();
         BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
 
         if (bridgePlayer == null) return;
@@ -53,6 +54,19 @@ public class PlayerQuitListener implements Listener {
 
         bridgeMapManagment.resetMap(map);
 
+
+        if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
+            bridgePlayer.setToSpectate(null);
+            playerManagement.stopSpectating(player, false);
+        }
+        if (!playerManagement.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer1 : playerManagement.getBridgePlayers().values()) {
+                if (bridgePlayer1.getToSpectate() == null) continue;
+                if (bridgePlayer1.getToSpectate().getUniqueId().equals(player.getUniqueId())) {
+                    playerManagement.stopSpectating(bridgePlayer1.getPlayer(), true);
+                }
+            }
+        }
 
         playerManagement.removePlayer(event.getPlayer());
     }

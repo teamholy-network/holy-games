@@ -60,7 +60,8 @@ public class Bridge extends JavaPlugin {
         loadListener();
 
         // period 20ms
-        executorService.scheduleAtFixedRate(new BridgeTimer(), 0, 20, TimeUnit.MILLISECONDS);
+        BridgeTimer timer = new BridgeTimer();
+        executorService.scheduleAtFixedRate(timer, 0, 20, TimeUnit.MILLISECONDS);
 
         for (BridgeMapType value : BridgeMapType.values()) {
             playerManagement.getTopPlayer().put(value, new HashMap<>());
