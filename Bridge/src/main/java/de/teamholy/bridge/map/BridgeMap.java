@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -71,33 +72,45 @@ public class BridgeMap implements Cloneable {
 
         }
 
-        this.bridgeMapSkin = bridgeMapSkin;
+
+        loadMapAsync(bridgeMapSkin, pasteAir).whenComplete((complete, throwabke) -> {
+            if (throwabke != null) {
+                throwabke.printStackTrace();
+                return;
+            }
+            this.bridgeMapSkin = complete;
+        });
+    }
+
+    private CompletableFuture<BridgeMapSkin> loadMapAsync(BridgeMapSkin bridgeMap, boolean air) {
+        CompletableFuture<BridgeMapSkin> completableFuture = new CompletableFuture<>();
+
+        completableFuture.completeAsync(() -> {
+            File file = new File(Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics/" + bridgeMap.getSchematic().getName().replace("%type%", mapType.getName()));
+            ClipboardFormat format = ClipboardFormat.findByFile(file);
+
+            if (format == null) {
+                System.out.println("Format not found");
+                return null;
+            }
+
+            try {
+                var bukkitWorld = FaweAPI.getWorld(mapType.getName());
+                BlockVector vector = new BlockVector(pasteLocation.getBlockX(), pasteLocation.getBlockY(), pasteLocation.getBlockZ());
+
+                Schematic schematic = format.load(file);
+
+                schematic.paste(bukkitWorld, vector, true, air, null);
+
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            return bridgeMap;
+        });
 
 
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-
-        File file = new File(Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics/" + bridgeMapSkin.getSchematic().getName().replace("%type%", mapType.getName()));
-        ClipboardFormat format = ClipboardFormat.findByFile(file);
-
-
-        if (format == null) {
-            System.out.println("Format not found");
-            completableFuture.complete(false);
-            return;
-        }
-
-        try {
-            var bukkitWorld = FaweAPI.getWorld(mapType.getName());
-            BlockVector vector = new BlockVector(pasteLocation.getBlockX(), pasteLocation.getBlockY(), pasteLocation.getBlockZ());
-
-            Schematic schematic = format.load(file);
-
-            schematic.paste(bukkitWorld, vector, true, pasteAir, null);
-
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-
+        return completableFuture;
     }
 
 }
