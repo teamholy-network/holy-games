@@ -8,6 +8,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -66,17 +67,18 @@ public class PlayerInteractAtItemListener implements Listener {
             } else {
                 event.setCancelled(true);
             }
-        }
-        else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+        } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
 
 
             event.setCancelled(false);
 
             if (item == null) return;
 
-            if (item.getItemMeta() != null
-                    && item.getItemMeta().getDisplayName() != null) {
-                if (item.getItemMeta().getDisplayName().startsWith("§8» §cQuit")) {
+            if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+                if (item.getItemMeta() != null
+                        && item.getItemMeta().getDisplayName() != null) {
+                    if (item.getItemMeta().getDisplayName().startsWith("§8» §cQuit")) {
+
            /*         bridgePlayer.setState(BridgePlayer.PlayerState.LOBBY);
                     playerManagement.loadLobbyInventory(player);
                     mapManagement.getLoader().unloadMap(bridgePlayer);
@@ -89,31 +91,31 @@ public class PlayerInteractAtItemListener implements Listener {
 
 */
 
-                    player.kickPlayer(null);
+                        player.kickPlayer(null);
+                    } else if (item.getItemMeta().getDisplayName().startsWith("§8» §6Settings")) {
 
-                } else if (item.getItemMeta().getDisplayName().startsWith("§8» §6Settings")) {
+                        if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
+                            player.sendMessage(Bridge.PREFIX + "§cYou can't open the settings while bridging!");
+                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                            event.setCancelled(true);
+                            return;
+                        }
 
-                    if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
-                        player.sendMessage(Bridge.PREFIX + "§cYou can't open the settings while bridging!");
-                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
                         event.setCancelled(true);
-                        return;
+
+                        playerManagement.ingameSettingsInventory(player);
+                    } else if (item.getItemMeta().getDisplayName().toLowerCase().contains("leave preview")) {
+                        playerManagement.prepareIngamePlayer(player);
+                        player.teleport(bridgePlayer.getMapLocation());
+                        bridgePlayer.getMap()
+                                .loadMap(
+                                        false,
+                                        bridgePlayer.getMapLocation().clone().add(-0.5, 0, -0.5),
+                                        bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()),
+                                        true);
+
+                        bridgePlayer.setPreview(false);
                     }
-
-                    event.setCancelled(true);
-
-                    playerManagement.ingameSettingsInventory(player);
-                } else if (item.getItemMeta().getDisplayName().toLowerCase().contains("leave preview")) {
-                    playerManagement.prepareIngamePlayer(player);
-                    player.teleport(bridgePlayer.getMapLocation());
-                    bridgePlayer.getMap()
-                            .loadMap(
-                                    false,
-                                    bridgePlayer.getMapLocation().clone().add(-0.5,0,-0.5),
-                                    bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()),
-                                    true);
-
-                    bridgePlayer.setPreview(false);
                 }
             }
         }
