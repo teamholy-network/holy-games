@@ -47,7 +47,7 @@ public class NPCEntry extends Reflection {
             this.displayName = displayName;
         }
 
-        this.uuid = UUID.randomUUID();//new UUID(new Random().nextLong(), 0);
+        this.uuid = new UUID(new Random().nextLong(), 0);
         this.gameProfile = new GameProfile(uuid, this.displayName);
 
         this.entityId = new Random().nextInt(10000000);
@@ -110,10 +110,15 @@ public class NPCEntry extends Reflection {
     }
 
     public void setSkin(UUID uuid) {
+        if (uuid == null) return;
         SkinEntry skinEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getSkinEntryHashMap().get(uuid);
+
         PropertyMap properties = this.gameProfile.getProperties();
 
         if (skinEntry != null) {
+            if (skinEntry.getUuid() == null) {
+                skinEntry.setUuid(uuid);
+            }
             properties.put("textures", new Property("textures", skinEntry.getValue(), skinEntry.getSignature()));
         } else {
             skinEntry = new SkinEntry();

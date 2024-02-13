@@ -30,6 +30,9 @@ public class SkinEntry {
     private String value, signature;
 
     public void fetch(Consumer<SkinEntry> consumer) {
+        if (uuid == null) {
+            throw new NullPointerException("UUID cannot be null");
+        }
         BukkitCore.getAPI().getExecutor().submit(() -> {
             try {
                 URLConnection uRLConnection = (new URL("https://api.ashcon.app/mojang/v2/user/" + uuid)).openConnection(); //old https://api.minetools.eu/profile/

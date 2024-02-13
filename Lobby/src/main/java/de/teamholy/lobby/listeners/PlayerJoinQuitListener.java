@@ -68,7 +68,7 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("labymod","§6§lWebsite", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("labymod_npc"))
                     .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player);
 
-        },5);
+        },10);
     }
 
     @EventHandler
