@@ -60,6 +60,7 @@ public class NPCEntry extends Reflection {
         this.kickBack = kickBack;
 
         setSkin(skinUUID);
+        update();
     }
 
     public NPCEntry setGameProfile(GameProfile gameProfile) {
@@ -175,6 +176,7 @@ public class NPCEntry extends Reflection {
     }
 
     public void update() {
+        if (player == null) return;
         if (!this.isInRange(player) && this.players.contains(player)) {
             this.remove();
         }
