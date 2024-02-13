@@ -81,6 +81,7 @@ public class PlayerManagement {
         player.setFoodLevel(20);
         player.setFireTicks(0);
         player.setExp(0);
+        player.getInventory().setHeldItemSlot(0);
         player.setLevel(0);
         player.getInventory().clear();
     }
@@ -88,6 +89,7 @@ public class PlayerManagement {
 
     public void prepareIngamePlayer(Player player) {
         preparePlayer(player);
+
         player.setGameMode(GameMode.SURVIVAL);
         player.setAllowFlight(false);
         player.setFlying(false);
