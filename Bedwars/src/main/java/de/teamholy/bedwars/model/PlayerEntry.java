@@ -409,6 +409,29 @@ public class PlayerEntry {
                 }
             }.runTaskTimer(Bedwars.getInstance(), 0, 20);
         }
+
+        if (list.isEmpty()) {
+            AtomicInteger i = new AtomicInteger(10);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Bukkit.getOnlinePlayers().forEach(all -> sendActionBar(all, Bedwars.getInstance().getPrefix() + "The server restarts in §6" + i.get() + " §7seconds!"));
+                    if (i.get() == 0) {
+
+                        Bedwars.getInstance().getCacheHandler().getPlayerEntries().forEach((uuid, playerEntry) -> {
+                            playerEntry.quickJoin();
+                        });
+
+                        Bukkit.shutdown();
+                        Bedwars.getInstance().bootrap();
+                        cancel();
+                    }
+                    i.getAndDecrement();
+                }
+            }.runTaskTimer(Bedwars.getInstance(), 0, 20);
+        }
+
+
     }
 
     public boolean hasTeam() {
