@@ -15,6 +15,7 @@ import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.settings.sounds.BridgeItems;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
+import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -754,5 +755,90 @@ public class PlayerManagement {
 
 
         return Math.round(averageTime);
+    }
+
+    private final SoundPerkManagement soundPerkManagement = Bridge.getInstance().getSoundPerkManagement();
+
+    public void stopTimer(BridgePlayer bridgePlayer, String newTime, long current) {
+        var player = bridgePlayer.getPlayer();
+        if (player.getLocation().getBlock().getType() == Material.GOLD_PLATE
+                || player.getLocation().clone().subtract(0, 1, 0).getBlock().getType() == Material.DIAMOND_BLOCK) {
+            if (!getPlayerTime().containsKey(player.getUniqueId())) {
+                return;
+            }
+            getPlayerTime().remove(player.getUniqueId());
+
+            sendTitle(player, "§fTime §8» §a" + newTime, "§a+ §e2 Coins", 10, 20, 10);
+            BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 2, true);
+
+
+            Location location = player.getLocation().clone();
+
+            var beforeBestLocal = bridgePlayer.getLocalBestTime(bridgePlayer.getMap().getMapType());
+            var beforeBestGlobal = bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType());
+
+            getScoreboard(player).updateLine(2, "§8");
+
+
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
+                if (!bridgePlayer.getBlocks().isEmpty()) {
+                    spawnBlockAnimation(bridgePlayer);
+                }
+
+                bridgePlayer.getBlocks().clear();
+                player.teleport(bridgePlayer.getMapLocation());
+            }, 1);
+
+
+            if (current < beforeBestGlobal || beforeBestGlobal == 0) {
+                String timerDifference = FormatTime.formatTimeManually(beforeBestGlobal - current);
+
+                Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> {
+                    FireworkUtil.playFirework(player.getWorld(), location.add(0, -3, 0), FireworkUtil.getBlowupRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(), location.add(0, -3, 0), FireworkUtil.getBlowupRandomEffect());
+                    FireworkUtil.playFirework(player.getWorld(), location.add(0, -3, 0), FireworkUtil.getBlowupRandomEffect());
+                });
+                player.sendMessage("§8§m-----------§f§lCONGRATS§8§m--------------");
+                player.sendMessage("");
+                player.sendMessage(" §fYou have beaten your §c§lall-time §frecord!");
+                player.sendMessage("      §fYour new §atime §fis §e" + newTime + (beforeBestGlobal != 0 ? " §8︳ §a-" + timerDifference + "§2 difference" : ""));
+                player.sendMessage("");
+                player.sendMessage("§8§m----------------------------------");
+
+                bridgePlayer.setGlobalBestTime(bridgePlayer.getMap().getMapType(), current);
+                bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
+
+                addBestTime(bridgePlayer, current);
+
+                soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+            } else if (current < beforeBestLocal || beforeBestLocal == 0) {
+                String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
+
+                Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> FireworkUtil.playFirework(player.getWorld(), location, FireworkUtil.getBlowupRandomEffect()));
+                player.sendMessage("");
+                player.sendMessage(" §fYou have beaten your §2§lsession record!");
+                player.sendMessage("       §fYour new §atime §fis §e" + newTime + (beforeBestLocal != 0 ? " §8︳ §a-" + timerDifference + "§2 difference" : ""));
+                player.sendMessage("");
+
+                bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
+
+                addBestTime(bridgePlayer, current);
+                soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+
+            } else {
+                soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
+            }
+
+            bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);
+
+            bridgePlayer.addWin();
+
+            Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
+                updateScoreboard(bridgePlayer);
+
+                prepareIngamePlayer(player);
+                updateHologram(bridgePlayer, false);
+            }, 1);
+        }
     }
 }

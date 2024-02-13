@@ -6,12 +6,10 @@ import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FormatTime;
-import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
@@ -21,7 +19,7 @@ import java.util.HashMap;
  * Proprietary and confidential
  * Written by charon
  **/
-public class BridgeTimer implements Runnable {
+public class BridgeTimerTask implements Runnable {
 
     private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
 
@@ -33,17 +31,9 @@ public class BridgeTimer implements Runnable {
                 var player = bridgePlayer.getPlayer();
 
                 if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
-                    if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
-                        long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
-                        String timer = FormatTime.formatTimeManually(playerTime);
-
-                        displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
-                    }
-
                     if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
                         long blockTime = bridgePlayer.getBridgeSettings().getRemovalTime();
                         HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
-
 
                         if (blocks.isEmpty() || blockTime < 1) return;
 
@@ -63,6 +53,16 @@ public class BridgeTimer implements Runnable {
                             }
                         });
                     }
+
+                    if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
+                        long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
+                        String timer = FormatTime.formatTimeManually(playerTime);
+
+                        displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
+
+                        playerManagement.stopTimer(bridgePlayer, timer, playerTime);
+                    }
+
                 } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
                     if (bridgePlayer.getToSpectate() != null) {
                         var toSpectate = bridgePlayer.getToSpectate();
@@ -107,4 +107,5 @@ public class BridgeTimer implements Runnable {
             }
         }
     }
+
 }

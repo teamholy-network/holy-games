@@ -2,7 +2,6 @@ package de.teamholy.bridge;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
 import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.listener.*;
@@ -12,7 +11,7 @@ import de.teamholy.bridge.player.management.BridgeMapSkinPerkManagment;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.song.SongManager;
-import de.teamholy.bridge.tasks.BridgeTimer;
+import de.teamholy.bridge.tasks.BridgeTimerTask;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,9 +49,9 @@ public class Bridge extends JavaPlugin {
 
 
         this.songManager = new SongManager();
+        this.soundPerkManagement = new SoundPerkManagement();
 
         this.playerManagement = new PlayerManagement();
-        this.soundPerkManagement = new SoundPerkManagement();
         this.bridgeMapLoader = new BridgeMapManagment();
         this.bridgeMapSkinPerkManagment = new BridgeMapSkinPerkManagment();
 
@@ -60,7 +59,7 @@ public class Bridge extends JavaPlugin {
         loadListener();
 
         // period 20ms
-        BridgeTimer timer = new BridgeTimer();
+        BridgeTimerTask timer = new BridgeTimerTask();
         executorService.scheduleAtFixedRate(timer, 0, 20, TimeUnit.MILLISECONDS);
 
         for (BridgeMapType value : BridgeMapType.values()) {
