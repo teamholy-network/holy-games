@@ -55,6 +55,7 @@ public class BridgeTimerTask implements Runnable {
                     }
 
                     if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
+                        if (playerManagement.getPlayerTime().get(player.getUniqueId()) == null) return;
                         long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
                         String timer = FormatTime.formatTimeManually(playerTime);
 

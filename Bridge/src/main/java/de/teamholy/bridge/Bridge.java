@@ -40,7 +40,7 @@ public class Bridge extends JavaPlugin {
 
     private SongManager songManager;
 
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
+    private final ScheduledThreadPoolExecutor executorService = new ScheduledThreadPoolExecutor(1);
 
     @Override
     public void onEnable() {
@@ -58,15 +58,18 @@ public class Bridge extends JavaPlugin {
         loadCommand();
         loadListener();
 
-        // period 20ms
-        BridgeTimerTask timer = new BridgeTimerTask();
-        executorService.scheduleAtFixedRate(timer, 0, 20, TimeUnit.MILLISECONDS);
+
 
         for (BridgeMapType value : BridgeMapType.values()) {
             playerManagement.getTopPlayer().put(value, new HashMap<>());
         }
 
         BukkitCloudNetHelper.setMaxPlayers(BridgeMapManagment.MAP_COUNT);
+
+        // period 20ms
+        BridgeTimerTask timer = new BridgeTimerTask();
+        //Bukkit.getScheduler().runTaskTimerAsynchronously(this, timer, 0, 20);
+        executorService.scheduleAtFixedRate(timer, 0, 50, TimeUnit.MILLISECONDS);
 
       // mapManagement.getLoader().loadBridgeMapsStartup(20);
     }
@@ -110,6 +113,7 @@ public class Bridge extends JavaPlugin {
                     .generateStructures(false).createWorld();
             world.setTime(6000);
             world.setGameRuleValue("doDaylightCycle", "false");
+            world.setGameRuleValue("randomTickSpeed", "0");
         }
     }
 
