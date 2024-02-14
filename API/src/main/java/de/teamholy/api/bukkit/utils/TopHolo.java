@@ -12,6 +12,7 @@ import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.core.bukkit.BukkitCore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -64,7 +65,7 @@ public class TopHolo {
                 }
 
 
-                updateHologram();
+                updateHologram(StatsType.ALLTIME);
             });
         }
 
@@ -73,12 +74,12 @@ public class TopHolo {
                 top.put(value, refreshTop(value));
             }
 
-            Bukkit.getScheduler().runTask(BukkitHolyAPI.getInstance(),this::updateHologram);
+            Bukkit.getScheduler().runTask(BukkitHolyAPI.getInstance(),() -> updateHologram(StatsType.ALLTIME));
         }, 10, 20 * 60 * 5);
     }
 
 
-    private void updateHologram() {
+    private void updateHologram(StatsType statsType) {
         TextLine textLine = (TextLine) hologram.getLine(1);
         textLine.setText(TOP_10_HEADER_FOOTER);
         for (int i = 2; i <= 11; i++) {
@@ -95,15 +96,15 @@ public class TopHolo {
         TextLine lastLine = (TextLine) hologram.getLine(12);
         switch (statsType) {
             case DAILY -> {
-                statsType = StatsType.ALLTIME;
+                this.statsType = StatsType.ALLTIME;
                 lastLine.setText("§c§lALLTIME §8︳ §7Monthly §8︳ §7Daily");
             }
             case MONTHLY -> {
-                statsType = StatsType.DAILY;
+                this.statsType = StatsType.DAILY;
                 lastLine.setText("§7Alltime §8︳ §7Monthly §8︳ §a§lDAILY");
             }
             case ALLTIME -> {
-                statsType = StatsType.MONTHLY;
+                this.statsType = StatsType.MONTHLY;
                 lastLine.setText("§7Alltime §8︳ §e§lMONTHLY §8︳ §7Daily");
             }
         }

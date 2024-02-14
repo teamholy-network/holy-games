@@ -180,7 +180,7 @@ public class PlayerEntry {
 
         if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.REDUCE) {
 
-            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true, false).setPlayer(playerEntry.player);
+            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true, false).setPlayer(player);
             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
             npcEntry.update();
 
@@ -261,7 +261,6 @@ public class PlayerEntry {
                         this.arenaType = arenaType;
 
 
-                        player.teleport(getArenaEntry().getPlayerSpawn());
                         setPlayerState(PlayerState.INGAME);
                         Clutches.getInstance().getHologramManager().updateHolograms();
 
@@ -292,7 +291,9 @@ public class PlayerEntry {
                         player.sendMessage(Clutches.PREFIX + "Use /quit to leave the game");
                         setIngameItems();
                         setScoreboard();
+                        player.teleport(getArenaEntry().getPlayerSpawn());
                     });
+
 
                     i++;
                 }

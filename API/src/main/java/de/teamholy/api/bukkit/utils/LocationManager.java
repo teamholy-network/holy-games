@@ -13,20 +13,21 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /* copyright by Yassino */
-@Getter @Setter
+@Getter
+@Setter
 public class LocationManager {
 
     private HashMap<String, Location> locations = new HashMap<>();
 
 
     public void addLocation(String name, Location location) {
-        locations.put(name,location);
-        createConfigLocation(location,name);
+        locations.put(name, location);
+        createConfigLocation(location, name);
     }
 
     public Location getLocation(String location) {
         if (getConfigLocation(location) != null) {
-            locations.put(location,getConfigLocation(location));
+            locations.put(location, getConfigLocation(location));
             return locations.get(location);
         }
         return null;
@@ -50,7 +51,7 @@ public class LocationManager {
     }
 
     public Location getConfigLocation(String path) {
-        if (BukkitHolyAPI.getInstance().getYamlConfiguration().get(path) != null) {
+        try {
             YamlConfiguration cfg = BukkitHolyAPI.getInstance().getYamlConfiguration();
             World w = Bukkit.getWorld(cfg.getString(path + ".World"));
             double x = cfg.getDouble(path + ".X");
@@ -59,6 +60,15 @@ public class LocationManager {
             float yaw = (float) cfg.getDouble(path + ".Yaw");
             float pitch = (float) cfg.getDouble(path + ".Pitch");
             return new Location(w, x, y, z, yaw, pitch);
+        } catch (Exception e) {
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
+            System.out.println("§cError while loading location from config: " + path);
         }
         return null;
     }
