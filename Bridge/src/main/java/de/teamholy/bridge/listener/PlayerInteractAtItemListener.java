@@ -105,8 +105,11 @@ public class PlayerInteractAtItemListener implements Listener {
 
                         playerManagement.ingameSettingsInventory(player);
                     } else if (item.getItemMeta().getDisplayName().toLowerCase().contains("leave preview")) {
+                        player.getInventory().clear();
+
                         playerManagement.prepareIngamePlayer(player);
                         player.teleport(bridgePlayer.getMapLocation());
+
                         bridgePlayer.getMap()
                                 .loadMap(
                                         false,

@@ -68,6 +68,8 @@ public class PlayerManagement {
             bridgePlayers.put(player.getUniqueId(), new BridgePlayer(player.getUniqueId()));
         }
         createScoreboard(getBridgePlayer(player));
+        player.getInventory().clear();
+
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> prepareIngamePlayer(player), 10);
     }
 
@@ -82,7 +84,6 @@ public class PlayerManagement {
         player.setFireTicks(0);
         player.setExp(0);
         player.setLevel(0);
-        player.getInventory().clear();
     }
 
 
@@ -107,6 +108,9 @@ public class PlayerManagement {
                     }
                     player.getInventory().setHeldItemSlot(i);
                 } else {
+                    if (player.getInventory().getItem(i) == content) {
+                        continue;
+                    }
                     player.getInventory().setItem(i, content);
                 }
 
@@ -237,6 +241,7 @@ public class PlayerManagement {
                     player.sendMessage(Bridge.PREFIX + "Your inventory was not saved");
                     player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2f, 2f);
                 }
+                player.getInventory().clear();
                 Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> prepareIngamePlayer(player), 1);
             });
 

@@ -31,31 +31,8 @@ public class BridgeTimerTask implements Runnable {
                 var player = bridgePlayer.getPlayer();
 
                 if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
-                    if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
-                        long blockTime = bridgePlayer.getBridgeSettings().getRemovalTime();
-                        HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
-
-                        if (blocks.isEmpty() || blockTime < 1) return;
-
-                        blocks.forEach((block, time) -> {
-                            if ((System.currentTimeMillis() - time) / 1000 >= blockTime) {
-
-                                Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> {
-                                    FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
-                                    block.setType(Material.AIR);
-                                    fallingBlock.setDropItem(false);
-                                    fallingBlock.setHurtEntities(false);
-                                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40L);
-                                });
-
-
-                                bridgePlayer.getBlocks().remove(block);
-                            }
-                        });
-                    }
-
                     if (playerManagement.getPlayerTime().containsKey(player.getUniqueId())) {
-                        if (playerManagement.getPlayerTime().get(player.getUniqueId()) == null) return;
+                        if (playerManagement.getPlayerTime().get(player.getUniqueId()) == null) continue;
                         long playerTime = (System.currentTimeMillis() - playerManagement.getPlayerTime().get(player.getUniqueId()));
                         String timer = FormatTime.formatTimeManually(playerTime);
 
@@ -63,6 +40,30 @@ public class BridgeTimerTask implements Runnable {
 
                         playerManagement.stopTimer(bridgePlayer, timer, playerTime);
                     }
+
+                    if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
+                        long blockTime = bridgePlayer.getBridgeSettings().getRemovalTime();
+                        HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
+
+                        if (!blocks.isEmpty() || blockTime > 1) {
+                            blocks.forEach((block, time) -> {
+                                if ((System.currentTimeMillis() - time) / 1000 >= blockTime) {
+
+                                    Bukkit.getScheduler().runTask(Bridge.getInstance(), () -> {
+                                        FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                                        block.setType(Material.AIR);
+                                        fallingBlock.setDropItem(false);
+                                        fallingBlock.setHurtEntities(false);
+                                        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40L);
+                                    });
+
+
+                                    bridgePlayer.getBlocks().remove(block);
+                                }
+                            });
+                        }
+                    }
+
 
                 } else if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
                     if (bridgePlayer.getToSpectate() != null) {
