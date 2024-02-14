@@ -81,7 +81,6 @@ public class PlayerManagement {
         player.setFoodLevel(20);
         player.setFireTicks(0);
         player.setExp(0);
-        player.getInventory().setHeldItemSlot(0);
         player.setLevel(0);
         player.getInventory().clear();
     }
@@ -106,11 +105,14 @@ public class PlayerManagement {
                     } else {
                         player.getInventory().setItem(i, new ItemBuilder(Material.SANDSTONE).amount(64).name("§8» §6Blocks §8(§7rightclick§8)").build());
                     }
+                    player.getInventory().setHeldItemSlot(i);
                 } else {
                     player.getInventory().setItem(i, content);
                 }
 
             }
+
+
 
             i++;
         }
