@@ -31,9 +31,14 @@ public class PlayerTask {
         final int[] countdown = {playgroundPlayer.getSettings().getCountdown()};
 
 
+        BukkitTask oldTask = bukkitTask;
         bukkitTask = new BukkitRunnable() {
             @Override
             public void run() {
+
+                if (oldTask != null) {
+                    oldTask.cancel();
+                }
 
                 if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
 
@@ -65,10 +70,15 @@ public class PlayerTask {
 
         hitPreset.setUsed(hitPreset.getUsed() + 1);
 
+        BukkitTask oldTask = bukkitTask;
         bukkitTask = new BukkitRunnable() {
             @Override
             public void run() {
                 counter[0]++;
+
+                if (oldTask != null) {
+                    oldTask.cancel();
+                }
 
                 if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
                 PlayerUtils.sendBar(playgroundPlayer.getPlayer(), "§7Server §8» §c§lTeamholy.de");
