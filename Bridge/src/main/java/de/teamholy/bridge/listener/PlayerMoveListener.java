@@ -4,7 +4,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.SoundPerkService;
+import de.teamholy.bridge.player.service.BridgeSoundPerkService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 
@@ -23,7 +23,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class PlayerMoveListener implements Listener {
 
     private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
-    private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
+    private final BridgeSoundPerkService bridgeSoundPerkService = Bridge.getInstance().getBridgeSoundPerkService();
 
     private final BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
 
@@ -88,7 +88,7 @@ public class PlayerMoveListener implements Listener {
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     bridgePlayerService.spawnBlockAnimation(bridgePlayer);
-                    if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
+                    if (bridgePlayer.getPlayer().getTicksLived() > 10) bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
                 }
 
 

@@ -247,7 +247,7 @@ public class BridgePlayerService {
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
         inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 14, event -> {
-            var soundPerkInventory = Bridge.getInstance().getSoundPerkService().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
+            var soundPerkInventory = Bridge.getInstance().getBridgeSoundPerkService().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
             player.openInventory(soundPerkInventory);
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
@@ -761,7 +761,7 @@ public class BridgePlayerService {
         return Math.round(averageTime);
     }
 
-    private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
+    private final BridgeSoundPerkService bridgeSoundPerkService = Bridge.getInstance().getBridgeSoundPerkService();
 
     public void stopTimer(BridgePlayer bridgePlayer, String newTime, long current) {
         var player = bridgePlayer.getPlayer();
@@ -814,7 +814,7 @@ public class BridgePlayerService {
 
                 addBestTime(bridgePlayer, current);
 
-                soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+                bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
             } else if (current < beforeBestLocal || beforeBestLocal == 0) {
                 String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
 
@@ -827,10 +827,10 @@ public class BridgePlayerService {
                 bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
 
                 addBestTime(bridgePlayer, current);
-                soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+                bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
 
             } else {
-                soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
+                bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
             }
 
             bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);

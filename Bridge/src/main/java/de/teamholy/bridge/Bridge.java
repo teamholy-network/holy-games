@@ -9,7 +9,7 @@ import de.teamholy.bridge.listener.*;
 import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.service.BridgeMapSkinPerkService;
-import de.teamholy.bridge.player.service.SoundPerkService;
+import de.teamholy.bridge.player.service.BridgeSoundPerkService;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.tasks.BridgeTimerTask;
@@ -34,7 +34,7 @@ public class Bridge extends JavaPlugin {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
     private BridgePlayerService bridgePlayerService;
-    private SoundPerkService soundPerkService;
+    private BridgeSoundPerkService bridgeSoundPerkService;
     private BridgeMapService bridgeMapService;
     private BridgeMapSkinPerkService bridgeMapSkinPerkService;
 
@@ -50,7 +50,7 @@ public class Bridge extends JavaPlugin {
 
 
         this.songManager = new SongManager();
-        this.soundPerkService = new SoundPerkService();
+        this.bridgeSoundPerkService = new BridgeSoundPerkService();
 
         this.bridgePlayerService = new BridgePlayerService();
         this.bridgeMapService = new BridgeMapService();

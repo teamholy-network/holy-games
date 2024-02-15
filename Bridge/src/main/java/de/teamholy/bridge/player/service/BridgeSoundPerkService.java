@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * Proprietary and confidential
  * Written by charon
  **/
-public class SoundPerkService {
+public class BridgeSoundPerkService {
 
     public static final int MAX_SOUNDS_PER_PAGE = 21;
     private final int radioSongPlayerDestroyDelay = 20 * 5;

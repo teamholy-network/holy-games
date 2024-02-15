@@ -1,7 +1,7 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.player.service.SoundPerkService;
+import de.teamholy.bridge.player.service.BridgeSoundPerkService;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.core.bukkit.perks.PerkManager;
@@ -20,7 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 public class PlayerInventoryListener implements Listener {
 
     private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
-    private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
+    private final BridgeSoundPerkService bridgeSoundPerkService = Bridge.getInstance().getBridgeSoundPerkService();
 
     @EventHandler
     public void onClickInventory(InventoryClickEvent event) {
@@ -33,7 +33,7 @@ public class PlayerInventoryListener implements Listener {
         if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
             var bridgePlayer = bridgePlayerService.getBridgePlayer(player);
-            var soundPerkInventory = soundPerkService.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
+            var soundPerkInventory = bridgeSoundPerkService.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
 
             var clickedItem = event.getCurrentItem();
