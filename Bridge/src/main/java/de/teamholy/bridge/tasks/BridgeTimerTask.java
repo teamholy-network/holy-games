@@ -91,17 +91,16 @@ public class BridgeTimerTask implements Runnable {
     private void displayTimer(BridgePlayer bridgePlayer, String timer, BridgeSettings.TimerPlace timerPlace) {
         var player = bridgePlayer.getPlayer();
 
-        BridgeMapType.InMapCords inMapCords = bridgePlayer.getMap().getMapType().getFinishLine();
-        Location spawnLocation = bridgePlayer.getMap().getSpawnLocation().clone();
-        Location finishLineLocation = spawnLocation.clone().add(inMapCords.xADD(),inMapCords.yADD(),inMapCords.zADD());
-
-        double maxDistance = spawnLocation.distance(finishLineLocation);
-        double currentDistance = player.getLocation().distance(finishLineLocation);
-        float exp = (float) ((maxDistance - currentDistance) / maxDistance);
-
-        player.setExp(exp);
-
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
+            BridgeMapType.InMapCords inMapCords = bridgePlayer.getMap().getMapType().getFinishLine();
+            Location spawnLocation = bridgePlayer.getMap().getSpawnLocation().clone();
+            Location finishLineLocation = spawnLocation.clone().add(inMapCords.xADD(),inMapCords.yADD(),inMapCords.zADD());
+
+            double maxDistance = spawnLocation.distance(finishLineLocation);
+            double currentDistance = player.getLocation().distance(finishLineLocation);
+            float exp = (float) ((maxDistance - currentDistance) / maxDistance);
+
+            player.setExp(exp);
             switch (timerPlace) {
                 case ACTION_BAR -> playerManagement.sendActionBar(player, "§7Time §8» §e" + timer);
                 case TITLE -> playerManagement.sendTitle(player, "", "§7Time §8» §e" + timer, 0, 20, 0);

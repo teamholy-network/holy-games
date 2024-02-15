@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
 import de.teamholy.bridge.command.BridgeCommand;
+import de.teamholy.bridge.command.SpectateCommand;
 import de.teamholy.bridge.listener.*;
 import de.teamholy.bridge.map.managment.BridgeMapManagment;
 import de.teamholy.bridge.map.BridgeMapType;
@@ -83,6 +84,7 @@ public class Bridge extends JavaPlugin {
 
     private void loadCommand() {
         Bukkit.getPluginCommand("bridge").setExecutor(new BridgeCommand());
+        Bukkit.getPluginCommand("spectate").setExecutor(new SpectateCommand());
     }
 
     private void loadListener() {
