@@ -599,7 +599,7 @@ public class PlayerManagement {
                     FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
                     block.setType(Material.AIR);
                     Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 15);
                     fallingBlock.setDropItem(false);
                     fallingBlock.setHurtEntities(false);
 
@@ -620,7 +620,7 @@ public class PlayerManagement {
                             block.setType(Material.AIR);
 
                             Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                                    () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                                    () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 15);
                             atomicInteger.set(0);
                         }
 
@@ -644,7 +644,7 @@ public class PlayerManagement {
                     block.setType(Material.AIR);
 
                     Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 15);
 
 
                     Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 40);
@@ -699,7 +699,7 @@ public class PlayerManagement {
                     block.setType(Material.AIR);
 
                     Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 5L);
+                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 15);
                     Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), toDrop::die, 60L);
 
                 });
