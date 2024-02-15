@@ -225,7 +225,7 @@ public class BridgeMapSkinPerkManagment {
                             bridgePlayer.getSelectedSkins().put(bridgeMapType, map);
                             bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), map, true);
                             bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 2.0F, 2.0F);
-                            bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
+                            bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3));
                             bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation());
                             bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§aYou have successfully selected the map skin §e" + map.getName() + "§a.");
                             bridgePlayer.getPlayer().closeInventory();
@@ -246,7 +246,7 @@ public class BridgeMapSkinPerkManagment {
                                     return;
                                 }
 
-                                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
+                                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3));
 
                                 var bridgeMap = bridgePlayer.getMap();
                                 bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), map, true);

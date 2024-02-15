@@ -357,7 +357,7 @@ public class PlayerManagement {
                     return;
                 } else Bridge.getInstance().getBridgeMapLoader().resetMap(bridgePlayer.getMap());
 
-                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(7));
+                bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3));
 
 
                 bridgePlayer.getBlocks().clear();
