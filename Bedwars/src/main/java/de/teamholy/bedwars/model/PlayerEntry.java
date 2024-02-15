@@ -261,7 +261,7 @@ public class PlayerEntry {
 
                 player.getPlayer().sendTitle("","§c-" + playerTrophies + " §6trophies");
             }
-            if (teamEntry.getPlayers().size() == 0) {
+            if (teamEntry.getPlayers().isEmpty()) {
                 teamEntry.setHasBed(false);
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId());
@@ -270,10 +270,10 @@ public class PlayerEntry {
                 }
             } else {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (teamEntry.getPlayers().size() < 1) {
-                        player.sendMessage(Bedwars.getInstance().getPrefix() + "one player is still alive in the " + teamEntry.getColorCode() + teamEntry.getName() + " §7team");
+                    if (teamEntry.getPlayers().size() < 2) {
+                        player.sendMessage(Bedwars.getInstance().getPrefix() + "One Player is still alive in the " + teamEntry.getColorCode() + teamEntry.getName() + " §7team");
                     } else {
-                        player.sendMessage(Bedwars.getInstance().getPrefix() + teamEntry.getPlayers().size() + " players are still alive in the " + teamEntry.getColorCode() + teamEntry.getName() + " §7team");
+                        player.sendMessage(Bedwars.getInstance().getPrefix() + teamEntry.getPlayers().size() + " Players are still alive in the " + teamEntry.getColorCode() + teamEntry.getName() + " §7team");
                     }
                 }
             }
