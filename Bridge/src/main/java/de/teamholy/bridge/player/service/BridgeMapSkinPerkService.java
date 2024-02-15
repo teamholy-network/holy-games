@@ -209,7 +209,7 @@ public class BridgeMapSkinPerkService {
                             .setLore(getLore(bridgePlayer, map, bridgeMapType))
                             .build(), slot, event -> {
 
-                        if (doOwn(bridgePlayer, map)) {
+                        if (hasMapSkin(bridgePlayer, map)) {
 
                             var bridgeMap = bridgePlayer.getMap();
                             if (bridgeMap.getBridgeMapSkin() == map) {
@@ -283,11 +283,11 @@ public class BridgeMapSkinPerkService {
 
 
     @Nonnull
-    private static List<String> getLore(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin, BridgeMapType bridgeMapType) {
+    private List<String> getLore(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin, BridgeMapType bridgeMapType) {
         List<String> lore = Lists.newArrayList();
 
 
-        if (!doOwn(bridgePlayer, bridgeMapSkin)) {
+        if (!hasMapSkin(bridgePlayer, bridgeMapSkin)) {
             if (bridgeMapSkin.isBuyable()) {
                 lore.add("§7This map costs §e" + bridgeMapSkin.getPrice() + " §6coins");
             } else if (bridgeMapSkin.isRank()) {
@@ -323,7 +323,7 @@ public class BridgeMapSkinPerkService {
         return lore;
     }
 
-    private static boolean doOwn(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
+    private boolean hasMapSkin(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
         return  (bridgeMapSkin.isBuyable() && bridgePlayer.getBridgeSettings().getMapSkins().contains(bridgeMapSkin))
                 || (bridgeMapSkin.isRank()) && bridgePlayer.getPlayer().hasPermission(bridgeMapSkin.getRankType().getPermission())
                 || bridgeMapSkin.isDefault();

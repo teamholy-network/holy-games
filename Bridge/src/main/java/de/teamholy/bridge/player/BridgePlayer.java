@@ -76,7 +76,7 @@ public class BridgePlayer {
     private PerkPlayerProfile perkPlayerProfile;
     private SkinProfile skinProfile;
 
-    private long cooldown = System.currentTimeMillis();
+    private long cooldown = System.currentTimeMillis() + 3000L;
 
     private Player toSpectate = null;
 
