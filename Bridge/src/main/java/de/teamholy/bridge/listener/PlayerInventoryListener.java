@@ -3,7 +3,7 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.service.SoundPerkService;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
  **/
 public class PlayerInventoryListener implements Listener {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
     private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
 
     @EventHandler
@@ -32,7 +32,7 @@ public class PlayerInventoryListener implements Listener {
 
         if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
-            var bridgePlayer = playerService.getBridgePlayer(player);
+            var bridgePlayer = bridgePlayerService.getBridgePlayer(player);
             var soundPerkInventory = soundPerkService.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
 
@@ -47,7 +47,7 @@ public class PlayerInventoryListener implements Listener {
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);
 
-            var bridgePlayer = playerService.getBridgePlayer(player);
+            var bridgePlayer = bridgePlayerService.getBridgePlayer(player);
 
             var clickedItem = event.getCurrentItem();
             if (clickedItem == null) return;
@@ -56,7 +56,7 @@ public class PlayerInventoryListener implements Listener {
             if (clickedItemMeta == null) return;
 
             if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Animation")) {
-                player.openInventory(playerService.blockSettingsInventory(bridgePlayer));
+                player.openInventory(bridgePlayerService.blockSettingsInventory(bridgePlayer));
             }
 
         }

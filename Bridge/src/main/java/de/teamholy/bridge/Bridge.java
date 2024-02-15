@@ -10,7 +10,7 @@ import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.service.BridgeMapSkinPerkService;
 import de.teamholy.bridge.player.service.SoundPerkService;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.tasks.BridgeTimerTask;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class Bridge extends JavaPlugin {
     public static String PREFIX = "§6Bridge §8* §7";
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
-    private PlayerService playerService;
+    private BridgePlayerService bridgePlayerService;
     private SoundPerkService soundPerkService;
     private BridgeMapService bridgeMapService;
     private BridgeMapSkinPerkService bridgeMapSkinPerkService;
@@ -52,7 +52,7 @@ public class Bridge extends JavaPlugin {
         this.songManager = new SongManager();
         this.soundPerkService = new SoundPerkService();
 
-        this.playerService = new PlayerService();
+        this.bridgePlayerService = new BridgePlayerService();
         this.bridgeMapService = new BridgeMapService();
         this.bridgeMapSkinPerkService = new BridgeMapSkinPerkService();
 
@@ -62,7 +62,7 @@ public class Bridge extends JavaPlugin {
 
 
         for (BridgeMapType value : BridgeMapType.values()) {
-            playerService.getTopPlayer().put(value, new HashMap<>());
+            bridgePlayerService.getTopPlayer().put(value, new HashMap<>());
         }
 
         BukkitCloudNetHelper.setMaxPlayers(BridgeMapService.MAP_COUNT);

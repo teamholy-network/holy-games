@@ -6,7 +6,7 @@ import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.service.SoundPerkService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
  **/
 public class PlayerMoveListener implements Listener {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
     private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
 
     private final BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
@@ -37,15 +37,15 @@ public class PlayerMoveListener implements Listener {
         if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) return;
         var player = event.getPlayer();
 
-        BridgePlayer bridgePlayer = playerService.getBridgePlayer(player);
+        BridgePlayer bridgePlayer = bridgePlayerService.getBridgePlayer(player);
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
             var bukkitToSpectate = bridgePlayer.getToSpectate();
             if (bukkitToSpectate == null) {
-                playerService.stopSpectating(player, true);
+                bridgePlayerService.stopSpectating(player, true);
             } else {
-                var toSpectate = playerService.getBridgePlayer(bukkitToSpectate);
+                var toSpectate = bridgePlayerService.getBridgePlayer(bukkitToSpectate);
                 if (toSpectate == null) {
-                    playerService.stopSpectating(player, true);
+                    bridgePlayerService.stopSpectating(player, true);
                     return;
                 }
                 var map = toSpectate.getMap().clone();
@@ -80,24 +80,24 @@ public class PlayerMoveListener implements Listener {
                 }
 
                 if (bridgePlayer.isPreview()) {
-                    playerService.prepareIngamePlayer(player);
+                    bridgePlayerService.prepareIngamePlayer(player);
                     bridgeMapService.loadMap(bridgePlayer.getMap(), false, bridgePlayer.getMapLocation().clone().add(-0.5,0,-0.5), bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()), true);
                     bridgePlayer.setPreview(false);
                     return;
                 }
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
-                    playerService.spawnBlockAnimation(bridgePlayer);
+                    bridgePlayerService.spawnBlockAnimation(bridgePlayer);
                     if (bridgePlayer.getPlayer().getTicksLived() > 10) soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
                 }
 
 
-                playerService.getScoreboard(player).updateLine(2, "§8");
+                bridgePlayerService.getScoreboard(player).updateLine(2, "§8");
                 bridgePlayer.getBlocks().clear();
                 player.setExp(0);
-                playerService.updateHologram(bridgePlayer,false);
-                playerService.prepareIngamePlayer(player);
-                playerService.getPlayerTime().remove(player.getUniqueId());
+                bridgePlayerService.updateHologram(bridgePlayer,false);
+                bridgePlayerService.prepareIngamePlayer(player);
+                bridgePlayerService.getPlayerTime().remove(player.getUniqueId());
             }
         }
     }

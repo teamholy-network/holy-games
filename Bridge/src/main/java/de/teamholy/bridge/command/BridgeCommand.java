@@ -3,7 +3,7 @@ package de.teamholy.bridge.command;
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -35,7 +35,7 @@ public class BridgeCommand implements CommandExecutor {
             return true;
         }
 
-        PlayerService bridgePlayerManager = Bridge.getInstance().getPlayerService();
+        BridgePlayerService bridgePlayerManager = Bridge.getInstance().getBridgePlayerService();
 
         switch (args[0].toLowerCase()) {
             case "deletestats": {

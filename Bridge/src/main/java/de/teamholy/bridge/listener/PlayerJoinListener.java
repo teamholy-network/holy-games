@@ -4,7 +4,7 @@ import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -41,15 +41,15 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
 
-        final PlayerService playerService = Bridge.getInstance().getPlayerService();
+        final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
 
         Player player = event.getPlayer();
-        playerService.addPlayer(player);
+        bridgePlayerService.addPlayer(player);
 
-        Bridge.getInstance().getBridgeMapService().findMapForPlayer(BridgeMapType.SHORT, playerService.getBridgePlayer(player));
+        Bridge.getInstance().getBridgeMapService().findMapForPlayer(BridgeMapType.SHORT, bridgePlayerService.getBridgePlayer(player));
 
-        if (!playerService.getBridgePlayers().isEmpty()) {
-            for (BridgePlayer bridgePlayer : playerService.getBridgePlayers().values()) {
+        if (!bridgePlayerService.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer : bridgePlayerService.getBridgePlayers().values()) {
                 if (bridgePlayer.getToSpectate() != null) {
                     for (Player bukkit : Bukkit.getOnlinePlayers()) {
                         if (bukkit == bridgePlayer.getPlayer()) {

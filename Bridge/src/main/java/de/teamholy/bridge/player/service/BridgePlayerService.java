@@ -48,7 +48,7 @@ import java.util.stream.IntStream;
  * Written by charon
  **/
 @Getter
-public class PlayerService {
+public class BridgePlayerService {
 
     private final HashMap<UUID, BridgePlayer> bridgePlayers = new HashMap<>();
     private final Map<UUID, Long> playerTime = new HashMap<>();

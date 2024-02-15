@@ -3,7 +3,7 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -18,7 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  **/
 public class PlayerQuitListener implements Listener {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
     private final BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
 
     @EventHandler
@@ -26,7 +26,7 @@ public class PlayerQuitListener implements Listener {
         event.setQuitMessage(null);
 
         var player = event.getPlayer();
-        BridgePlayer bridgePlayer = playerService.getBridgePlayer(event.getPlayer());
+        BridgePlayer bridgePlayer = bridgePlayerService.getBridgePlayer(event.getPlayer());
 
         if (bridgePlayer == null) return;
 
@@ -34,9 +34,9 @@ public class PlayerQuitListener implements Listener {
 
 
         bridgePlayer.getHologram().delete();
-        playerService.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
+        bridgePlayerService.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
 
-        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerService.updateScoreboardForPlayer(map.getMapType()), 5);
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayerService.updateScoreboardForPlayer(map.getMapType()), 5);
 
 
         if (!bridgePlayer.getBlocks().isEmpty()) {
@@ -52,18 +52,18 @@ public class PlayerQuitListener implements Listener {
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
             bridgePlayer.setToSpectate(null);
-            playerService.stopSpectating(player, false);
+            bridgePlayerService.stopSpectating(player, false);
         }
-        if (!playerService.getBridgePlayers().isEmpty()) {
-            for (BridgePlayer bridgePlayer1 : playerService.getBridgePlayers().values()) {
+        if (!bridgePlayerService.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer1 : bridgePlayerService.getBridgePlayers().values()) {
                 if (bridgePlayer1.getToSpectate() == null) continue;
                 if (bridgePlayer1.getToSpectate().getUniqueId().equals(player.getUniqueId())) {
-                    playerService.stopSpectating(bridgePlayer1.getPlayer(), true);
+                    bridgePlayerService.stopSpectating(bridgePlayer1.getPlayer(), true);
                 }
             }
         }
 
-        playerService.removePlayer(event.getPlayer());
+        bridgePlayerService.removePlayer(event.getPlayer());
     }
 
 }

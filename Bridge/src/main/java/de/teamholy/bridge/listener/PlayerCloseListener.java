@@ -20,7 +20,7 @@ public class PlayerCloseListener implements Listener {
         if (inventory == null) return;
         if (!inventory.getName().toLowerCase().contains("perks")) return;
 
-        Bridge.getInstance().getPlayerService().prepareIngamePlayer(player);
+        Bridge.getInstance().getBridgePlayerService().prepareIngamePlayer(player);
 
 
     }

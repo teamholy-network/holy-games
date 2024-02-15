@@ -2,7 +2,7 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -15,16 +15,16 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
  **/
 public class PlayerSpectateListener implements Listener {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
 
     @EventHandler
     public void onChangeWorldEvent(PlayerChangedWorldEvent event) {
         var player = event.getPlayer();
 
-        for (BridgePlayer bridgePlayer : playerService.getBridgePlayers().values()) {
+        for (BridgePlayer bridgePlayer : bridgePlayerService.getBridgePlayers().values()) {
             if (bridgePlayer.getToSpectate() != null) {
                 if (bridgePlayer.getToSpectate().getUniqueId().equals(player.getUniqueId())) {
-                    playerService.startSpectating(bridgePlayer.getPlayer(), player);
+                    bridgePlayerService.startSpectating(bridgePlayer.getPlayer(), player);
                 }
             }
         }

@@ -11,7 +11,7 @@ import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,7 +37,7 @@ public class BridgeMapService {
 
     private final Gson gson;
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
 
     private final BridgeMapLoader bridgeMapLoader;
 
@@ -118,10 +118,10 @@ public class BridgeMapService {
         if (!bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()).isDefault()) {
             bridgeMapLoader.loadMap(bridgeMap,false, bridgeMap.getSpawnLocation(), bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()), true);
         }
-        playerService.prepareIngamePlayer(bridgePlayer.getPlayer());
-        playerService.updateHologram(bridgePlayer, true);
-        playerService.setScoreboard(bridgePlayer);
-        playerService.updateScoreboard(bridgePlayer);
+        bridgePlayerService.prepareIngamePlayer(bridgePlayer.getPlayer());
+        bridgePlayerService.updateHologram(bridgePlayer, true);
+        bridgePlayerService.setScoreboard(bridgePlayer);
+        bridgePlayerService.updateScoreboard(bridgePlayer);
     }
 
     public void resetMap(BridgeMap bridgeMap) {

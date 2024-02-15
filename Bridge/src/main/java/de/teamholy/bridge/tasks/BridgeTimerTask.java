@@ -4,7 +4,7 @@ import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FormatTime;
 import org.bukkit.Bukkit;
@@ -23,24 +23,24 @@ import java.util.HashMap;
  **/
 public class BridgeTimerTask implements Runnable {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
 
     @Override
     public void run() {
         try {
 
-            for (BridgePlayer bridgePlayer : playerService.getBridgePlayers().values()) {
+            for (BridgePlayer bridgePlayer : bridgePlayerService.getBridgePlayers().values()) {
                 var player = bridgePlayer.getPlayer();
 
                 if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
-                    if (playerService.getPlayerTime().containsKey(player.getUniqueId())) {
-                        if (playerService.getPlayerTime().get(player.getUniqueId()) == null) continue;
-                        long playerTime = (System.currentTimeMillis() - playerService.getPlayerTime().get(player.getUniqueId()));
+                    if (bridgePlayerService.getPlayerTime().containsKey(player.getUniqueId())) {
+                        if (bridgePlayerService.getPlayerTime().get(player.getUniqueId()) == null) continue;
+                        long playerTime = (System.currentTimeMillis() - bridgePlayerService.getPlayerTime().get(player.getUniqueId()));
                         String timer = FormatTime.formatTimeManually(playerTime);
 
                         displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
 
-                        playerService.stopTimer(bridgePlayer, timer, playerTime);
+                        bridgePlayerService.stopTimer(bridgePlayer, timer, playerTime);
                     }
 
                     if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
@@ -71,8 +71,8 @@ public class BridgeTimerTask implements Runnable {
                     if (bridgePlayer.getToSpectate() != null) {
                         var toSpectate = bridgePlayer.getToSpectate();
                         if (toSpectate.isOnline()) {
-                            if (playerService.getPlayerTime().containsKey(toSpectate.getUniqueId())) {
-                                long playerTime = (System.currentTimeMillis() - playerService.getPlayerTime().get(toSpectate.getUniqueId()));
+                            if (bridgePlayerService.getPlayerTime().containsKey(toSpectate.getUniqueId())) {
+                                long playerTime = (System.currentTimeMillis() - bridgePlayerService.getPlayerTime().get(toSpectate.getUniqueId()));
                                 String timer = FormatTime.formatTimeManually(playerTime);
 
                                 displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
@@ -102,9 +102,9 @@ public class BridgeTimerTask implements Runnable {
 
             player.setExp(exp);
             switch (timerPlace) {
-                case ACTION_BAR -> playerService.sendActionBar(player, "§7Time §8» §e" + timer);
-                case TITLE -> playerService.sendTitle(player, "", "§7Time §8» §e" + timer, 0, 20, 0);
-                case SCOREBOARD -> playerService.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
+                case ACTION_BAR -> bridgePlayerService.sendActionBar(player, "§7Time §8» §e" + timer);
+                case TITLE -> bridgePlayerService.sendTitle(player, "", "§7Time §8» §e" + timer, 0, 20, 0);
+                case SCOREBOARD -> bridgePlayerService.getScoreboard(player).updateLine(2, "  §7Time §8» §e" + timer);
             }
         } else {
             var toSpec = bridgePlayer.getToSpectate();
@@ -112,11 +112,11 @@ public class BridgeTimerTask implements Runnable {
 
             switch (timerPlace) {
                 case ACTION_BAR ->
-                        playerService.sendActionBar(player, rankColor + toSpec.getName() + " §8» §e" + timer);
+                        bridgePlayerService.sendActionBar(player, rankColor + toSpec.getName() + " §8» §e" + timer);
                 case TITLE ->
-                        playerService.sendTitle(player, "", rankColor + toSpec.getName() + " §8» §e" + timer, 0, 20, 0);
+                        bridgePlayerService.sendTitle(player, "", rankColor + toSpec.getName() + " §8» §e" + timer, 0, 20, 0);
                 case SCOREBOARD ->
-                        playerService.getScoreboard(player).updateLine(2, rankColor + toSpec.getName() + " §8» §e" + timer);
+                        bridgePlayerService.getScoreboard(player).updateLine(2, rankColor + toSpec.getName() + " §8» §e" + timer);
             }
         }
     }

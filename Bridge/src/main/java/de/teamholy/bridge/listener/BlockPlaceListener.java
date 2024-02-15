@@ -2,7 +2,7 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -17,11 +17,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
  **/
 public class BlockPlaceListener implements Listener {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        BridgePlayer bridgePlayer = playerService.getBridgePlayers().get(event.getPlayer().getUniqueId());
+        BridgePlayer bridgePlayer = bridgePlayerService.getBridgePlayers().get(event.getPlayer().getUniqueId());
 
         if (bridgePlayer.getState() != BridgePlayer.PlayerState.INGAME) {
             event.setCancelled(true);
@@ -64,15 +64,15 @@ public class BlockPlaceListener implements Listener {
 
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
-            if (!playerService.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {
+            if (!bridgePlayerService.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {
                 bridgePlayer.addGamesPlayed();
-                playerService.getPlayerTime().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+                bridgePlayerService.getPlayerTime().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
             }
 
             if (event.getPlayer().getInventory().getItemInHand().getType() == event.getBlockPlaced().getType()) {
                 event.getPlayer().getInventory().getItemInHand().setAmount(event.getPlayer().getInventory().getItemInHand().getMaxStackSize());
                 bridgePlayer.addPlacedBlock();
-                playerService.updateHologram(bridgePlayer,false);
+                bridgePlayerService.updateHologram(bridgePlayer,false);
             }
 
         }

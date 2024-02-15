@@ -3,7 +3,7 @@ package de.teamholy.bridge.listener;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.service.PlayerService;
+import de.teamholy.bridge.player.service.BridgePlayerService;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
  **/
 public class PlayerInteractAtItemListener implements Listener {
 
-    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
     private final BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
 
     @EventHandler
@@ -28,7 +28,7 @@ public class PlayerInteractAtItemListener implements Listener {
         final Player player = event.getPlayer();
         ItemStack item = event.getItem();
 
-        var bridgePlayer = playerService.getBridgePlayers().get(player.getUniqueId());
+        var bridgePlayer = bridgePlayerService.getBridgePlayers().get(player.getUniqueId());
         if (bridgePlayer.getToSpectate() == null) {
             if (player.getLocation().getY() <= 96) {
                 event.setCancelled(true);
@@ -62,7 +62,7 @@ public class PlayerInteractAtItemListener implements Listener {
                 if (item.getItemMeta().getDisplayName().startsWith("§8» §cLeave Spectator")) {
                     event.setCancelled(false);
 
-                    playerService.stopSpectating(player, true);
+                    bridgePlayerService.stopSpectating(player, true);
                 }
             } else {
                 event.setCancelled(true);
@@ -94,7 +94,7 @@ public class PlayerInteractAtItemListener implements Listener {
                         player.kickPlayer(null);
                     } else if (item.getItemMeta().getDisplayName().startsWith("§8» §6Settings")) {
 
-                        if (playerService.getPlayerTime().containsKey(player.getUniqueId())) {
+                        if (bridgePlayerService.getPlayerTime().containsKey(player.getUniqueId())) {
                             player.sendMessage(Bridge.PREFIX + "§cYou can't open the settings while bridging!");
                             player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
                             event.setCancelled(true);
@@ -103,11 +103,11 @@ public class PlayerInteractAtItemListener implements Listener {
 
                         event.setCancelled(true);
 
-                        playerService.ingameSettingsInventory(player);
+                        bridgePlayerService.ingameSettingsInventory(player);
                     } else if (item.getItemMeta().getDisplayName().toLowerCase().contains("leave preview")) {
                         player.getInventory().clear();
 
-                        playerService.prepareIngamePlayer(player);
+                        bridgePlayerService.prepareIngamePlayer(player);
                         player.teleport(bridgePlayer.getMapLocation());
 
                         bridgeMapService.loadMap(bridgePlayer.getMap(),
