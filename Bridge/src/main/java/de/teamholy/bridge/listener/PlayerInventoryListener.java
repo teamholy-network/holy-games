@@ -1,15 +1,11 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.player.management.SoundPerkManagement;
+import de.teamholy.bridge.player.service.SoundPerkService;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
-import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.service.PlayerService;
 import de.teamholy.core.bukkit.perks.PerkManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,8 +19,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
  **/
 public class PlayerInventoryListener implements Listener {
 
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
-    private final SoundPerkManagement soundPerkManagement = Bridge.getInstance().getSoundPerkManagement();
+    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
 
     @EventHandler
     public void onClickInventory(InventoryClickEvent event) {
@@ -36,8 +32,8 @@ public class PlayerInventoryListener implements Listener {
 
         if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
-            var soundPerkInventory = soundPerkManagement.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
+            var bridgePlayer = playerService.getBridgePlayer(player);
+            var soundPerkInventory = soundPerkService.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
 
             var clickedItem = event.getCurrentItem();
@@ -51,7 +47,7 @@ public class PlayerInventoryListener implements Listener {
         } else if (view.getTitle().equalsIgnoreCase("§8» §6Block Settings")) {
             event.setCancelled(true);
 
-            var bridgePlayer = playerManagement.getBridgePlayer(player);
+            var bridgePlayer = playerService.getBridgePlayer(player);
 
             var clickedItem = event.getCurrentItem();
             if (clickedItem == null) return;
@@ -60,7 +56,7 @@ public class PlayerInventoryListener implements Listener {
             if (clickedItemMeta == null) return;
 
             if (clickedItemMeta.getDisplayName().equalsIgnoreCase("§6Animation")) {
-                player.openInventory(playerManagement.blockSettingsInventory(bridgePlayer));
+                player.openInventory(playerService.blockSettingsInventory(bridgePlayer));
             }
 
         }

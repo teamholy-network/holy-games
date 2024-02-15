@@ -1,10 +1,8 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.management.PlayerManagement;
-import de.teamholy.core.bukkit.perks.Perk;
+import de.teamholy.bridge.player.service.PlayerService;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -19,11 +17,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
  **/
 public class BlockPlaceListener implements Listener {
 
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayers().get(event.getPlayer().getUniqueId());
+        BridgePlayer bridgePlayer = playerService.getBridgePlayers().get(event.getPlayer().getUniqueId());
 
         if (bridgePlayer.getState() != BridgePlayer.PlayerState.INGAME) {
             event.setCancelled(true);
@@ -66,15 +64,15 @@ public class BlockPlaceListener implements Listener {
 
             var blocks = bridgePlayer.getBlocks();
             blocks.put(event.getBlock(), System.currentTimeMillis());
-            if (!playerManagement.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {
+            if (!playerService.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {
                 bridgePlayer.addGamesPlayed();
-                playerManagement.getPlayerTime().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+                playerService.getPlayerTime().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
             }
 
             if (event.getPlayer().getInventory().getItemInHand().getType() == event.getBlockPlaced().getType()) {
                 event.getPlayer().getInventory().getItemInHand().setAmount(event.getPlayer().getInventory().getItemInHand().getMaxStackSize());
                 bridgePlayer.addPlacedBlock();
-                playerManagement.updateHologram(bridgePlayer,false);
+                playerService.updateHologram(bridgePlayer,false);
             }
 
         }

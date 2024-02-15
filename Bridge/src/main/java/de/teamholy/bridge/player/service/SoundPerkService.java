@@ -1,4 +1,4 @@
-package de.teamholy.bridge.player.management;
+package de.teamholy.bridge.player.service;
 
 import com.google.common.collect.Lists;
 import com.xxmicloxx.NoteBlockAPI.model.Song;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * Proprietary and confidential
  * Written by charon
  **/
-public class SoundPerkManagement {
+public class SoundPerkService {
 
     public static final int MAX_SOUNDS_PER_PAGE = 21;
     private final int radioSongPlayerDestroyDelay = 20 * 5;

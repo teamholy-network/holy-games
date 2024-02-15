@@ -12,7 +12,7 @@ import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.settings.BridgeSettings;
-import de.teamholy.bridge.player.settings.sounds.BridgeItems;
+import de.teamholy.bridge.player.settings.items.BridgeItems;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
 import de.teamholy.core.api.entities.game.GameProfile;

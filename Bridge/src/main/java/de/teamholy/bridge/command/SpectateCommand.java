@@ -1,7 +1,7 @@
 package de.teamholy.bridge.command;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.service.PlayerService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
  **/
 public class SpectateCommand implements CommandExecutor {
 
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -39,7 +39,7 @@ public class SpectateCommand implements CommandExecutor {
             return true;
         }
 
-        playerManagement.startSpectating(player, target);
+        playerService.startSpectating(player, target);
         return false;
     }
 }

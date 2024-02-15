@@ -1,19 +1,16 @@
-package de.teamholy.bridge.player.management;
+package de.teamholy.bridge.player.service;
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import com.google.common.collect.Lists;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.BridgeSettings;
-import de.teamholy.bridge.player.settings.sounds.BridgeItems;
+import de.teamholy.bridge.player.settings.items.BridgeItems;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.util.FireworkUtil;
 import de.teamholy.bridge.util.FormatTime;
@@ -35,8 +32,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -53,7 +48,7 @@ import java.util.stream.IntStream;
  * Written by charon
  **/
 @Getter
-public class PlayerManagement {
+public class PlayerService {
 
     private final HashMap<UUID, BridgePlayer> bridgePlayers = new HashMap<>();
     private final Map<UUID, Long> playerTime = new HashMap<>();
@@ -252,7 +247,7 @@ public class PlayerManagement {
 
         //inventory.setItem(4, new ItemBuilder(Material.SLIME_BALL).name("§cIsland Moving")/*.lore("§c§lSOON")*/.lore((bridgePlayer.getSettings().isIslandMoving() ? "§aYes" : "§cNo")).build());
         inventory.setItem(new ItemBuilder(Material.RECORD_8).name("§8» §6Sounds").build(), 14, event -> {
-            var soundPerkInventory = Bridge.getInstance().getSoundPerkManagement().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
+            var soundPerkInventory = Bridge.getInstance().getSoundPerkService().openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
             player.openInventory(soundPerkInventory);
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
@@ -322,7 +317,7 @@ public class PlayerManagement {
                         "GVkNDU4MDI0MDBmNDY1YjVjNGUzYTZiN2E5ZjJiNmE1YjNkNDc4YjZmZDg0OTI1Y2M1ZDk4ODM5MWM3ZCJ9fX0=", "")
                 .setName("§8» §6Maps §8(§fIsland skins§8)").build(), 33, event -> {
 
-            player.openInventory(Bridge.getInstance().getBridgeMapSkinPerkManagment().openMapInventory(bridgePlayer, bridgePlayer.getMap().getMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory());
+            player.openInventory(Bridge.getInstance().getBridgeMapSkinPerkService().openMapInventory(bridgePlayer, bridgePlayer.getMap().getMapType(), PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory());
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
@@ -352,10 +347,10 @@ public class PlayerManagement {
                 }
 
 
-                if (Bridge.getInstance().getBridgeMapLoader().getFreeMap(mapType) == null) {
+                if (Bridge.getInstance().getBridgeMapService().getFreeMap(mapType) == null) {
                     player.sendMessage(Bridge.PREFIX + "§cNo map found for you, please try again later.");
                     return;
-                } else Bridge.getInstance().getBridgeMapLoader().resetMap(bridgePlayer.getMap());
+                } else Bridge.getInstance().getBridgeMapService().resetMap(bridgePlayer.getMap());
 
                 bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3));
 
@@ -366,7 +361,7 @@ public class PlayerManagement {
                 player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
 
 
-                Bridge.getInstance().getBridgeMapLoader().findMapForPlayer(mapType, bridgePlayer);
+                Bridge.getInstance().getBridgeMapService().findMapForPlayer(mapType, bridgePlayer);
 
 
             });
@@ -766,7 +761,7 @@ public class PlayerManagement {
         return Math.round(averageTime);
     }
 
-    private final SoundPerkManagement soundPerkManagement = Bridge.getInstance().getSoundPerkManagement();
+    private final SoundPerkService soundPerkService = Bridge.getInstance().getSoundPerkService();
 
     public void stopTimer(BridgePlayer bridgePlayer, String newTime, long current) {
         var player = bridgePlayer.getPlayer();
@@ -819,7 +814,7 @@ public class PlayerManagement {
 
                 addBestTime(bridgePlayer, current);
 
-                soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+                soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
             } else if (current < beforeBestLocal || beforeBestLocal == 0) {
                 String timerDifference = FormatTime.formatTimeManually(beforeBestLocal - current);
 
@@ -832,10 +827,10 @@ public class PlayerManagement {
                 bridgePlayer.setLocalBestTime(bridgePlayer.getMap().getMapType(), current);
 
                 addBestTime(bridgePlayer, current);
-                soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
+                soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.NEW_RECORD);
 
             } else {
-                soundPerkManagement.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
+                soundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.WIN);
             }
 
             bridgePlayer.getBestTimes().get(bridgePlayer.getMap().getMapType()).add(current);

@@ -1,14 +1,17 @@
-package de.teamholy.bridge.map.managment;
+package de.teamholy.bridge.map.service;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMap;
+import de.teamholy.bridge.map.loader.BridgeMapLoader;
+import de.teamholy.bridge.map.loader.BridgeSchematicMapLoader;
+import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.service.PlayerService;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +28,7 @@ import java.util.logging.Level;
  * Written by charon
  **/
 @Getter
-public class BridgeMapManagment {
+public class BridgeMapService {
 
     private final List<BridgeMap> maps;
     public static int MAP_COUNT = 50;
@@ -34,15 +37,18 @@ public class BridgeMapManagment {
 
     private final Gson gson;
 
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
 
-    public BridgeMapManagment() {
+    private final BridgeMapLoader bridgeMapLoader;
+
+    public BridgeMapService() {
         this.gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         for (BridgeMapType value : BridgeMapType.values()) {
             Bridge.getInstance().createWorld(value.getName());
             Bridge.getInstance().getLogger().log(Level.INFO, "created world " + value.getName());
         }
 
+        this.bridgeMapLoader = new BridgeSchematicMapLoader();
 
         this.maps = Lists.newArrayList();
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), this::loadSchematics, 40L);
@@ -62,7 +68,7 @@ public class BridgeMapManagment {
 
                     if (schematicIndex < MAP_COUNT) {
                         BridgeMap bridgeMap = new BridgeMap(bridgeMapType.toString() + "-" + schematicIndex, bridgeMapType);
-                        bridgeMap.loadMap(true, new Location(Bukkit.getWorld(bridgeMapType.getName()), xCord, 102, 0),
+                        bridgeMapLoader.loadMap(bridgeMap,true, new Location(Bukkit.getWorld(bridgeMapType.getName()), xCord, 102, 0),
                                 BridgeMapSkins.getDefaultSkin(bridgeMapType),false);
                         maps.add(bridgeMap);
 
@@ -110,20 +116,28 @@ public class BridgeMapManagment {
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation()), 2);
 
         if (!bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()).isDefault()) {
-            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()), true);
+            bridgeMapLoader.loadMap(bridgeMap,false, bridgeMap.getSpawnLocation(), bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()), true);
         }
-        playerManagement.prepareIngamePlayer(bridgePlayer.getPlayer());
-        playerManagement.updateHologram(bridgePlayer, true);
-        playerManagement.setScoreboard(bridgePlayer);
-        playerManagement.updateScoreboard(bridgePlayer);
+        playerService.prepareIngamePlayer(bridgePlayer.getPlayer());
+        playerService.updateHologram(bridgePlayer, true);
+        playerService.setScoreboard(bridgePlayer);
+        playerService.updateScoreboard(bridgePlayer);
     }
 
     public void resetMap(BridgeMap bridgeMap) {
         bridgeMap.setUsed(false);
         if (!bridgeMap.getBridgeMapSkin().isDefault()) {
-            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), BridgeMapSkins.getDefaultSkin(bridgeMap.getMapType()), true);
+            bridgeMapLoader.loadMap(bridgeMap,false, bridgeMap.getSpawnLocation(), BridgeMapSkins.getDefaultSkin(bridgeMap.getMapType()), true);
         }
     }
 
+    public void loadMap(BridgeMap bridgeMap, boolean firstPaste, Location location, BridgeMapSkin bridgeMapSkin, boolean pasteAir)
+    {
+        bridgeMapLoader.loadMap(bridgeMap, firstPaste, location, bridgeMapSkin, pasteAir);
+    }
+
+    public void loadMapAsync(BridgeMap bridgeMap, BridgeMapSkin bridgeMapSkin, boolean air) {
+        bridgeMapLoader.loadMapAsync(bridgeMap, bridgeMapSkin, air);
+    }
 
 }

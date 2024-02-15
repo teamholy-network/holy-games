@@ -56,61 +56,7 @@ public class BridgeMap implements Cloneable {
         return new BridgeMap(name, mapType);
     }
 
-    public void loadMap(boolean firstPaste, Location location, BridgeMapSkin bridgeMapSkin, boolean pasteAir) {
 
 
-        if (firstPaste) {
-            this.pasteLocation = location.clone();
-
-            this.spawnLocation = location.clone().add(0.5,0,0.5);
-            int distance = (mapType.getLength() + 10);
-            if (mapType == BridgeMapType.DIAGONAL) {
-                mapPosition = new MapPosition(location.clone().add(distance, 35, 10), location.clone().subtract(10, 2, distance));
-            } else {
-                mapPosition = new MapPosition(location.clone().add(10, 35, 10), location.clone().subtract(10, 2, distance));
-            }
-
-        }
-
-
-        loadMapAsync(bridgeMapSkin, pasteAir).whenComplete((complete, throwabke) -> {
-            if (throwabke != null) {
-                throwabke.printStackTrace();
-                return;
-            }
-            this.bridgeMapSkin = complete;
-        });
-    }
-
-    private CompletableFuture<BridgeMapSkin> loadMapAsync(BridgeMapSkin bridgeMap, boolean air) {
-        CompletableFuture<BridgeMapSkin> completableFuture = new CompletableFuture<>();
-
-        completableFuture.completeAsync(() -> {
-            File file = new File(Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics/" + bridgeMap.getSchematic().getName().replace("%type%", mapType.getName()));
-            ClipboardFormat format = ClipboardFormat.findByFile(file);
-
-            if (format == null) {
-                System.out.println("Format not found");
-                return null;
-            }
-
-            try {
-                var bukkitWorld = FaweAPI.getWorld(mapType.getName());
-                BlockVector vector = new BlockVector(pasteLocation.getBlockX(), pasteLocation.getBlockY(), pasteLocation.getBlockZ());
-
-                Schematic schematic = format.load(file);
-
-                schematic.paste(bukkitWorld, vector, true, air, null);
-
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-
-            return bridgeMap;
-        });
-
-
-        return completableFuture;
-    }
 
 }

@@ -1,10 +1,9 @@
-package de.teamholy.bridge.player.settings.sounds;
+package de.teamholy.bridge.player.settings.items;
 
 import de.teamholy.bridge.util.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 

@@ -6,11 +6,11 @@ import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
 import de.teamholy.bridge.command.BridgeCommand;
 import de.teamholy.bridge.command.SpectateCommand;
 import de.teamholy.bridge.listener.*;
-import de.teamholy.bridge.map.managment.BridgeMapManagment;
+import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.player.management.BridgeMapSkinPerkManagment;
-import de.teamholy.bridge.player.management.SoundPerkManagement;
-import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.service.BridgeMapSkinPerkService;
+import de.teamholy.bridge.player.service.SoundPerkService;
+import de.teamholy.bridge.player.service.PlayerService;
 import de.teamholy.bridge.song.SongManager;
 import de.teamholy.bridge.tasks.BridgeTimerTask;
 import lombok.Getter;
@@ -33,10 +33,10 @@ public class Bridge extends JavaPlugin {
     public static String PREFIX = "§6Bridge §8* §7";
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
-    private PlayerManagement playerManagement;
-    private SoundPerkManagement soundPerkManagement;
-    private BridgeMapManagment bridgeMapLoader;
-    private BridgeMapSkinPerkManagment bridgeMapSkinPerkManagment;
+    private PlayerService playerService;
+    private SoundPerkService soundPerkService;
+    private BridgeMapService bridgeMapService;
+    private BridgeMapSkinPerkService bridgeMapSkinPerkService;
 
 
     private SongManager songManager;
@@ -50,11 +50,11 @@ public class Bridge extends JavaPlugin {
 
 
         this.songManager = new SongManager();
-        this.soundPerkManagement = new SoundPerkManagement();
+        this.soundPerkService = new SoundPerkService();
 
-        this.playerManagement = new PlayerManagement();
-        this.bridgeMapLoader = new BridgeMapManagment();
-        this.bridgeMapSkinPerkManagment = new BridgeMapSkinPerkManagment();
+        this.playerService = new PlayerService();
+        this.bridgeMapService = new BridgeMapService();
+        this.bridgeMapSkinPerkService = new BridgeMapSkinPerkService();
 
         loadCommand();
         loadListener();
@@ -62,10 +62,10 @@ public class Bridge extends JavaPlugin {
 
 
         for (BridgeMapType value : BridgeMapType.values()) {
-            playerManagement.getTopPlayer().put(value, new HashMap<>());
+            playerService.getTopPlayer().put(value, new HashMap<>());
         }
 
-        BukkitCloudNetHelper.setMaxPlayers(BridgeMapManagment.MAP_COUNT);
+        BukkitCloudNetHelper.setMaxPlayers(BridgeMapService.MAP_COUNT);
         BukkitCloudNetHelper.updateServiceInfo();
 
         // period 20ms

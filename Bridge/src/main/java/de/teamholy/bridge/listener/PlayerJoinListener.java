@@ -2,9 +2,9 @@ package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.map.managment.BridgeMapManagment;
+import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.service.PlayerService;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Copyright (c) charon, All Rights Reserved
@@ -32,7 +30,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
 
-        if (!BridgeMapManagment.MAPS_PASTED) {
+        if (!BridgeMapService.MAPS_PASTED) {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST,"§cThe server is still starting, please try again in a few seconds.");
         }
 
@@ -43,15 +41,15 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
 
-        final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
+        final PlayerService playerService = Bridge.getInstance().getPlayerService();
 
         Player player = event.getPlayer();
-        playerManagement.addPlayer(player);
+        playerService.addPlayer(player);
 
-        Bridge.getInstance().getBridgeMapLoader().findMapForPlayer(BridgeMapType.SHORT, playerManagement.getBridgePlayer(player));
+        Bridge.getInstance().getBridgeMapService().findMapForPlayer(BridgeMapType.SHORT, playerService.getBridgePlayer(player));
 
-        if (!playerManagement.getBridgePlayers().isEmpty()) {
-            for (BridgePlayer bridgePlayer : playerManagement.getBridgePlayers().values()) {
+        if (!playerService.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer : playerService.getBridgePlayers().values()) {
                 if (bridgePlayer.getToSpectate() != null) {
                     for (Player bukkit : Bukkit.getOnlinePlayers()) {
                         if (bukkit == bridgePlayer.getPlayer()) {

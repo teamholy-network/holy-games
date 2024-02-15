@@ -1,15 +1,10 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.map.managment.BridgeMapManagment;
+import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.player.management.PlayerManagement;
-import de.teamholy.core.api.entities.game.StatsType;
-import de.teamholy.core.api.utility.Gamemodes;
-import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.bridge.player.service.PlayerService;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,15 +18,15 @@ import org.bukkit.event.player.PlayerQuitEvent;
  **/
 public class PlayerQuitListener implements Listener {
 
-    private final PlayerManagement playerManagement = Bridge.getInstance().getPlayerManagement();
-    private final BridgeMapManagment bridgeMapManagment = Bridge.getInstance().getBridgeMapLoader();
+    private final PlayerService playerService = Bridge.getInstance().getPlayerService();
+    private final BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
 
         var player = event.getPlayer();
-        BridgePlayer bridgePlayer = playerManagement.getBridgePlayer(event.getPlayer());
+        BridgePlayer bridgePlayer = playerService.getBridgePlayer(event.getPlayer());
 
         if (bridgePlayer == null) return;
 
@@ -39,9 +34,9 @@ public class PlayerQuitListener implements Listener {
 
 
         bridgePlayer.getHologram().delete();
-        playerManagement.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
+        playerService.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
 
-        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerManagement.updateScoreboardForPlayer(map.getMapType()), 5);
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> playerService.updateScoreboardForPlayer(map.getMapType()), 5);
 
 
         if (!bridgePlayer.getBlocks().isEmpty()) {
@@ -52,23 +47,23 @@ public class PlayerQuitListener implements Listener {
         bridgePlayer.getBlocks().clear();
         bridgePlayer.saveStats();
 
-        bridgeMapManagment.resetMap(map);
+        bridgeMapService.resetMap(map);
 
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
             bridgePlayer.setToSpectate(null);
-            playerManagement.stopSpectating(player, false);
+            playerService.stopSpectating(player, false);
         }
-        if (!playerManagement.getBridgePlayers().isEmpty()) {
-            for (BridgePlayer bridgePlayer1 : playerManagement.getBridgePlayers().values()) {
+        if (!playerService.getBridgePlayers().isEmpty()) {
+            for (BridgePlayer bridgePlayer1 : playerService.getBridgePlayers().values()) {
                 if (bridgePlayer1.getToSpectate() == null) continue;
                 if (bridgePlayer1.getToSpectate().getUniqueId().equals(player.getUniqueId())) {
-                    playerManagement.stopSpectating(bridgePlayer1.getPlayer(), true);
+                    playerService.stopSpectating(bridgePlayer1.getPlayer(), true);
                 }
             }
         }
 
-        playerManagement.removePlayer(event.getPlayer());
+        playerService.removePlayer(event.getPlayer());
     }
 
 }

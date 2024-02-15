@@ -3,10 +3,8 @@ package de.teamholy.bridge.command;
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.bridge.player.management.PlayerManagement;
+import de.teamholy.bridge.player.service.PlayerService;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.utils.ItemBuilder;
-import net.minecraft.server.v1_8_R3.EntityItem;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,7 +35,7 @@ public class BridgeCommand implements CommandExecutor {
             return true;
         }
 
-        PlayerManagement bridgePlayerManager = Bridge.getInstance().getPlayerManagement();
+        PlayerService bridgePlayerManager = Bridge.getInstance().getPlayerService();
 
         switch (args[0].toLowerCase()) {
             case "deletestats": {

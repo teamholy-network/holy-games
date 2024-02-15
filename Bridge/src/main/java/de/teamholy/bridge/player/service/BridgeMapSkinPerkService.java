@@ -1,7 +1,8 @@
-package de.teamholy.bridge.player.management;
+package de.teamholy.bridge.player.service;
 
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
@@ -27,8 +28,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /* copyright by Yassino */
-public class BridgeMapSkinPerkManagment {
+public class BridgeMapSkinPerkService {
 
+    private final BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
     public static final int MAX_MAPS_PER_PAGE = 21;
 
     public void buyPerk(BridgePlayer bridgePlayer, BridgeMapSkin bridgeMapSkin) {
@@ -223,7 +225,8 @@ public class BridgeMapSkinPerkManagment {
 
                             bridgeMap.setBridgeMapSkin(map);
                             bridgePlayer.getSelectedSkins().put(bridgeMapType, map);
-                            bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), map, true);
+
+                            bridgeMapService.loadMap(bridgeMap, false, bridgeMap.getSpawnLocation(), map, true);
                             bridgePlayer.getPlayer().playSound(bridgePlayer.getPlayer().getLocation(), Sound.NOTE_PLING, 2.0F, 2.0F);
                             bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3));
                             bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation());
@@ -249,7 +252,7 @@ public class BridgeMapSkinPerkManagment {
                                 bridgePlayer.setCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3));
 
                                 var bridgeMap = bridgePlayer.getMap();
-                                bridgeMap.loadMap(false, bridgeMap.getSpawnLocation(), map, true);
+                                bridgeMapService.loadMap(bridgeMap, false, bridgeMap.getSpawnLocation(), map, true);
 
                                 bridgePlayer.getPlayer().closeInventory();
                                 bridgePlayer.getPlayer().sendMessage(Bridge.PREFIX + "§aYou can now preview the map skin §e" + map.getName() + "§a.");
