@@ -2,11 +2,13 @@ package de.teamholy.bridge.tasks;
 
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.PlayerManagement;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FormatTime;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
@@ -88,6 +90,16 @@ public class BridgeTimerTask implements Runnable {
 
     private void displayTimer(BridgePlayer bridgePlayer, String timer, BridgeSettings.TimerPlace timerPlace) {
         var player = bridgePlayer.getPlayer();
+
+        BridgeMapType.InMapCords inMapCords = bridgePlayer.getMap().getMapType().getFinishLine();
+        Location spawnLocation = bridgePlayer.getMap().getSpawnLocation().clone();
+        Location finishLineLocation = spawnLocation.clone().add(inMapCords.xADD(),inMapCords.yADD(),inMapCords.zADD());
+
+        double maxDistance = spawnLocation.distance(finishLineLocation);
+        double currentDistance = player.getLocation().distance(finishLineLocation);
+        float exp = (float) ((maxDistance - currentDistance) / maxDistance);
+
+        player.setExp(exp);
 
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.INGAME) {
             switch (timerPlace) {

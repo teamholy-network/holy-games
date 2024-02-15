@@ -1,6 +1,7 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.management.SoundPerkManagement;
@@ -11,6 +12,7 @@ import de.teamholy.bridge.player.management.PlayerManagement;
 
 import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -102,6 +104,7 @@ public class PlayerMoveListener implements Listener {
 
                 playerManagement.getScoreboard(player).updateLine(2, "§8");
                 bridgePlayer.getBlocks().clear();
+                player.setExp(0);
                 playerManagement.updateHologram(bridgePlayer,false);
                 playerManagement.prepareIngamePlayer(player);
                 playerManagement.getPlayerTime().remove(player.getUniqueId());

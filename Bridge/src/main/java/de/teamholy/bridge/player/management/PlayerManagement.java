@@ -89,7 +89,7 @@ public class PlayerManagement {
 
     public void prepareIngamePlayer(Player player) {
         preparePlayer(player);
-
+        player.setExp(0);
         player.setGameMode(GameMode.SURVIVAL);
         player.setAllowFlight(false);
         player.setFlying(false);
