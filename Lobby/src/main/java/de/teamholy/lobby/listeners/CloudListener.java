@@ -16,6 +16,7 @@ import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -38,7 +39,7 @@ public class CloudListener implements Listener {
                 LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(uuid);
                 if (lobbyPlayer != null) {
                     lobbyPlayer.updateClanTagScore();
-                   // lobbyPlayer.setLabyModSubtitle();
+                    // lobbyPlayer.setLabyModSubtitle();
                 }
             } else if (event.getMessage().equalsIgnoreCase("rank_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
@@ -59,26 +60,35 @@ public class CloudListener implements Listener {
                 if (lobbyPlayer != null) {
                     lobbyPlayer.updateCoinsScore();
                 }
+            } else if (event.getMessage().equalsIgnoreCase("cameFromBw")) {
+                Bukkit.getScheduler().runTaskLater(Lobby.getInstance(), () -> {
+                    System.out.println("Came from bw");
+                    Player player = Bukkit.getPlayer(UUID.fromString(event.getData().getString("uuid")));
+                    if (player != null) {
+                        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn"));
+                    }
+                }, 3);
             } else if (event.getMessage().equalsIgnoreCase("friend_update")) {
 
-                UUID uuid = data.get("target",UUID.class);
+                UUID uuid = data.get("target", UUID.class);
                 String extra = data.getString("extra");
                 UUID target = data.get("player", UUID.class);
                 if (extra == null) extra = "";
                 if (uuid != null) {
                     LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(uuid);
                     if (lobbyPlayer == null) return;
-                    lobbyPlayer.getBukkitFriendEntry().updateFriendEntry(target,data.getString("type"), extra);
+                    lobbyPlayer.getBukkitFriendEntry().updateFriendEntry(target, data.getString("type"), extra);
                 } else {
                     String finalExtra = extra;
                     Lobby.getInstance().getLobbyPlayerEntryHandler().forEach((uuid1, lobbyPlayer) -> {
-                        if (lobbyPlayer.getFriendEntry().getFriendCache().containsKey(target)) lobbyPlayer.getFriendEntry().updateFriendEntry(target, data.getString("type"), finalExtra);
+                        if (lobbyPlayer.getFriendEntry().getFriendCache().containsKey(target))
+                            lobbyPlayer.getFriendEntry().updateFriendEntry(target, data.getString("type"), finalExtra);
                     });
                 }
             } else if (event.getMessage().equalsIgnoreCase("friendrequest_update")) {
-                LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(data.get("target",UUID.class));
+                LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(data.get("target", UUID.class));
                 if (lobbyPlayer == null) return;
-                lobbyPlayer.getBukkitFriendEntry().updateFriendRequestEntry(data.get("player",UUID.class),data.getString("type"));
+                lobbyPlayer.getBukkitFriendEntry().updateFriendRequestEntry(data.get("player", UUID.class), data.getString("type"));
             }
         }
     }

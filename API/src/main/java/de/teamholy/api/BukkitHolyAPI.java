@@ -1,5 +1,6 @@
 package de.teamholy.api;
 
+import com.mojang.authlib.properties.Property;
 import de.teamholy.api.bukkit.commands.*;
 import de.teamholy.api.bukkit.npc.tasks.UpdateLookTask;
 import de.teamholy.api.cloud.BukkitCloudUtil;
