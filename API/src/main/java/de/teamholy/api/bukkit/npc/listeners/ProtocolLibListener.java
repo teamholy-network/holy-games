@@ -1,5 +1,6 @@
 package de.teamholy.api.bukkit.npc.listeners;
 
+import com.comphenix.protocol.events.PacketAdapter;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
 import de.teamholy.api.bukkit.npc.event.action.InteractAction;
@@ -25,7 +26,7 @@ public class ProtocolLibListener implements PacketListener {
 
     @Override
     public Plugin getPlugin() {
-        return null;
+        return BukkitHolyAPI.getInstance();
     }
 
     @Override

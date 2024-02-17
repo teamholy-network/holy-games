@@ -64,6 +64,7 @@ public class BukkitHolyAPI extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        protocolManager = ProtocolLibrary.getProtocolManager();
         registerListener("de.teamholy.api.bukkit.listeners");
         bukkitCacheHandler = new BukkitCacheHandler();
         locationManager = new LocationManager();
@@ -71,7 +72,6 @@ public class BukkitHolyAPI extends JavaPlugin {
         chatTabConfig = new ChatTabConfig();
         statsManager = new StatsManager();
         npcSkinRepository = BukkitCore.getAPI().getMongoManager().create(NPCSkinRepository.class);
-        protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.addPacketListener(new TabCompleteListener(this, PacketType.Play.Client.TAB_COMPLETE));
         registerNpcAPI();
         getCommand("location").setExecutor(new LocationCommand());
