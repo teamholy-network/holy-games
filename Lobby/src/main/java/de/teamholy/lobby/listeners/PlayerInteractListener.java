@@ -1,6 +1,7 @@
 package de.teamholy.lobby.listeners;
 
 import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.api.manager.FriendManager;
 import de.teamholy.lobby.Lobby;
 import de.teamholy.lobby.lobbyplayer.BukkitFriendEntry;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayer;
@@ -45,7 +46,7 @@ public class PlayerInteractListener implements Listener {
                 } else if (event.getItem().getType() == Material.NETHER_STAR) {
                     lobbyPlayer.openLobbySwitcher();
                 } else if (event.getItem().getType() == Material.SKULL_ITEM) {
-                    lobbyPlayer.getBukkitFriendEntry().openFriendGui(player,1, BukkitFriendEntry.SortOption.LASTONLINE_RECENTLY);
+                    lobbyPlayer.getBukkitFriendEntry().openFriendGui(player,1);
                 } else if (event.getItem().getType() == Material.FIREWORK) {
                     event.setCancelled(true);
                 } else if (event.getItem().getType() == Material.REDSTONE_COMPARATOR) {
