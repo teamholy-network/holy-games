@@ -4,6 +4,7 @@ import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.api.bukkit.npc.NPCBuilder;
 import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
+import de.teamholy.core.api.entities.friend.entry.FriendEntry;
 import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.manager.FriendManager;
 import de.teamholy.lobby.Lobby;
@@ -46,7 +47,7 @@ public class LobbyPlayer {
     private Long cooldown = System.currentTimeMillis();
     private boolean fly = false, collectedNameMCReward = false, collectedLabyModReward = false;
 
-    private FriendManager.FriendEntry friendEntry;
+    private FriendEntry friendEntry;
 
     private BukkitFriendEntry bukkitFriendEntry;
 
