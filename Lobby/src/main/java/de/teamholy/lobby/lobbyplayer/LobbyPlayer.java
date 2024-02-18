@@ -75,11 +75,6 @@ public class LobbyPlayer {
 
         setInventory();
 
-        BukkitCore.getAPI().getPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
-            if (playerProfile.getCollectables().containsKey("namemc")) collectedNameMCReward = true;
-            if (playerProfile.getCollectables().containsKey("labymod")) collectedLabyModReward = true;
-        });
-
         BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),this::setGameProfile);
     }
 
