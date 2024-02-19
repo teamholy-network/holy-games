@@ -90,6 +90,17 @@ public class BridgePlayerService {
         player.setFlying(false);
         BridgePlayer bridgePlayer = getBridgePlayer(player);
 
+        if (bridgePlayer == null) {
+            bridgePlayer = new BridgePlayer(player.getUniqueId());
+            if (!bridgePlayers.containsKey(player.getUniqueId())) {
+                bridgePlayers.put(player.getUniqueId(), new BridgePlayer(player.getUniqueId()));
+            }
+        }
+
+        if (bridgePlayer.getInventory() == null) {
+            bridgePlayer.setInventory(bridgePlayer.createInventory());
+        }
+
         var i = 0;
         for (ItemStack content : bridgePlayer.getInventory().getContents()) {
             if (content != null && content.getType() != null) {

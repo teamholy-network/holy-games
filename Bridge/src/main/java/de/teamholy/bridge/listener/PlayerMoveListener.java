@@ -8,6 +8,7 @@ import de.teamholy.bridge.player.service.BridgeSoundPerkService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 
+import de.teamholy.bridge.util.FormatTime;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -98,7 +99,13 @@ public class PlayerMoveListener implements Listener {
                 bridgePlayerService.updateHologram(bridgePlayer,false);
                 bridgePlayerService.prepareIngamePlayer(player);
                 bridgePlayerService.getPlayerTime().remove(player.getUniqueId());
+
             }
+//            if (bridgePlayerService.getPlayerTime().containsKey(player.getUniqueId())) {
+//                long playerTime = (System.currentTimeMillis() - bridgePlayerService.getPlayerTime().get(player.getUniqueId()));
+//                String timer = FormatTime.formatTimeManually(playerTime);
+//                bridgePlayerService.stopTimer(bridgePlayer, timer, playerTime);
+//            }
         }
     }
 
