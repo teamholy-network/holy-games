@@ -1,5 +1,6 @@
 package de.teamholy.lobby;
 
+import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
 import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
@@ -66,12 +67,13 @@ public class Lobby extends JavaPlugin {
             prefix = "§6PremiumLobby §8× §7";
             isPremiumLobby = true;
         }
+        int maxPlayers = 250;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this,() -> {
             try {
                 int count = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getOnlineCountAsync().get();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.setLevel(count);
-                    player.setExp((float) count / 100);
+                    player.setExp((float) count / maxPlayers);
 
                     if (player.getLocation().getY() < 0) {
                         player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));

@@ -1,7 +1,6 @@
 package de.teamholy.lobby.lobbyplayer;
 
 import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.NPCBuilder;
 import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.core.api.entities.friend.entry.FriendEntry;
@@ -163,7 +162,7 @@ public class LobbyPlayer {
                 .sorted(Comparator.comparingInt(info -> info.getServiceId().getTaskServiceId())).collect(Collectors.toList());
 
         try {
-            if (gameServices.size() == 0) {
+            if (gameServices.isEmpty()) {
                 player.sendMessage(Lobby.getInstance().getPrefix() + error);
             } else if (gameServices.size() == 1) {
                 BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameServices.get(0).getName());
