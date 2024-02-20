@@ -1,6 +1,9 @@
 package de.teamholy.lobby.commands;
 
+import de.teamholy.core.api.entities.game.StatsType;
+import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.lobby.Lobby;
 import net.minecraft.server.v1_8_R3.EntityItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,26 +28,17 @@ public class TestCommand implements CommandExecutor {
             return true;
         }
 
-        EntityItem entity = dropItem(((Player)sender).getLocation(), new ItemBuilder(Material.DIAMOND).setName("§e§lTest").build());
-
-
-
-        Bukkit.broadcastMessage((entity.isAlive() ? "JA" : "NEIN") + " - " + (entity.isInvisible() ? "JA" : "NEIN"));
-        Bukkit.broadcastMessage(entity.getName() + " - " + entity.getItemStack().getItem().getName());
-        Bukkit.broadcastMessage(entity.getBukkitEntity().getLocation().toString());
-
+        sender.sendMessage(Lobby.getInstance().getCloudCacheHandler().getServerInfos().size() + " servers");
+        for (Gamemodes gamemodes : Gamemodes.values()) {
+            for (StatsType value : StatsType.values()) {
+                sender.sendMessage(Lobby.getInstance().getLeaderboardInventory().topEntries.get(gamemodes).get(value).size() + " " + value.name() + " - " + gamemodes.name());
+            }
+        }
+        sender.sendMessage(Lobby.getInstance().getBedwarsSpectateInventory().getGameHashMap().size() + " games spec");
+        sender.sendMessage(Lobby.getInstance().getLobbyPlayerEntryHandler().size() + " players");
+        sender.sendMessage(Lobby.getInstance().getHologramHandler().getHolograms().size() + " holograms");
         return true;
     }
 
-    public EntityItem dropItem(Location loc, ItemStack item) {
-        if (loc.getChunk().getEntities().length > 64 * 4) return null;
-        EntityItem entity = new EntityItem(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
-        entity.pickupDelay = 10;
-        entity.motX = 0.0D;
-        entity.motY = 0.0D;
-        entity.motZ = 0.0D;
-        ((CraftWorld) loc.getWorld()).getHandle().addEntity(entity);
-        return entity;
-    }
 
 }
