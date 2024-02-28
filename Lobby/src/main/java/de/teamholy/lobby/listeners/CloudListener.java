@@ -77,18 +77,18 @@ public class CloudListener implements Listener {
                 if (uuid != null) {
                     LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(uuid);
                     if (lobbyPlayer == null) return;
-                    lobbyPlayer.getBukkitFriendEntry().updateFriendEntry(target, data.getString("type"), extra);
+                    lobbyPlayer.getFriendEntry().updateFriendEntry(target, data.getString("type"), extra);
                 } else {
                     String finalExtra = extra;
                     Lobby.getInstance().getLobbyPlayerEntryHandler().forEach((uuid1, lobbyPlayer) -> {
-                        if (lobbyPlayer.getFriendEntry().getFriendCache().containsKey(target))
+                        if (lobbyPlayer.getFriendEntry().getFriends().containsKey(target))
                             lobbyPlayer.getFriendEntry().updateFriendEntry(target, data.getString("type"), finalExtra);
                     });
                 }
             } else if (event.getMessage().equalsIgnoreCase("friendrequest_update")) {
                 LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(data.get("target", UUID.class));
                 if (lobbyPlayer == null) return;
-                lobbyPlayer.getBukkitFriendEntry().updateFriendRequestEntry(data.get("player", UUID.class), data.getString("type"));
+                lobbyPlayer.getFriendEntry().updateFriendRequestEntry(data.get("player", UUID.class), data.getString("type"));
             }
         }
     }
