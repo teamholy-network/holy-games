@@ -41,6 +41,8 @@ public class PlayerTask {
                 }
 
                 if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
+                if (playgroundPlayer == null) stopIfActive();
+                if (playgroundPlayer.getPlayer() == null) stopIfActive();
 
                 switch (playgroundPlayer.getSettings().getCountdownLocation()) {
                     case CHAT -> playgroundPlayer.getPlayer().sendMessage(Clutches.PREFIX + "Clutch in §6§l" + countdown[0]);
@@ -81,6 +83,8 @@ public class PlayerTask {
                 }
 
                 if (!playgroundPlayer.getPlayer().isOnline()) stopIfActive();
+                if (playgroundPlayer == null) stopIfActive();
+                if (playgroundPlayer.getPlayer() == null) stopIfActive();
                 PlayerUtils.sendBar(playgroundPlayer.getPlayer(), "§7Server §8» §c§lTeamholy.de");
 
                 for (int i = counter[0]; i < 28; i++) {
@@ -179,8 +183,10 @@ public class PlayerTask {
     public boolean stopIfActive() {
         if (bukkitTask != null) {
             Bukkit.getScheduler().cancelTask(bukkitTask.getTaskId());
-            playgroundPlayer.getPlayer().setExp(0);
-            playgroundPlayer.getPlayer().setLevel(0);
+            if (playgroundPlayer != null) {
+                playgroundPlayer.getPlayer().setExp(0);
+                playgroundPlayer.getPlayer().setLevel(0);
+            }
             bukkitTask = null;
             return true;
         }

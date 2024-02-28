@@ -1,7 +1,9 @@
 package de.teamholy.lobby.lobbyplayer;
 
-import de.teamholy.core.api.manager.FriendManager;
 import de.teamholy.lobby.Lobby;
+import de.teamholy.core.api.entities.player.PlayerProfile;
+import de.teamholy.core.api.entities.skin.SkinProfile;
+import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
@@ -13,33 +15,138 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /* copyright by Yassino */
 @Getter
-public class BukkitFriendEntry {
+public class FriendEntry {
 
-    private final UUID uuid;
-    private final Player player;
+    private UUID uuid;
+    private Player player;
 
-    private final FriendManager.FriendEntry friendEntry;
+
+    private final ConcurrentHashMap<UUID, Friend> friends = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Friend> requests = new ConcurrentHashMap<>();
+
 
     private int page = 1;
     private SortOption sortOption = SortOption.LASTONLINE_RECENTLY;
 
-    public BukkitFriendEntry(FriendManager.FriendEntry friendEntry, Player player) {
+    public FriendEntry(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
 
-        this.friendEntry = friendEntry;
+
+        BukkitCore.getAPI().getFriendService().getEntityAsync(uuid, () -> BukkitCore.getAPI().getFriendService().getRepository().findFirstById(uuid), friendProfile -> {
+            if (friendProfile == null) return;
+
+
+
+            long start = System.currentTimeMillis();
+
+            friendProfile.getFriendList().forEach(friendUUID -> {
+                loadFriendEntry(friendUUID, false);
+            });
+
+
+            BukkitCore.getAPI().getFriendService().saveEntity(friendProfile,true,true);
+
+            friendProfile.getFriendReqeustsList().forEach(requestUUID -> {
+                loadFriendEntry(requestUUID, true);
+            });
+            long end = System.currentTimeMillis();
+
+            long time = (end / start);
+            System.out.println("[!] loading friends of " + player.getName() + " in " + time + "ms");
+
+        });
+
     }
 
     public void updateFriendEntry(UUID uuid, String data, String extra) {
-        friendEntry.updateFriendEntry(uuid, data, extra);
+
+        if (data.equalsIgnoreCase("add")) {
+
+            loadFriendEntryAsync(uuid, false);
+
+        } else if (data.equalsIgnoreCase("remove")) {
+
+            friends.remove(uuid);
+
+        } else if (data.equalsIgnoreCase("server_update")) {
+
+            Friend friend = friends.get(uuid);
+            if (friend == null) return;
+            friend.setCurrentServer(extra);
+            friends.put(uuid, friend);
+
+        } else if (data.equalsIgnoreCase("online")) {
+
+            Friend friend = friends.get(uuid);
+            if (friend == null) return;
+            friend.setOnline(true);
+            friends.put(uuid, friend);
+
+        } else if (data.equalsIgnoreCase("offline")) {
+
+            Friend friend = friends.get(uuid);
+            if (friend == null) return;
+            friend.setOnline(false);
+            friends.put(uuid, friend);
+
+        }
+
     }
 
     public void updateFriendRequestEntry(UUID uuid, String data) {
-        friendEntry.updateFriendRequestEntry(uuid, data);
+        if (data.equalsIgnoreCase("send")) {
+            loadFriendEntryAsync(uuid, true);
+        } else if (data.equalsIgnoreCase("remove")) {
+            requests.remove(uuid);
+        }
+    }
+
+    public void loadFriendEntry(UUID uuid, boolean isRequest) {
+        PlayerProfile playerProfile = BukkitCore.getAPI().getPlayerService().getEntity(uuid, () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(uuid));
+        SkinProfile skinProfile = BukkitCore.getAPI().getSkinService().getEntity(uuid, () -> BukkitCore.getAPI().getSkinService().getRepository().findFirstById(uuid));
+
+        String value;
+        String signature;
+        if (skinProfile == null) {
+            value = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGZk" +
+                    "NWJkZTk5NGUwYTY0N2FmMTgyMzY4MWE2MTNjMmJmYzNkOTczNmY4ODlkYmY4YzNiYmJhNWExM2Y4ZWQifX19";
+            signature = "";
+        } else {
+            value = skinProfile.getValue();
+            signature = skinProfile.getSignature();
+        }
+
+
+        Friend friend = new Friend();
+
+        PlayerRank playerRank = PlayerRank.valueOf(playerProfile.getRank());
+
+        friend.setUuid(uuid);
+        friend.setOnline(playerProfile.isOnline());
+        friend.setCurrentServer(playerProfile.getServerName());
+        friend.setName(playerProfile.getPlayerName());
+        friend.setLastJoin(playerProfile.getLastJoin());
+        friend.setPlayerRank(playerRank);
+        friend.setValue(value);
+        friend.setSignature(signature);
+
+        if (isRequest) {
+            requests.put(uuid, friend);
+        } else {
+            friends.put(uuid, friend);
+        }
+
+    }
+
+
+    public void loadFriendEntryAsync(UUID uuid, boolean isRequest) {
+        BukkitCore.getAPI().getExecutor().execute(() -> loadFriendEntry(uuid, isRequest));
     }
 
     public void openFriendGui(Player player, int page, SortOption sortOption) {
@@ -49,7 +156,7 @@ public class BukkitFriendEntry {
             this.sortOption = SortOption.LASTONLINE_RECENTLY;
         }
 
-        ArrayList<FriendManager.Friend> friendArrayList = friendEntry.getFriendCache()
+        ArrayList<Friend> friendArrayList = friends
                 .values()
                 .stream()
                 .sorted(sortOption.getComparator())
@@ -176,7 +283,7 @@ public class BukkitFriendEntry {
                         " "
                         , " §7Page §6" + page + " §7of §c" + getMaxPages(friendArrayList,21)
                         ," "
-                        ," §aOnline friends§8: §6" + friendArrayList.stream().filter(FriendManager.Friend::isOnline).count()
+                        ," §aOnline friends§8: §6" + friendArrayList.stream().filter(Friend::isOnline).count()
                         ," §cOffline friends§8: §6" + friendArrayList.stream().filter(friend -> !friend.isOnline()).count()
                         , ""
                 )
@@ -190,7 +297,7 @@ public class BukkitFriendEntry {
         Inventory inventory = new Inventory("§8» §6Requests",9*5);
         if (page == 1) this.page = 1;
 
-        ArrayList<FriendManager.Friend> friendArrayList = friendEntry.getFriendRequestCache()
+        ArrayList<Friend> friendArrayList = requests
                 .values()
                 .stream()
                 .sorted((o1, o2) -> o1.isOnline() && !o2.isOnline() ? -1 : o1.isOnline() == o2.isOnline() ? 0 : 1)
@@ -238,7 +345,7 @@ public class BukkitFriendEntry {
     }
 
 
-    private List<FriendManager.Friend> getListForPage(int page, List<FriendManager.Friend> list, int slotsPerPage) {
+    private List<Friend> getListForPage(int page, List<Friend> list, int slotsPerPage) {
         int startIndex = (page - 1) * slotsPerPage;
         int endIndex = startIndex + slotsPerPage;
 
@@ -252,7 +359,7 @@ public class BukkitFriendEntry {
         return list.subList(startIndex, endIndex);
     }
 
-    private int getMaxPages(List<FriendManager.Friend> list, int slotsPerPage) {
+    private int getMaxPages(List<Friend> list, int slotsPerPage) {
         int totalItems = list.size();
         return (int) Math.ceil((double) totalItems / slotsPerPage);
     }
@@ -293,8 +400,8 @@ public class BukkitFriendEntry {
                 return 1;
             }
         }),
-        LASTONLINE_LONG(" Last online §8(§6long §7➡ §6recently§8)", Comparator.comparingLong(FriendManager.Friend::getLastJoin)),
-        NAME_A_TO_Z(" Name §8(§6A §7➡ §6Z§8)", Comparator.comparing(FriendManager.Friend::getName)),
+        LASTONLINE_LONG(" Last online §8(§6long §7➡ §6recently§8)", Comparator.comparingLong(Friend::getLastJoin)),
+        NAME_A_TO_Z(" Name §8(§6A §7➡ §6Z§8)", Comparator.comparing(Friend::getName)),
         NAME_Z_TO_A(" Name §8(§6Z §7➡ §6A§8)", (o1, o2) -> o2.getName().compareTo(o1.getName())),
         RANK(" Ranks §8(§4Admin §7➡ §7Player§8)",(o1, o2) -> {
             if (o1.getPlayerRank().getSortId() < o2.getPlayerRank().getSortId()) {
@@ -306,7 +413,7 @@ public class BukkitFriendEntry {
         });
 
         private final String lore;
-        private final Comparator<FriendManager.Friend> comparator;
+        private final Comparator<Friend> comparator;
     }
 
 
