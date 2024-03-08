@@ -1,6 +1,6 @@
 package de.teamholy.knockbackffa.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.models.MapEntry;
@@ -77,7 +77,7 @@ public class PlayerInteractListener implements Listener {
                                 Inventory users = new Inventory("§8» §6Spieler von " + mapEntry.getMapName(),54);
                                 int usersInt = 0;
                                 for (Player all : mapEntry.getPlayers()) {
-                                    users.setItem(new ItemBuilder(Material.SKULL_ITEM,1,(byte) 3).setSkullOwner(all.getName()).setName("§8» " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(all.getUniqueId()) + all.getName()).build(),usersInt,event2 -> {
+                                    users.setItem(new ItemBuilder(Material.SKULL_ITEM,1,(byte) 3).setSkullOwner(all.getName()).setName("§8» " + BukkitCore.getInstance().getPlayerColor(all.getUniqueId(), true) + all.getName()).build(),usersInt, event2 -> {
                                         player.teleport(all);
                                     });
                                     usersInt++;

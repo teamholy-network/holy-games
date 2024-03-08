@@ -4,8 +4,6 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import com.google.common.collect.Lists;
 import de.dytanic.cloudnet.wrapper.Wrapper;
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
@@ -17,7 +15,8 @@ import de.teamholy.bridge.util.FormatTime;
 import de.teamholy.bridge.util.ItemBuilder;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
-import de.teamholy.core.bukkit.perks.PerkType;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import lombok.Getter;
 import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.lang3.tuple.Pair;
@@ -171,7 +170,7 @@ public class BridgePlayerService {
             hologram.appendItemLine(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
                     .setSkullMeta(bridgePlayer.getSkinProfile().getValue(), bridgePlayer.getSkinProfile().getSignature()).build());
             hologram.appendTextLine("");
-            hologram.appendTextLine("§fStats of " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(bridgePlayer.getPlayer().getUniqueId()) + bridgePlayer.getPlayer().getName());
+            hologram.appendTextLine("§fStats of " + BukkitCore.getInstance().getPlayerColor(bridgePlayer.getPlayer().getUniqueId(), true) + bridgePlayer.getPlayer().getName());
             hologram.appendTextLine("");
             hologram.appendTextLine("§c§lGLOBAL");
             hologram.appendTextLine("§fWins §8» §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getWins()));
@@ -576,7 +575,7 @@ public class BridgePlayerService {
 
                         var playerEntry = bridgePlayerLongEntry.getKey().getPlayer();
                         var string = " " +
-                                BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getUniqueId()) + playerEntry.getName() + " §8» §7" +
+                                BukkitCore.getInstance().getPlayerColor(playerEntry.getUniqueId(), true) + playerEntry.getName() + " §8» §7" +
                                 checkBestTimeString(bridgePlayerLongEntry.getKey().getLocalBestTime(bridgeMapType));
 
                         bridgePlayer.getBridgeScoreboard().updateLine(i.getAndDecrement(), string);

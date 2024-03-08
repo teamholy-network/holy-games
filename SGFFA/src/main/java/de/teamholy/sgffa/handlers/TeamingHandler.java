@@ -1,6 +1,6 @@
 package de.teamholy.sgffa.handlers;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.sgffa.SGFFA;
 import de.teamholy.sgffa.models.PlayerEntry;
 import de.teamholy.sgffa.models.TeamEntry;
@@ -69,7 +69,7 @@ public class TeamingHandler {
             playerEntry.updateTeamScore();
             teamEntry.getPlayerEntries().remove(playerEntry);
             MarkupAPI.updateNameTag(playerEntry.getPlayer());
-            sendMessageToTeam(teamEntry,prefix + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getPlayer().getUniqueId()) + playerEntry.getPlayer().getName() + " §cleft the team");
+            sendMessageToTeam(teamEntry,prefix + BukkitCore.getInstance().getPlayerColor(playerEntry.getPlayer().getUniqueId(), true) + playerEntry.getPlayer().getName() + " §cleft the team");
         }
     }
 

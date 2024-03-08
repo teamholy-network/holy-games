@@ -5,8 +5,8 @@ import de.teamholy.bedwars.commands.NPCShopCommand;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.bedwars.model.TeamEntry;
-import de.teamholy.api.BukkitHolyAPI;
 import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -153,7 +153,7 @@ public class LobbyTask {
             playerEntry.getPlayer().teleport(playerEntry.getTeamEntry().getSpawn());
             playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(),Sound.ANVIL_BREAK,50f,50f);
             playerEntry.getPlayer().sendTitle("§6§lTeamholy.de",(Bedwars.isRushMode() ? "§bRushBW" : "§6Bedwars"));
-            BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"played_games",playerEntry.getPlayer().getUniqueId());
+            BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"played_games",playerEntry.getPlayer().getUniqueId());
             Bedwars.getInstance().getIngamePlayers().add(playerEntry);
             Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), playerEntry::setScorebord,1);
         }

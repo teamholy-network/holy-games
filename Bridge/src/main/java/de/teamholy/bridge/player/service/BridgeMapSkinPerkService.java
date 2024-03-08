@@ -12,6 +12,7 @@ import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.Pagifier;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -55,7 +56,11 @@ public class BridgeMapSkinPerkService {
 
         playerProfile.setCoins(playerProfile.getCoins() - bridgeMapSkin.getPrice());
         perkProfile.getOwnedPerks().add(bridgeMapSkin.getId());
-        BukkitCore.getInstance().getPerkCache().getPerkPlayerProfileHashMap().put(bridgePlayer.getUuid(), perkProfile);
+
+        PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(bridgePlayer.getUuid());
+        cachedBukkitPlayer.getPerkPlayerProfile().getOwnedPerks().add(bridgeMapSkin.getId());
+        BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().put(bridgePlayer.getUuid(), cachedBukkitPlayer);
+
         BukkitCore.getAPI().getPerkPlayerService().saveEntity(perkProfile, true, true);
         BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile, true, true);
 

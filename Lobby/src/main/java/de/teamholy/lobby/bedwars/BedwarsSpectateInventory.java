@@ -1,6 +1,5 @@
 package de.teamholy.lobby.bedwars;
 
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.lobby.Lobby;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -238,7 +237,7 @@ public class BedwarsSpectateInventory implements Listener {
 
                 bigList.forEach(integer -> {
                     if (event.getSlot() == integer && event.getCurrentItem() != null) {
-                        BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(event.getWhoClicked().getUniqueId()).connect(getServerNameFromItemStack(event.getCurrentItem()));
+                        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(event.getWhoClicked().getUniqueId()).connect(getServerNameFromItemStack(event.getCurrentItem()));
                     }
                 });
             }

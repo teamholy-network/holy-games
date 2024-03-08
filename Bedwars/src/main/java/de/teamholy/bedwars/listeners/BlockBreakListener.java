@@ -1,14 +1,12 @@
 package de.teamholy.bedwars.listeners;
 
-import de.teamholy.api.manager.StatsManager;
 import de.teamholy.bedwars.Bedwars;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.TeamEntry;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.model.PlayerEntry;
-import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.manager.StatsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -75,7 +73,7 @@ public class BlockBreakListener implements Listener {
 
                         int difference = (int) teamEntry.getAllPlayers().stream().mapToInt(PlayerEntry::getAlltimeTrophies).count() / teamEntry.getSize();
 
-                        int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS,
+                        int killerTrophies = BukkitCore.getInstance().getStatsManager().handleTrophie(player.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.PLUS,
                                 TrophieLeague.calculateRange(difference - playerEntry.getAlltimeTrophies(),3,9));
 
 
@@ -85,13 +83,13 @@ public class BlockBreakListener implements Listener {
                         playerEntry.setBeds(playerEntry.getBeds() + 1);
                         playerEntry.updateScoreboard();
                         BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(),20,true);
-                        BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"destroyed_beds", player.getUniqueId());
+                        BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"destroyed_beds", player.getUniqueId());
 
                         for (Player teamPlayers : teamEntry.getPlayers()) {
                             teamPlayers.sendTitle("§cYour bed", "§cwas §4destroyed!");
                             teamPlayers.playSound(teamPlayers.getLocation(), Sound.ANVIL_BREAK, 20f, 20f);
                             teamPlayers.sendTitle("","§c-" +
-                                    BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(teamPlayers.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS,
+                                    BukkitCore.getInstance().getStatsManager().handleTrophie(teamPlayers.getUniqueId(), Bedwars.MODE.toString(), StatsManager.TrophieAdjustType.MINUS,
                                             TrophieLeague.calculateRange(difference - playerEntry.getAlltimeTrophies(),2,6))
                                     + " §6trophies");
 

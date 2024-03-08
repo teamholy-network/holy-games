@@ -1,6 +1,6 @@
 package de.teamholy.sgffa.listeners;
 
-import de.teamholy.api.events.bukkit.CloudChannelListenEvent;
+import de.teamholy.core.bukkit.event.CloudChannelListenEvent;
 import de.teamholy.sgffa.SGFFA;
 import de.teamholy.sgffa.models.PlayerEntry;
 import org.bukkit.Bukkit;

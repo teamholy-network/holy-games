@@ -1,8 +1,8 @@
 package de.teamholy.bedwars.inventoriers;
 
 import de.teamholy.bedwars.Bedwars;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.model.TeamEntry;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -25,7 +25,7 @@ public class TeamSelectInventory {
         for (TeamEntry teamEntry : Bedwars.getInstance().getCacheHandler().getTeamEntries()) {
             List list = new ArrayList<>();
             for (int i = 0; i < teamEntry.getPlayers().size(); i++) {
-                list.add("§8» " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(teamEntry.getPlayers().get(i).getUniqueId()) + teamEntry.getPlayers().get(i).getName());
+                list.add("§8» " + BukkitCore.getInstance().getPlayerColor(teamEntry.getPlayers().get(i).getUniqueId(), true) + teamEntry.getPlayers().get(i).getName());
             }
             inventory.setItem(i1,new ItemBuilder(Material.SKULL_ITEM,(teamEntry.getPlayers().size() < 1 ? (teamEntry.getPlayers().size() + 1) : teamEntry.getPlayers().size()),(byte) 3).setName("§8» " + teamEntry.getColorCode() + teamEntry.getName()).getSkull("http://textures.minecraft.net/texture/" + teamEntry.getSkullId()).setLore(list).build());
             i1++;

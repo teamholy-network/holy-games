@@ -1,9 +1,8 @@
 package de.teamholy.lobby.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
 import de.teamholy.lobby.Lobby;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.PerkType;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
@@ -25,22 +24,18 @@ public class BlockPlaceListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         Player player = e.getPlayer();
 
-        if(player.getGameMode().equals(GameMode.CREATIVE)) {
-            Bukkit.getScheduler().runTaskLater(Lobby.getInstance(), () -> {
-                    e.getBlock().breakNaturally();
-            }, 20L);
+        if (player.getGameMode() == GameMode.CREATIVE)
             return;
-        }
 
 
-        if (BukkitCore.getInstance().getPerkManager().getPerk(player,PerkType.BLOCK).itemStack.getType() == e.getBlock().getType()) {
+        if (BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK).itemStack.getType() == e.getBlock().getType()) {
 
             if (e.getBlockReplacedState().getType() != Material.AIR) {
                 e.setCancelled(true);
                 return;
             }
 
-            if (BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby").distance(e.getBlock().getLocation()) < 10.0) {
+            if (BukkitCore.getInstance().getLocationManager().getLocation("lobby").distance(e.getBlock().getLocation()) < 10.0) {
                 player.sendMessage("§cYou cant place blocks here");
                 e.setCancelled(true);
                 return;

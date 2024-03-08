@@ -1,8 +1,9 @@
 package de.teamholy.knockbackffa;
 
-import de.teamholy.api.bukkit.utils.TopHolo;
 import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.core.bukkit.utils.TopHolo;
 import de.teamholy.knockbackffa.commands.QuitCommand;
 import de.teamholy.knockbackffa.commands.SetupCommand;
 import de.teamholy.knockbackffa.commands.TeamingCommand;
@@ -14,7 +15,6 @@ import de.teamholy.knockbackffa.handlers.TeamingHandler;
 import de.teamholy.knockbackffa.models.MapEntry;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.knockbackffa.utils.PlayerUtils;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.knockbackffa.tasks.ArmorColorRainbowTask;
 import com.google.common.reflect.ClassPath;
 import de.slikey.effectlib.EffectLib;
@@ -64,7 +64,7 @@ public class KnockbackFFA extends JavaPlugin {
         registerListener("de.teamholy.knockbackffa.listeners");
         registerMaps();
         startMoveListener();
-        new TopHolo(BukkitHolyAPI.getInstance().getLocationManager().getLocation("topHolo"), Gamemodes.KNOCKBACKFFA, new ItemBuilder(Material.SANDSTONE).build());
+        new TopHolo(BukkitCore.getInstance().getLocationManager().getLocation("topHolo"), Gamemodes.KNOCKBACKFFA, new ItemBuilder(Material.SANDSTONE).build());
         new ArmorColorRainbowTask(this);
     }
 
@@ -82,7 +82,7 @@ public class KnockbackFFA extends JavaPlugin {
                     }
                 } else if (playerEntry.getPlayerState() == PlayerState.LOBBY) {
                     if (player.getLocation().getBlockY() < 10) {
-                        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+                        player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
                     }
                 }
             }

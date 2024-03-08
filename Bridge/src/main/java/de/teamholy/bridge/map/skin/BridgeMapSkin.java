@@ -1,7 +1,7 @@
 package de.teamholy.bridge.map.skin;
 
 import de.teamholy.bridge.map.BridgeMapType;
-import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.perks.enums.PerkRankType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;

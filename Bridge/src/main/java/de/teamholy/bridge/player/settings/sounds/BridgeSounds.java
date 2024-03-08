@@ -1,6 +1,6 @@
 package de.teamholy.bridge.player.settings.sounds;
 
-import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.perks.enums.PerkRankType;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;

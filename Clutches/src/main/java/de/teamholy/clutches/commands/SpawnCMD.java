@@ -1,9 +1,9 @@
 package de.teamholy.clutches.commands;
 
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ public class SpawnCMD implements CommandExecutor {
         Player player = (Player) commandSender;
         PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
         if (playerEntry.getPlayerState() == PlayerState.LOBBY) {
-            player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+            player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
         }
         return false;
     }

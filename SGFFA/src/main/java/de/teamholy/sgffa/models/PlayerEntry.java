@@ -1,8 +1,7 @@
 package de.teamholy.sgffa.models;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.core.api.utility.TrophieLeague;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import de.teamholy.sgffa.SGFFA;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.core.api.entities.game.GameProfile;
@@ -92,7 +91,7 @@ public class PlayerEntry {
             scoreboardAPI.setLine(6," §7Trophies§8: §a"  + elo + " " + TrophieLeague.getEloRank(elo).getShortName());
             scoreboardAPI.setLine(5," §7Kills§8: §a" + gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"kills"));
             scoreboardAPI.setLine(4," §7Deaths§8: §a" + gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"deaths"));
-            scoreboardAPI.setLine(3," §7K/D§8: §a" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"kills"), gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"deaths")));
+            scoreboardAPI.setLine(3," §7K/D§8: §a" + BukkitCore.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"kills"), gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"deaths")));
             scoreboardAPI.setLine(2, "§5");
             scoreboardAPI.setLine(1, " §8§m--------------- ");
             scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
@@ -109,7 +108,7 @@ public class PlayerEntry {
             scoreboardAPI.updateLine(6," §7Trophies§8: §a"  + elo + " " + TrophieLeague.getEloRank(elo).getShortName());
             scoreboardAPI.updateLine(5," §7Kills§8: §a" + gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"kills"));
             scoreboardAPI.updateLine(4," §7Deaths§8: §a" + gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"deaths"));
-            scoreboardAPI.updateLine(3," §7K/D§8: §a" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"kills"), gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"deaths")));
+            scoreboardAPI.updateLine(3," §7K/D§8: §a" + BukkitCore.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"kills"), gameProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"deaths")));
         });
     }
 
@@ -122,7 +121,7 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.showPlayer(player);
                 } else {
-                    all.sendMessage(SGFFA.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() + " §7Ist nun nicht mehr im Vanish!");
+                    all.sendMessage(SGFFA.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getName() + " §7Ist nun nicht mehr im Vanish!");
                 }
             }
             player.setAllowFlight(false);
@@ -135,7 +134,7 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.hidePlayer(player);
                 } else {
-                    all.sendMessage(SGFFA.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() +  " §7Ist nun im Vanish!");
+                    all.sendMessage(SGFFA.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getName() +  " §7Ist nun im Vanish!");
                 }
             }
             player.setAllowFlight(true);
@@ -150,7 +149,7 @@ public class PlayerEntry {
         Inventory inventory = new Inventory("§8» §6Vanish Menü",9*6);
         int i = 0;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            inventory.setItem(new ItemBuilder(Material.SKULL_ITEM,1, (byte) 3).setSkullOwner(player.getName()).setName(BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getDisplayName()).build(),i,inventoryClickEvent -> {
+            inventory.setItem(new ItemBuilder(Material.SKULL_ITEM,1, (byte) 3).setSkullOwner(player.getName()).setName(BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getDisplayName()).build(),i,inventoryClickEvent -> {
                 if (player.isOnline()) this.player.teleport(player);
             });
             i++;

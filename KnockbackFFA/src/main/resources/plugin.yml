@@ -3,7 +3,7 @@ version: 1.0
 author: yassino
 main: de.teamholy.knockbackffa.KnockbackFFA
 
-depend: [API, EffectLib, MarkupAPI]
+depend: [EffectLib, MarkupAPI]
 
 commands:
   setup:

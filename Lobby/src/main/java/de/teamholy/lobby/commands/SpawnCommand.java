@@ -1,6 +1,6 @@
 package de.teamholy.lobby.commands;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +19,7 @@ public class SpawnCommand implements CommandExecutor {
         if (!(commandSender instanceof Player player)) {
             return true;
         }
-        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+        player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
         return false;
     }
 }

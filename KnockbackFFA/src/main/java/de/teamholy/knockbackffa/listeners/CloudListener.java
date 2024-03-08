@@ -1,6 +1,6 @@
 package de.teamholy.knockbackffa.listeners;
 
-import de.teamholy.api.events.bukkit.CloudChannelListenEvent;
+import de.teamholy.core.bukkit.event.CloudChannelListenEvent;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.models.PlayerEntry;

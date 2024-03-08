@@ -1,7 +1,5 @@
 package de.teamholy.clutches.task;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.models.NPCEntry;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.arena.ArenaEntry;
 import de.teamholy.clutches.arena.ArenaType;
@@ -10,6 +8,8 @@ import de.teamholy.clutches.enums.HitType;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.utils.PlayerUtils;
+import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.npc.models.NPCEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -59,7 +59,7 @@ public class ClutchTask {
                                 player.setExp(0);
 
                                 if (playerEntry.getArenaType() == ArenaType.REDUCE) {
-                                    for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
+                                    for (NPCEntry npcEntry : BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().values()) {
                                         if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
                                             if (npcEntry.getLocation().distance(player.getLocation()) <= 3.7) {
                                                 npcEntry.animation(player, 0);
@@ -75,7 +75,7 @@ public class ClutchTask {
                                     }
                                 } else if (playerEntry.getArenaType() == ArenaType.EXPERIMENTAL) {
 
-                                    for (NPCEntry npcEntry : BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().values()) {
+                                    for (NPCEntry npcEntry : BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().values()) {
                                         if (npcEntry.getDisplayName().equalsIgnoreCase("§6§lteamholy.de")) {
                                             if (npcEntry.getLocation().distance(player.getLocation()) <= 2.5) {
                                                 npcEntry.animation(player, 0);

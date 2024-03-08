@@ -1,14 +1,9 @@
 package de.teamholy.knockbackffa.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.core.api.entities.game.GameProfile;
-import de.teamholy.core.api.entities.game.StatsType;
-import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.core.api.entities.clan.Clan;
-import de.teamholy.core.api.entities.clanplayer.ClanPlayerProfile;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
 import eu.koboo.markup.MarkupAPI;
@@ -24,7 +19,7 @@ public class PlayerNameTagListener implements Listener {
     public void onNameTag(PlayerNameTagEvent event) {
 
         Player player = event.getPlayer();
-        PlayerRank playerRank = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().get(player.getUniqueId());
+        PlayerRank playerRank = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getRank();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
 
         if (playerRank == null) return;
@@ -46,7 +41,7 @@ public class PlayerNameTagListener implements Listener {
         } else if (player.getName().equalsIgnoreCase("Koboo")) {
             prefix = "§8[§5Koboo§8] §7";
         } else {
-            Clan clan = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getClanPlayerHashMap().get(player.getUniqueId());
+            Clan clan = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getClan();
             if (playerEntry != null && playerEntry.getTeamEntry() != null) {
                 suffixBuilder.append(" §7§o").append(playerEntry.getTeamEntry().getTag());
                 displaySuffixBuilder.append(" §7§o").append(playerEntry.getTeamEntry().getTag());

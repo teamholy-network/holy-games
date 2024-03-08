@@ -1,6 +1,6 @@
 package de.teamholy.knockbackffa.listeners;
 
-import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
+import de.teamholy.core.bukkit.npc.event.PlayerInteractAtNPCEvent;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.models.PlayerEntry;

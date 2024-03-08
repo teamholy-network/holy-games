@@ -2,14 +2,14 @@ package de.teamholy.bedwars.listeners;
 
 import de.teamholy.bedwars.Bedwars;
 import de.teamholy.bedwars.enums.RushBWShopItems;
-import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
-import de.teamholy.api.bukkit.npc.event.action.InteractAction;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.bedwars.utils.PlayerShopListener;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.npc.event.PlayerInteractAtNPCEvent;
+import de.teamholy.core.bukkit.npc.event.action.InteractAction;
 import de.teamholy.core.bukkit.perks.PerkManager;
-import de.teamholy.core.bukkit.perks.PerkType;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Bukkit;

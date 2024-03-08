@@ -10,7 +10,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/API" />
             <option value="$PROJECT_DIR$/Bedwars" />
             <option value="$PROJECT_DIR$/Bridge" />
             <option value="$PROJECT_DIR$/Clutches" />

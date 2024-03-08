@@ -1,7 +1,8 @@
 package de.teamholy.knockbackffa.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.NPCBuilder;
+import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.event.CachedPlayerJoinEvent;
+import de.teamholy.core.bukkit.npc.NPCBuilder;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.models.DamagedPlayer;
@@ -25,8 +26,8 @@ import java.util.UUID;
 public class PlayerJoinQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+    public void onJoin(CachedPlayerJoinEvent event) {
+        Player player = event.getCachedBukkitPlayer().getPlayer();
         KnockbackFFA.getInstance().getCacheHandler().getMapEntrys().values().forEach(MapEntry::updateSign);
         player.removePotionEffect(PotionEffectType.INVISIBILITY);
         player.setLevel(0);
@@ -45,7 +46,7 @@ public class PlayerJoinQuitListener implements Listener {
             Bukkit.getScheduler().runTask(KnockbackFFA.getInstance(), () -> {
                 playerEntry.performSpawn();
                 player.setGameMode(GameMode.SURVIVAL);
-                new NPCBuilder("invsort","§6§lInventory",UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),100,10,true,false,BukkitHolyAPI.getInstance().getLocationManager().getLocation("invsort")).build(player);
+                new NPCBuilder("invsort","§6§lInventory",UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),100,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("invsort")).build(player);
             });
         },1);
     }
@@ -66,13 +67,13 @@ public class PlayerJoinQuitListener implements Listener {
             if (damagedPlayer.getHitTime() > System.currentTimeMillis()) {
                 PlayerEntry killerEntry = damagedPlayer.getDamager();
                 Player killer = killerEntry.getPlayer();
-                killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName() + " §7(§cleave§7)");
+                killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7(§cleave§7)");
                 killer.setLevel(killer.getLevel()+1);
                 killer.setHealth(20);
                 killer.playSound(killer.getLocation(), Sound.NOTE_PLING,2f,2f);
 
-                BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"kills",killer.getUniqueId());
-                BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"deaths",player.getUniqueId());
+                BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"kills",killer.getUniqueId());
+                BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"deaths",player.getUniqueId());
 
                 PlayerDeathListener.killStreak(killer,player);
                 killerEntry.updateScoreboard();

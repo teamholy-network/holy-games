@@ -2,7 +2,8 @@ package de.teamholy.knockbackffa.enums;
 
 
 import de.slikey.effectlib.util.ParticleEffect;
-import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.perks.enums.PerkRankType;
+import de.teamholy.core.bukkit.perks.model.Perk;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;

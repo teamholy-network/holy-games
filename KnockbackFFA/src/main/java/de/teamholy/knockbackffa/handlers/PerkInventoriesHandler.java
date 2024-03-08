@@ -1,6 +1,7 @@
 package de.teamholy.knockbackffa.handlers;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.ArmorColor;
 import de.teamholy.knockbackffa.enums.BowTrail;
 import de.teamholy.knockbackffa.enums.KillStreakEffect;
@@ -34,7 +35,7 @@ public class PerkInventoriesHandler {
             inventory.setItem(itemBuilder.build(),i,event -> {
                 if (!playerEntry.getPlayer().hasPermission(bowTrail.getPerkRankType().getPermission()))
                     return;
-                playerEntry.getPlayer().sendMessage(BukkitHolyAPI.getInstance().getPrefix() + "Bow trail selected!");
+                playerEntry.getPlayer().sendMessage(KnockbackFFA.getInstance().getPrefix() + "Bow trail selected!");
                 playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(), Sound.NOTE_PLING,2f,2f);
                 playerEntry.setBowTrail(bowTrail);
                 playerEntry.getPlayer().closeInventory();
@@ -65,7 +66,7 @@ public class PerkInventoriesHandler {
             inventory.setItem(itemBuilder.build(),i,event -> {
                 if (!playerEntry.getPlayer().hasPermission(killeffect.getPerkRankType().getPermission()))
                     return;
-                playerEntry.getPlayer().sendMessage(BukkitHolyAPI.getInstance().getPrefix() + "KillStreak effect selected!");
+                playerEntry.getPlayer().sendMessage(KnockbackFFA.getInstance().getPrefix() + "KillStreak effect selected!");
                 playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(), Sound.NOTE_PLING,2f,2f);
                 playerEntry.setKillStreakEffect(killeffect);
                 playerEntry.getPlayer().closeInventory();
@@ -96,7 +97,7 @@ public class PerkInventoriesHandler {
             inventory.setItem(itemBuilder.build(),i,event -> {
                 if (!playerEntry.getPlayer().hasPermission(armorColor.getPerkRankType().getPermission()))
                     return;
-                playerEntry.getPlayer().sendMessage(BukkitHolyAPI.getInstance().getPrefix() + "Armor color selected!");
+                playerEntry.getPlayer().sendMessage(KnockbackFFA.getInstance().getPrefix() + "Armor color selected!");
                 playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(), Sound.NOTE_PLING,2f,2f);
                 playerEntry.setArmorColor(armorColor);
                 playerEntry.getPlayer().closeInventory();

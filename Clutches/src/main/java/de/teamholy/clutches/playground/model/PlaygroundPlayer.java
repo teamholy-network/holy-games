@@ -1,9 +1,5 @@
 package de.teamholy.clutches.playground.model;
 
-import com.google.common.collect.Lists;
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.utils.InventoryUtils;
-import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
@@ -16,10 +12,10 @@ import de.teamholy.clutches.utils.PlayerUtils;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
-import de.teamholy.core.bukkit.perks.PerkType;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
+import de.teamholy.core.bukkit.utils.InventoryUtils;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
-import eu.koboo.en2do.repository.entity.Id;
-import io.netty.handler.codec.spdy.SpdyHttpResponseStreamIdHandler;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -102,7 +98,7 @@ public class PlaygroundPlayer {
 
     public void openArmorColor() {
         de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Armor Color", 9);
-        PerkPlayerProfile perkPlayerProfile = BukkitCore.getInstance().getPerkCache().getPerkPlayerProfileHashMap().get(player.getUniqueId());
+        PerkPlayerProfile perkPlayerProfile = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getPerkPlayerProfile();
         for (int i = 0; i < 9; i++) {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
@@ -140,7 +136,7 @@ public class PlaygroundPlayer {
                 }
 
                 if (sucess) {
-                    player.sendMessage(BukkitHolyAPI.getInstance().getPrefix() + "Armor color selected!");
+                    player.sendMessage(Clutches.PREFIX + "Armor color selected!");
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 2f, 2f);
                     settings.setArmorColor(armorColor);
                     player.closeInventory();
@@ -462,7 +458,7 @@ public class PlaygroundPlayer {
         playerEntry.setPlayerState(PlayerState.LOBBY);
         playgroundWorld = null;
         playerEntry.setItemsSpawn();
-        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+        player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
         playerEntry.setScoreboard();
         Clutches.getInstance().getHologramManager().updateHolograms();
     }

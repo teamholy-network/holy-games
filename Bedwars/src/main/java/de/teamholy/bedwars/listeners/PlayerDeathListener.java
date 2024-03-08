@@ -1,10 +1,10 @@
 package de.teamholy.bedwars.listeners;
 
 import de.teamholy.bedwars.Bedwars;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.commands.NPCShopCommand;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.bedwars.model.TeamEntry;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -68,7 +68,7 @@ public class PlayerDeathListener implements Listener {
         } else {
             playerEntry.setSpectator();
             playerEntry.checkWin();
-            event.setRespawnLocation(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+            event.setRespawnLocation(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
         }
     }
 

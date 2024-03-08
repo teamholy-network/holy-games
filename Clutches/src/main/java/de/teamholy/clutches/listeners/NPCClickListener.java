@@ -1,12 +1,12 @@
 package de.teamholy.clutches.listeners;
 
-import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
-import de.teamholy.api.bukkit.npc.event.action.InteractAction;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.arena.ArenaType;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.model.PlaygroundWorld;
+import de.teamholy.core.bukkit.npc.event.PlayerInteractAtNPCEvent;
+import de.teamholy.core.bukkit.npc.event.action.InteractAction;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Material;

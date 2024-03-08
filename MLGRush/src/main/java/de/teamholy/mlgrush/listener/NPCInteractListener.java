@@ -1,6 +1,6 @@
 package de.teamholy.mlgrush.listener;
 
-import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
+import de.teamholy.core.bukkit.npc.event.PlayerInteractAtNPCEvent;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.GameType;
 import de.teamholy.mlgrush.game.GameEntry;

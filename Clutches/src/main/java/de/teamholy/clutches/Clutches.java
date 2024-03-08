@@ -17,10 +17,10 @@ import de.teamholy.clutches.utils.PlayerUtils;
 import com.google.common.reflect.ClassPath;
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.models.SkinEntry;
 import de.teamholy.clutches.commands.QuitCommand;
 import de.teamholy.clutches.npcskin.NPCSkin;
+import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.npc.models.SkinEntry;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -88,7 +88,7 @@ public class Clutches extends JavaPlugin {
             SkinEntry temp = new SkinEntry();
             temp.setUuid(value.getUuid());
             temp.fetch(skinEntry -> {
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getSkinEntryHashMap().put(value.getUuid(),skinEntry);
+                BukkitCore.getInstance().getNpcService().getSkinEntryHashMap().put(value.getUuid(),skinEntry);
                 System.out.println(value.getName() + " wurde gecached");
             });
         }
@@ -132,7 +132,7 @@ public class Clutches extends JavaPlugin {
             for (PlayerEntry playerEntry : getPlayerEntryHandler().values()) {
                 Player player = playerEntry.getPlayer();
                 if (playerEntry.getPlayerState() == PlayerState.LOBBY && playerEntry.getPlayer().getLocation().getBlockY() < 30) {
-                    player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+                    player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
                 } else if (playerEntry.getPlayerState() == PlayerState.INGAME && player.getLocation().distance(playerEntry.getArenaEntry().getNpc()) > 400) {
                     player.teleport(playerEntry.getArenaEntry().getPlayerSpawn());
                     player.playSound(player.getLocation(),Sound.ENDERMAN_TELEPORT,5,5);

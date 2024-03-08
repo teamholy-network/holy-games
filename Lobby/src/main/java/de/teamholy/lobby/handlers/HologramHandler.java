@@ -1,6 +1,5 @@
 package de.teamholy.lobby.handlers;
 
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -29,22 +28,22 @@ public class HologramHandler {
 
     public HologramHandler(Lobby instance) {
         this.instance = instance;
-        holograms.put("Bedwars",createHologram(new ItemBuilder(Material.BED).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("bedwars")));
+        holograms.put("Bedwars",createHologram(new ItemBuilder(Material.BED).build(), BukkitCore.getInstance().getLocationManager().getLocation("bedwars")));
 
-        holograms.put("bw_spawn",createHologram(new ItemBuilder(Material.BED).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_bw")));
-        holograms.put("rbw_spawn",createHologram(new ItemBuilder(Material.BLAZE_ROD).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_rbw")));
+        holograms.put("bw_spawn",createHologram(new ItemBuilder(Material.BED).build(), BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_bw")));
+        holograms.put("rbw_spawn",createHologram(new ItemBuilder(Material.BLAZE_ROD).build(), BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_rbw")));
 
 
-        Hologram hologram = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn_spec").add(0,3.35,0));
+        Hologram hologram = HologramsAPI.createHologram(instance,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_spec").add(0,3.35,0));
         hologram.appendItemLine(new ItemBuilder(Material.EYE_OF_ENDER).build());
         hologram.appendTextLine("§50 §7Games");
         holograms.put("spec",hologram);
 
-        gameholograms.put("MLGRush",createHologram(new ItemBuilder(Material.STICK).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("mlgrush")));
-        gameholograms.put("KnockbackFFA",createHologram(new ItemBuilder(Material.SANDSTONE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("kbffa")));
-        gameholograms.put("Clutches",createHologram(new ItemBuilder(Material.RED_SANDSTONE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("clutches")));
-        gameholograms.put("SGFFA",createHologram(new ItemBuilder(Material.IRON_SWORD).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("sgffa")));
-        gameholograms.put("Bridge",createHologram(new ItemBuilder(Material.IRON_PICKAXE).build(), BukkitHolyAPI.getInstance().getLocationManager().getLocation("bridge")));
+        gameholograms.put("MLGRush",createHologram(new ItemBuilder(Material.STICK).build(), BukkitCore.getInstance().getLocationManager().getLocation("mlgrush")));
+        gameholograms.put("KnockbackFFA",createHologram(new ItemBuilder(Material.SANDSTONE).build(), BukkitCore.getInstance().getLocationManager().getLocation("kbffa")));
+        gameholograms.put("Clutches",createHologram(new ItemBuilder(Material.RED_SANDSTONE).build(), BukkitCore.getInstance().getLocationManager().getLocation("clutches")));
+        gameholograms.put("SGFFA",createHologram(new ItemBuilder(Material.IRON_SWORD).build(), BukkitCore.getInstance().getLocationManager().getLocation("sgffa")));
+        gameholograms.put("Bridge",createHologram(new ItemBuilder(Material.IRON_PICKAXE).build(), BukkitCore.getInstance().getLocationManager().getLocation("bridge")));
 
 
 
@@ -62,7 +61,7 @@ public class HologramHandler {
         arrayList.add("§f§lClick to see the §c§lleaderboards");
 
 
-        Hologram eloholo = HologramsAPI.createHologram(instance,BukkitHolyAPI.getInstance().getLocationManager().getLocation("eloholo").add(0,8,0));
+        Hologram eloholo = HologramsAPI.createHologram(instance,BukkitCore.getInstance().getLocationManager().getLocation("eloholo").add(0,8,0));
         eloholo.appendItemLine(new ItemBuilder(Material.DIAMOND_SWORD).setEnchantments(Enchantment.DAMAGE_ALL,1).build());
         arrayList.forEach(s -> eloholo.appendTextLine(s).setTouchHandler(player -> Lobby.getInstance().getLeaderboardInventory().open(player, Gamemodes.MLGRUSH)));
 

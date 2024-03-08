@@ -4,7 +4,7 @@ import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.PerkType;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;

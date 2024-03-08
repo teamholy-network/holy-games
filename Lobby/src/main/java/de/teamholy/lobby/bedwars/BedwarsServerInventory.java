@@ -1,6 +1,6 @@
 package de.teamholy.lobby.bedwars;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.lobby.Lobby;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayer;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
@@ -184,7 +184,7 @@ public class BedwarsServerInventory implements Listener {
                     Player player = (Player) event.getWhoClicked();
                     if (event.getCurrentItem().getItemMeta().getDisplayName().startsWith("§8» §6")) {
                         String server = event.getCurrentItem().getItemMeta().getDisplayName().replace("§8» §6","");
-                        BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(server);
+                        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(server);
                         player.closeInventory();
                     }
                 }

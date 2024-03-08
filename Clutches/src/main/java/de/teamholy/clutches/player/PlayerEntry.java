@@ -1,10 +1,5 @@
 package de.teamholy.clutches.player;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.models.NPCEntry;
-import de.teamholy.api.bukkit.npc.models.SkinEntry;
-import de.teamholy.api.bukkit.utils.InventoryUtils;
-import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.arena.ArenaEntry;
 import de.teamholy.clutches.arena.ArenaType;
@@ -20,10 +15,14 @@ import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.Perk;
-import de.teamholy.core.bukkit.perks.PerkType;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
+import de.teamholy.core.bukkit.npc.models.NPCEntry;
+import de.teamholy.core.bukkit.npc.models.SkinEntry;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
+import de.teamholy.core.bukkit.utils.InventoryUtils;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
@@ -148,7 +147,7 @@ public class PlayerEntry {
         for (PlayerEntry playerEntry : Clutches.getInstance().getPlayerEntryHandler().values()) {
             if (playerEntry.getPlayerState() == PlayerState.INGAME) {
                 ItemBuilder item = new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullOwner(playerEntry.player.getName())
-                        .setName("§8» " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry.getPlayer().getUniqueId()) + playerEntry.getPlayer().getName());
+                        .setName("§8» " + BukkitCore.getInstance().getPlayerColor(playerEntry.getPlayer().getUniqueId(), true) + playerEntry.getPlayer().getName());
                 item.setLore("§7Type §8» §6" + playerEntry.getArenaType().getName()
                         , "§7Map §8» §6" + playerEntry.getArenaEntry().getMapEntry().getName()
                 );
@@ -180,22 +179,26 @@ public class PlayerEntry {
 
         if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.REDUCE) {
 
-            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true, false).setPlayer(player);
+            NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), getSpectateArena().getNpc(), 100, 20, true, false).setPlayer(this.player);
             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
             npcEntry.update();
 
             Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
 
-            BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
+            PlayerCacheManager.CachedBukkitPlayer player = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(this.player.getUniqueId());
+            player.getNpcPlayer().getNpcs().put("reduceNPC", npcEntry);
+            BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().put(this.player.getUniqueId(), player);
         } else if (spectateArena.getArenaPlayers().get(0).arenaType == ArenaType.EXPERIMENTAL) {
             for (int j = 0; j < 10; j++) {
                 Location location = new Location(getSpectateArena().getNpc().getWorld(), getSpectateArena().getNpc().getX() + (j * spectateArena.getArenaPlayers().get(0).getMultiReduceNpcDistance()), getSpectateArena().getNpc().getY(), getSpectateArena().getNpc().getZ());
-                NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), location, 100, 20, true, false).setPlayer(playerEntry.player);
+                NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", spectateArena.getArenaPlayers().get(0).npcSkin.getUuid(), location, 100, 20, true, false).setPlayer(this.player);
                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                 npcEntry.update();
                 Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
 
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
+                PlayerCacheManager.CachedBukkitPlayer player = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(this.player.getUniqueId());
+                player.getNpcPlayer().getNpcs().put("reduceNPC " + j, npcEntry);
+                BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().put(this.player.getUniqueId(), player);
             }
         }
     }
@@ -217,11 +220,11 @@ public class PlayerEntry {
             setItemsSpawn();
             setScoreboard();
 
-            player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
-            if (BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()) != null) {
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().remove("reduceNPC");
+            player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
+            if (BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()) != null) {
+                BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().remove("reduceNPC");
                 for (int i = 0; i < 10; i++) {
-                    BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().remove("reduceNPC " + i);
+                    BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().remove("reduceNPC " + i);
                 }
             }
         }
@@ -270,7 +273,7 @@ public class PlayerEntry {
                             NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), getArenaEntry().getNpc(), 100, 20, true, false).setPlayer(player);
                             npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                             npcEntry.update();
-                            BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC", npcEntry);
+                            BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().put("reduceNPC", npcEntry);
 
                             Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
 
@@ -282,7 +285,7 @@ public class PlayerEntry {
                                 NPCEntry npcEntry = new NPCEntry("§6§lTeamholy.de", npcSkin.getUuid(), location, 100, 20, true, false).setPlayer(player);
                                 npcEntry.setHeldItem(new ItemBuilder(Material.STICK, 1, (byte) 0).setEnchantments(Enchantment.KNOCKBACK, 1).build());
                                 npcEntry.update();
-                                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId()).getNpcs().put("reduceNPC " + j, npcEntry);
+                                BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().put("reduceNPC " + j, npcEntry);
 
                                 Bukkit.getScheduler().runTaskLater(Clutches.getInstance(), npcEntry::updateSkin, 10L);
                             }
@@ -348,15 +351,16 @@ public class PlayerEntry {
             playerEntry.getPlayer().setAllowFlight(false);
             playerEntry.getPlayer().setFlying(false);
             playerEntry.getPlayer().spigot().setCollidesWithEntities(true);
-            playerEntry.getPlayer().teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
-            if (BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(playerEntry.getPlayer().getUniqueId()) != null) {
-                BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(playerEntry.getPlayer().getUniqueId()).getNpcs().remove("reduceNPC");
+            playerEntry.getPlayer().teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
+            if (BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(playerEntry.getPlayer().getUniqueId()) != null) {
+                BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(playerEntry.getPlayer().getUniqueId()).getNpcPlayer().getNpcs().remove("reduceNPC");
                 for (int i = 0; i < 10; i++) {
-                    BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(playerEntry.getPlayer().getUniqueId()).getNpcs().remove("reduceNPC " + i);
+                    BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(playerEntry.getPlayer().getUniqueId()).getNpcPlayer().getNpcs().remove("reduceNPC " + i);
                 }
             }
             playerEntry.setScoreboard();
             playerEntry.setSpectateArena(null);
+            player.showPlayer(playerEntry.getPlayer());
         });
         arenaEntry.getArenaPlayers().clear();
         setArenaEntry(null);
@@ -620,7 +624,7 @@ public class PlayerEntry {
             int i = 0;
             for (NPCSkin npcSkin : NPCSkin.values()) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setName("§8» §6" + npcSkin.getName());
-                SkinEntry skinEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getSkinEntryHashMap().get(npcSkin.getUuid());
+                SkinEntry skinEntry = BukkitCore.getInstance().getNpcService().getSkinEntryHashMap().get(npcSkin.getUuid());
                 itemBuilder.setSkullMeta(skinEntry.getValue(), skinEntry.getSignature());
 
                 if (npcSkin == this.npcSkin) {
@@ -769,13 +773,13 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.showPlayer(player);
                 } else {
-                    all.sendMessage(Clutches.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() + " §7Isn't in §cVanish §7anymore!");
+                    all.sendMessage(Clutches.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7Isn't in §cVanish §7anymore!");
                 }
             }
             player.setAllowFlight(false);
             player.setFlying(false);
             performSpawn();
-            player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+            player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
         } else {
             vanish = true;
@@ -784,7 +788,7 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.hidePlayer(player);
                 } else {
-                    all.sendMessage(Clutches.PREFIX + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColorWithoutNick(player.getUniqueId()) + player.getName() + " §7Is now in §aVanish!");
+                    all.sendMessage(Clutches.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7Is now in §aVanish!");
                 }
             }
             player.setAllowFlight(true);

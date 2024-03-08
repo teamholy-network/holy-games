@@ -1,6 +1,6 @@
 package de.teamholy.mlgrush.manager.holograms;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.GameType;
 import de.teamholy.mlgrush.player.PlayerEntry;
@@ -22,10 +22,10 @@ public class QueueHandler {
 
 
     public QueueHandler(MLGRush instance) {
-        TwoxOne = HologramsAPI.createHologram(instance, BukkitHolyAPI.getInstance().getLocationManager().getLocation("queue").add(0,2.6,0));
+        TwoxOne = HologramsAPI.createHologram(instance, BukkitCore.getInstance().getLocationManager().getLocation("queue").add(0,2.6,0));
         TwoxOne.appendTextLine("§e0 §7Players in queue");
 
-        FourxOne = HologramsAPI.createHologram(instance, BukkitHolyAPI.getInstance().getLocationManager().getLocation("spectate").add(0,2.6,0));
+        FourxOne = HologramsAPI.createHologram(instance, BukkitCore.getInstance().getLocationManager().getLocation("spectate").add(0,2.6,0));
         FourxOne.appendTextLine("§e0 §7Players in queue");
     }
 

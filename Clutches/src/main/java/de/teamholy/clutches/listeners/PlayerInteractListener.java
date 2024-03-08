@@ -1,11 +1,11 @@
 package de.teamholy.clutches.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.model.PlaygroundPlayer;
 import de.teamholy.clutches.utils.PlayerUtils;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -48,7 +48,7 @@ public class PlayerInteractListener implements Listener {
                     int i = 0;
                     for (PlayerEntry all : Clutches.getInstance().getPlayerEntryHandler().values()) {
                         ItemBuilder item = new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullOwner(all.getPlayer().getName())
-                                .setName("§8» " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(all.getPlayer().getUniqueId()) + all.getPlayer().getName());
+                                .setName("§8» " + BukkitCore.getInstance().getPlayerColor(all.getPlayer().getUniqueId(), true) + all.getPlayer().getName());
                         item.setLore("§7State §8» §6" + all.getPlayerState());
 
                         inventory.setItem(item.build(), i, event2 -> player.teleport(all.getPlayer()));

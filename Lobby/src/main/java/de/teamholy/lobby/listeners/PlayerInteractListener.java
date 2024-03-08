@@ -1,6 +1,6 @@
 package de.teamholy.lobby.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.lobby.Lobby;
 import de.teamholy.lobby.lobbyplayer.FriendEntry;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayer;
@@ -23,7 +23,7 @@ public class PlayerInteractListener implements Listener {
         if (player.getItemInHand() != null && player.getItemInHand().getType() != null) {
             if (player.getItemInHand().getType() == Material.FIREWORK) {
                 Player target = (Player) event.getRightClicked();
-                BukkitHolyAPI.getInstance().getBukkitCloudUtil().sendCloudMessage("party","removeinvite", JsonDocument.newDocument("attacker",player.getUniqueId()).append("entity",target.getUniqueId()));
+                BukkitCore.getAPI().getCloudManager().sendCloudMessage("party","removeinvite", JsonDocument.newDocument("attacker",player.getUniqueId()).append("entity",target.getUniqueId()));
             }
         }
     }

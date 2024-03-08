@@ -1,6 +1,6 @@
 package de.teamholy.mlgrush.manager;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.BlockResetType;
 import de.teamholy.mlgrush.enums.GameType;
@@ -22,8 +22,8 @@ public class InventoryManager {
                     spectateInv.addItem(new ItemBuilder(gameEntry.getMapEntry().getMapTemplate().getMaterial()).setName("§8» §6" + gameEntry.getMapEntry().getMapId())
                             .setLore("",
                                     "§7Players §8»",
-                                    " " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(gameEntry.getPlayerOne().getPlayer().getUniqueId()) + gameEntry.getPlayerOne().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerOne().getIngamePlayer().getBeds(),
-                                    " " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(gameEntry.getPlayerTwo().getPlayer().getUniqueId()) + gameEntry.getPlayerTwo().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerTwo().getIngamePlayer().getBeds(),
+                                    " " + BukkitCore.getInstance().getPlayerColor(gameEntry.getPlayerOne().getPlayer().getUniqueId(),true) + gameEntry.getPlayerOne().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerOne().getIngamePlayer().getBeds(),
+                                    " " + BukkitCore.getInstance().getPlayerColor(gameEntry.getPlayerTwo().getPlayer().getUniqueId(),true)  + gameEntry.getPlayerTwo().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerTwo().getIngamePlayer().getBeds(),
                                     " ",
                                     "§7Timer §8»",
                                     " §6" + MLGRush.getInstance().getPlayerUtils().formatSeconds(gameEntry.getTimeSinceStart()),
@@ -38,10 +38,10 @@ public class InventoryManager {
                     spectateInv.addItem(new ItemBuilder(gameEntry.getMapEntry().getMapTemplate().getMaterial()).setName("§8» §6" + gameEntry.getMapEntry().getMapId())
                             .setLore("",
                                     "§7Players §8»",
-                                    " " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(gameEntry.getPlayerOne().getPlayer().getUniqueId()) + gameEntry.getPlayerOne().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerOne().getIngamePlayer().getBeds(),
-                                    " " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(gameEntry.getPlayerTwo().getPlayer().getUniqueId()) + gameEntry.getPlayerTwo().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerTwo().getIngamePlayer().getBeds(),
-                                    " " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(gameEntry.getPlayerThree().getPlayer().getUniqueId()) + gameEntry.getPlayerThree().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerThree().getIngamePlayer().getBeds(),
-                                    " " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(gameEntry.getPlayerFour().getPlayer().getUniqueId()) + gameEntry.getPlayerFour().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerFour().getIngamePlayer().getBeds(),
+                                    " " + BukkitCore.getInstance().getPlayerColor(gameEntry.getPlayerOne().getPlayer().getUniqueId(),true) + gameEntry.getPlayerOne().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerOne().getIngamePlayer().getBeds(),
+                                    " " + BukkitCore.getInstance().getPlayerColor(gameEntry.getPlayerTwo().getPlayer().getUniqueId(),true) + gameEntry.getPlayerTwo().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerTwo().getIngamePlayer().getBeds(),
+                                    " " + BukkitCore.getInstance().getPlayerColor(gameEntry.getPlayerThree().getPlayer().getUniqueId(),true) + gameEntry.getPlayerThree().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerThree().getIngamePlayer().getBeds(),
+                                    " " + BukkitCore.getInstance().getPlayerColor(gameEntry.getPlayerFour().getPlayer().getUniqueId(),true) + gameEntry.getPlayerFour().getPlayer().getDisplayName() + " §8× §6" + gameEntry.getPlayerFour().getIngamePlayer().getBeds(),
                                     " ",
                                     "§7Timer §8»",
                                     " §6" + MLGRush.getInstance().getPlayerUtils().formatSeconds(gameEntry.getTimeSinceStart()),

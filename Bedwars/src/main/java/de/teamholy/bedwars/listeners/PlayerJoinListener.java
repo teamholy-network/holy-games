@@ -1,13 +1,13 @@
 package de.teamholy.bedwars.listeners;
 
 import de.teamholy.bedwars.Bedwars;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.commands.NPCShopCommand;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.bedwars.task.LobbyTask;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.event.CachedPlayerJoinEvent;
 import eu.koboo.markup.MarkupAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -59,8 +59,8 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+    public void onJoin(CachedPlayerJoinEvent event) {
+        Player player = event.getCachedBukkitPlayer().getPlayer();
         player.setLevel(0);
         player.setExp(0);
         int count = Bukkit.getOnlinePlayers().size();
@@ -74,7 +74,7 @@ public class PlayerJoinListener implements Listener {
             Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), playerEntry);
             if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
                 MarkupAPI.updateNameTag(player);
-                Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(),() -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"),1);
+                Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(),() -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"),1);
 
                 playerEntry.performSpawn();
 
@@ -83,7 +83,6 @@ public class PlayerJoinListener implements Listener {
                 }
 
             } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
-                event.setJoinMessage(null);
                 if (NPCShopCommand.NPCSHOP) {
                     playerEntry.setNpcShops();
                 }
@@ -98,7 +97,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId());
         if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
-            Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName() + " §7has left §8(§a" + (Bukkit.getOnlinePlayers().size() - 1) + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)");
+            Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7has left §8(§a" + (Bukkit.getOnlinePlayers().size() - 1) + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)");
             if (Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().getWithoutGold().remove(player) || Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().getWithGold().remove(player)) {
                 Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().removingVotes(player);
                 Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().updateInventory();
@@ -119,7 +118,7 @@ public class PlayerJoinListener implements Listener {
             }
 
             if (Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0].equalsIgnoreCase("BWC2x1") && (Bukkit.getOnlinePlayers().size() - 1) == 1) {
-                Bukkit.getOnlinePlayers().forEach(player1 -> player1.kickPlayer(Bedwars.getInstance().getPrefix() + "You were kicked because " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName() + " §7left the game!"));
+                Bukkit.getOnlinePlayers().forEach(player1 -> player1.kickPlayer(Bedwars.getInstance().getPrefix() + "You were kicked because " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7left the game!"));
             }
 
         } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
@@ -139,13 +138,13 @@ public class PlayerJoinListener implements Listener {
                     Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + playerEntry.getTeamEntry().getColorCode() + player.getName() + " §7has left");
                 } else {
                     Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + playerEntry.getTeamEntry().getColorCode() + player.getName() + " §7has left §8(" + damager.getTeamEntry().getColorCode() + damager.getPlayer().getName() + " §7got the kill§8)");
-                    BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"kills", damager.getPlayer().getUniqueId());
+                    BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"kills", damager.getPlayer().getUniqueId());
                     damager.setKills(damager.getKills() + 1);
                     BukkitCore.getAPI().getCoinManager().addCoins(damager.getPlayer().getUniqueId(),10,true);
                     damager.getPlayer().playSound(damager.getPlayer().getLocation(), Sound.LEVEL_UP, 1, 1);
                 }
 
-                BukkitHolyAPI.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"deaths", player.getUniqueId());
+                BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"deaths", player.getUniqueId());
                 Bedwars.getInstance().getIngamePlayers().remove(playerEntry);
                 playerEntry.checkTeams(null);
                 playerEntry.checkWin();

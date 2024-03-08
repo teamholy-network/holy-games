@@ -1,7 +1,6 @@
 package de.teamholy.bedwars.listeners;
 
 import de.teamholy.bedwars.Bedwars;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.core.api.entities.clan.Clan;
@@ -24,7 +23,7 @@ public class PlayerNameTagListener implements Listener {
 
         if(Bedwars.getInstance().getGameState() == GameState.LOBBY) {
 
-            PlayerRank playerRank = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().get(player.getUniqueId());
+            PlayerRank playerRank = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getRank();
 
             if (playerRank == null) return;
 

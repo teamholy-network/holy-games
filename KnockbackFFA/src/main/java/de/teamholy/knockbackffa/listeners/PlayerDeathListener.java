@@ -1,9 +1,8 @@
 package de.teamholy.knockbackffa.listeners;
 
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.manager.StatsManager;
 import de.teamholy.core.api.utility.TrophieLeague;
+import de.teamholy.core.bukkit.manager.StatsManager;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.slikey.effectlib.EffectType;
@@ -34,7 +33,7 @@ public class PlayerDeathListener implements Listener {
         Player killer = player.getKiller();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
         event.setDeathMessage(null);
-        BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"deaths",player.getUniqueId());
+        BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"deaths",player.getUniqueId());
 
         Bukkit.getScheduler().runTaskLater(KnockbackFFA.getInstance(), () -> {
             if (player.isOnline()) {
@@ -47,29 +46,29 @@ public class PlayerDeathListener implements Listener {
         if (killer == null || killer == player) {
             player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You died! §8(§c-2 §6trophies§8)");
             player.setLevel(0);
-            BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,2);
+            BukkitCore.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,2);
             playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() -2);
         } else {
             PlayerEntry killerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(killer.getUniqueId());
 
             int difference = playerEntry.getAlltimeTrophies() - killerEntry.getAlltimeTrophies();
 
-            int killerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.PLUS,
+            int killerTrophies = BukkitCore.getInstance().getStatsManager().handleTrophie(killer.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.PLUS,
                     TrophieLeague.calculateRange(difference,3,5));
 
-            int playerTrophies = BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
+            int playerTrophies = BukkitCore.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,
                     TrophieLeague.calculateRange(difference,1,4));
 
             killerEntry.setAlltimeTrophies(killerEntry.getAlltimeTrophies() + killerTrophies);
             playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() - playerTrophies);
 
-            killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName()
+            killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName()
                     + " §8(§a+" + killerTrophies
 
                     + " §6trophies§8)"
             );
             String healthString = getHealthColor(killer.getHealth()) + String.valueOf(Math.round(killer.getHealth() / 2D));
-            player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You have been killed by " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(killer.getUniqueId()) + killer.getName()
+            player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You have been killed by " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName()
                     + " §8(" + healthString + "§c❤§8)"+
                     " §8(§c-" + playerTrophies + " §6trophies§8)"
             );
@@ -79,7 +78,7 @@ public class PlayerDeathListener implements Listener {
                 killerEntry.setIngameItems();
             }
             killer.playSound(killer.getLocation(), Sound.NOTE_PLING, 2f, 2f);
-            BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"kills",killer.getUniqueId());
+            BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"kills",killer.getUniqueId());
             killStreak(killer,player);
             killerEntry.updateScoreboard();
             EntityDamageByEntityListener.COMBATLOG.remove(player.getUniqueId());
@@ -91,7 +90,7 @@ public class PlayerDeathListener implements Listener {
         if (killer.getLevel() % 5 == 0) {
             BukkitCore.getAPI().getCoinManager().addCoins(killer.getUniqueId(),20,true);
             Bukkit.getOnlinePlayers().forEach(all -> {
-                all.sendMessage(KnockbackFFA.getInstance().getPrefix() + "The Player " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(killer.getUniqueId()) + killer.getName() + " §7has made §c" + killer.getLevel() + " §7kills in a row!");
+                all.sendMessage(KnockbackFFA.getInstance().getPrefix() + "The Player " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName() + " §7has made §c" + killer.getLevel() + " §7kills in a row!");
                 all.getPlayer().playSound(all.getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL,50,50);
             });
             Location location = new Location(killer.getPlayer().getLocation().getWorld(), killer.getPlayer().getLocation().getX(), killer.getPlayer().getLocation().getY() + 1.0D, killer.getPlayer().getLocation().getZ());

@@ -1,11 +1,11 @@
 package de.teamholy.bedwars.listeners;
 
 import de.teamholy.bedwars.Bedwars;
-import de.teamholy.api.events.bukkit.CloudChannelListenEvent;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.bedwars.model.TeamEntry;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.core.bukkit.event.CloudChannelListenEvent;
 import eu.koboo.markup.MarkupAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

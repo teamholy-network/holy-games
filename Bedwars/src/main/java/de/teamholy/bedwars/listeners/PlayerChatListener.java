@@ -1,12 +1,12 @@
 package de.teamholy.bedwars.listeners;
 
 import de.teamholy.bedwars.Bedwars;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.Perk;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
+import de.teamholy.core.bukkit.perks.model.Perk;
 import eu.koboo.markup.MarkupAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,8 +29,9 @@ public class PlayerChatListener implements Listener {
                 return;
             }
 
-            PlayerRank playerRank = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().get(player.getUniqueId());
-            Perk perk = BukkitCore.getInstance().getPerkCache().getPerkHashMap().get(BukkitCore.getInstance().getPerkCache().getPerkPlayerProfileHashMap().get(player.getUniqueId()).getChatPerk());
+            PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId());
+            PlayerRank playerRank = cachedBukkitPlayer.getRank();
+            Perk perk = BukkitCore.getInstance().getPerkManager().getPerkHashMap().get(cachedBukkitPlayer.getPerkPlayerProfile().getChatPerk());
             if (perk == null) {
                 event.setCancelled(true);
                 return;

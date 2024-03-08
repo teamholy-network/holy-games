@@ -1,6 +1,6 @@
 package de.teamholy.mlgrush;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.mlgrush.commands.SpawnCMD;
 import de.teamholy.mlgrush.enums.GameType;
 import de.teamholy.mlgrush.game.GameEntry;
@@ -76,7 +76,7 @@ public class MLGRush extends JavaPlugin {
         startIngameKiller();
 
 
-        lobby = BukkitHolyAPI.getInstance().getLocationManager().getConfigLocation("lobby");
+        lobby = BukkitCore.getInstance().getLocationManager().getConfigLocation("lobby");
         for (World world : Bukkit.getWorlds()) {
             world.setMonsterSpawnLimit(0);
             world.setTicksPerMonsterSpawns(8888888);
@@ -177,11 +177,11 @@ public class MLGRush extends JavaPlugin {
                         gameEntry.getPlayersPlaying().forEach(playerEntry1 -> {
                             i.getAndIncrement();
                             if (gameEntry.getPlayersPlaying().size() == 2 && i.get() == 2) {
-                                stringBuilder.append(BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry1.getPlayer().getUniqueId()) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds());
+                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(),true) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds());
                             } else if (gameEntry.getPlayersPlaying().size() == 4 && i.get() == 4) {
-                                stringBuilder.append(BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry1.getPlayer().getUniqueId()) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds());
+                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(),true) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds());
                             } else {
-                                stringBuilder.append(BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(playerEntry1.getPlayer().getUniqueId()) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds() + " §8§l︳ ");
+                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(),true) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds() + " §8§l︳ ");
                             }
                         });
                         playerEntry.updateScoreBoard();

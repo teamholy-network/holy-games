@@ -1,7 +1,5 @@
 package de.teamholy.mlgrush.listener;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.models.NPCPlayer;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.player.PlayerEntry;
 import de.teamholy.mlgrush.player.PlayerState;
@@ -128,28 +126,5 @@ public class BlockListener implements Listener {
             if (block.getType() == Material.HOPPER) e.setCancelled(true);
             if (block.getType() == Material.ITEM_FRAME) e.setCancelled(true);
         }
-    }
-    @EventHandler
-    public void onProtectNPC(PlayerMoveEvent event) {
-        try {
-            if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
-                    event.getFrom().getBlockY() == event.getTo().getBlockY() &&
-                    event.getFrom().getBlockZ() == event.getTo().getBlockZ() &&
-                    event.getFrom().getWorld() == event.getTo().getWorld())
-                return;
-            Player player = event.getPlayer();
-            PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler()
-                    .get(player.getUniqueId());
-            if (playerEntry != null && playerEntry.getPlayerState() == PlayerState.LOBBY) {
-                NPCPlayer npcPlayerEntry = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap().get(player.getUniqueId());
-                npcPlayerEntry.getNpcs().values().forEach(npc -> {
-                    if (npc.getLocation().distance(player.getLocation()) <= 1.4D) {
-                        npc.animation(player,0);
-                        player.setVelocity(new Vector(0,0.5,0.5));
-                        player.playSound(player.getLocation(), Sound.NOTE_BASS_GUITAR, 1.0F, 1.0F);
-                    }
-                });
-            }
-        } catch (Exception exception) {}
     }
 }

@@ -1,6 +1,6 @@
 package de.teamholy.mlgrush.listener;
 
-import de.teamholy.api.events.bukkit.CloudChannelListenEvent;
+import de.teamholy.core.bukkit.event.CloudChannelListenEvent;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.player.PlayerEntry;
 import de.teamholy.mlgrush.player.PlayerState;

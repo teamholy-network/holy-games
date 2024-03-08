@@ -1,5 +1,0 @@
-name: API
-version: 1.0
-main: de.teamholy.api.BungeeHolyAPI
-
-depends: [bungee-core, CloudNet-Bridge]

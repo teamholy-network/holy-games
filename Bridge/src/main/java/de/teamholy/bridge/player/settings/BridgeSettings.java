@@ -3,7 +3,7 @@ package de.teamholy.bridge.player.settings;
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
-import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.perks.enums.PerkRankType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

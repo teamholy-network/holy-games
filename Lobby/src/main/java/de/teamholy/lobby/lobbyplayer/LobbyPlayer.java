@@ -1,9 +1,10 @@
 package de.teamholy.lobby.lobbyplayer;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.models.NPCEntry;
-import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.core.api.entities.game.GameProfile;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
+import de.teamholy.core.bukkit.npc.models.NPCEntry;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import de.teamholy.lobby.Lobby;
 import de.dytanic.cloudnet.common.document.gson.JsonDocument;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
@@ -15,7 +16,6 @@ import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.PartyInviteAllowance;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
@@ -49,14 +49,13 @@ public class LobbyPlayer {
     private GameProfile gameProfile;
 
 
-    public LobbyPlayer(Player player) {
+    public LobbyPlayer(Player player, PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer) {
         this.player = player;
         scoreboardAPI = new ScoreboardAPI();
         scoreboardAPI.createScoreboard(player, "§6");
         player.getInventory().clear();
-        playerRank = BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().get(player.getUniqueId());
 
-
+        playerRank = cachedBukkitPlayer.getRank();
         setScoreboard();
 
         updateOnlineTime();
@@ -73,15 +72,12 @@ public class LobbyPlayer {
     }
 
     public void executeBungeeCommand(String command) {
-        BukkitHolyAPI.getInstance().getBukkitCloudUtil().sendCloudMessage("command", "command", JsonDocument.newDocument("uuid", player.getUniqueId()).append("command", command));
+        BukkitCore.getAPI().getCloudManager().sendCloudMessage("command", "command", JsonDocument.newDocument("uuid", player.getUniqueId()).append("command", command));
     }
 
     public void createNPC(String name, UUID uuid, Location location) {
-        BukkitHolyAPI.getInstance().getBukkitCacheHandler().getNpcPlayerHashMap()
-                .get(player.getUniqueId()).getNpcs().put(ChatColor.stripColor(name),
-                        new NPCEntry(name, uuid, location, 100, 10, true, true).setPlayer(player));
-
-
+        BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().put(ChatColor.stripColor(name),
+                new NPCEntry(name, uuid, location, 100, 10, true, true).setPlayer(player));
     }
 
     private String getOnlineTimeFormated(Long millis) {
@@ -159,7 +155,7 @@ public class LobbyPlayer {
             if (gameServices.isEmpty()) {
                 player.sendMessage(Lobby.getInstance().getPrefix() + error);
             } else if (gameServices.size() == 1) {
-                BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameServices.get(0).getName());
+                BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameServices.get(0).getName());
             } else {
                 Inventory inventory = new Inventory("§8» §6" + group, 9);
 
@@ -169,7 +165,7 @@ public class LobbyPlayer {
                 gameServices.forEach(gameService -> {
                     int onlinecount = (gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).isPresent() ? gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).get() : 0);
                     inventory.setItem(new ItemBuilder(material, Math.min(64, onlinecount)).setLore("§7Players §8× §6" + onlinecount).setName("§8» §6" + gameService.getName()).build(), i.get(), (event) -> {
-                        BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName());
+                        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName());
                     });
                     i.getAndIncrement();
                 });
@@ -197,7 +193,7 @@ public class LobbyPlayer {
         if (service == null) {
             player.sendMessage(Lobby.getInstance().getPrefix() + "Could not find a §c" + group + " §7server");
         } else {
-            BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(service.getName());
+           BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(service.getName());
         }
     }
 
@@ -220,7 +216,7 @@ public class LobbyPlayer {
             } else {
                 inventory.setItem(new ItemBuilder(Material.GLOWSTONE_DUST, Math.min(64, onlinecount)).setLore("§7You need §6Premium §7or above to join", ("§7Players §8× §6" + onlinecount)).setName("§8» §6" + gameService.getName()).build(), i.get(), event -> {
                     if (player.hasPermission("teamholy.fulljoin")) {
-                        BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName());
+                        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName());
                     }
                 });
             }
@@ -233,7 +229,7 @@ public class LobbyPlayer {
             if (gameService.getName().equalsIgnoreCase(Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0])) {
                 inventory.setItem(new ItemBuilder(Material.SUGAR, Math.min(64, onlinecount)).setEnchantments(Enchantment.KNOCKBACK, 1).setAttributs().setLore("§7Players §8× §6" + onlinecount, "§cYou are currently on this lobby").setName("§8» §6" + gameService.getName()).build(), i.get());
             } else {
-                inventory.setItem(new ItemBuilder(Material.SUGAR, Math.min(64, onlinecount)).setLore("§7Players §8× §6" + onlinecount).setName("§8» §6" + gameService.getName()).build(), i.get(), (event) -> BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName()));
+                inventory.setItem(new ItemBuilder(Material.SUGAR, Math.min(64, onlinecount)).setLore("§7Players §8× §6" + onlinecount).setName("§8» §6" + gameService.getName()).build(), i.get(), (event) -> BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName()));
             }
             i.getAndIncrement();
         });
@@ -249,7 +245,7 @@ public class LobbyPlayer {
             inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
         }
 
-        inventory.setItem(new ItemBuilder(Material.SLIME_BALL, Math.min(64, (Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Lobby") + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("PremiumLobby")))).setName("§8» §6Spawn").build(), 10, event -> player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby")));
+        inventory.setItem(new ItemBuilder(Material.SLIME_BALL, Math.min(64, (Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Lobby") + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("PremiumLobby")))).setName("§8» §6Spawn").build(), 10, event -> player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby")));
 
 
         inventory.setItem(new ItemBuilder(Material.STICK, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("MLGRush")))
@@ -309,7 +305,7 @@ public class LobbyPlayer {
                         , " "
                         , "§8» §7Click to §6§nteleport"
                 )
-                .build(), 15, event -> player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn")));
+                .build(), 15, event -> player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn")));
         inventory.setItem(new ItemBuilder(Material.IRON_SWORD, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SGFFA")))
                 .setName("§8» §6SGFFA")
                 .setLore(" "

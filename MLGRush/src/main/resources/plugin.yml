@@ -2,7 +2,7 @@ name: MLGRush
 author: Yassino
 version: 1.0
 main: de.teamholy.mlgrush.MLGRush
-depend: [API, bukkit-core]
+depend: [bukkit-core]
 
 commands:
   setup:

@@ -2,7 +2,6 @@ package de.teamholy.bedwars;
 
 import de.teamholy.bedwars.commands.*;
 import de.teamholy.bedwars.handlers.InventoryHandler;
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bedwars.config.BedwarsConfig;
 import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.inventoriers.ShopInventory;
@@ -19,6 +18,7 @@ import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
 import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.bukkit.BukkitCore;
 import eu.koboo.markup.MarkupAPI;
 import lombok.Getter;
 import lombok.Setter;
@@ -120,8 +120,8 @@ public class Bedwars extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(), () -> {
             if (getGameState() != GameState.INGAME) {
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    if ((BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby").getBlockY() - 50) > player.getLocation().getBlockY() && player.getLocation().getWorld().getName().equalsIgnoreCase(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby").getWorld().getName())) {
-                        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+                    if ((BukkitCore.getInstance().getLocationManager().getLocation("lobby").getBlockY() - 50) > player.getLocation().getBlockY() && player.getLocation().getWorld().getName().equalsIgnoreCase(BukkitCore.getInstance().getLocationManager().getLocation("lobby").getWorld().getName())) {
+                        player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
                     }
                 });
             }

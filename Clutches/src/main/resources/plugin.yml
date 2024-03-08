@@ -2,7 +2,7 @@ name: Clutches
 main: de.teamholy.clutches.Clutches
 version: 1.0
 
-depend: [ API, bukkit-core, SlimeWorldManager ]
+depend: [ bukkit-core, SlimeWorldManager ]
 softdepend:
   - SlimeWorldManager
 

@@ -1,6 +1,6 @@
 package de.teamholy.knockbackffa.commands;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.handlers.TeamingHandler;
 import de.teamholy.knockbackffa.models.PlayerEntry;
@@ -37,7 +37,7 @@ public class TeamingCommand implements CommandExecutor {
             }
 
             TeamEntry teamEntry = playerEntry.getTeamEntry();
-            teamingHandler.sendMessageToTeam(teamEntry,prefix + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getName() + " §8» §7" + sb);
+            teamingHandler.sendMessageToTeam(teamEntry,prefix + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §8» §7" + sb);
         } else if (args.length == 0) {
             sendHelp(player);
         } else if (args.length == 1) {
@@ -79,7 +79,7 @@ public class TeamingCommand implements CommandExecutor {
                     return false;
                 }
 
-                PlayerEntry targetEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(BukkitHolyAPI.getInstance().getBukkitCloudUtil().getUuid(args[1]));
+                PlayerEntry targetEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(BukkitCore.getAPI().getUuidManager().getUUID(args[1]));
                 if (targetEntry == null) {
                     player.sendMessage(prefix + "The player is not online!");
                     return false;
@@ -106,7 +106,7 @@ public class TeamingCommand implements CommandExecutor {
                 }
 
                 playerEntry.getTeamEntry().getInvites().add(targetEntry);
-                player.sendMessage(prefix + "You invited " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(targetEntry.getPlayer().getUniqueId()) + targetEntry.getPlayer().getName() + " §7into your team!");
+                player.sendMessage(prefix + "You invited " + BukkitCore.getInstance().getPlayerColor(targetEntry.getPlayer().getUniqueId(), true) + targetEntry.getPlayer().getName() + " §7into your team!");
                 targetEntry.getPlayer().sendMessage(prefix + "You were invited by the team §b" + playerEntry.getTeamEntry().getTag() + " §7(§b/teaming§7)");
             } else if (args[0].equalsIgnoreCase("kick")) {
                 if (!teamingHandler.isInTeam(playerEntry)) {
@@ -119,7 +119,7 @@ public class TeamingCommand implements CommandExecutor {
                     return false;
                 }
 
-                PlayerEntry targetEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(BukkitHolyAPI.getInstance().getBukkitCloudUtil().getUuid(args[1]));
+                PlayerEntry targetEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(BukkitCore.getAPI().getUuidManager().getUUID(args[1]));
                 if (targetEntry == null) {
                     player.sendMessage(prefix + "The player is not online!");
                     return false;

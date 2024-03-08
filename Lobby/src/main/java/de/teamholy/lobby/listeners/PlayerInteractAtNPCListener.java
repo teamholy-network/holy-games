@@ -1,15 +1,9 @@
 package de.teamholy.lobby.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.event.PlayerInteractAtNPCEvent;
+import de.teamholy.core.bukkit.npc.event.PlayerInteractAtNPCEvent;
 import de.teamholy.lobby.Lobby;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayer;
-import de.dytanic.cloudnet.common.document.gson.JsonDocument;
-import de.dytanic.cloudnet.ext.bridge.player.ICloudPlayer;
-import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.utils.Inventory;
-import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -39,7 +33,7 @@ public class PlayerInteractAtNPCListener implements Listener {
             case "spectate" -> lobbyPlayer.getPlayer().openInventory(Lobby.getInstance().getBedwarsSpectateInventory().getInventory());
             case "bedwars" -> Lobby.getInstance().getBedwarsServerInventory().openBWInventory(lobbyPlayer.getPlayer());
             case "rushbw" -> Lobby.getInstance().getBedwarsServerInventory().openRushInventory(lobbyPlayer.getPlayer());
-            case "bedwars&rush" -> lobbyPlayer.getPlayer().teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn"));
+            case "bedwars&rush" -> lobbyPlayer.getPlayer().teleport(BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn"));
             case "website" -> lobbyPlayer.executeBungeeCommand("link");
             case "namemc" -> lobbyPlayer.executeBungeeCommand("vote");
             case "bridge" -> lobbyPlayer.openGameSubInventory("Bridge", Material.IRON_PICKAXE);

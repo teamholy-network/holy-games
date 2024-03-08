@@ -1,7 +1,6 @@
 package de.teamholy.lobby.listeners;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.events.bukkit.CloudChannelListenEvent;
+import de.teamholy.core.bukkit.event.CloudChannelListenEvent;
 import de.teamholy.lobby.Lobby;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayer;
 import de.dytanic.cloudnet.common.document.gson.JsonDocument;
@@ -43,8 +42,8 @@ public class CloudListener implements Listener {
                 }
             } else if (event.getMessage().equalsIgnoreCase("rank_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
-                if (BukkitHolyAPI.getInstance().getBukkitCacheHandler().getHolyPlayerHashMap().containsKey(uuid)) {
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(BukkitHolyAPI.getInstance(), () -> {
+                if (BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().containsKey(uuid)) {
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(Lobby.getInstance(), () -> {
                         PlayerProfile playerProfile = BukkitCore.getAPI().getPlayerService().getEntity(uuid, () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(uuid));
                         LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(uuid);
                         lobbyPlayer.setPlayerRank(PlayerRank.valueOf(playerProfile.getRank()));
@@ -65,7 +64,7 @@ public class CloudListener implements Listener {
                     System.out.println("Came from bw");
                     Player player = Bukkit.getPlayer(UUID.fromString(event.getData().getString("uuid")));
                     if (player != null) {
-                        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("bw_spawn"));
+                        player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn"));
                     }
                 }, 3);
             } else if (event.getMessage().equalsIgnoreCase("friend_update")) {

@@ -4,7 +4,8 @@ import de.teamholy.clutches.Clutches;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.PerkRankType;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
+import de.teamholy.core.bukkit.perks.enums.PerkRankType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
@@ -74,7 +75,11 @@ public enum ArmorColor {
                 player.sendMessage(var10001 + "§aYou successfully bought the §e" + armorColor.getName() + " §aArmorcolor for §a" + armorColor.getPrice() + " §6coins!");
                 player.playSound(player.getLocation(), Sound.LEVEL_UP, 2.0F, 2.0F);
                 perkPlayerProfile.getOwnedPerks().add(getId(armorColor));
-                BukkitCore.getInstance().getPerkCache().getPerkPlayerProfileHashMap().put(player.getUniqueId(), perkPlayerProfile);
+
+                PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId());
+                cachedBukkitPlayer.getPerkPlayerProfile().getOwnedPerks().add(getId(armorColor));
+                BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().put(player.getUniqueId(), cachedBukkitPlayer);
+
                 BukkitCore.getAPI().getPerkPlayerService().saveEntity(perkPlayerProfile, true, true);
                 BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile, true, true);
             }

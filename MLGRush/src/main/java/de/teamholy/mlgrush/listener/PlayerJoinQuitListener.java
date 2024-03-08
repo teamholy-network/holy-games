@@ -1,7 +1,8 @@
 package de.teamholy.mlgrush.listener;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.npc.NPCBuilder;
+import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.event.CachedPlayerJoinEvent;
+import de.teamholy.core.bukkit.npc.NPCBuilder;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.player.PlayerEntry;
 import de.teamholy.mlgrush.player.PlayerState;
@@ -19,8 +20,8 @@ import java.util.UUID;
 public class PlayerJoinQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+    public void onJoin(CachedPlayerJoinEvent event) {
+        Player player = event.getCachedBukkitPlayer().getPlayer();
         Bukkit.getScheduler().runTaskLaterAsynchronously(MLGRush.getInstance(), () -> {
             PlayerEntry playerEntry = new PlayerEntry(player);
             MLGRush.getInstance().getPlayerEntryHandler().put(player.getUniqueId(),playerEntry);
@@ -32,8 +33,8 @@ public class PlayerJoinQuitListener implements Listener {
                 if (MLGRush.getInstance().getLobby() != null)
                     player.teleport(MLGRush.getInstance().getLobby());
 
-                new NPCBuilder("queue4x1","§6§lQueue 4x1",UUID.fromString("1cff8006-9714-4231-997c-7b37a69dfff0"),100,20,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("spectate")).build(player);
-                new NPCBuilder("queue","§6§lQueue 2x1",UUID.fromString("03c55754-08fc-4a12-a451-e517c89a3f91"),100,20,true,true,BukkitHolyAPI.getInstance().getLocationManager().getLocation("queue")).build(player);
+                new NPCBuilder("queue4x1","§6§lQueue 4x1",UUID.fromString("1cff8006-9714-4231-997c-7b37a69dfff0"),100,20,true,true, BukkitCore.getInstance().getLocationManager().getLocation("spectate")).build(player);
+                new NPCBuilder("queue","§6§lQueue 2x1",UUID.fromString("03c55754-08fc-4a12-a451-e517c89a3f91"),100,20,true,true,BukkitCore.getInstance().getLocationManager().getLocation("queue")).build(player);
             });
 
 

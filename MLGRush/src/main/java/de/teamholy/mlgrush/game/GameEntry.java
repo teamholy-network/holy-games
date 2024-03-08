@@ -1,8 +1,7 @@
 package de.teamholy.mlgrush.game;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.manager.StatsManager;
 import de.teamholy.core.api.utility.TrophieLeague;
+import de.teamholy.core.bukkit.manager.StatsManager;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.BlockResetType;
 import de.teamholy.mlgrush.enums.GameType;
@@ -131,7 +130,7 @@ public class GameEntry {
     }
 
     public void destroyBed(PlayerEntry playerEntry, PlayerEntry destroyed) {
-        BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "destroyed_beds", playerEntry.getPlayer().getUniqueId());
+        BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "destroyed_beds", playerEntry.getPlayer().getUniqueId());
 
 
         int difference = destroyed.getAlltimeTrophies() - playerEntry.getAlltimeTrophies();
@@ -168,7 +167,7 @@ public class GameEntry {
         placedBlocks.clear();
         bukkitRunnables.forEach(BukkitTask::cancel);
         bukkitRunnables.clear();
-        playersPlaying.forEach(playerEntry -> BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "played_games", playerEntry.getPlayer().getUniqueId()));
+        playersPlaying.forEach(playerEntry -> BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "played_games", playerEntry.getPlayer().getUniqueId()));
 
 
         List<PlayerEntry> losers = new ArrayList<>(playersPlaying);
@@ -196,7 +195,7 @@ public class GameEntry {
         if (!stopserver) {
             String winnerName = null;
             if (winner != null)
-                winnerName = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(winner.getPlayer().getUniqueId()) + winner.getPlayer().getName();
+                winnerName = BukkitCore.getInstance().getPlayerColor(winner.getPlayer().getUniqueId(), true) + winner.getPlayer().getName();
 
             String finalWinnerName = winnerName;
             playersInArena.forEach(playerEntry -> {
@@ -221,11 +220,11 @@ public class GameEntry {
                     playerEntry.getPlayer().sendMessage(" §7Deaths §8» §c" + playerEntry.getIngamePlayer().getDeaths());
                     if (playerEntry.getGameTrophies() > 0) {
                         playerEntry.getPlayer().sendMessage(" §6Trophies §8» §a+" + playerEntry.getGameTrophies());
-                        BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
+                        BukkitCore.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
                                 StatsManager.TrophieAdjustType.PLUS,playerEntry.getGameTrophies());
                     } else if (playerEntry.getGameTrophies() < 0) {
                         playerEntry.getPlayer().sendMessage(" §6Trophies §8» §c" + playerEntry.getGameTrophies());
-                        BukkitHolyAPI.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
+                        BukkitCore.getInstance().getStatsManager().handleTrophie(playerEntry.getPlayer().getUniqueId(),Gamemodes.MLGRUSH.toString(),
                                 StatsManager.TrophieAdjustType.MINUS,Math.abs(playerEntry.getGameTrophies()));
                     } else {
                         playerEntry.getPlayer().sendMessage(" §6Trophies §8» §7+-0");
@@ -268,7 +267,7 @@ public class GameEntry {
             } else {
                 BukkitCore.getAPI().getCoinManager().addCoins(winners.get(0).getPlayer().getUniqueId(), 30, true);
             }
-            BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "won_games", winners.get(0).getPlayer().getUniqueId());
+            BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "won_games", winners.get(0).getPlayer().getUniqueId());
             return winners.get(0);
         }
         return null;

@@ -1,9 +1,5 @@
 package de.teamholy.lobby;
 
-import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.core.api.entities.game.StatsType;
-import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.lobby.bedwars.BedwarsServerInventory;
 import de.teamholy.lobby.bedwars.BedwarsSpectateInventory;
@@ -70,13 +66,13 @@ public class Lobby extends JavaPlugin {
         int maxPlayers = 250;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this,() -> {
             try {
-                int count = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getPlayerManager().getOnlineCountAsync().get();
+                int count = BukkitCore.getAPI().getCloudManager().getPlayerManager().getOnlineCountAsync().get();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.setLevel(count);
                     player.setExp((float) count / maxPlayers);
 
                     if (player.getLocation().getY() < 0) {
-                        player.teleport(BukkitHolyAPI.getInstance().getLocationManager().getLocation("lobby"));
+                        player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
                     }
                 }
             } catch (InterruptedException | ExecutionException e) {

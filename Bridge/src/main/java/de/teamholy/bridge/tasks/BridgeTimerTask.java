@@ -1,12 +1,12 @@
 package de.teamholy.bridge.tasks;
 
-import de.teamholy.api.BukkitHolyAPI;
 import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.util.FormatTime;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -108,7 +108,7 @@ public class BridgeTimerTask implements Runnable {
             }
         } else {
             var toSpec = bridgePlayer.getToSpectate();
-            var rankColor = BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(toSpec.getUniqueId());
+            var rankColor = BukkitCore.getInstance().getPlayerColor(toSpec.getUniqueId(), true);
 
             switch (timerPlace) {
                 case ACTION_BAR ->

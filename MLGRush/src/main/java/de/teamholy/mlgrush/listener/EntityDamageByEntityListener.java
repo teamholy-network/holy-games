@@ -1,6 +1,6 @@
 package de.teamholy.mlgrush.listener;
 
-import de.teamholy.api.BukkitHolyAPI;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.GameType;
 import de.teamholy.mlgrush.game.GameEntry;
@@ -83,8 +83,8 @@ public class EntityDamageByEntityListener implements Listener {
                                 attackerEntry.setChallengedPlayer(playerEntry);
                                 attacker.playSound(attacker.getLocation(), Sound.NOTE_STICKS,2f,2f);
                                 player.playSound(player.getLocation(), Sound.NOTE_STICKS,2f,2f);
-                                attacker.sendMessage(MLGRush.getInstance().getPrefix() + "You challenged " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(player.getUniqueId()) + player.getDisplayName());
-                                player.sendMessage(MLGRush.getInstance().getPrefix() + "You were challenged by " + BukkitHolyAPI.getInstance().getBukkitCloudUtil().getRankColor(attacker.getUniqueId()) + attacker.getDisplayName());
+                                attacker.sendMessage(MLGRush.getInstance().getPrefix() + "You challenged " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(),true) + player.getDisplayName());
+                                player.sendMessage(MLGRush.getInstance().getPrefix() + "You were challenged by " + BukkitCore.getInstance().getPlayerColor(attacker.getUniqueId(),true) + attacker.getDisplayName());
                             }
                         }
                     }

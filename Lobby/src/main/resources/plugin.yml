@@ -3,8 +3,8 @@ author: Yassino
 version: 1.0
 main: de.teamholy.lobby.Lobby
 
-depend: [API, HolographicDisplays]
-softdepend: [API,HolographicDisplays]
+depend: [CloudNet-Bridge ,HolographicDisplays, bukkit-core]
+softdepend: [CloudNet-Bridge, HolographicDisplays, bukkit-core]
 
 commands:
   fly:

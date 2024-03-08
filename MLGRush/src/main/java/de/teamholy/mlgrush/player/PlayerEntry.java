@@ -1,9 +1,9 @@
 package de.teamholy.mlgrush.player;
 
-import de.teamholy.api.BukkitHolyAPI;
-import de.teamholy.api.bukkit.utils.InventoryUtils;
-import de.teamholy.api.bukkit.utils.scoreboard.ScoreboardAPI;
 import de.teamholy.core.api.utility.TrophieLeague;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
+import de.teamholy.core.bukkit.utils.InventoryUtils;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import de.teamholy.mlgrush.MLGRush;
 import de.teamholy.mlgrush.enums.BlockResetType;
 import de.teamholy.mlgrush.enums.GameType;
@@ -16,7 +16,6 @@ import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
-import de.teamholy.core.bukkit.perks.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
@@ -153,7 +152,7 @@ public class PlayerEntry {
                 killer.getPlayer().sendMessage(MLGRush.getInstance().getPrefix() + "You knocked down §6" + player.getDisplayName());
             }
             killer.getIngamePlayer().setKills(killer.getIngamePlayer().getKills() + 1);
-            BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "kills", killer.getPlayer().getUniqueId());
+            BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "kills", killer.getPlayer().getUniqueId());
 
         } else {
             if (!isNoIngameMessage()) {
@@ -163,7 +162,7 @@ public class PlayerEntry {
         ingamePlayer.setDeaths(ingamePlayer.getDeaths() + 1);
         gameEntry.teleportToSpawn(this);
         gameEntry.removeBlocks(player, gameEntry.getResetBlocksOnDeath());
-        BukkitHolyAPI.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "deaths", player.getUniqueId());
+        BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.MLGRUSH.toString(), "deaths", player.getUniqueId());
         setIngameItems();
         setGotLastHit(null);
     }
@@ -287,7 +286,7 @@ public class PlayerEntry {
                 scoreboardAPI.setLine(6," §7Games§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"played_games"));
                 scoreboardAPI.setLine(5," §7Wins§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"won_games"));
                 scoreboardAPI.setLine(4," §7Beds§8: §6" + gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"destroyed_beds"));
-                scoreboardAPI.setLine(3," §7K/D§8: §6" + BukkitHolyAPI.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"deaths")));
+                scoreboardAPI.setLine(3," §7K/D§8: §6" + BukkitCore.getInstance().getStatsManager().calculateKD(gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"kills"), gameProfile.getStat(Gamemodes.MLGRUSH.toString(),shownBoardStatsType,"deaths")));
                 scoreboardAPI.setLine(2, "§5");
                 scoreboardAPI.setLine(1, " §8§m--------------- ");
                 scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
