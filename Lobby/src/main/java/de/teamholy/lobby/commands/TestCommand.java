@@ -2,6 +2,7 @@ package de.teamholy.lobby.commands;
 
 import de.teamholy.core.api.entities.game.StatsType;
 import de.teamholy.core.api.utility.Gamemodes;
+import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.lobby.Lobby;
 import net.minecraft.server.v1_8_R3.EntityItem;
@@ -37,6 +38,10 @@ public class TestCommand implements CommandExecutor {
         sender.sendMessage(Lobby.getInstance().getBedwarsSpectateInventory().getGameHashMap().size() + " games spec");
         sender.sendMessage(Lobby.getInstance().getLobbyPlayerEntryHandler().size() + " players");
         sender.sendMessage(Lobby.getInstance().getHologramHandler().getHolograms().size() + " holograms");
+
+        BukkitCore.getAPI().getGameService().getRepository().findAll().forEach(game -> {
+            sender.sendMessage(game.getPlayerId().toString());
+        });
         return true;
     }
 

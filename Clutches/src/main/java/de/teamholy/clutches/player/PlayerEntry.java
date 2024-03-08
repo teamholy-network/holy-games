@@ -337,10 +337,10 @@ public class PlayerEntry {
     }
 
     public void checkQuit() {
+        if (arenaEntry != null) arenaEntry.setUsed(false);
         if (playerState != PlayerState.INGAME) return;
         resetMap();
         setSecondRound(false);
-        arenaEntry.setUsed(false);
         PlayerUtils.sendBar(player, "");
         arenaEntry.getArenaPlayers().forEach(playerEntry -> {
             playerEntry.performSpawn();
