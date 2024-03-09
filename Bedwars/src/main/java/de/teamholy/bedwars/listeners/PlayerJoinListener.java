@@ -59,8 +59,8 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(CachedPlayerJoinEvent event) {
-        Player player = event.getCachedBukkitPlayer().getPlayer();
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
         player.setLevel(0);
         player.setExp(0);
         int count = Bukkit.getOnlinePlayers().size();
@@ -70,24 +70,26 @@ public class PlayerJoinListener implements Listener {
         }
 
 
-        PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
-        Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(),  new PlayerEntry(player.getPlayer()));
-        if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
-            MarkupAPI.updateNameTag(player);
-            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 1);
+        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
+            PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
+            Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), new PlayerEntry(player.getPlayer()));
+            if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
+                MarkupAPI.updateNameTag(player);
+                Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 1);
 
-            playerEntry.performSpawn();
+                playerEntry.performSpawn();
 
-            if (Bukkit.getOnlinePlayers().size() == Bedwars.getInstance().getMaxPlayers() && LobbyTask.count > 10) {
-                LobbyTask.count = 10;
+                if (Bukkit.getOnlinePlayers().size() == Bedwars.getInstance().getMaxPlayers() && LobbyTask.count > 10) {
+                    LobbyTask.count = 10;
+                }
+
+            } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
+                if (NPCShopCommand.NPCSHOP) {
+                    playerEntry.setNpcShops();
+                }
+                playerEntry.setSpectator();
             }
-
-        } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
-            if (NPCShopCommand.NPCSHOP) {
-                playerEntry.setNpcShops();
-            }
-            playerEntry.setSpectator();
-        }
+        }, 1);
         Bedwars.getInstance().updateData();
     }
 
