@@ -69,26 +69,25 @@ public class PlayerJoinListener implements Listener {
             all.hidePlayer(player);
         }
 
-        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
-            PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
-            Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), playerEntry);
-            if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
-                MarkupAPI.updateNameTag(player);
-                Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(),() -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"),1);
 
-                playerEntry.performSpawn();
+        PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
+        Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(),  new PlayerEntry(player.getPlayer()));
+        if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
+            MarkupAPI.updateNameTag(player);
+            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 1);
 
-                if (Bukkit.getOnlinePlayers().size() == Bedwars.getInstance().getMaxPlayers() && LobbyTask.count > 10) {
-                    LobbyTask.count = 10;
-                }
+            playerEntry.performSpawn();
 
-            } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
-                if (NPCShopCommand.NPCSHOP) {
-                    playerEntry.setNpcShops();
-                }
-                playerEntry.setSpectator();
+            if (Bukkit.getOnlinePlayers().size() == Bedwars.getInstance().getMaxPlayers() && LobbyTask.count > 10) {
+                LobbyTask.count = 10;
             }
-        }, 1);
+
+        } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
+            if (NPCShopCommand.NPCSHOP) {
+                playerEntry.setNpcShops();
+            }
+            playerEntry.setSpectator();
+        }
         Bedwars.getInstance().updateData();
     }
 
@@ -138,13 +137,13 @@ public class PlayerJoinListener implements Listener {
                     Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + playerEntry.getTeamEntry().getColorCode() + player.getName() + " §7has left");
                 } else {
                     Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + playerEntry.getTeamEntry().getColorCode() + player.getName() + " §7has left §8(" + damager.getTeamEntry().getColorCode() + damager.getPlayer().getName() + " §7got the kill§8)");
-                    BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"kills", damager.getPlayer().getUniqueId());
+                    BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "kills", damager.getPlayer().getUniqueId());
                     damager.setKills(damager.getKills() + 1);
-                    BukkitCore.getAPI().getCoinManager().addCoins(damager.getPlayer().getUniqueId(),10,true);
+                    BukkitCore.getAPI().getCoinManager().addCoins(damager.getPlayer().getUniqueId(), 10, true);
                     damager.getPlayer().playSound(damager.getPlayer().getLocation(), Sound.LEVEL_UP, 1, 1);
                 }
 
-                BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"deaths", player.getUniqueId());
+                BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "deaths", player.getUniqueId());
                 Bedwars.getInstance().getIngamePlayers().remove(playerEntry);
                 playerEntry.checkTeams(null);
                 playerEntry.checkWin();
