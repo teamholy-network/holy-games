@@ -32,7 +32,7 @@ public class PlayerInteractListener implements Listener {
                     event.setCancelled(true);
                     playerEntry.openSpectator();
                 } else if (event.getItem().getType() == Material.MAGMA_CREAM && playerEntry.getPlayerState() == PlayerState.INGAME) {
-                    playerEntry.checkQuit();
+                    playerEntry.checkQuit(false);
                 } else if (event.getItem().getType() == Material.MAGMA_CREAM && playerEntry.getPlayerState() == PlayerState.SPECTATE) {
                     playerEntry.leaveSpectator();
                 } else if (event.getItem().getType() == Material.REDSTONE_COMPARATOR) {

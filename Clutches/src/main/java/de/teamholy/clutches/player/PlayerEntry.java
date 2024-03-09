@@ -336,10 +336,10 @@ public class PlayerEntry {
         firstHitDelay.setReceived(false);
     }
 
-    public void checkQuit() {
-        if (arenaEntry != null) arenaEntry.setUsed(false);
-        if (playerState != PlayerState.INGAME) return;
+    public void checkQuit(boolean force) {
+        if (playerState != PlayerState.INGAME && !force) return;
         resetMap();
+        arenaEntry.setUsed(false);
         setSecondRound(false);
         PlayerUtils.sendBar(player, "");
         arenaEntry.getArenaPlayers().forEach(playerEntry -> {

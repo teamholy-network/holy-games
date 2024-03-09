@@ -15,7 +15,7 @@ public class QuitCommand implements CommandExecutor {
         PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
         if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND) {
             playerEntry.getPlaygroundPlayer().quit();
-        } else playerEntry.checkQuit();
+        } else playerEntry.checkQuit(false);
         return false;
     }
 }

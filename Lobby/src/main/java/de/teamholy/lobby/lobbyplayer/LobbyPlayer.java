@@ -68,7 +68,7 @@ public class LobbyPlayer {
         friendEntry = new FriendEntry(player);
         setInventory();
 
-        BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),this::setGameProfile);
+        BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()), this::setGameProfile);
     }
 
     public void executeBungeeCommand(String command) {
@@ -98,8 +98,8 @@ public class LobbyPlayer {
     public void setLabyModSubtitle() {
         Bukkit.getScheduler().runTaskLaterAsynchronously(Lobby.getInstance(), () -> {
             for (LobbyPlayer all : Lobby.getInstance().getLobbyPlayerEntryHandler().values()) {
-            //    setSubtitle(all.getPlayer(), player.getUniqueId(), "§7Clan §8» " + getClanNameString() + " §8︳ §7Onlinetime §8» §a" + getOnlineTimeString());
-            //    setSubtitle(player, all.getPlayer().getUniqueId(), "§7Clan §8» " + all.getClanNameString() + " §8︳ §7Onlinetime §8» §a" + all.getOnlineTimeString());
+                //    setSubtitle(all.getPlayer(), player.getUniqueId(), "§7Clan §8» " + getClanNameString() + " §8︳ §7Onlinetime §8» §a" + getOnlineTimeString());
+                //    setSubtitle(player, all.getPlayer().getUniqueId(), "§7Clan §8» " + all.getClanNameString() + " §8︳ §7Onlinetime §8» §a" + all.getOnlineTimeString());
             }
         }, 5);
     }
@@ -193,7 +193,7 @@ public class LobbyPlayer {
         if (service == null) {
             player.sendMessage(Lobby.getInstance().getPrefix() + "Could not find a §c" + group + " §7server");
         } else {
-           BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(service.getName());
+            BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(service.getName());
         }
     }
 
@@ -301,7 +301,7 @@ public class LobbyPlayer {
                         , " §7the best German mouse abuse experience "
                         , " "
                         , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + (Lobby.getInstance().getBedwarsServerInventory().getBedwarsPlayers() + Lobby.getInstance().getBedwarsServerInventory().getRushBWPlayers())+ " §7players"
+                        , " §7Currently playing§8: §6" + (Lobby.getInstance().getBedwarsServerInventory().getBedwarsPlayers() + Lobby.getInstance().getBedwarsServerInventory().getRushBWPlayers()) + " §7players"
                         , " "
                         , "§8» §7Click to §6§nteleport"
                 )
@@ -410,7 +410,7 @@ public class LobbyPlayer {
 
         inventory.setOnClose(inventoryCloseEvent -> {
             if (nickUpdate.get()) {
-                BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile,true,true);
+                BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile, true, true);
             }
 
             if (friendUpdate.get()) {
@@ -438,7 +438,6 @@ public class LobbyPlayer {
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
 
 
-
             if (playerProfile.isAutoNick()) {
                 playerProfile.setAutoNick(false);
             } else {
@@ -451,7 +450,7 @@ public class LobbyPlayer {
             nickUpdate.set(true);
         });
 
-        inventory.setItem(new ItemBuilder(Material.LAVA_BUCKET,1).setName("§8» §6Statsreset").build(),4, event1 -> Lobby.getInstance().getStatsResetHandler().openStatsReset(player));
+        inventory.setItem(new ItemBuilder(Material.LAVA_BUCKET, 1).setName("§8» §6Statsreset").build(), 4, event1 -> Lobby.getInstance().getStatsResetHandler().openStatsReset(player));
 
         player.openInventory(inventory.getInventory());
     }
@@ -477,7 +476,7 @@ public class LobbyPlayer {
                 .collect(Collectors.toList());
 
         Collections.reverse(collection);
-        
+
         itemBuilder.setLore(collection);
     }
 
@@ -486,12 +485,10 @@ public class LobbyPlayer {
 
         player.getInventory().clear();
 
-        while (true) {
-            ItemBuilder perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
-            if (perk != null) {
-                player.getInventory().setItem(4, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
-                break;
-            }
+
+        ItemBuilder perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+        if (perk != null) {
+            player.getInventory().setItem(4, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
         }
 
         player.getInventory().setItem(0, new ItemBuilder(Material.COMPASS, 1).setName("§8» §6Games §8(§7rightclick§8)").build());
