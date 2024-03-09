@@ -1,5 +1,6 @@
 package de.teamholy.sgffa.listeners;
 
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
 import de.teamholy.sgffa.SGFFA;
 import de.teamholy.sgffa.models.PlayerEntry;
 import de.teamholy.core.api.entities.clan.Clan;
@@ -20,10 +21,16 @@ public class PlayerNameTagListener implements Listener {
     public void onNameTag(PlayerNameTagEvent event) {
 
         Player player = event.getPlayer();
-        PlayerRank playerRank = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getRank();
-        PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(player.getUniqueId());
+
+        PlayerCacheManager.CachedBukkitPlayer playerCache = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId());
+        if (playerCache == null) return;
+
+        PlayerRank playerRank = playerCache.getRank();
 
         if (playerRank == null) return;
+
+        PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(player.getUniqueId());
+
 
         // Get default values from HolyPlayer
         int sortId = playerRank.getSortId();

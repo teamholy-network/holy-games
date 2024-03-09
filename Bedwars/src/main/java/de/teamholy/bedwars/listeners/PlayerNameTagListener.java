@@ -7,6 +7,7 @@ import de.teamholy.core.api.entities.clan.Clan;
 import de.teamholy.core.api.entities.clanplayer.ClanPlayerProfile;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
 import eu.koboo.markup.MarkupAPI;
 import eu.koboo.markup.events.PlayerNameTagEvent;
 import org.bukkit.entity.Player;
@@ -23,7 +24,10 @@ public class PlayerNameTagListener implements Listener {
 
         if(Bedwars.getInstance().getGameState() == GameState.LOBBY) {
 
-            PlayerRank playerRank = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getRank();
+            PlayerCacheManager.CachedBukkitPlayer playerCache = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId());
+            if (playerCache == null) return;
+
+            PlayerRank playerRank = playerCache.getRank();
 
             if (playerRank == null) return;
 
