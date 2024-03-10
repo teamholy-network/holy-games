@@ -150,7 +150,6 @@ public class LobbyTask {
             playerEntry.getPlayer().sendMessage(Bedwars.getInstance().getPrefix() + "§7Gold §8» " + ((Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().isGold()) ? "§a✔" : "§c✘"));
             playerEntry.getPlayer().sendMessage("§8§m------------------------------");
             playerEntry.clearPlayer();
-            playerEntry.getPlayer().teleport(playerEntry.getTeamEntry().getSpawn());
             playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(),Sound.ANVIL_BREAK,50f,50f);
             playerEntry.getPlayer().sendTitle("§6§lTeamholy.de",(Bedwars.isRushMode() ? "§bRushBW" : "§6Bedwars"));
             BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"played_games",playerEntry.getPlayer().getUniqueId());
@@ -160,6 +159,10 @@ public class LobbyTask {
 
         Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(),() -> Bedwars.getInstance().updateNameTags(),1);
         Double death = Bedwars.getInstance().getYamlConfiguration().getDouble(map + ".death.Y");
+
+        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bedwars.getInstance().getCacheHandler().getPlayerEntries().values().forEach(playerEntry -> {
+            if (playerEntry.getTeamEntry() != null)  playerEntry.getPlayer().teleport(playerEntry.getTeamEntry().getSpawn());
+        }),10);
 
         AtomicInteger i = new AtomicInteger();
 
