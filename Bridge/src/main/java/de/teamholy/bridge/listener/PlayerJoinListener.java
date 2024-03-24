@@ -44,6 +44,7 @@ public class PlayerJoinListener implements Listener {
         final BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
 
         Player player = event.getCachedBukkitPlayer().getPlayer();
+        if (player == null || !player.isOnline()) return;
         bridgePlayerService.addPlayer(player);
 
         Bridge.getInstance().getBridgeMapService().findMapForPlayer(BridgeMapType.SHORT, bridgePlayerService.getBridgePlayer(player));

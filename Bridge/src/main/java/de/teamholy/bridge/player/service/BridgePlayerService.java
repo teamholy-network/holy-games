@@ -64,7 +64,9 @@ public class BridgePlayerService {
         createScoreboard(getBridgePlayer(player));
         player.getInventory().clear();
 
-        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> prepareIngamePlayer(player), 10);
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
+            if (player.isOnline()) prepareIngamePlayer(player);
+        }, 10);
     }
 
     public void removePlayer(Player player) {
