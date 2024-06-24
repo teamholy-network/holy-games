@@ -119,11 +119,17 @@ public class PlayerEntry {
         }
 
         int i = 0;
-        List<MapTemplateEntry> arrayList = MLGRush.getInstance().getMapTemplateEntryHandler().values().stream().filter(mapTemplateEntry -> mapTemplateEntry.getTemplatesCount().get(0).getGameType() == gameType).collect(Collectors.toList());
+        List<MapTemplateEntry> arrayList = MLGRush.getInstance().getMapTemplateEntryHandler().values().stream().filter(mapTemplateEntry -> mapTemplateEntry.getTemplatesCount().get(0).getGameType() == gameType).toList();
+
         for (MapTemplateEntry mapEntry : arrayList) {
-            if (mapEntry.getFreeTemplatesCount().size() != 0) {
+            if (!mapEntry.getFreeTemplatesCount().isEmpty()) {
+
+                if (i >= 9) {
+                    break;
+                }
+
                 inventory.setItem(new ItemBuilder(mapEntry.getMaterial(), mapEntry.getFreeTemplatesCount().size(), (byte) 0).setName("§8» §6" + mapEntry.getName()).build(), i, event -> {
-                    if (mapEntry.getFreeTemplatesCount().size() == 0) {
+                    if (mapEntry.getFreeTemplatesCount().isEmpty()) {
                         player.sendMessage("§cAll arenas on the map are full");
                     } else {
                         MapEntry tempMap = mapEntry.getFreeArena();
