@@ -68,9 +68,6 @@ public class PlayerJoinQuitListener implements Listener {
 
             new NPCBuilder("labymod","§6§lWebsite", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc"))
                     .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player);
-            new NPCBuilder("uefa","§6§lUEFA", UUID.fromString("2646aecf-ddcc-4f3a-bedd"
-                + "-3b2c8d386350"),50,10,true,false,
-                BukkitCore.getInstance().getLocationManager().getLocation("uefa_npc")).addHolo("§6UEFA Euro public viewing!").build(player);
 
         },10);
     }

@@ -37,7 +37,6 @@ public class PlayerInteractAtNPCListener implements Listener {
             case "website" -> lobbyPlayer.executeBungeeCommand("link");
             case "namemc" -> lobbyPlayer.executeBungeeCommand("vote");
             case "bridge" -> lobbyPlayer.openGameSubInventory("Bridge", Material.IRON_PICKAXE);
-            case "uefa" -> BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(lobbyPlayer.getPlayer().getUniqueId()).connect("EM-1");
             default -> {
             }
 
