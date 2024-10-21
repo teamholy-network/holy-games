@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -57,11 +58,6 @@ public class LobbyPlayer {
 
         playerRank = cachedBukkitPlayer.getRank();
         setScoreboard();
-
-        updateOnlineTime();
-        updateClanTagScore();
-        updateCoinsScore();
-        updateRankScore();
 
         //setLabyModSubtitle();
 
@@ -131,15 +127,41 @@ public class LobbyPlayer {
     public void setScoreboard() {
         scoreboardAPI.setLine(9, " §8§m--------------- ");
         scoreboardAPI.setLine(8, "§7");
-        scoreboardAPI.setLine(7, " §7Rank§8: §6loading...");
+        scoreboardAPI.setLine(7, " §7Rank§8: " + playerRank.getColorCode() + playerRank.getName());
         scoreboardAPI.setLine(6, "§2");
-        scoreboardAPI.setLine(5, " §7Clan§8: §6loading...");
-        scoreboardAPI.setLine(4, " §7Coins§8: §6loading...");
-        scoreboardAPI.setLine(3, " §7Playtime§8: §6loading...");
+
+        CountDownLatch latch = new CountDownLatch(2);
+
+        BukkitCore.getAPI().getClanPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getClanPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
+            if (playerProfile != null) {
+                Clan clan = BukkitCore.getAPI().getClanManager().getClanById(playerProfile.getClanId());
+                clanNameString = clan.getColor() + clan.getName();
+            } else {
+                clanNameString = "§cno clan";
+            }
+            scoreboardAPI.setLine(5, " §7Clan§8: " + clanNameString);
+            latch.countDown();
+        });
+
+        BukkitCore.getAPI().getPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
+            setOnlineTimeString(getOnlineTimeFormated(playerProfile.getOnlineTime()));
+            scoreboardAPI.setLine(4, " §7Coins§8: §6" + BukkitCore.getAPI().getCoinManager().formatInteger(playerProfile.getCoins()));
+            scoreboardAPI.setLine(3, " §7Playtime§8: §6" + getOnlineTimeString());
+            latch.countDown();
+        });
+
         scoreboardAPI.setLine(2, "§5");
         scoreboardAPI.setLine(1, " §8§m--------------- ");
         scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
-        scoreboardAPI.build();
+
+        Bukkit.getScheduler().runTaskAsynchronously(Lobby.getInstance(), () -> {
+            try {
+                latch.await();
+                Bukkit.getScheduler().runTask(Lobby.getInstance(), scoreboardAPI::build);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void openGameSubInventory(String group, Material material) {

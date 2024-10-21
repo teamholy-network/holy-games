@@ -1,7 +1,6 @@
 package de.teamholy.sgffa;
 
 
-import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.sgffa.commands.SetupCommand;
 import de.teamholy.sgffa.commands.TeamingCommand;
 import de.teamholy.sgffa.commands.VanishCommand;

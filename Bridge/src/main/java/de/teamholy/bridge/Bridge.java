@@ -27,6 +27,7 @@ import java.util.concurrent.*;
  * Proprietary and confidential
  * Written by charon
  **/
+
 @Getter
 public class Bridge extends JavaPlugin {
 

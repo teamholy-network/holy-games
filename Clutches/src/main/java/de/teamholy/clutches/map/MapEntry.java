@@ -56,6 +56,8 @@ public class MapEntry {
                 arenaEntryHashMap.put(finalI,arenaEntry);
                 spawn[0] =  spawn[0] +250;
             },20);
+
+
         }
     }
 
