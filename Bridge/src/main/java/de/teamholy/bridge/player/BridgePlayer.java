@@ -139,6 +139,13 @@ public class BridgePlayer {
         } else {
 
             for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
+
+                if (statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best") == null) {
+                    statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best", String.valueOf(0L));
+                    statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "BestTimes", gson.toJson(Lists.newArrayList()));
+                    statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(BridgeMapSkins.getDefaultSkin(bridgeMapType).getId()));
+                }
+
                 this.globalBestTime.put(bridgeMapType, Long.valueOf(statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best")));
                 this.bestTimes.put(bridgeMapType, gson.fromJson(statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "BestTimes"), new TypeToken<List<Long>>() {}.getType()));
                 this.selectedSkins.put(bridgeMapType, BridgeMapSkins.getById(Integer.parseInt(statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected"))));
@@ -210,15 +217,6 @@ public class BridgePlayer {
         loadPerks();
     }
 
-    private boolean isNumber(String string) {
-        try {
-            Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     private void loadPerks() {
         for (int id : perkPlayerProfile.getOwnedPerks()) {
             if (id >= 5000 && id < 5500) {
@@ -250,37 +248,27 @@ public class BridgePlayer {
         statsProfile.setSetting(gameKey, "removalTime", String.valueOf(this.bridgeSettings.getRemovalTime()));
         statsProfile.setSetting(gameKey, "blockAnimationType", this.bridgeSettings.getBlockAnimationType().name());
 
-        statsProfile.setSetting(gameKey, "shortBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.SHORT)));
-        statsProfile.setSetting(gameKey, "longBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.LONG)));
-        statsProfile.setSetting(gameKey, "diagonalBestTimes", gson.toJson(this.bestTimes.get(BridgeMapType.DIAGONAL)));
+        for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
+            statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "BestTimes", gson.toJson(this.bestTimes.get(bridgeMapType)));
+            statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
+                    .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(bridgeMapType)).findFirst().get().getBridgeMapSkin().getId()));
+        }
+
+        if (globalBestTime != null) {
+            for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
+                if (this.globalBestTime.get(bridgeMapType) != null) {
+                    statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best", String.valueOf(this.globalBestTime.get(bridgeMapType)));
+                }
+            }
+        }
 
         statsProfile.setSetting(gameKey, "gamesPlayed", String.valueOf(this.gamesPlayed));
         statsProfile.setSetting(gameKey, "timerPlace", bridgeSettings.getTimerPlace().name());
 
         statsProfile.setSetting(gameKey, "inventory", InventoryUtils.inventoryToString(inventory));
 
-        statsProfile.setSetting(gameKey, "shortSelected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
-                .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.SHORT)).findFirst().get().getBridgeMapSkin().getId()));
-        statsProfile.setSetting(gameKey, "longSelected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
-                .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.LONG)).findFirst().get().getBridgeMapSkin().getId()));
-        statsProfile.setSetting(gameKey, "diagonalSelected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
-                .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(BridgeMapType.DIAGONAL)).findFirst().get().getBridgeMapSkin().getId()));
-
         statsProfile.setSetting(gameKey, "offsetZ", String.valueOf(bridgeSettings.getOffsetZ()));
 
-        if (globalBestTime != null) {
-            if (this.globalBestTime.get(BridgeMapType.SHORT) != null) {
-                statsProfile.setSetting(gameKey, "shortBest", String.valueOf(this.globalBestTime.get(BridgeMapType.SHORT)));
-            }
-
-            if (this.globalBestTime.get(BridgeMapType.LONG) != null) {
-                statsProfile.setSetting(gameKey, "longBest", String.valueOf(this.globalBestTime.get(BridgeMapType.LONG)));
-            }
-
-            if (this.globalBestTime.get(BridgeMapType.DIAGONAL) != null) {
-                statsProfile.setSetting(gameKey, "diagonalBest", String.valueOf(this.globalBestTime.get(BridgeMapType.DIAGONAL)));
-            }
-        }
 
         for (var set : bridgeSettings.getSoundEvents().entrySet()) {
             statsProfile.setSetting(gameKey, set.getKey().getPerkId() + "_soundEvent", set.getValue().name());
