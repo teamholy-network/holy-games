@@ -29,7 +29,6 @@ public class PlayerQuitListener implements Listener {
         BridgePlayer bridgePlayer = bridgePlayerService.getBridgePlayer(event.getPlayer());
 
         if (bridgePlayer == null) {
-            System.out.println("Player " + player.getName() + " is null on leave.");
             return;
         }
 

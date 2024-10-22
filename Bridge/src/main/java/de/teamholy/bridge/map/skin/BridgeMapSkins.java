@@ -84,7 +84,7 @@ public enum BridgeMapSkins {
                 return value.getBridgeMapSkin();
             }
         }
-        return null;
+        return TREE.getBridgeMapSkin();
     }
 
 

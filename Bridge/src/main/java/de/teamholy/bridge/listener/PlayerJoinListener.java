@@ -45,6 +45,13 @@ public class PlayerJoinListener implements Listener {
 
         Player player = event.getCachedBukkitPlayer().getPlayer();
         if (player == null || !player.isOnline()) return;
+
+        if (bridgePlayerService.getBridgePlayers().containsKey(player.getUniqueId())) {
+            player.kickPlayer("§cPlease rejoin the server.");
+            System.out.println("Kicked player " + player.getName() + " because he was already in the bridge player list.");
+            return;
+        }
+
         bridgePlayerService.addPlayer(player);
 
         Bridge.getInstance().getBridgeMapService().findMapForPlayer(BridgeMapType.SHORT, bridgePlayerService.getBridgePlayer(player));
