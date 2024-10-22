@@ -2,6 +2,7 @@ package de.teamholy.bridge.command;
 
 import com.google.common.collect.Lists;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.core.bukkit.BukkitCore;
@@ -75,6 +76,15 @@ public class BridgeCommand implements CommandExecutor {
                 player.sendMessage(" §8» §7Blocks placed§8: §e" + BukkitCore.getAPI().getCoinManager().formatInteger(bridgePlayer.getPlacedBlocks()));
                 player.sendMessage("§7§m------------------------------------------");
 
+                return false;
+            }
+
+            case "list": {
+                player.sendMessage("§7§m-------------------§r §6Bridge Maps §7§m-------------------");
+                for (BridgeMap bridgeMap : Bridge.getInstance().getBridgeMapService().getMaps().stream().filter(BridgeMap::isUsed).toList()) {
+                    player.sendMessage(bridgeMap.getUser() + " §8- §7" + bridgeMap.getName() + " §8- §7" + Bridge.getInstance().getBridgePlayerService().getBridgePlayers().size());
+                }
+                player.sendMessage("§7§m-----------------------------------------------------");
                 return false;
             }
 

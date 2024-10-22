@@ -63,10 +63,7 @@ public class BridgePlayerService {
         }
         createScoreboard(getBridgePlayer(player));
         player.getInventory().clear();
-
-        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> {
-            if (player.isOnline()) prepareIngamePlayer(player);
-        }, 10);
+        prepareIngamePlayer(player);
     }
 
     public void removePlayer(Player player) {
@@ -102,31 +99,33 @@ public class BridgePlayerService {
             bridgePlayer.setInventory(bridgePlayer.createInventory());
         }
 
-        var i = 0;
-        for (ItemStack content : bridgePlayer.getInventory().getContents()) {
-            if (content != null && content.getType() != null) {
+        AtomicInteger i = new AtomicInteger();
+        BridgePlayer finalBridgePlayer = bridgePlayer;
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),() -> {
+            if (player.isOnline()) {
+                for (ItemStack content : finalBridgePlayer.getInventory().getContents()) {
+                    if (content != null && content.getType() != null) {
 
-                if (content.getType() == Material.SANDSTONE) {
-                    var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
-                    if (perk != null) {
-                        player.getInventory().setItem(i, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
-                    } else {
-                        player.getInventory().setItem(i, new ItemBuilder(Material.SANDSTONE).amount(64).name("§8» §6Blocks §8(§7rightclick§8)").build());
+                        if (content.getType() == Material.SANDSTONE) {
+                            var perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
+                            if (perk != null) {
+                                player.getInventory().setItem(i.get(), perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+                            } else {
+                                player.getInventory().setItem(i.get(), new ItemBuilder(Material.SANDSTONE).amount(64).name("§8» §6Blocks §8(§7rightclick§8)").build());
+                            }
+                            player.getInventory().setHeldItemSlot(i.get());
+                        } else {
+                            if (player.getInventory().getItem(i.get()) == content) {
+                                continue;
+                            }
+                            player.getInventory().setItem(i.get(), content);
+                        }
+
                     }
-                    player.getInventory().setHeldItemSlot(i);
-                } else {
-                    if (player.getInventory().getItem(i) == content) {
-                        continue;
-                    }
-                    player.getInventory().setItem(i, content);
+                    i.getAndIncrement();
                 }
-
             }
-
-
-
-            i++;
-        }
+        },10);
     }
 
     private void createScoreboard(BridgePlayer bridgePlayer) {

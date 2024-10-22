@@ -37,7 +37,9 @@ public class BridgeMap implements Cloneable {
 
     private int givenSpace;
     private BridgeMapType mapType;
+
     private boolean isUsed = false;
+    private String user;
 
     private BridgeMapSkin bridgeMapSkin;
 

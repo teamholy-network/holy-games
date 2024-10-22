@@ -102,6 +102,8 @@ public class BridgeMapService {
             bridgePlayer.getPlayer().kickPlayer("§c§lNo map found for you, please try again later.");
         }
 
+        System.out.println("Found map " + bridgeMap.getName() + " for player " + bridgePlayer.getPlayer().getName());
+        bridgeMap.setUser(bridgePlayer.getPlayer().getName());
         bridgeMap.setUsed(true);
         bridgePlayer.setState(BridgePlayer.PlayerState.INGAME);
         bridgePlayer.setMap(bridgeMap);
@@ -126,6 +128,7 @@ public class BridgeMapService {
 
     public void resetMap(BridgeMap bridgeMap) {
         bridgeMap.setUsed(false);
+        bridgeMap.setUser(null);
         if (!bridgeMap.getBridgeMapSkin().isDefault()) {
             bridgeMapLoader.loadMap(bridgeMap,false, bridgeMap.getSpawnLocation(), BridgeMapSkins.getDefaultSkin(bridgeMap.getMapType()), true);
         }
