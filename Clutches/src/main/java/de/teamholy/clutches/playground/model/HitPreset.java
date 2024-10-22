@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter @Setter @NoArgsConstructor
-public class HitPreset {
+public class HitPreset implements Cloneable {
 
     private UUID uuid = UUID.randomUUID();
 
@@ -25,6 +26,20 @@ public class HitPreset {
     private Origin origin = Origin.CREATED;
     private boolean shared = false;
 
+    public HitPreset deepCopy() {
+        HitPreset copy = new HitPreset();
+        copy.uuid = UUID.randomUUID();
+        copy.name = this.name;
+        copy.icon = this.icon;
+        copy.hitMap = new ConcurrentHashMap<>();
+        copy.hitMap.putAll(this.hitMap);
+        copy.used = this.used;
+        copy.created = this.created;
+        copy.lastEdit = this.lastEdit;
+        copy.origin = this.origin;
+        copy.shared = this.shared;
+        return copy;
+    }
 
     public enum Origin { OTHER, CREATED, IMPORTED }
 

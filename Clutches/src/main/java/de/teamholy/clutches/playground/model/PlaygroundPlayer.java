@@ -161,6 +161,8 @@ public class PlaygroundPlayer {
         int i = 0;
         for (HitPreset hitPreset : hitPresets) {
 
+            var clonePreset = hitPreset.deepCopy();
+
             inventory.setItem(new ItemBuilder(hitPreset.getIcon().getMaterial(), hitPreset.getHitMap().size(), (byte) hitPreset.getIcon().getSubId())
                             .setName("§8» §6" + hitPreset.getName())
                             .setLore(
@@ -171,30 +173,24 @@ public class PlaygroundPlayer {
                             .build(), i, event -> {
                 if (event.isLeftClick()) {
                     player.playSound(player.getLocation(),Sound.NOTE_PLING,2,2);
-                    settings.setSelectedPreset(hitPreset);
+                    settings.setSelectedPreset(clonePreset);
                     updateClutchSelectedScore();
                     player.closeInventory();
                     player.sendMessage(Clutches.PREFIX + "You selected the §6" + hitPreset.getName() + " §7hitpreset");
                     player.sendMessage(Clutches.PREFIX + "Press §6leftclick §7on the §csettings §7item to start clutching");
                 } else if (event.isRightClick()) {
-
-                    if (settings.getHitPresetMap().stream().anyMatch(temp -> temp.getUuid().equals(hitPreset.getUuid()))) {
-                        player.closeInventory();
-                        player.sendMessage(Clutches.PREFIX + "§cYou already have this preset");
-                        return;
-                    }
-
                     if (settings.getHitPresetMap().size() < 27) {
-                        HitPreset temp = new HitPreset();
-                        temp.setIcon(hitPreset.getIcon());
-                        temp.setOrigin(HitPreset.Origin.IMPORTED);
-                        temp.setHitMap(hitPreset.getHitMap());
-                        temp.setName(hitPreset.getName());
-                        temp.setUuid(hitPreset.getUuid());
+
+
+                        clonePreset.setCreated(System.currentTimeMillis());
+                        clonePreset.setUsed(0);
+                        clonePreset.setLastEdit(System.currentTimeMillis());
+                        clonePreset.setOrigin(HitPreset.Origin.IMPORTED);
+                        clonePreset.setUuid(UUID.randomUUID());
 
                         player.closeInventory();
                         player.playSound(player.getLocation(),Sound.NOTE_PLING,2,2);
-                        settings.getHitPresetMap().add(temp);
+                        settings.getHitPresetMap().add(clonePreset);
                         player.sendMessage(Clutches.PREFIX + "You imported the §6" + hitPreset.getName() + " §7hitpreset");
 
 
