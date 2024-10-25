@@ -23,10 +23,7 @@ import eu.koboo.markup.MarkupAPI;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -109,6 +106,8 @@ public class Bedwars extends JavaPlugin {
         instance = this;
         file = new File("plugins/Bedwars/locations.yml");
 
+        loadLobbyChunks();
+
 
 
         new File("plugins/Bedwars/songs/").mkdirs();
@@ -135,6 +134,16 @@ public class Bedwars extends JavaPlugin {
 
 
 
+    }
+
+    public void loadLobbyChunks() {
+        Location lobbyLocation = BukkitCore.getInstance().getLocationManager().getLocation("lobby");
+        if (lobbyLocation != null) {
+            Chunk chunk = lobbyLocation.getWorld().getChunkAt(lobbyLocation);
+            chunk.load(true);
+        } else {
+            System.out.println("Lobby location is not set.");
+        }
     }
 
     public void bootrap() {

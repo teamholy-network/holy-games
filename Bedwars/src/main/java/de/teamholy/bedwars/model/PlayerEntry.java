@@ -61,32 +61,35 @@ public class PlayerEntry {
 
     public PlayerEntry(Player player) {
         this.player = player;
-        GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
 
 
-        if (Bedwars.isRushMode()) createInv();
-        if (!statsProfile.exists(Bedwars.MODE.toString())) {
-            for (StatsType time : StatsType.values()) {
-                for (Gamemodes.StatKey statKey : Bedwars.MODE.getStatKeys())
-                    statsProfile.setStat(Bedwars.MODE.toString(), time, statKey.getName(), statKey.getDefaultValue());
-            }
+        Bukkit.getScheduler().runTaskAsynchronously(Bedwars.getInstance(), () -> {
+            GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
 
-            if (Bedwars.isRushMode()) {
-                statsProfile.setSetting(Gamemodes.RUSHBW.toString(), "invsort", InventoryUtils.inventoryToString(shopInventory));
-            }
+            if (Bedwars.isRushMode()) createInv();
+            if (!statsProfile.exists(Bedwars.MODE.toString())) {
+                for (StatsType time : StatsType.values()) {
+                    for (Gamemodes.StatKey statKey : Bedwars.MODE.getStatKeys())
+                        statsProfile.setStat(Bedwars.MODE.toString(), time, statKey.getName(), statKey.getDefaultValue());
+                }
 
-            BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
-        } else {
-            alltimeTrophies = (int) statsProfile.getStat(Bedwars.MODE.toString(), StatsType.ALLTIME, "trophies");
-            if (Bedwars.isRushMode()) {
-                String inventory = statsProfile.getSetting(Gamemodes.RUSHBW.toString(), "invsort");
-                if (inventory == null || inventory.isEmpty()) {
-                    createInv();
-                } else {
-                    setShopInventory(InventoryUtils.inventoryFromString(inventory));
+                if (Bedwars.isRushMode()) {
+                    statsProfile.setSetting(Gamemodes.RUSHBW.toString(), "invsort", InventoryUtils.inventoryToString(shopInventory));
+                }
+
+                BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
+            } else {
+                alltimeTrophies = (int) statsProfile.getStat(Bedwars.MODE.toString(), StatsType.ALLTIME, "trophies");
+                if (Bedwars.isRushMode()) {
+                    String inventory = statsProfile.getSetting(Gamemodes.RUSHBW.toString(), "invsort");
+                    if (inventory == null || inventory.isEmpty()) {
+                        createInv();
+                    } else {
+                        setShopInventory(InventoryUtils.inventoryFromString(inventory));
+                    }
                 }
             }
-        }
+        });
 
 
         scoreboardAPI = new ScoreboardAPI().createScoreboard(player, "§6");
@@ -152,8 +155,8 @@ public class PlayerEntry {
     public void updateScoreboard() {
         int i = 3;
         ArrayList<TeamEntry> teamEntries = new ArrayList<>();
-        teamEntries.addAll(Bedwars.getInstance().getCacheHandler().getTeamEntries().stream().filter(team -> !team.isHasBed()).collect(Collectors.toList()));
-        teamEntries.addAll(Bedwars.getInstance().getCacheHandler().getTeamEntries().stream().filter(TeamEntry::isHasBed).collect(Collectors.toList()));
+        teamEntries.addAll(Bedwars.getInstance().getCacheHandler().getTeamEntries().stream().filter(team -> !team.isHasBed()).toList());
+        teamEntries.addAll(Bedwars.getInstance().getCacheHandler().getTeamEntries().stream().filter(TeamEntry::isHasBed).toList());
         for (TeamEntry teamEntry : teamEntries) {
             scoreboardAPI.updateLine(i, " " + (teamEntry.isHasBed() ? "§c❤ " : "§7❤ ") + teamEntry.getColorCode() + teamEntry.getName() + " §8(" + (teamEntry.getPlayers().size() == 0 ? "§c" : "§6") + teamEntry.getPlayers().size() + "§8)");
             i++;
@@ -495,6 +498,7 @@ public class PlayerEntry {
         Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
             for (PlayerEntry all : Bedwars.getInstance().getCacheHandler().getPlayerEntries().values()) {
                 all.getPlayer().showPlayer(player);
+                player.showPlayer(all.getPlayer());
             }
         }, 5);
         player.spigot().setCollidesWithEntities(true);

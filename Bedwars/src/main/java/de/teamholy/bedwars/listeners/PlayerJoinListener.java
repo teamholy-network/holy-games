@@ -6,6 +6,7 @@ import de.teamholy.bedwars.enums.GameState;
 import de.teamholy.bedwars.model.PlayerEntry;
 import de.teamholy.bedwars.task.LobbyTask;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import de.teamholy.bedwars.utils.CacheHandler;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.event.CachedPlayerJoinEvent;
 import eu.koboo.markup.MarkupAPI;
@@ -23,7 +24,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 /* copyright by Yassino */
 public class PlayerJoinListener implements Listener {
-
 
     @EventHandler
     public void onLogin(PlayerLoginEvent event) {
@@ -65,31 +65,34 @@ public class PlayerJoinListener implements Listener {
         player.setExp(0);
         int count = Bukkit.getOnlinePlayers().size();
 
+        if (Bedwars.getInstance().getCacheHandler().getPlayerEntries().containsKey(player.getUniqueId())) {
+            player.kickPlayer("§cPlease rejoin the server!");
+            return;
+        }
+
         for (Player all : Bukkit.getOnlinePlayers()) {
             all.hidePlayer(player);
         }
 
 
-        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
-            PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
-            Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), new PlayerEntry(player.getPlayer()));
-            if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
-                MarkupAPI.updateNameTag(player);
-                Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 1);
+        PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
+        Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), new PlayerEntry(player.getPlayer()));
+        if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
+            MarkupAPI.updateNameTag(player);
+            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 1);
 
-                playerEntry.performSpawn();
+            playerEntry.performSpawn();
 
-                if (Bukkit.getOnlinePlayers().size() == Bedwars.getInstance().getMaxPlayers() && LobbyTask.count > 10) {
-                    LobbyTask.count = 10;
-                }
-
-            } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
-                if (NPCShopCommand.NPCSHOP) {
-                    playerEntry.setNpcShops();
-                }
-                playerEntry.setSpectator();
+            if (Bukkit.getOnlinePlayers().size() == Bedwars.getInstance().getMaxPlayers() && LobbyTask.count > 10) {
+                LobbyTask.count = 10;
             }
-        }, 1);
+
+        } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
+            if (NPCShopCommand.NPCSHOP) {
+                playerEntry.setNpcShops();
+            }
+            playerEntry.setSpectator();
+        }
         Bedwars.getInstance().updateData();
     }
 
