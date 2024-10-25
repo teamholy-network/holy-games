@@ -79,7 +79,7 @@ public class PlayerJoinListener implements Listener {
         Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), new PlayerEntry(player.getPlayer()));
         if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
             MarkupAPI.updateNameTag(player);
-            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 1);
+            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getDisplayName() + " §7has joined §8(§a" + count + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)"), 7);
 
             playerEntry.performSpawn();
 
