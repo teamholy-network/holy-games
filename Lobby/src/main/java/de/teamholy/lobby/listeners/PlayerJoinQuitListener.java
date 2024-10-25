@@ -36,7 +36,7 @@ public class PlayerJoinQuitListener implements Listener {
         Player player = event.getCachedBukkitPlayer().getPlayer();
         player.setGameMode(GameMode.SURVIVAL);
         player.setFoodLevel(20);
-        player.sendTitle("","§c§kN§c §oNEW §cgamemode §e§lBridge§c §c§kd");
+        player.sendTitle("§c§kN§c §bIndex-hosting.de §c§kd","§7§oSponsored by");
 
         final LobbyPlayer[] lobbyPlayer = new LobbyPlayer[1];
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {

@@ -285,8 +285,7 @@ public class LobbyPlayer {
                 .build(), 21, (event) -> openGameSubInventory("MLGRush", Material.STICK));
         inventory.setItem(new ItemBuilder(Material.RED_SANDSTONE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Clutches")))
                 .setName("§8» §6Clutches §8x §6Reduce §8/ §aPlayground")
-                .setLore("§c§lNEW MODE §a§lPLAYGROUND! ",
-                        ""
+                .setLore(""
                         , " §7The perfect mode for practicing your clutching skills §7§lalone§7! "
                         , " §7Use our ReduceBot, which behaves just like a real player, and "
                         , " §7it offers modes like reduce, clutch, diagonal-clutch, and multi-reduce."
@@ -343,7 +342,7 @@ public class LobbyPlayer {
                 .build(), 16, (event) -> openGameSubInventory("SGFFA", Material.IRON_SWORD));
 
         inventory.setItem(new ItemBuilder(Material.IRON_PICKAXE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Bridge")))
-                .setName("§c§lNEW §8» §6Bridge §8/ §6Fastbuilders")
+                .setName("§6Bridge §8/ §6Fastbuilders")
                 .setLore(" "
                         , " §7Practice your building skills "
                         , " §7by fast building a §ebridge §7to the end island. "
