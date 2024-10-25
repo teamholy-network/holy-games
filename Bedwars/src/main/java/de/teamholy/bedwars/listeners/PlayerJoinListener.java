@@ -70,11 +70,6 @@ public class PlayerJoinListener implements Listener {
             return;
         }
 
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            all.hidePlayer(player);
-        }
-
-
         PlayerEntry playerEntry = new PlayerEntry(player.getPlayer());
         Bedwars.getInstance().getCacheHandler().getPlayerEntries().put(player.getUniqueId(), new PlayerEntry(player.getPlayer()));
         if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {

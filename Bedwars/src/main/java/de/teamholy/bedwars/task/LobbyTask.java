@@ -25,7 +25,8 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /* copyright by Yassino */
-@Getter @Setter
+@Getter
+@Setter
 public class LobbyTask {
 
     private int task;
@@ -42,9 +43,9 @@ public class LobbyTask {
 
     public void startLobby() {
         count = 60;
-        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(),() -> {
+        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(), () -> {
             if (Bedwars.getInstance().getMaps().size() == 0) {
-                Bukkit.getOnlinePlayers().forEach(player -> sendActionBar(player,Bedwars.getInstance().getPrefix() + "No map has been set up yet /setup"));
+                Bukkit.getOnlinePlayers().forEach(player -> sendActionBar(player, Bedwars.getInstance().getPrefix() + "No map has been set up yet /setup"));
                 return;
             }
             if (Bukkit.getOnlinePlayers().size() < minPlayers) {
@@ -53,9 +54,9 @@ public class LobbyTask {
                     player.setLevel(60);
                     player.setExp(xp);
                     if (minPlayers - Bukkit.getOnlinePlayers().size() == 1) {
-                        sendActionBar(player,Bedwars.getInstance().getPrefix() + "There is still §6one §7player missing to start");
+                        sendActionBar(player, Bedwars.getInstance().getPrefix() + "There is still §6one §7player missing to start");
                     } else {
-                        sendActionBar(player,Bedwars.getInstance().getPrefix() + "There is still §6" + (minPlayers - Bukkit.getOnlinePlayers().size()) + " §7players missing to start");
+                        sendActionBar(player, Bedwars.getInstance().getPrefix() + "There is still §6" + (minPlayers - Bukkit.getOnlinePlayers().size()) + " §7players missing to start");
                     }
                 });
             } else {
@@ -64,9 +65,9 @@ public class LobbyTask {
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         player.setLevel(count);
                         player.setExp(xp);
-                        player.playSound(player.getLocation(), Sound.NOTE_BASS,3f,3f);
+                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 3f, 3f);
                     });
-                } else if (count == 0){
+                } else if (count == 0) {
                     startGame();
                 } else {
                     xp = 0.016666668F * count;
@@ -77,7 +78,7 @@ public class LobbyTask {
                 }
                 count--;
             }
-        },0,20);
+        }, 0, 20);
     }
 
     public void startGame() {
@@ -95,8 +96,7 @@ public class LobbyTask {
         String map = Bedwars.getInstance().getMapEntry().getName();
 
 
-
-        String[] shopSkinNames1 = {"iamSlowly", "2sa" , "sturmliebender" , "reatyy","derNOZE","AltsRIP","stacho"};
+        String[] shopSkinNames1 = {"iamSlowly", "2sa", "sturmliebender", "reatyy", "derNOZE", "AltsRIP", "stacho"};
         ArrayList<String> shopSkinNames = new ArrayList(Arrays.asList(shopSkinNames1));
 
         for (TeamEntry teamEntry : Bedwars.getInstance().getCacheHandler().getTeamEntries()) {
@@ -107,14 +107,14 @@ public class LobbyTask {
 
             if (!NPCShopCommand.NPCSHOP) {
                 Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
-                    ArmorStand armorStand = teamEntry.getShop().getWorld().spawn(teamEntry.getShop(),ArmorStand.class);
+                    ArmorStand armorStand = teamEntry.getShop().getWorld().spawn(teamEntry.getShop(), ArmorStand.class);
                     armorStand.setCustomName("§6§lShop");
                     armorStand.setCustomNameVisible(true);
                     armorStand.setVisible(false);
-                    armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM,1,(byte) 3).setSkullOwner(shopSkinNames.get(new Random().nextInt(shopSkinNames.size()))).build());
-                    armorStand.setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE,1,(byte) 0).setLeatherColor(teamEntry.getColor()).build());
-                    armorStand.setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS,1,(byte) 0).setLeatherColor(teamEntry.getColor()).build());
-                    armorStand.setBoots(new ItemBuilder(Material.LEATHER_BOOTS,1,(byte) 0).setLeatherColor(teamEntry.getColor()).build());
+                    armorStand.setHelmet(new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullOwner(shopSkinNames.get(new Random().nextInt(shopSkinNames.size()))).build());
+                    armorStand.setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE, 1, (byte) 0).setLeatherColor(teamEntry.getColor()).build());
+                    armorStand.setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS, 1, (byte) 0).setLeatherColor(teamEntry.getColor()).build());
+                    armorStand.setBoots(new ItemBuilder(Material.LEATHER_BOOTS, 1, (byte) 0).setLeatherColor(teamEntry.getColor()).build());
                 }, 2);
             }
 
@@ -150,30 +150,31 @@ public class LobbyTask {
             playerEntry.getPlayer().sendMessage(Bedwars.getInstance().getPrefix() + "§7Gold §8» " + ((Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().isGold()) ? "§a✔" : "§c✘"));
             playerEntry.getPlayer().sendMessage("§8§m------------------------------");
             playerEntry.clearPlayer();
-            playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(),Sound.ANVIL_BREAK,50f,50f);
-            playerEntry.getPlayer().sendTitle("§6§lTeamholy.de",(Bedwars.isRushMode() ? "§bRushBW" : "§6Bedwars"));
-            BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(),"played_games",playerEntry.getPlayer().getUniqueId());
+            playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(), Sound.ANVIL_BREAK, 50f, 50f);
+            playerEntry.getPlayer().sendTitle("§6§lTeamholy.de", (Bedwars.isRushMode() ? "§bRushBW" : "§6Bedwars"));
+            BukkitCore.getInstance().getStatsManager().addStat(Bedwars.MODE.toString(), "played_games", playerEntry.getPlayer().getUniqueId());
             Bedwars.getInstance().getIngamePlayers().add(playerEntry);
-            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), playerEntry::setScorebord,1);
+            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), playerEntry::setScorebord, 1);
         }
 
-        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(),() -> Bedwars.getInstance().updateNameTags(),1);
+        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bedwars.getInstance().updateNameTags(), 1);
         Double death = Bedwars.getInstance().getYamlConfiguration().getDouble(map + ".death.Y");
 
-        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> Bedwars.getInstance().getCacheHandler().getPlayerEntries().values().forEach(playerEntry -> {
-            if (playerEntry.getTeamEntry() != null)  playerEntry.getPlayer().teleport(playerEntry.getTeamEntry().getSpawn());
-        }),10);
+        Bedwars.getInstance().getCacheHandler().getPlayerEntries().values().forEach(playerEntry -> {
+            if (playerEntry.getTeamEntry() != null)
+                playerEntry.getPlayer().teleport(playerEntry.getTeamEntry().getSpawn());
+        });
 
         AtomicInteger i = new AtomicInteger();
 
         int sched = 0;
         int finalSched = sched;
 
-        sched = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(),() -> {
+        sched = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(), () -> {
             Bedwars.getInstance().getCacheHandler().getPlayerEntries().values().forEach(holyPlayer -> {
                 if (holyPlayer.getScoreboardAPI() != null) {
                     if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
-                        sendActionBar(holyPlayer.getPlayer(),"§7Gold §8» " + ((Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().isGold()) ? "§a✔" : "§c✘") + " §8︳ §7Map §8» §6" + Bedwars.getInstance().getMapEntry().getName());
+                        sendActionBar(holyPlayer.getPlayer(), "§7Gold §8» " + ((Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().isGold()) ? "§a✔" : "§c✘") + " §8︳ §7Map §8» §6" + Bedwars.getInstance().getMapEntry().getName());
                         holyPlayer.getPlayer().getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName("§6§lTeamholy.de §8- §7" + formatSeconds(i.get()));
                     } else {
                         holyPlayer.getPlayer().getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName("§6§lTeamholy.de");
@@ -182,12 +183,12 @@ public class LobbyTask {
                 }
             });
             i.getAndIncrement();
-        },0,20);
+        }, 0, 20);
 
         int sched1 = 0;
         int finalSched1 = sched;
 
-        sched1 = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(),() ->{
+        sched1 = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(), () -> {
             for (PlayerEntry playerEntry : Bedwars.getInstance().getCacheHandler().getPlayerEntries().values()) {
                 if (Bedwars.getInstance().getIngamePlayers().contains(playerEntry)) {
                     if (playerEntry.getPlayer().getLocation().getBlockY() < death) {
@@ -200,7 +201,7 @@ public class LobbyTask {
 
             if (Bedwars.getInstance().getGameState() == GameState.END) Bukkit.getScheduler().cancelTask(finalSched1);
 
-        },1,1);
+        }, 1, 1);
 
         for (TeamEntry teamEntry : Bedwars.getInstance().getCacheHandler().getTeamEntries()) {
             teamEntry.getPlayers().forEach(player -> {
@@ -223,20 +224,21 @@ public class LobbyTask {
 
 
     public Location getConfigLocation(String path) {
-            YamlConfiguration cfg = Bedwars.getInstance().getYamlConfiguration();
-            World w = Bukkit.getWorld(cfg.getString(path + ".World"));
-            double x = cfg.getDouble(path + ".X");
-            double y = cfg.getDouble(path + ".Y");
-            double z = cfg.getDouble(path + ".Z");
-            float yaw = (float) cfg.getDouble(path + ".Yaw");
-            float pitch = (float) cfg.getDouble(path + ".Pitch");
-            return new Location(w, x, y, z, yaw, pitch);
+        YamlConfiguration cfg = Bedwars.getInstance().getYamlConfiguration();
+        World w = Bukkit.getWorld(cfg.getString(path + ".World"));
+        double x = cfg.getDouble(path + ".X");
+        double y = cfg.getDouble(path + ".Y");
+        double z = cfg.getDouble(path + ".Z");
+        float yaw = (float) cfg.getDouble(path + ".Yaw");
+        float pitch = (float) cfg.getDouble(path + ".Pitch");
+        return new Location(w, x, y, z, yaw, pitch);
     }
 
-    public void stopLobby() { Bukkit.getScheduler().cancelTask(task);}
+    public void stopLobby() {
+        Bukkit.getScheduler().cancelTask(task);
+    }
 
-    public String formatSeconds(int seconds)
-    {
+    public String formatSeconds(int seconds) {
         int minutes = seconds / 60;
         seconds %= 60;
         return String.format("%02d:%02d", minutes, seconds);

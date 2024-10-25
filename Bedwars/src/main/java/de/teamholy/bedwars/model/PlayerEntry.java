@@ -497,8 +497,12 @@ public class PlayerEntry {
             player.removePotionEffect(effect.getType());
         Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
             for (PlayerEntry all : Bedwars.getInstance().getCacheHandler().getPlayerEntries().values()) {
-                all.getPlayer().showPlayer(player);
-                player.showPlayer(all.getPlayer());
+                if (player.isOnline()) {
+                    all.getPlayer().hidePlayer(player);
+                    all.getPlayer().showPlayer(player);
+                    player.hidePlayer(all.getPlayer());
+                    player.showPlayer(all.getPlayer());
+                }
             }
         }, 5);
         player.spigot().setCollidesWithEntities(true);
