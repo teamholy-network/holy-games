@@ -88,9 +88,11 @@ public class PlayerJoinListener implements Listener {
             }
 
         } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
-            if (NPCShopCommand.NPCSHOP) {
-                playerEntry.setNpcShops();
-            }
+            Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
+                if (NPCShopCommand.NPCSHOP) {
+                    playerEntry.setNpcShops();
+                }
+            }, 5);
             playerEntry.setSpectator();
         }
         Bedwars.getInstance().updateData();
