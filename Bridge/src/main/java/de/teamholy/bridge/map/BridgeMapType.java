@@ -12,7 +12,10 @@ import java.util.Map;
 @Getter
 public enum BridgeMapType {
 
-    SHORT("Short",25,25,
+    EXTRASHORT("ExtraShort",13,20,
+            new ItemBuilder(Material.STONE_SLAB2, 1)
+                    .build(),180, new InMapCords(-4, 5, -2), new InMapCords(0, 0, -30)),
+    SHORT("Short",19,20,
             new ItemBuilder(Material.WOOD_STEP, 1)
             .build(),180, new InMapCords(-4, 5, -2), new InMapCords(0, 0, -30)),
     LONG("Long",50, 25,

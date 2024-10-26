@@ -1,8 +1,12 @@
 package de.teamholy.bridge.listener;
 
+import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.player.BridgePlayer;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
@@ -19,9 +23,30 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.CREATIVE && !event.getPlayer().isOp()) {
-            event.setCancelled(true);
+        if (event.getPlayer() == null || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            return;
         }
+
+        Player player = event.getPlayer();
+
+        if (player.getItemInHand() == null || player.getItemInHand().getType() != Material.GOLD_PICKAXE) {
+            event.setCancelled(true);
+            return;
+        }
+
+        BridgePlayer bridgePlayer = Bridge.getInstance().getBridgePlayerService().getBridgePlayer(event.getPlayer());
+        if (bridgePlayer == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (bridgePlayer.getBlocks().containsKey(event.getBlock())) {
+            bridgePlayer.getBlocks().remove(event.getBlock());
+            event.getBlock().setType(Material.AIR);
+            return;
+        }
+
+        event.setCancelled(true);
     }
 
     @EventHandler

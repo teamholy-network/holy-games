@@ -5,7 +5,9 @@ import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import com.google.common.collect.Lists;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.bridge.Bridge;
+import de.teamholy.bridge.map.BridgeMap;
 import de.teamholy.bridge.map.BridgeMapType;
+import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.settings.items.BridgeItems;
@@ -196,7 +198,7 @@ public class BridgePlayerService {
 
     public void updateScoreboard(BridgePlayer bridgePlayer) {
         ScoreboardAPI bridgeScoreboard = bridgePlayer.getBridgeScoreboard();
-        bridgeScoreboard.updateLine(13, " §7Best Time §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)");
+        bridgeScoreboard.updateLine(13, " §7Best Time §e§l" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time"));
         bridgeScoreboard.updateLine(12, " §e" + checkBestTimeString(bridgePlayer.getGlobalBestTime(bridgePlayer.getMap().getMapType())));
 
         String top5 = " §6Top 5 §8(§e" + (bridgePlayer.getMap() != null ? bridgePlayer.getMap().getMapType().getName() : "All time") + "§8)";
@@ -326,14 +328,29 @@ public class BridgePlayerService {
             player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
         });
 
+        inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.REDSTONE_COMPARATOR).setName("§8» §6Map selector").build(), 34, event -> {
+            player.openInventory(mapSelectorInventory(bridgePlayer));
+            player.playSound(player.getLocation(), Sound.CLICK, 2, 100);
+        });
 
-        int index = 29;
+
+        int index = 28;
         for (BridgeMapType mapType : BridgeMapType.values()) {
             inventory.setItem(new ItemBuilder(mapType.getIcon())
 
                     .amount(mapType.getLength())
                     .name("§8» §6" + mapType.getName())
-                    .lore("§7Distance§8: §e" + mapType.getLength()).build(), index, event -> {
+                    .lore(
+                            Arrays.asList(
+                                    "§7Distance§8: §e" + mapType.getLength()
+                                    ," "
+                                    ," §fBest time§8: §e" + checkBestTimeString(bridgePlayer.getGlobalBestTime(mapType))
+                                    ," §fAverage time§8: §e" + checkBestTimeString(getAverageTime(bridgePlayer, mapType))
+                                    ," "
+
+                            )
+                    )
+                    .withGlow(bridgePlayer.getLastPlayedMap() == mapType).build(), index, event -> {
 
 
                 if (bridgePlayer.getMap().getMapType() == mapType) {
@@ -467,9 +484,87 @@ public class BridgePlayerService {
         //  player.removePotionEffect(PotionEffectType.INVISIBILITY);
     }
 
+    private Inventory mapSelectorInventory(BridgePlayer bridgePlayer) {
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Map selector", 6 * 9);
+        var task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (bridgePlayer == null) {
+                    cancel();
+                    return;
+                }
+
+                inventory.getItems().clear();
+
+                AtomicInteger slot = new AtomicInteger();
+                Bridge.getInstance().getBridgeMapService().getMaps().stream()
+                        .filter(bridgeMap -> bridgePlayer.getLastPlayedMap() == bridgeMap.getMapType())
+                        .forEach(bridgeMap -> {
+                            boolean isTaken = Bridge.getInstance().getBridgePlayerService().getBridgePlayers().values().stream()
+                                    .anyMatch(allPlayers -> allPlayers.getMap() == bridgeMap);
+
+                            if (isTaken) {
+                                Bridge.getInstance().getBridgePlayerService().getBridgePlayers().values().stream()
+                                        .filter(allPlayers -> allPlayers.getMap() == bridgeMap)
+                                        .findFirst()
+                                        .ifPresent(allPlayers -> inventory.setItem(
+                                                new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
+                                                        .setName("§8» §6" + bridgeMap.getName() + " §c§lTAKEN")
+                                                        .setSkullOwner(allPlayers.getPlayer().getName())
+                                                        .build(), slot.get()));
+                            } else {
+                                inventory.setItem(
+                                        new de.teamholy.core.bukkit.utils.ItemBuilder(Material.SANDSTONE, 1)
+                                                .setName("§8» §6" + bridgeMap.getName() + " §a§lAVAILABLE")
+                                                .build(), slot.get(), event -> {
+
+                                            BridgeMapService bridgeMapService = Bridge.getInstance().getBridgeMapService();
+                                            BridgePlayerService bridgePlayerService = Bridge.getInstance().getBridgePlayerService();
+                                            BridgeMap map = bridgePlayer.getMap();
+
+                                            bridgePlayer.getPlayer().closeInventory();
+
+                                            if (!bridgePlayer.getBlocks().isEmpty()) {
+                                                bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
+                                            }
+
+
+                                            bridgePlayer.getBlocks().clear();
+                                            bridgePlayer.saveStats();
+
+                                            bridgeMapService.resetMap(map);
+
+
+                                            if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
+                                                bridgePlayer.setToSpectate(null);
+                                                bridgePlayerService.stopSpectating(bridgePlayer.getPlayer(), false);
+                                            }
+                                            if (!bridgePlayerService.getBridgePlayers().isEmpty()) {
+                                                for (BridgePlayer bridgePlayer1 : bridgePlayerService.getBridgePlayers().values()) {
+                                                    if (bridgePlayer1.getToSpectate() == null) continue;
+                                                    if (bridgePlayer1.getToSpectate().getUniqueId().equals(bridgePlayer.getPlayer().getUniqueId())) {
+                                                        bridgePlayerService.stopSpectating(bridgePlayer1.getPlayer(), true);
+                                                    }
+                                                }
+                                            }
+
+                                            bridgeMapService.findSelectedMapForPlayer(bridgeMap.getName(), bridgePlayer);
+
+
+                                        });
+                            }
+                            slot.getAndIncrement();
+                        });
+            }
+        }.runTaskTimer(Bridge.getInstance(), 0, 20);
+
+        inventory.setOnClose(inventoryCloseEvent -> task.cancel());
+        return inventory.getInventory();
+    }
+
     public Inventory blockSettingsInventory(BridgePlayer bridgePlayer) {
 
-        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Block Settings", 9);
+        de.teamholy.core.bukkit.utils.Inventory inventory = new de.teamholy.core.bukkit.utils.Inventory("§8» §6Block settings", 9);
 
         for (int i = 0; i < 9; i++) {
             inventory.setItem(new de.teamholy.core.bukkit.utils.ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
@@ -592,21 +687,19 @@ public class BridgePlayerService {
         HashMap<Block, Long> blocks = (HashMap<Block, Long>) bridgePlayer.getBlocks().clone();
 
         switch (blockAnimationType) {
-            case FALLING -> {
-                blocks.forEach((block, time) -> {
-                    bridgePlayer.getBlocks().remove(block);
+            case FALLING -> blocks.forEach((block, time) -> {
+                bridgePlayer.getBlocks().remove(block);
 
-                    FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
-                    block.setType(Material.AIR);
-                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
-                            () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 15);
-                    fallingBlock.setDropItem(false);
-                    fallingBlock.setHurtEntities(false);
+                FallingBlock fallingBlock = block.getWorld().spawnFallingBlock(block.getLocation(), block.getType(), block.getData());
+                block.setType(Material.AIR);
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(),
+                        () -> getBlocksInRadius(block.getLocation(), 3).forEach(block1 -> bridgePlayer.getPlayer().sendBlockChange(block1.getLocation(), Material.AIR, (byte) 0)), 15);
+                fallingBlock.setDropItem(false);
+                fallingBlock.setHurtEntities(false);
 
 
-                    Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 15L);
-                });
-            }
+                Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), fallingBlock::remove, 15L);
+            });
             case BREAK -> blocks.forEach((block, time) -> {
                 BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
                 bridgePlayer.getBlocks().remove(block);

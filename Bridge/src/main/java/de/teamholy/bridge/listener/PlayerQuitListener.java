@@ -39,9 +39,6 @@ public class PlayerQuitListener implements Listener {
         bridgePlayerService.getTopPlayer().forEach((type, players) -> players.remove(bridgePlayer));
 
         Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayerService.updateScoreboardForPlayer(map.getMapType()), 5);
-
-        System.out.println("Player " + player.getName() + " has left the server.");
-
         if (!bridgePlayer.getBlocks().isEmpty()) {
             bridgePlayer.getBlocks().forEach((block, time) -> block.setType(Material.AIR));
         }

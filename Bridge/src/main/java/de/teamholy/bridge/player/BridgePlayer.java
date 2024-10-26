@@ -60,6 +60,8 @@ public class BridgePlayer {
     private HashMap<BridgeMapType, Long> localBestTime;
     private HashMap<BridgeMapType, Long> globalBestTime;
 
+    private BridgeMapType lastPlayedMap = BridgeMapType.SHORT;
+
     private BridgeSettings bridgeSettings;
     private Inventory inventory = createInventory();
 
@@ -117,6 +119,7 @@ public class BridgePlayer {
 
             statsProfile.setSetting(gameKey, "wins", String.valueOf(0L));
             statsProfile.setSetting(gameKey, "placedBlocks", String.valueOf(0L));
+            statsProfile.setSetting(gameKey,"lastPlayedMap", lastPlayedMap.toString().toLowerCase());
 
 
             statsProfile.setSetting(gameKey, "removeBlocks", "false");
@@ -151,6 +154,10 @@ public class BridgePlayer {
                 this.selectedSkins.put(bridgeMapType, BridgeMapSkins.getById(Integer.parseInt(statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected"))));
             }
 
+            if (statsProfile.getSetting(gameKey, "lastPlayedMap") != null) {
+                this.lastPlayedMap = BridgeMapType.mapType(statsProfile.getSetting(gameKey, "lastPlayedMap"));
+            }
+
             if (statsProfile.getSetting(gameKey, "wins") != null) {
                 this.wins = Long.parseLong(statsProfile.getSetting(gameKey, "wins"));
             }
@@ -180,6 +187,9 @@ public class BridgePlayer {
 
             if (statsProfile.getSetting(gameKey, "inventory") != null && !statsProfile.getSetting(gameKey, "inventory").isEmpty()) {
                 this.inventory = InventoryUtils.inventoryFromString(statsProfile.getSetting(gameKey, "inventory"));
+                if (!BridgeItems.correctInventory(inventory)) {
+                    this.inventory = createInventory();
+                }
             }
 
 
@@ -243,6 +253,7 @@ public class BridgePlayer {
 
         statsProfile.setSetting(gameKey, "wins", String.valueOf(this.wins));
         statsProfile.setSetting(gameKey, "placedBlocks", String.valueOf(this.placedBlocks));
+        statsProfile.setSetting(gameKey, "lastPlayedMap", lastPlayedMap.toString().toLowerCase());
 
         statsProfile.setSetting(gameKey, "removeBlocks", String.valueOf(this.bridgeSettings.isRemoveBlocks()));
         statsProfile.setSetting(gameKey, "removalTime", String.valueOf(this.bridgeSettings.getRemovalTime()));

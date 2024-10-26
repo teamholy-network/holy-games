@@ -31,7 +31,7 @@ import java.util.logging.Level;
 public class BridgeMapService {
 
     private final List<BridgeMap> maps;
-    public static int MAP_COUNT = 50;
+    public static int MAP_COUNT = 6*9;
 
     public static boolean MAPS_PASTED = false;
 
@@ -94,6 +94,36 @@ public class BridgeMapService {
         return bridgeMapOptional.orElse(null);
     }
 
+    public void findSelectedMapForPlayer(String name, BridgePlayer bridgePlayer) {
+        BridgeMap bridgeMap = maps.stream().filter(bridgeMap1 -> bridgeMap1.getName().equals(name)).findFirst().orElse(null);
+
+        if (bridgeMap == null || bridgeMap.isUsed()) {
+            bridgePlayer.getPlayer().kickPlayer("§4§ERROR §cplease rejoin the bridge server.");
+        }
+
+        System.out.println("Found map " + bridgeMap.getName() + " for player " + bridgePlayer.getPlayer().getName());
+        bridgeMap.setUser(bridgePlayer.getPlayer().getName());
+        bridgeMap.setUsed(true);
+        bridgePlayer.setMap(bridgeMap);
+        bridgePlayer.setLastPlayedMap(bridgeMap.getMapType());
+        Location location = new Location(Bukkit.getWorld(bridgeMap.getMapType().getName()),
+                bridgeMap.getSpawnLocation().getX(), bridgeMap.getSpawnLocation().getY(),
+                bridgeMap.getSpawnLocation().getZ(), bridgeMap.getMapType().getSpawnYaw(), 0);
+
+        bridgePlayer.setUneditedLocation(location);
+
+        bridgePlayer.setMapLocation(
+                location.clone().add(0, 0, bridgePlayer.getBridgeSettings().getOffsetZ()));
+        Bukkit.getScheduler().runTaskLater(Bridge.getInstance(), () -> bridgePlayer.getPlayer().teleport(bridgePlayer.getMapLocation()), 2);
+
+        if (!bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()).isDefault()) {
+            bridgeMapLoader.loadMap(bridgeMap,false, bridgeMap.getSpawnLocation(), bridgePlayer.getSelectedSkins().get(bridgeMap.getMapType()), true);
+        }
+        bridgePlayerService.prepareIngamePlayer(bridgePlayer.getPlayer());
+        bridgePlayerService.updateHologram(bridgePlayer, true);
+
+    }
+
 
     public void findMapForPlayer(BridgeMapType bridgeMapType, BridgePlayer bridgePlayer) {
         BridgeMap bridgeMap = getFreeMap(bridgeMapType);
@@ -107,6 +137,7 @@ public class BridgeMapService {
         bridgeMap.setUsed(true);
         bridgePlayer.setState(BridgePlayer.PlayerState.INGAME);
         bridgePlayer.setMap(bridgeMap);
+        bridgePlayer.setLastPlayedMap(bridgeMap.getMapType());
         Location location = new Location(Bukkit.getWorld(bridgeMap.getMapType().getName()),
                 bridgeMap.getSpawnLocation().getX(), bridgeMap.getSpawnLocation().getY(),
                 bridgeMap.getSpawnLocation().getZ(), bridgeMap.getMapType().getSpawnYaw(), 0);

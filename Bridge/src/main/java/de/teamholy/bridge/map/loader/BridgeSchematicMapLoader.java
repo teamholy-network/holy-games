@@ -35,7 +35,7 @@ public class BridgeSchematicMapLoader implements BridgeMapLoader {
             if (mapType == BridgeMapType.DIAGONAL) {
                 bridgeMap.setMapPosition(new MapPosition(location.clone().add(distance, 35, 10), location.clone().subtract(10, 2, distance)));
             } else {
-                bridgeMap.setMapPosition(new MapPosition(location.clone().add(10, 35, 10), location.clone().subtract(10, 2, distance)));
+                bridgeMap.setMapPosition(new MapPosition(location.clone().add(7, 35, 10), location.clone().subtract(7, 2, distance)));
             }
         }
 
