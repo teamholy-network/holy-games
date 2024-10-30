@@ -8,7 +8,7 @@ import de.teamholy.bridge.player.service.BridgeSoundPerkService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 
-import de.teamholy.bridge.util.FormatTime;
+import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -90,6 +90,11 @@ public class PlayerMoveListener implements Listener {
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     bridgePlayerService.spawnBlockAnimation(bridgePlayer);
                     if (bridgePlayer.getPlayer().getTicksLived() > 10) bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
+                }
+
+                if (player.getExp() > bridgePlayer.getMap().getMapType().getFailReward()) {
+                    bridgePlayerService.sendTitle(player, "", "§a+ §e1 Coin", 10, 20, 10);
+                    BukkitCore.getAPI().getCoinManager().addCoins(player.getUniqueId(), 1, true);
                 }
 
 
