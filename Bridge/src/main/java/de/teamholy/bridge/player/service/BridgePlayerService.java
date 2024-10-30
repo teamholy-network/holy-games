@@ -892,6 +892,8 @@ public class BridgePlayerService {
             }, 1);
 
 
+            System.out.println(FormatTime.formatTime(current));
+
             if (current < beforeBestGlobal || beforeBestGlobal == 0) {
                 String timerDifference = FormatTime.formatTimeManually(beforeBestGlobal - current);
 

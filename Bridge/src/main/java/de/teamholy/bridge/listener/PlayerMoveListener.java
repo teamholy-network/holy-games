@@ -82,14 +82,15 @@ public class PlayerMoveListener implements Listener {
 
                 if (bridgePlayer.isPreview()) {
                     bridgePlayerService.prepareIngamePlayer(player);
-                    bridgeMapService.loadMap(bridgePlayer.getMap(), false, bridgePlayer.getMapLocation().clone().add(-0.5,0,-0.5), bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()), true);
+                    bridgeMapService.loadMap(bridgePlayer.getMap(), false, bridgePlayer.getMapLocation().clone().add(-0.5, 0, -0.5), bridgePlayer.getSelectedSkins().get(bridgePlayer.getMap().getMapType()), true);
                     bridgePlayer.setPreview(false);
                     return;
                 }
 
                 if (!bridgePlayer.getBlocks().isEmpty()) {
                     bridgePlayerService.spawnBlockAnimation(bridgePlayer);
-                    if (bridgePlayer.getPlayer().getTicksLived() > 10) bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
+                    if (bridgePlayer.getPlayer().getTicksLived() > 10)
+                        bridgeSoundPerkService.playSoundPerk(bridgePlayer, BridgeSettings.BridgeSoundEventType.DEATH);
                 }
 
                 if (player.getExp() > bridgePlayer.getMap().getMapType().getFailReward()) {
@@ -101,10 +102,9 @@ public class PlayerMoveListener implements Listener {
                 bridgePlayerService.getScoreboard(player).updateLine(2, "§8");
                 bridgePlayer.getBlocks().clear();
                 player.setExp(0);
-                bridgePlayerService.updateHologram(bridgePlayer,false);
+                bridgePlayerService.updateHologram(bridgePlayer, false);
                 bridgePlayerService.prepareIngamePlayer(player);
                 bridgePlayerService.getPlayerTime().remove(player.getUniqueId());
-
             }
 //            if (bridgePlayerService.getPlayerTime().containsKey(player.getUniqueId())) {
 //                long playerTime = (System.currentTimeMillis() - bridgePlayerService.getPlayerTime().get(player.getUniqueId()));

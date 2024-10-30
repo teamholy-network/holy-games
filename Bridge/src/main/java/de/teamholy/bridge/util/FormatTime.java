@@ -13,14 +13,19 @@ public class FormatTime {
 
     private static final DecimalFormat df = new DecimalFormat("#.###");
 
+
     public static long getTimeDiffMillis(final long millis) {
         return System.currentTimeMillis() - millis;
     }
-
     public static String formatTimeManually(final long millis) {
         final double time = millis / 1000d;
-        final double roundedTime = Math.round(time / 0.05) * 0.05;
+        final double roundedTime = Math.round(time * 20.0) / 20.0;
         return String.format("%.2f", roundedTime);
+    }
+
+    public static String formatTime(final long millis) {
+        final double time = millis / 1000d;
+        return String.format("%.2f", time);
     }
 
   //  getFormatedString
