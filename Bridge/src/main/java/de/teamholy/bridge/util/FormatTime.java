@@ -19,9 +19,8 @@ public class FormatTime {
 
     public static String formatTimeManually(final long millis) {
         final double time = millis / 1000d;
-
-        //return df.format(time);
-        return String.format("%.2f", time);
+        final double roundedTime = Math.round(time / 0.05) * 0.05;
+        return String.format("%.2f", roundedTime);
     }
 
 
