@@ -23,8 +23,6 @@ public class FormatTime {
         return String.format("%.2f", roundedTime);
     }
 
-
-
   //  getFormatedString
     public static String getFormatedString(long millis) {
         final double time = millis / 1000d;

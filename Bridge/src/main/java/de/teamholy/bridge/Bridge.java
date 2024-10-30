@@ -69,12 +69,8 @@ public class Bridge extends JavaPlugin {
         BukkitCloudNetHelper.setMaxPlayers(BridgeMapService.MAP_COUNT);
         BukkitCloudNetHelper.updateServiceInfo();
 
-        // period 20ms
         BridgeTimerTask timer = new BridgeTimerTask();
-        //Bukkit.getScheduler().runTaskTimerAsynchronously(this, timer, 0, 20);
-        executorService.scheduleAtFixedRate(timer, 5, 50, TimeUnit.MILLISECONDS);
-
-      // mapManagement.getLoader().loadBridgeMapsStartup(20);
+        executorService.scheduleAtFixedRate(timer, 50, 50, TimeUnit.MILLISECONDS);
     }
 
     @Override
