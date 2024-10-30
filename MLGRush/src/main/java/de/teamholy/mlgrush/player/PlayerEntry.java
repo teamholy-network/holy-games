@@ -296,7 +296,9 @@ public class PlayerEntry {
                 scoreboardAPI.setLine(2, "§5");
                 scoreboardAPI.setLine(1, " §8§m--------------- ");
                 scoreboardAPI.setLine(0,"§o"+Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
-                Bukkit.getScheduler().runTask(MLGRush.getInstance(),() -> scoreboardAPI.build());
+                Bukkit.getScheduler().runTask(MLGRush.getInstance(),() -> {
+                    scoreboardAPI.build()  ;
+                });
             });
         } else {
             scoreboardAPI.clearScoreboard();

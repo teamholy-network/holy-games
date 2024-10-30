@@ -22,7 +22,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 public class BlockBreakListener implements Listener {
 
     @EventHandler
-    public void onBreak(BlockBreakEvent event) {
+    public void onBreak(BlockDamageEvent event) {
         if (event.getPlayer() == null || event.getPlayer().getGameMode() == GameMode.CREATIVE) {
             return;
         }
@@ -41,7 +41,15 @@ public class BlockBreakListener implements Listener {
         }
 
         if (bridgePlayer.getBlocks().containsKey(event.getBlock())) {
-            bridgePlayer.getBlocks().remove(event.getBlock());
+            // Remove the block from the player's block list, wouldnt work otherwise
+            bridgePlayer.getBlocks()
+                    .keySet()
+                    .stream()
+                    .filter(block -> block.getLocation() == event.getBlock().getLocation())
+                    .forEach(block -> bridgePlayer.getBlocks().remove(block));
+
+            player.playEffect(event.getBlock().getLocation(), org.bukkit.Effect.STEP_SOUND, event.getBlock().getType());
+
             event.getBlock().setType(Material.AIR);
             return;
         }
