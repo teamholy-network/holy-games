@@ -40,7 +40,7 @@ public class BridgeTimerTask implements Runnable {
 
                         displayTimer(bridgePlayer, timer, bridgePlayer.getBridgeSettings().getTimerPlace());
 
-                        bridgePlayerService.stopTimer(bridgePlayer, timer, playerTime);
+                        //bridgePlayerService.stopTimer(bridgePlayer, timer, playerTime);
                     }
 
                     if (bridgePlayer.getBridgeSettings().isRemoveBlocks()) {
