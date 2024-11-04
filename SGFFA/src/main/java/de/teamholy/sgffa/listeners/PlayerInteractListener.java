@@ -30,7 +30,7 @@ public class PlayerInteractListener implements Listener {
             if (event.getClickedBlock().getType() != Material.CHEST) return;
 
             Player player = event.getPlayer();
-            player.getInventory().addItem(SGFFA.getInstance().getItemHandler().getItemStackArrayList().get(new Random().nextInt(SGFFA.getInstance().getItemHandler().getItemStackArrayList().size())));
+            player.getInventory().addItem(SGFFA.getInstance().getItemHandler().getRandomItem());
             player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 0.9F, 0.5F);
 
             event.getClickedBlock().setType(Material.COAL_BLOCK);
