@@ -13,7 +13,6 @@ import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.lobby.Lobby;
-import de.teamholy.lobby.lobbyplayer.LobbyPlayer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.client.protocol.ScoredEntry;
@@ -90,7 +88,7 @@ public class LeaderboardInventory {
 
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 9; col++) {
-                if (row == 1 || col == 1 || col == 7 || row == 5) {
+                if (row == 1 || col == 0 || col == 8 || row == 5) {
                     inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), row * 9 + col);
                 }
             }
@@ -98,6 +96,7 @@ public class LeaderboardInventory {
 
         int colorslot = 11;
         switch (gamemode) {
+            case SKYWARSFFA -> colorslot = 11;
             case KNOCKBACKFFA -> colorslot = 12;
             case BEDWARS -> colorslot = 13;
             case RUSHBW -> colorslot = 14;
@@ -118,11 +117,13 @@ public class LeaderboardInventory {
 
 
         String clickToOpen = "§7Click to show leaderboard";
+        inventory.setItem(new ItemBuilder(Material.GRASS).setLore(clickToOpen).setName("§8» §6SkywarsFFA").build(), 1, event -> open(player, Gamemodes.SKYWARSFFA));
         inventory.setItem(new ItemBuilder(Material.STICK).setLore(clickToOpen).setName("§8» §6MLGRush").build(), 2, event -> open(player, Gamemodes.MLGRUSH));
         inventory.setItem(new ItemBuilder(Material.SANDSTONE).setLore(clickToOpen).setName("§8» §6KnockbackFFA").build(), 3, event -> open(player, Gamemodes.KNOCKBACKFFA));
         inventory.setItem(new ItemBuilder(Material.BED).setLore(clickToOpen).setName("§8» §6Bedwars").build(), 4, event -> open(player, Gamemodes.BEDWARS));
         inventory.setItem(new ItemBuilder(Material.BLAZE_ROD).setLore(clickToOpen).setName("§8» §6Rush-Bedwars").build(), 5, event -> open(player, Gamemodes.RUSHBW));
         inventory.setItem(new ItemBuilder(Material.IRON_SWORD).setLore(clickToOpen).setName("§8» §6SGFFA").build(), 6, event -> open(player, Gamemodes.SGFFA));
+        inventory.setItem(new ItemBuilder(Material.BARRIER).setName("§8-/-").build(), 6);
 
 
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 5).setName("§a§lDAILY §f§lTOP 5 §8»").build(), 36);

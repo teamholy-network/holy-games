@@ -9,84 +9,98 @@ import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Locale;
 
-/* copyright by Yassino */
 public class StatsResetHandler {
 
+    private static final int INVENTORY_SIZE = 27;
+    private static final int CONFIRM_INVENTORY_SIZE = 9;
+    private static final byte GLASS_PANE_COLOR = 15;
+    private static final String INVENTORY_TITLE = "§8» §6Statsreset";
+    private static final String CONFIRM_TITLE_PREFIX = "§8» §6Statsreset in ";
+    private static final String NO_TOKENS_MESSAGE = "§cNo statsreset tokens";
+    private static final String BUY_TOKENS_MESSAGE = "§7Do you want to buy statsreset tokens? §ashop.teamholy.de";
+    private static final String STATS_RESET_MESSAGE = "§6You currently have §a%s §6statsreset tokens! §7Click on the mode where you want to delete your stats";
+    private static final String RESET_CONFIRM_MESSAGE = "§7Do you want to reset your stats in %s%s§7?";
+    private static final String STATS_DELETED_MESSAGE = "§aYou deleted your stats in §%s%s§a!";
+    private static final String NO_STATS_MESSAGE = "§cYou don't have any stats in §%s%s";
+    private static final String ABORTED_RESET_MESSAGE = "§cAborted stats reset!";
 
     public void openStatsReset(Player player) {
-        Inventory inventory = new Inventory("§8» §6Statsreset", 3 * 9);
-
-        for (int i = 0; i < 9 * 3; i++) {
-            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
-        }
+        Inventory inventory = createInventory(INVENTORY_TITLE, INVENTORY_SIZE);
 
         PlayerProfile playerProfile = BukkitCore.getAPI().getPlayerService().getRedisCache().get(player.getUniqueId());
         if (playerProfile == null) return;
 
-
         long tokens = playerProfile.getStatsResetTokens();
         if (tokens == 0) {
-            inventory.setItem(new ItemBuilder(Material.BARRIER).setName("§cNo statsreset tokens").setLore("§7Do you want to buy statsreset tokens? §ashop.teamholy.de").build(), 13);
+            inventory.setItem(createItem(Material.BARRIER, NO_TOKENS_MESSAGE, BUY_TOKENS_MESSAGE), 13);
         } else {
-
-            ItemBuilder mlgrush = new ItemBuilder(Material.STICK).setName("§8» §6MLGRush");
-            ItemBuilder kbffa = new ItemBuilder(Material.SANDSTONE).setName("§8» §6KnockbackFFA");
-            ItemBuilder bw = new ItemBuilder(Material.BED).setName("§8» §6Bedwars");
-            ItemBuilder rbw = new ItemBuilder(Material.BLAZE_ROD).setName("§8» §6Rush-Bedwars");
-            ItemBuilder sgffa = new ItemBuilder(Material.IRON_SWORD).setName("§8» §6SGFFA");
-            ItemBuilder bridge = new ItemBuilder(Material.DIAMOND_PICKAXE).setName("§8» §6Bridge");
-
-            inventory.setItem(new ItemBuilder(Material.PAPER).setName("§6You currently have §a" + tokens + " §6statsreset tokens!").setLore("§7Click on the mode where you want to delete your stats").build(), 4);
-            inventory.setItem(mlgrush.build(), 10, clickEvent -> openStatsResetConfirm(player, playerProfile, mlgrush, Gamemodes.MLGRUSH));
-            inventory.setItem(kbffa.build(), 11, clickEvent -> openStatsResetConfirm(player, playerProfile, kbffa,Gamemodes.KNOCKBACKFFA));
-            inventory.setItem(bw.build(), 12, clickEvent -> openStatsResetConfirm(player, playerProfile, bw, Gamemodes.BEDWARS));
-            inventory.setItem(sgffa.build(), 14, clickEvent -> openStatsResetConfirm(player, playerProfile, sgffa, Gamemodes.SGFFA));
-            inventory.setItem(rbw.build(), 15, clickEvent -> openStatsResetConfirm(player, playerProfile, rbw, Gamemodes.RUSHBW));
-            inventory.setItem(bridge.build(), 16, clickEvent -> openStatsResetConfirm(player, playerProfile, bridge, Gamemodes.BRIDGE));
+            inventory.setItem(createItem(Material.PAPER, String.format(STATS_RESET_MESSAGE, tokens)), 4);
+            addGamemodeItems(inventory, player, playerProfile);
         }
 
         player.openInventory(inventory.getInventory());
     }
 
+    private void addGamemodeItems(Inventory inventory, Player player, PlayerProfile playerProfile) {
+        addItem(inventory, player, playerProfile, Material.STICK, "§8» §6MLGRush", 10, Gamemodes.MLGRUSH);
+        addItem(inventory, player, playerProfile, Material.SANDSTONE, "§8» §6KnockbackFFA", 11, Gamemodes.KNOCKBACKFFA);
+        addItem(inventory, player, playerProfile, Material.BED, "§8» §6Bedwars", 12, Gamemodes.BEDWARS);
+        addItem(inventory, player, playerProfile, Material.IRON_SWORD, "§8» §6SGFFA", 14, Gamemodes.SGFFA);
+        addItem(inventory, player, playerProfile, Material.BLAZE_ROD, "§8» §6Rush-Bedwars", 15, Gamemodes.RUSHBW);
+        addItem(inventory, player, playerProfile, Material.DIAMOND_PICKAXE, "§8» §6Bridge", 16, Gamemodes.BRIDGE);
+    }
+
+    private void addItem(Inventory inventory, Player player, PlayerProfile playerProfile, Material material, String name, int slot, Gamemodes gamemode) {
+        ItemBuilder itemBuilder = new ItemBuilder(material).setName(name);
+        inventory.setItem(itemBuilder.build(), slot, clickEvent -> openStatsResetConfirm(player, playerProfile, itemBuilder, gamemode));
+    }
+
     private void openStatsResetConfirm(Player player, PlayerProfile playerProfile, ItemBuilder itemBuilder, Gamemodes gamemode) {
-        Inventory inventory = new Inventory("§8» §6Statsreset in " +gamemode.getColor() + gamemode.toString().toLowerCase(Locale.ROOT), 9);
+        Inventory inventory = createInventory(CONFIRM_TITLE_PREFIX + gamemode.getColor() + gamemode.toString().toLowerCase(Locale.ROOT), CONFIRM_INVENTORY_SIZE);
 
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
-        }
+        inventory.setItem(itemBuilder.setLore(String.format(RESET_CONFIRM_MESSAGE, gamemode.getColor(), gamemode.toString().toLowerCase(Locale.ROOT))).build(), 4);
 
-        inventory.setItem(itemBuilder.setLore("§7Do you want to reset your stats in " + gamemode.getColor() + gamemode.toString().toLowerCase(Locale.ROOT) + "§7?").build(), 4);
+        GameProfile gameProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
 
-        GameProfile gameProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
-
-
-        inventory.setItem(new ItemBuilder(Material.INK_SACK, 1, (byte) 10).setName("§8» §aYes").build(), 2, event -> {
-
+        inventory.setItem(createItem(Material.INK_SACK, (byte) 10, "§8» §aYes"), 2, event -> {
             if (gameProfile.exists(gamemode.toString())) {
                 gameProfile.delete(gamemode.toString());
                 player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 50f, 50f);
-                player.sendMessage("§aYou deleted your stats in §" + gamemode.getColor() + gamemode.toString().toLowerCase(Locale.ROOT) + "§a!");
-                BukkitCore.getAPI().getGameService().saveEntity(gameProfile,true,true);
+                player.sendMessage(String.format(STATS_DELETED_MESSAGE, gamemode.getColor(), gamemode.toString().toLowerCase(Locale.ROOT)));
+                BukkitCore.getAPI().getGameService().saveEntity(gameProfile, true, true);
                 playerProfile.setStatsResetTokens(playerProfile.getStatsResetTokens() - 1);
-                BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile,true,true);
-
-
+                BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile, true, true);
             } else {
-                player.sendMessage("§cYou dont have any stats in §" + gamemode.getColor() + gamemode.toString().toLowerCase(Locale.ROOT));
+                player.sendMessage(String.format(NO_STATS_MESSAGE, gamemode.getColor(), gamemode.toString().toLowerCase(Locale.ROOT)));
             }
             player.closeInventory();
         });
 
-        inventory.setItem(new ItemBuilder(Material.INK_SACK, 1, (byte) 1).setName("§8» §cNo").build(), 6, event -> {
+        inventory.setItem(createItem(Material.INK_SACK, (byte) 1, "§8» §cNo"), 6, event -> {
             player.closeInventory();
-            player.sendMessage("§cAborted stats reset!");
+            player.sendMessage(ABORTED_RESET_MESSAGE);
         });
 
         player.openInventory(inventory.getInventory());
-
     }
 
+    private Inventory createInventory(String title, int size) {
+        Inventory inventory = new Inventory(title, size);
+        for (int i = 0; i < size; i++) {
+            inventory.setItem(createItem(Material.STAINED_GLASS_PANE, GLASS_PANE_COLOR, "§8//"), i);
+        }
+        return inventory;
+    }
+
+    private ItemStack createItem(Material material, byte data, String name) {
+        return new ItemBuilder(material, 1, data).setName(name).build();
+    }
+
+    private ItemStack createItem(Material material, String name, String... lore) {
+        return new ItemBuilder(material).setName(name).setLore(lore).build();
+    }
 }
