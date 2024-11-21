@@ -16,92 +16,63 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class NPCInteractListener implements Listener {
-
     @EventHandler
     public void onInteract(PlayerInteractAtNPCEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
-        String displayName = event.getNpcEntry().getDisplayName();
-
-        if (displayName.equals("§6§lQueue 4x1")) {
-            processQueue(playerEntry, GameType.FOURxONE);
-        } else if (displayName.equals("§6§lQueue 2x1")) {
-            processQueue(playerEntry, GameType.TWOxONE);
+        if (event.getNpcEntry().getDisplayName().equals("§6§lQueue 4x1")) {
+            proceesQueue(playerEntry,GameType.FOURxONE);
+        } else if (event.getNpcEntry().getDisplayName().equals("§6§lQueue 2x1")) {
+            proceesQueue(playerEntry,GameType.TWOxONE);
         }
     }
 
-    private void processQueue(PlayerEntry playerEntry, GameType gameType) {
-        Player player = playerEntry.getPlayer();
 
-        if (isOnCooldown(playerEntry)) {
-            MLGRush.getInstance().getPlayerUtils().sendActionBar(player, "§c§lPlease wait!");
+    private void proceesQueue(PlayerEntry playerEntry, GameType gameType) {
+        int size = (int) MLGRush.getInstance().getQueueHandler().getQueue().values().stream().filter(gameType1 -> gameType1 == gameType).count();
+        Player player = playerEntry.getPlayer();
+        if (playerEntry.getQueueCooldown() > System.currentTimeMillis()) {
+            MLGRush.getInstance().getPlayerUtils().sendActionBar(player,"§c§lPlease wait!");
             return;
         }
-
-        int requiredPlayers = gameType == GameType.FOURxONE ? 4 : 2;
-        int currentQueueSize = getCurrentQueueSize(gameType);
-
-        if (currentQueueSize >= requiredPlayers) {
-            notifyQueueFull(player);
+        if ((gameType == GameType.FOURxONE ? 4 : 2) <= MLGRush.getInstance().getQueueHandler().getQueue().values().stream().filter(gameType1 -> gameType1 == gameType).count()) {
+            player.sendMessage(MLGRush.getInstance().getPrefix() + "The Queue is full, please wait");
+            player.playSound(player.getLocation(), Sound.NOTE_BASS, 50f, 50f);
         } else {
-            toggleQueueStatus(playerEntry, gameType);
-            if (currentQueueSize + 1 == requiredPlayers) {
-                startGame(gameType);
+            playerEntry.setQueueCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2L));
+            if (MLGRush.getInstance().getQueueHandler().getQueue().containsKey(playerEntry)) {
+                MLGRush.getInstance().getQueueHandler().getQueue().remove(playerEntry);
+                MLGRush.getInstance().getQueueHandler().updateQueue();
+                player.sendMessage(MLGRush.getInstance().getPrefix() + "You left the queue!");
+            } else {
+                playerEntry.setChallengedPlayer(null);
+                MLGRush.getInstance().getQueueHandler().getQueue().put(playerEntry,gameType);
+                MLGRush.getInstance().getQueueHandler().updateQueue();
+                player.sendMessage(MLGRush.getInstance().getPrefix() + "You joined the queue!");
+            }
+            if ((gameType == GameType.FOURxONE ? 4 : 2) == MLGRush.getInstance().getQueueHandler().getQueue().values().stream().filter(gameType1 -> gameType1 == gameType).count()) {
+                List<Map.Entry<PlayerEntry, GameType>> collection = MLGRush.getInstance().getQueueHandler().getQueue().entrySet().stream().filter(entry -> entry.getValue() == gameType).collect(Collectors.toList());
+                GameEntry gameEntry;
+                if (gameType == GameType.TWOxONE) {
+                    gameEntry = new GameEntry(collection.get(0).getKey(),collection.get(1).getKey(),null,null);
+                } else {
+                    gameEntry = new GameEntry(collection.get(0).getKey(),collection.get(1).getKey(),collection.get(2).getKey(),collection.get(3).getKey());
+                }
+                collection.forEach(enty -> {
+                    PlayerEntry playerEntry1 = enty.getKey();
+                    playerEntry1.setChallengedPlayer(null);
+                    playerEntry1.getPlayer().playSound(playerEntry.getPlayer().getLocation(),Sound.CHEST_OPEN,2f,2f);
+                    playerEntry1.setGameEntry(gameEntry);
+                    playerEntry1.openMapSelection(gameType);
+                });
+                MLGRush.getInstance().getQueueHandler().getQueue().forEach((playerEntry1, gameType2) -> {
+                    if (gameType2 == gameType) {
+                        MLGRush.getInstance().getQueueHandler().getQueue().remove(playerEntry1);
+                    }
+                });
+                MLGRush.getInstance().getQueueHandler().updateQueue();
             }
         }
-    }
 
-    private boolean isOnCooldown(PlayerEntry playerEntry) {
-        return playerEntry.getQueueCooldown() > System.currentTimeMillis();
-    }
-
-    private int getCurrentQueueSize(GameType gameType) {
-        return (int) MLGRush.getInstance().getQueueHandler().getQueue().values().stream()
-                .filter(type -> type == gameType).count();
-    }
-
-    private void notifyQueueFull(Player player) {
-        player.sendMessage(MLGRush.getInstance().getPrefix() + "The Queue is full, please wait");
-        player.playSound(player.getLocation(), Sound.NOTE_BASS, 50f, 50f);
-    }
-
-    private void toggleQueueStatus(PlayerEntry playerEntry, GameType gameType) {
-        Player player = playerEntry.getPlayer();
-        playerEntry.setQueueCooldown(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2L));
-
-        if (MLGRush.getInstance().getQueueHandler().getQueue().containsKey(playerEntry)) {
-            MLGRush.getInstance().getQueueHandler().getQueue().remove(playerEntry);
-            player.sendMessage(MLGRush.getInstance().getPrefix() + "You left the queue!");
-        } else {
-            playerEntry.setChallengedPlayer(null);
-            MLGRush.getInstance().getQueueHandler().getQueue().put(playerEntry, gameType);
-            player.sendMessage(MLGRush.getInstance().getPrefix() + "You joined the queue!");
-        }
-
-        MLGRush.getInstance().getQueueHandler().updateQueue();
-    }
-
-    private void startGame(GameType gameType) {
-        List<Map.Entry<PlayerEntry, GameType>> playersInQueue = MLGRush.getInstance().getQueueHandler().getQueue().entrySet().stream()
-                .filter(entry -> entry.getValue() == gameType)
-                .collect(Collectors.toList());
-
-        GameEntry gameEntry;
-        if (gameType == GameType.TWOxONE) {
-            gameEntry = new GameEntry(playersInQueue.get(0).getKey(), playersInQueue.get(1).getKey(), null, null);
-        } else {
-            gameEntry = new GameEntry(playersInQueue.get(0).getKey(), playersInQueue.get(1).getKey(), playersInQueue.get(2).getKey(), playersInQueue.get(3).getKey());
-        }
-
-        playersInQueue.forEach(entry -> {
-            PlayerEntry playerEntry = entry.getKey();
-            playerEntry.setChallengedPlayer(null);
-            playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(), Sound.CHEST_OPEN, 2f, 2f);
-            playerEntry.setGameEntry(gameEntry);
-            playerEntry.openMapSelection(gameType);
-        });
-
-        playersInQueue.forEach(entry -> MLGRush.getInstance().getQueueHandler().getQueue().remove(entry.getKey()));
-        MLGRush.getInstance().getQueueHandler().updateQueue();
     }
 }
