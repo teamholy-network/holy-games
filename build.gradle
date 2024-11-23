@@ -33,10 +33,7 @@ subprojects {
             name = 'sonatype'
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
-        maven {
-            name 'koboo-reposilite'
-            url 'https://reposilite.koboo.eu/releases'
-        }
+        maven { url "https://repo.codemc.io/repository/maven-public/" }
         maven { url "https://repo.glaremasters.me/repository/concuncan/" }
         maven { url 'https://repo.cloudnetservice.eu/repository/releases/' }
     }
@@ -48,7 +45,7 @@ subprojects {
         compileOnly "de.teamholy:bukkit-core-api:${coreVersion}"
         compileOnly "de.teamholy:bungee-core-api:${coreVersion}"
         compileOnly "de.teamholy:bukkit-markupapi:${coreVersion}"
-        implementation 'eu.koboo:en2do:2.3.3'
+        implementation 'eu.koboo:en2do:3.1.9'
         implementation 'io.netty:netty-codec:4.1.97.Final'
         compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
         compileOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
@@ -60,11 +57,5 @@ subprojects {
         compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.4.0-RELEASE'
         implementation 'com.grinderwolf:slimeworldmanager-api:2.2.1'
         compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
-
-
     }
-}
-
-test {
-    useJUnitPlatform()
 }

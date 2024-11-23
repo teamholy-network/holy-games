@@ -18,6 +18,7 @@ import de.teamholy.core.api.utility.TrophieLeague;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.manager.StatsManager;
 import de.teamholy.core.bukkit.npc.NPCBuilder;
+import de.teamholy.core.bukkit.npc.models.NPCPlayer;
 import de.teamholy.core.bukkit.utils.InventoryUtils;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.core.bukkit.utils.ScoreboardAPI;
@@ -553,7 +554,9 @@ public class PlayerEntry {
     }
 
     public void setNpcShops() {
-        BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().clear();
+        NPCPlayer npcPlayer = BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer();
+        npcPlayer.getNpcs().forEach((s, npcEntry) -> npcEntry.remove());
+        npcPlayer.getNpcs().clear();
         int i = 0;
         for (TeamEntry teamEntry : Bedwars.getInstance().getCacheHandler().getTeamEntries()) {
             i++;
