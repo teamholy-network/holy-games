@@ -49,6 +49,7 @@ public class StatsResetHandler {
         addItem(inventory, player, playerProfile, Material.STICK, "§8» §6MLGRush", 10, Gamemodes.MLGRUSH);
         addItem(inventory, player, playerProfile, Material.SANDSTONE, "§8» §6KnockbackFFA", 11, Gamemodes.KNOCKBACKFFA);
         addItem(inventory, player, playerProfile, Material.BED, "§8» §6Bedwars", 12, Gamemodes.BEDWARS);
+        addItem(inventory, player, playerProfile, Material.GRASS, "§8» §6SkywarsFFA", 13, Gamemodes.SKYWARSFFA);
         addItem(inventory, player, playerProfile, Material.IRON_SWORD, "§8» §6SGFFA", 14, Gamemodes.SGFFA);
         addItem(inventory, player, playerProfile, Material.BLAZE_ROD, "§8» §6Rush-Bedwars", 15, Gamemodes.RUSHBW);
         addItem(inventory, player, playerProfile, Material.DIAMOND_PICKAXE, "§8» §6Bridge", 16, Gamemodes.BRIDGE);

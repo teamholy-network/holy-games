@@ -96,11 +96,12 @@ public class LeaderboardInventory {
 
         int colorslot = 11;
         switch (gamemode) {
-            case SKYWARSFFA -> colorslot = 11;
-            case KNOCKBACKFFA -> colorslot = 12;
-            case BEDWARS -> colorslot = 13;
-            case RUSHBW -> colorslot = 14;
+            case SKYWARSFFA -> colorslot = 16;
+            case KNOCKBACKFFA -> colorslot = 17;
+            case BEDWARS -> colorslot = 11;
+            case RUSHBW -> colorslot = 13;
             case SGFFA -> colorslot = 15;
+            case MLGRUSH -> colorslot = 12;
         }
 
         inventory.getInventory().getItem(colorslot).setDurability((short) 0);
@@ -117,13 +118,12 @@ public class LeaderboardInventory {
 
 
         String clickToOpen = "§7Click to show leaderboard";
-        inventory.setItem(new ItemBuilder(Material.GRASS).setLore(clickToOpen).setName("§8» §6SkywarsFFA").build(), 1, event -> open(player, Gamemodes.SKYWARSFFA));
+        inventory.setItem(new ItemBuilder(Material.GRASS).setLore(clickToOpen).setName("§8» §6SkywarsFFA").build(), 6, event -> open(player, Gamemodes.SKYWARSFFA));
         inventory.setItem(new ItemBuilder(Material.STICK).setLore(clickToOpen).setName("§8» §6MLGRush").build(), 2, event -> open(player, Gamemodes.MLGRUSH));
-        inventory.setItem(new ItemBuilder(Material.SANDSTONE).setLore(clickToOpen).setName("§8» §6KnockbackFFA").build(), 3, event -> open(player, Gamemodes.KNOCKBACKFFA));
-        inventory.setItem(new ItemBuilder(Material.BED).setLore(clickToOpen).setName("§8» §6Bedwars").build(), 4, event -> open(player, Gamemodes.BEDWARS));
-        inventory.setItem(new ItemBuilder(Material.BLAZE_ROD).setLore(clickToOpen).setName("§8» §6Rush-Bedwars").build(), 5, event -> open(player, Gamemodes.RUSHBW));
-        inventory.setItem(new ItemBuilder(Material.IRON_SWORD).setLore(clickToOpen).setName("§8» §6SGFFA").build(), 6, event -> open(player, Gamemodes.SGFFA));
-        inventory.setItem(new ItemBuilder(Material.BARRIER).setName("§8-/-").build(), 6);
+        inventory.setItem(new ItemBuilder(Material.SANDSTONE).setLore(clickToOpen).setName("§8» §6KnockbackFFA").build(), 5, event -> open(player, Gamemodes.KNOCKBACKFFA));
+        inventory.setItem(new ItemBuilder(Material.BED).setLore(clickToOpen).setName("§8» §6Bedwars").build(), 1, event -> open(player, Gamemodes.BEDWARS));
+        inventory.setItem(new ItemBuilder(Material.BLAZE_ROD).setLore(clickToOpen).setName("§8» §6Rush-Bedwars").build(), 3, event -> open(player, Gamemodes.RUSHBW));
+        inventory.setItem(new ItemBuilder(Material.IRON_SWORD).setLore(clickToOpen).setName("§8» §6SGFFA").build(), 7, event -> open(player, Gamemodes.SGFFA));
 
 
         inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 5).setName("§a§lDAILY §f§lTOP 5 §8»").build(), 36);

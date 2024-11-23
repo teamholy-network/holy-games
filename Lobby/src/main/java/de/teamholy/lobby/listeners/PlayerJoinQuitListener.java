@@ -66,8 +66,7 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
             new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("cac3bd6a-b55f-4bfd-8c2b-537dc06375a6"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
 
-            new NPCBuilder("labymod","§6§lWebsite", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc"))
-                    .addHolo("§6Link §7yourself with the website","§7to get §e500 coins").build(player);
+            new NPCBuilder("skywarsffa","§3§lSkyWarsFFA", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc")).build(player);
 
         },10);
     }

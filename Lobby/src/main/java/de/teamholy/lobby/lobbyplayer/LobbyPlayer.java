@@ -342,7 +342,7 @@ public class LobbyPlayer {
                 .build(), 16, (event) -> openGameSubInventory("SGFFA", Material.IRON_SWORD));
 
         inventory.setItem(new ItemBuilder(Material.IRON_PICKAXE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Bridge")))
-                .setName("§6Bridge §8/ §6Fastbuilders")
+                .setName("§8» §6Bridge §8/ §6Fastbuilders")
                 .setLore(" "
                         , " §7Practice your building skills "
                         , " §7by fast building a §ebridge §7to the end island. "
@@ -354,6 +354,20 @@ public class LobbyPlayer {
                         , "§8» §7Click to §6§nconnect"
                 )
                 .build(), 12, (event) -> openGameSubInventory("Bridge", Material.IRON_PICKAXE));
+
+        inventory.setItem(new ItemBuilder(Material.GRASS, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SkyWarsFFA")))
+                .setName("§8» §6SkywarsFFA §c§lNEW")
+                .setLore(" "
+                        , " §7Practice your combat skills "
+                        , " §7by fighting against other players on "
+                        , " §7skywars environment islands. "
+                        , " "
+                        , " §fMultiplayer "
+                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SkyWarsFFA") + " §7players"
+                        , " "
+                        , "§8» §7Click to §6§nconnect"
+                )
+                .build(), 22, (event) -> openGameSubInventory("SkyWarsFFA", Material.GRASS));
 
 
         player.openInventory(inventory.getInventory());
