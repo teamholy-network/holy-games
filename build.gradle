@@ -2,16 +2,18 @@ plugins {
     id 'java'
 }
 
+def HolyRepoUser = project.findProperty("HolyRepoUser")
+def HolyRepoPass = project.findProperty("HolyRepoPass")
+
 group = 'de.teamholy'
 version = '1.0'
 
 ext {
-    coreVersion='2.7.1'
+    coreVersion = '2.7.1'
 }
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
@@ -36,6 +38,14 @@ subprojects {
         maven { url "https://repo.codemc.io/repository/maven-public/" }
         maven { url "https://repo.glaremasters.me/repository/concuncan/" }
         maven { url 'https://repo.cloudnetservice.eu/repository/releases/' }
+        maven { url 'https://maven.enginehub.org/repo/' }
+        maven {
+            url = 'https://repo.gin1.cc/repository/releases/'
+            credentials {
+                username = HolyRepoUser
+                password = HolyRepoPass
+            }
+        }
     }
 
     dependencies {
