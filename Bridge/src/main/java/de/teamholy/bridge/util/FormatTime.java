@@ -17,10 +17,11 @@ public class FormatTime {
     public static long getTimeDiffMillis(final long millis) {
         return System.currentTimeMillis() - millis;
     }
+
     public static String formatTimeManually(final long millis) {
         final double time = millis / 1000d;
-        final double roundedTime = Math.round(time * 20.0) / 20.0;
-        return String.format("%.2f", roundedTime);
+        //final double roundedTime = Math.round(time * 20.0) / 20.0;
+        return String.format("%.2f", time);
     }
 
     public static String formatTime(final long millis) {

@@ -70,7 +70,7 @@ public class Bridge extends JavaPlugin {
         BukkitCloudNetHelper.updateServiceInfo();
 
         BridgeTimerTask timer = new BridgeTimerTask();
-        executorService.scheduleAtFixedRate(timer, 0, 50, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(timer, 0, 10, TimeUnit.MILLISECONDS);
     }
 
     @Override
