@@ -13,6 +13,7 @@ import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import de.teamholy.core.bukkit.perks.enums.PerkType;
+import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.InventoryUtils;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.core.bukkit.utils.ScoreboardAPI;
@@ -43,6 +44,8 @@ public class PlaygroundPlayer {
     private Settings settings = new Settings();
     private PlayerTask playerTask;
 
+    private Optional<PrivateWorld> privateWorld = Optional.empty();
+
     private HitPreset currentEditPreset;
     private boolean chatEdit = false;
 
@@ -55,7 +58,6 @@ public class PlaygroundPlayer {
         settings.setUuid(player.getUniqueId());
 
         BukkitCore.getAPI().getExecutor().execute(() -> {
-
             Settings temp = Clutches.getInstance().getPlaygroundManager().getPlaygroundRepository().findFirstById(player.getUniqueId());
             if (temp != null) {
                 settings = temp;
@@ -67,10 +69,6 @@ public class PlaygroundPlayer {
                 settings.setInventoryString(InventoryUtils.inventoryToString(inventory));
             }
         });
-
-
-
-
     }
 
 
@@ -437,13 +435,61 @@ public class PlaygroundPlayer {
         }
     }
 
-    public void join(PlaygroundWorld playgroundWorld) {
+    public void openPlaygroundWorlds() {
+        Inventory inventory = new Inventory("§8» §6Select map", 9);
+
+        for (int j = 0; j < 9; j++) {
+            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), j);
+        }
+
+
+        int i = 0;
+        for (PlaygroundWorld playgroundWorld : Clutches.getInstance().getPlaygroundManager().getPlaygroundWorlds()) {
+            inventory.setItem(playgroundWorld.asItemBuilder()
+                            .setLore("","§7leftlick to §ajoin","§7rightlick to create a §aprivate world"," ")
+                            .build(),
+                    i,event1 -> {
+
+                if (event1.isLeftClick()) {
+                    this.joinWorld(playgroundWorld);
+                } else if (event1.isRightClick()) {
+                    if (player.hasPermission("teamholy.perk.premium")) {
+                        return;
+                    } else {
+                        player.sendMessage(Clutches.PREFIX + "You need at least the §dVIP §7rank to create a §aprivate world");
+                    }
+
+                }
+
+                    });
+            i++;
+        }
+
+
+
+        player.openInventory(inventory.getInventory());
+    }
+
+    private void joinWorld(PlaygroundWorld playgroundWorld) {
         this.playgroundWorld = playgroundWorld;
         playerEntry.setPlayerState(PlayerState.PLAYGROUND);
         setScoreboard();
         setItems();
         player.teleport(playgroundWorld.getSpawns().get(new Random().nextInt(playgroundWorld.getSpawns().size())));
         Clutches.getInstance().getHologramManager().updateHolograms();
+    }
+
+    private void joinPrivateWorld(PlaygroundWorld playgroundWorld) {
+        this.playgroundWorld = playgroundWorld;
+        playerEntry.setPlayerState(PlayerState.PLAYGROUND);
+        setScoreboard();
+        setItems();
+
+        PrivateWorld privateWorld = new PrivateWorld(playgroundWorld);
+        setPrivateWorld(Optional.of(privateWorld));
+        Clutches.getInstance().getHologramManager().updateHolograms();
+        privateWorld.loadWorld(player);
+
     }
 
 
@@ -456,6 +502,11 @@ public class PlaygroundPlayer {
         playerEntry.setItemsSpawn();
         player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
         playerEntry.setScoreboard();
+
+        if (privateWorld.isPresent()) {
+            privateWorld.get().unloadWorld();
+        }
+
         Clutches.getInstance().getHologramManager().updateHolograms();
     }
 

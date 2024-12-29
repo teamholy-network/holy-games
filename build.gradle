@@ -39,13 +39,7 @@ subprojects {
         maven { url "https://repo.glaremasters.me/repository/concuncan/" }
         maven { url 'https://repo.cloudnetservice.eu/repository/releases/' }
         maven { url 'https://maven.enginehub.org/repo/' }
-        maven {
-            url = 'https://repo.gin1.cc/repository/releases/'
-            credentials {
-                username = HolyRepoUser
-                password = HolyRepoPass
-            }
-        }
+        mavenLocal()
     }
 
     dependencies {

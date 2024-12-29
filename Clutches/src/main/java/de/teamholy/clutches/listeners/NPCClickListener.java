@@ -46,19 +46,7 @@ public class NPCClickListener implements Listener {
             playerEntry.getPlayer().playSound(playerEntry.getPlayer().getLocation(), Sound.CHEST_OPEN, 2f, 2f);
             playerEntry.openMapInventory(ArenaType.DIAGONAL_CLUTCH);
         } else if (event.getNpcEntry().getDisplayName().equalsIgnoreCase("§a§lPLAYGROUND")) {
-            Inventory inventory = new Inventory("§8» §6Select map", 9);
-
-            for (int j = 0; j < 9; j++) {
-                inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), j);
-            }
-
-            int i = 0;
-            for (PlaygroundWorld playgroundWorld : Clutches.getInstance().getPlaygroundManager().getPlaygroundWorlds()) {
-                inventory.setItem(playgroundWorld.asItemBuilder().build(),i,event1 -> playerEntry.getPlaygroundPlayer().join(playgroundWorld));
-                i++;
-            }
-
-            player.openInventory(inventory.getInventory());
+            playerEntry.getPlaygroundPlayer().openPlaygroundWorlds();
         }
 
     }

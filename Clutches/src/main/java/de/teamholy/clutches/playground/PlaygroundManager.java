@@ -1,6 +1,11 @@
 package de.teamholy.clutches.playground;
 
 import com.google.common.collect.Lists;
+import com.grinderwolf.swm.api.exceptions.CorruptedWorldException;
+import com.grinderwolf.swm.api.exceptions.NewerFormatException;
+import com.grinderwolf.swm.api.exceptions.UnknownWorldException;
+import com.grinderwolf.swm.api.exceptions.WorldInUseException;
+import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.playground.model.Hit;
 import de.teamholy.clutches.playground.model.HitPreset;
@@ -12,6 +17,7 @@ import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /* copyright by Yassino */
@@ -47,6 +53,13 @@ public class PlaygroundManager {
                 playgroundWorld.setMaterialAndSubId(yamlConfiguration.getString(map + ".materialAndSubId"));
                 playgroundWorld.setDeathHeight(yamlConfiguration.getInt(map + ".deathHeight"));
                 playgroundWorld.setSpawns(new ArrayList(yamlConfiguration.getList(map + ".spawns")));
+                try {
+                    playgroundWorld.setSlimeWorld(Clutches.getInstance().getSlimePlugin()
+                            .loadWorld(Clutches.getInstance().getSlimeLoader(),"PLAYGROUND-" + map,true,new SlimePropertyMap()));
+                } catch (UnknownWorldException | IOException | CorruptedWorldException | NewerFormatException |
+                         WorldInUseException e) {
+                    throw new RuntimeException(e);
+                }
                 playgroundWorlds.add(playgroundWorld);
             });
         }
