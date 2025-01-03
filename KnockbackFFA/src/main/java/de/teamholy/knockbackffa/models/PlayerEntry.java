@@ -132,6 +132,11 @@ public class PlayerEntry {
         playerState = PlayerState.INGAME;
         mapEntry.updateSign();
         updateMapScoreboard();
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            onlinePlayer.showPlayer(player);
+        }
+
         player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "Use /quit to return to the lobby");
     }
 
