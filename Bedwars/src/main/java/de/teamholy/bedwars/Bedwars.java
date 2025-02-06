@@ -131,9 +131,6 @@ public class Bedwars extends JavaPlugin {
 
 
         bootrap();
-
-
-
     }
 
     public void loadLobbyChunks() {
@@ -147,9 +144,6 @@ public class Bedwars extends JavaPlugin {
     }
 
     public void bootrap() {
-
-
-
         bedwarsConfig = new BedwarsConfig();
         cacheHandler = new CacheHandler();
         inventoryHandler = new InventoryHandler();
@@ -179,7 +173,6 @@ public class Bedwars extends JavaPlugin {
         BukkitCloudNetHelper.setState("LOBBY");
         BukkitCloudNetHelper.setMaxPlayers(getMaxPlayers());
         updateMotd();
-
     }
 
     private void initMAps() {

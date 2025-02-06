@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -295,7 +296,7 @@ public class PlayerEntry {
             Bedwars.getInstance().getIngamePlayers().remove(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
         if (!Bedwars.getInstance().getSpectatePlayers().contains(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId())))
             Bedwars.getInstance().getSpectatePlayers().add(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
-        player.setGameMode(GameMode.ADVENTURE);
+        player.setGameMode(GameMode.SPECTATOR);
         player.setHealth(20.0D);
         player.setFoodLevel(20);
         player.getInventory().clear();
@@ -309,6 +310,11 @@ public class PlayerEntry {
         player.getInventory().setItem(0, new ItemBuilder(Material.COMPASS).setName("§8» §6Spectate §8(§7rightclick§8)").build());
         removePlayerFromTeam();
         player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
+
+        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
+            CraftPlayer cp = (CraftPlayer) player;
+            cp.getHandle().playerConnection.sendPacket(new PacketPlayOutGameStateChange(3, 2));
+        }, 5L);
 
         Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
             for (PotionEffect effect : player.getActivePotionEffects())
@@ -403,9 +409,14 @@ public class PlayerEntry {
                         });
 
                         radioSongPlayer.setPlaying(false);
-                        Bukkit.shutdown();
-                        Bedwars.getInstance().bootrap();
-                        cancel();
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                Bukkit.shutdown();
+                            }
+                        }.runTaskTimer(Bedwars.getInstance(), 0, 40);
+                        //Bedwars.getInstance().bootrap(); //Todo: Lookup if this is needed otherwise remove it
+                        //cancel();
                     }
                     i.getAndDecrement();
                 }
@@ -424,9 +435,14 @@ public class PlayerEntry {
                             playerEntry.quickJoin();
                         });
 
-                        Bukkit.shutdown();
-                        Bedwars.getInstance().bootrap();
-                        cancel();
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                Bukkit.shutdown();
+                            }
+                        }.runTaskTimer(Bedwars.getInstance(), 0, 40);
+                        //Bedwars.getInstance().bootrap(); //Todo: Lookup if this is needed otherwise remove it
+                        //cancel();
                     }
                     i.getAndDecrement();
                 }

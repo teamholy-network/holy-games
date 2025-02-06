@@ -56,7 +56,7 @@ public class BedwarsServerInventory implements Listener {
 
 
         inventory.setItem(new ItemBuilder(Material.BLAZE_ROD)
-                .setAmount(Lobby.getInstance().getCloudCacheHandler().getOnlineCount( "RBW2x1")).setName("§8» §62x1").build(), 10);
+                .setAmount(Lobby.getInstance().getCloudCacheHandler().getOnlineCount("RBW2x1")).setName("§8» §62x1").build(), 10);
         inventory.setItem(new ItemBuilder(Material.BLAZE_ROD)
                 .setAmount(Lobby.getInstance().getCloudCacheHandler().getOnlineCount("RBW8x1")).setName("§8» §68x1").build(), 13);
         inventory.setItem(new ItemBuilder(Material.BLAZE_ROD)
@@ -89,7 +89,7 @@ public class BedwarsServerInventory implements Listener {
 
 
         inventory.setItem(new ItemBuilder(Material.BED)
-                .setAmount(Lobby.getInstance().getCloudCacheHandler().getOnlineCount( "BW2x1")).setName("§8» §62x1").build(), 10);
+                .setAmount(Lobby.getInstance().getCloudCacheHandler().getOnlineCount("BW2x1")).setName("§8» §62x1").build(), 10);
         inventory.setItem(new ItemBuilder(Material.BED)
                 .setAmount(Lobby.getInstance().getCloudCacheHandler().getOnlineCount("BW8x1")).setName("§8» §68x1").build(), 13);
         inventory.setItem(new ItemBuilder(Material.BED)
