@@ -16,7 +16,12 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    implementation 'com.elmakers.mine.bukkit:EffectLib:9.4'
+    compileOnly 'com.elmakers.mine.bukkit:EffectLib:9.4'
+
+    implementation('de.skydb.updater:Updater-Bukkit:0.0.3-SNAPSHOT')
+    shadowJar {
+        relocate('de.skydb.updater', 'de.teamholy.knockbackffa.updater')
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
