@@ -296,7 +296,7 @@ public class PlayerEntry {
             Bedwars.getInstance().getIngamePlayers().remove(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
         if (!Bedwars.getInstance().getSpectatePlayers().contains(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId())))
             Bedwars.getInstance().getSpectatePlayers().add(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
-        player.setGameMode(GameMode.SPECTATOR);
+        player.setGameMode(GameMode.ADVENTURE);
         player.setHealth(20.0D);
         player.setFoodLevel(20);
         player.getInventory().clear();
@@ -311,10 +311,19 @@ public class PlayerEntry {
         removePlayerFromTeam();
         player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
 
-        Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
-            CraftPlayer cp = (CraftPlayer) player;
-            cp.getHandle().playerConnection.sendPacket(new PacketPlayOutGameStateChange(3, 2));
-        }, 5L);
+        new Thread(() -> {
+            try {
+                /*
+                 * Set the player to spectator mode Async triggers the AsyncCatcher in Spigot
+                 * and causes the server to give a bugged GameMode to the Player that is not
+                 * obtainable
+                 * by the API itself only via NMS
+                 */
+                player.setGameMode(GameMode.SPECTATOR);
+            } catch (Exception e) {
+                // ignore this is only to prevent the AsyncCatcher message in the console
+            }
+        }).start();
 
         Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
             for (PotionEffect effect : player.getActivePotionEffects())
