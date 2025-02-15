@@ -3,12 +3,12 @@ name: Build and Upload Gradle Shadow JAR
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
-    environment: production
+    # environment: production
 
     steps:
       # Checkout des Repositories
