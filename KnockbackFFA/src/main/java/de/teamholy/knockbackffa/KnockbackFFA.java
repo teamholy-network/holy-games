@@ -84,7 +84,7 @@ public class KnockbackFFA extends JavaPlugin {
                     if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getSpawnHight() && player.getInventory().contains(Material.MAGMA_CREAM))  {
                         player.closeInventory();
                         playerEntry.setIngameItems();
-                    } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead() && ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
+                    } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead() && !ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
                         player.damage(1234);
                     }
                 } else if (playerEntry.getPlayerState() == PlayerState.LOBBY) {
