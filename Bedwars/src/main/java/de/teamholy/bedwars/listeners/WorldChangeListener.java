@@ -14,6 +14,7 @@ public class WorldChangeListener implements Listener {
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) {
             Bukkit.getScheduler().runTaskLater(Bedwars.getInstance(), () -> {
+                player.setGameMode(GameMode.ADVENTURE);
                 new Thread(() -> {
                     try {
                         /*
