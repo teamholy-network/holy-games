@@ -87,8 +87,8 @@ public class PlayerJoinListener implements Listener {
                 if (NPCShopCommand.NPCSHOP) {
                     playerEntry.setNpcShops();
                 }
+                playerEntry.setSpectator();
             }, 5);
-            playerEntry.setSpectator();
         }
         Bedwars.getInstance().updateData();
     }
