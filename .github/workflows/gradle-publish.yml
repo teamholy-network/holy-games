@@ -68,7 +68,7 @@ jobs:
             UPLOAD_DETAILS["Clutches/build/libs/Clutches-${VERSION}-all.jar"]="${CLUTCHES_UUID}:${CLUTCHES_KEY}"
             UPLOAD_DETAILS["KnockbackFFA/build/libs/KnockbackFFA-${VERSION}-all.jar"]="${KNOCKBACKFFA_UUID}:${KNOCKBACKFFA_KEY}"
             UPLOAD_DETAILS["Lobby/build/libs/Lobby-${VERSION}-all.jar"]="${LOBBY_UUID}:${LOBBY_KEY}"
-            UPLOAD_DETAILS["MLGrush/build/libs/MLGrush-${VERSION}-all.jar"]="${MLGRUSH_UUID}:${MLGRUSH_KEY}"
+            UPLOAD_DETAILS["MLGrush/build/libs/MLGRush-${VERSION}-all.jar"]="${MLGRUSH_UUID}:${MLGRUSH_KEY}"
             UPLOAD_DETAILS["SGFFA/build/libs/SGFFA-${VERSION}-all.jar"]="${SGFFA_UUID}:${SGFFA_KEY}"
 
           for JAR_FILE in "${!UPLOAD_DETAILS[@]}"; do
