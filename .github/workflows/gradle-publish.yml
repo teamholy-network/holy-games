@@ -45,7 +45,7 @@ jobs:
       # Hochladen der JAR-Dateien auf den HTTP Server
       - name: Upload JARs to HTTP Server
         env:
-          VERSION: 2.7.2
+          VERSION: 1.0
           BEDWARS_UUID: ${{ secrets.BEDWARS_UUID }}
           BEDWARS_KEY: ${{ secrets.BEDWARS_KEY }}
           CLUTCHES_UUID: ${{ secrets.CLUTCHES_UUID }}
