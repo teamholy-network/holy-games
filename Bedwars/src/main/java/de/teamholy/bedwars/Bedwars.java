@@ -28,6 +28,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.skydb.updater.BukkitUpdaterAPI;
+import de.teamholy.bedwars.listeners.WorldChangeListener;
 
 import java.io.File;
 import java.util.ArrayList;
