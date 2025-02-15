@@ -1,0 +1,84 @@
+name: Build and Upload Gradle Shadow JAR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      # Checkout des Repositories
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Setze Java-Version
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Gradle-Wrapper ausführbar machen
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+
+      # Shadow JAR bauen (erzeugt im Ordner "output" die spezifischen JARs)
+      - name: Build JAR with Gradle ShadowJar
+        run: ./gradlew clean shadowJar
+
+      # Verifizieren, dass die JAR-Dateien erstellt wurden
+      - name: Verify JAR files
+        run: find output -type f -name '*.jar' -exec ls -lh {} \;
+
+      # Hochladen der JAR-Dateien auf den HTTP Server
+      - name: Upload JARs to HTTP Server
+        env:
+          VERSION: 2.7.2
+          BEDWARS_UUID: ${{ secrets.BEDWARS_UUID }}
+          BEDWARS_KEY: ${{ secrets.BEDWARS_KEY }}
+          CLUTCHES_UUID: ${{ secrets.CLUTCHES_UUID }}
+          CLUTCHES_KEY: ${{ secrets.CLUTCHES_KEY }}
+          KNOCKBACKFFA_UUID: ${{ secrets.KNOCKBACKFFA_UUID }}
+          KNOCKBACKFFA_KEY: ${{ secrets.KNOCKBACKFFA_KEY }}
+          LOBBY_UUID: ${{ secrets.LOBBY_UUID }}
+          LOBBY_KEY: ${{ secrets.LOBBY_KEY }}
+          MLGRUSH_UUID: ${{ secrets.MLGRUSH_UUID }}
+          MLGRUSH_KEY: ${{ secrets.MLGRUSH_KEY }}
+          SGFFA_UUID: ${{ secrets.SGFFA_UUID }}
+          SGFFA_KEY: ${{ secrets.SGFFA_KEY }}
+        run: |
+          declare -A UPLOAD_DETAILS
+
+          # UUID und Upload-Key für jede Datei definieren
+          UPLOAD_DETAILS["output/bedwars-${VERSION}-all.jar"]="${BEDWARS_UUID}:${BEDWARS_KEY}"
+          UPLOAD_DETAILS["output/clutches-${VERSION}-all.jar"]="${CLUTCHES_UUID}:${CLUTCHES_KEY}"
+          UPLOAD_DETAILS["output/knockbackffa-${VERSION}-all.jar"]="${KNOCKBACKFFA_UUID}:${KNOCKBACKFFA_KEY}"
+          UPLOAD_DETAILS["output/lobby-${VERSION}-all.jar"]="${LOBBY_UUID}:${LOBBY_KEY}"
+          UPLOAD_DETAILS["output/mlgrush-${VERSION}-all.jar"]="${MLGRUSH_UUID}:${MLGRUSH_KEY}"
+          UPLOAD_DETAILS["output/sgffa-${VERSION}-all.jar"]="${SGFFA_UUID}:${SGFFA_KEY}"
+
+          for JAR_FILE in "${!UPLOAD_DETAILS[@]}"; do
+            if [ -f "$JAR_FILE" ]; then
+              UUID_KEY=${UPLOAD_DETAILS[$JAR_FILE]}
+              UUID=${UUID_KEY%%:*}
+              UPLOAD_KEY=${UUID_KEY##*:}
+
+              UPLOAD_URL="http://updaterapi.skydb.de/uploadupdate?uuid=$UUID&uploadkey=$UPLOAD_KEY"
+              
+              RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$UPLOAD_URL" -F "file=@$JAR_FILE")
+              
+              if [ "$RESPONSE" -eq 200 ]; then
+                echo "Uploaded $JAR_FILE successfully."
+              else
+                echo "Error uploading $JAR_FILE, response code: $RESPONSE"
+                exit 1
+              fi
+            else
+              echo "Error: $JAR_FILE not found."
+              exit 1
+            fi
+          done
