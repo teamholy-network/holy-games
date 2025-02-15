@@ -7,6 +7,7 @@ import de.teamholy.knockbackffa.models.MapEntry;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -24,8 +25,10 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         if(event.getClickedBlock() != null && event.getPlayer().getItemInHand() != null && event.getPlayer().getItemInHand().getType() == Material.ENDER_PEARL) {
-             event.getPlayer().launchProjectile(EnderPearl.class);
-             event.getPlayer().setItemInHand(new ItemStack(Material.AIR));
+             Player player = event.getPlayer();
+             EnderPearl pearl = player.launchProjectile(EnderPearl.class);
+             ActiveEnderPearlManager.add(player.getUniqueId(), pearl);
+             player.setItemInHand(new ItemStack(Material.AIR));
         }
         if (event.getAction() != null || event.getItem() != null || event.getItem().getType() != null || event.getItem().getType() != Material.AIR || event.getItem().getItemMeta() != null || event.getItem().getItemMeta().getDisplayName() != null) {
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {

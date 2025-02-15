@@ -12,6 +12,7 @@ import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.handlers.CacheHandler;
 import de.teamholy.knockbackffa.handlers.PerkInventoriesHandler;
 import de.teamholy.knockbackffa.handlers.TeamingHandler;
+import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import de.teamholy.knockbackffa.models.MapEntry;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.knockbackffa.utils.PlayerUtils;
@@ -77,7 +78,7 @@ public class KnockbackFFA extends JavaPlugin {
                     if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getSpawnHight() && player.getInventory().contains(Material.MAGMA_CREAM))  {
                         player.closeInventory();
                         playerEntry.setIngameItems();
-                    } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead()) {
+                    } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead() && ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
                         player.damage(1234);
                     }
                 } else if (playerEntry.getPlayerState() == PlayerState.LOBBY) {

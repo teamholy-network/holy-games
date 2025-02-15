@@ -2,9 +2,11 @@ package de.teamholy.knockbackffa.listeners;
 
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.BowTrail;
+import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import org.bukkit.World;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,6 +64,13 @@ public class EntityShootListener implements Listener {
 
     @EventHandler
     public void onLand(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof EnderPearl) {
+            EnderPearl pearl = (EnderPearl) event.getEntity();
+            if(pearl.getShooter() instanceof Player) {
+                Player shooter = (Player) pearl.getShooter();
+                ActiveEnderPearlManager.remove(shooter.getUniqueId());
+            }
+        }
         if (event.getEntity() instanceof Arrow) {
             arrows.remove(event.getEntity().getUniqueId());
         }

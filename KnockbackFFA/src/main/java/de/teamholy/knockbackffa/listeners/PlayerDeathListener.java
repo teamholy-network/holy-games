@@ -24,6 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /* copyright by Yassino */
+/**
+ * This class implements the Listener interface to handle player death and respawn events in a KnockbackFFA game.
+ * It manages player statistics, trophy adjustments, killstreaks, and respawn behavior.
+ *
+ * The class listens for the following events:
+ * <ul>
+ *   <li>{@link PlayerDeathEvent}: Handles player death, including clearing drops, adjusting trophies,
+ *       sending messages to the player and killer, and managing killstreaks.</li>
+ *   <li>{@link PlayerRespawnEvent}: Handles player respawn, setting the respawn location and inventory.</li>
+ * </ul>
+ *
+ * It utilizes various utility classes and managers from the `de.teamholy.core` and `de.teamholy.knockbackffa` packages
+ * to manage player data, statistics, and game mechanics.
+ *
+ * @author Yassino (copyright)
+ */
 public class PlayerDeathListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -85,6 +101,8 @@ public class PlayerDeathListener implements Listener {
         }
     }
 
+    /* Particle Effects are Depricated */
+    @SuppressWarnings("deprecation")
     public static void killStreak(Player killer, Player player) {
         PlayerEntry killerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(killer.getUniqueId());
         if (killer.getLevel() % 5 == 0) {

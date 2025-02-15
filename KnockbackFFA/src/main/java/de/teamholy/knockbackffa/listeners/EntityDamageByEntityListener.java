@@ -4,6 +4,7 @@ import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.models.DamagedPlayer;
 import de.teamholy.knockbackffa.models.PlayerEntry;
+import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -23,9 +25,15 @@ public class EntityDamageByEntityListener implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player))  return;
-            PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getEntity().getUniqueId());
+        Player player = (Player) event.getEntity();
+        // Cancel void damage if an enderpearl is still active
+        if (event.getCause() == DamageCause.VOID && ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
+            event.setCancelled(true);
+            return;
+        }
+        PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
         if (playerEntry.getActiveMap() == null) return;
-        if (playerEntry.getPlayer().getLocation().getY() > playerEntry.getActiveMap().getSpawnHight()) {
+        if (player.getLocation().getY() > playerEntry.getActiveMap().getSpawnHight()) {
             event.setCancelled(true);
         }
     }
