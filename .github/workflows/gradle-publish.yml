@@ -35,9 +35,12 @@ jobs:
       - name: Build JAR with Gradle ShadowJar
         run: ./gradlew clean shadowJar
 
-      # Verifizieren, dass die JAR-Dateien erstellt wurden
+      # Verify that the JAR files are present in the expected output folders
       - name: Verify JAR files
-        run: find output -type f -name '*.jar' -exec ls -lh {} \;
+        run: |
+          for dir in Bedwars Clutches KnockbackFFA Lobby MLGrush SGFFA; do
+            find "$dir/build/libs" -type f -name "*-all.jar" -exec ls -lh {} \;
+          done
 
       # Hochladen der JAR-Dateien auf den HTTP Server
       - name: Upload JARs to HTTP Server
