@@ -22,6 +22,7 @@ import com.google.common.reflect.ClassPath;
 import de.teamholy.mlgrush.commands.QuitCMD;
 import de.teamholy.mlgrush.commands.SetupCMD;
 import de.teamholy.mlgrush.commands.SpectateCommand;
+import de.skydb.updater.BukkitUpdaterAPI;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -64,6 +65,11 @@ public class MLGRush extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+        new BukkitUpdaterAPI(this,"a02d5753-a4ee-4fc6-a96e-49b280f2111f","")
+            .setHibernat(true)
+            .setOnlyempty(true)
+            .setOnlyrestart(true);
         registerClasses();
         registerTemplates();
         getCommand("setup").setExecutor(new SetupCMD());

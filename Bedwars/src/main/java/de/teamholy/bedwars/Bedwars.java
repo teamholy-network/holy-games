@@ -27,6 +27,7 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import de.skydb.updater.BukkitUpdaterAPI;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,6 +76,12 @@ public class Bedwars extends JavaPlugin {
     @SneakyThrows
     @Override
     public void onEnable() {
+
+        instance = this;
+        new BukkitUpdaterAPI(this,"dd6371bf-ca85-4a78-839a-f9617cb442bc","")
+            .setHibernat(true)
+            .setOnlyempty(true)
+            .setOnlyrestart(true);
 
         shopUuids = new ArrayList<>();
         shopUuids.add(UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"));

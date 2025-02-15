@@ -40,6 +40,7 @@ import org.bukkit.util.Vector;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
+import de.skydb.updater.BukkitUpdaterAPI;
 
 @Getter
 @Setter
@@ -62,6 +63,10 @@ public class Clutches extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new BukkitUpdaterAPI(this,"9bd6b569-b1f2-4b7e-ad27-9bc1a1e50d72","")
+            .setHibernat(true)
+            .setOnlyempty(true)
+            .setOnlyrestart(true);
 
         slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         slimeLoader = slimePlugin.getLoader("mongodb");

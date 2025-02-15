@@ -25,8 +25,8 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import de.skydb.updater.BukkitUpdaterAPI;
 
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 /* copyright by Yassino */
@@ -51,6 +51,10 @@ public class Lobby extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new BukkitUpdaterAPI(this,"79844b1c-aa14-453b-96b2-492a3a3a4c1d","")
+            .setHibernat(true)
+            .setOnlyempty(true)
+            .setOnlyrestart(true);
         lobbyPlayerEntryHandler = new LobbyPlayerHandler();
         cloudCacheHandler = new CloudCacheHandler();
         hologramHandler = new HologramHandler(this);

@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import de.skydb.updater.BukkitUpdaterAPI;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,6 +46,10 @@ public class SGFFA extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new BukkitUpdaterAPI(this,"9dffacd9-2bc3-4601-ba95-672bd682d21c","")
+            .setHibernat(true)
+            .setOnlyempty(true)
+            .setOnlyrestart(true);
         cacheHandler = new CacheHandler();
         itemHandler = new ItemHandler();
         teamingHandler = new TeamingHandler(this);

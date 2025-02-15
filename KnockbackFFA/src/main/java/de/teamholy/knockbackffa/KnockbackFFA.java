@@ -18,6 +18,8 @@ import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.knockbackffa.utils.PlayerUtils;
 import de.teamholy.knockbackffa.tasks.ArmorColorRainbowTask;
 import com.google.common.reflect.ClassPath;
+
+import de.skydb.updater.BukkitUpdaterAPI;
 import de.slikey.effectlib.EffectLib;
 import de.slikey.effectlib.EffectManager;
 import lombok.Getter;
@@ -52,6 +54,10 @@ public class KnockbackFFA extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new BukkitUpdaterAPI(this,"37153192-6ff5-46f5-9899-8d33a67f3797","")
+            .setHibernat(true)
+            .setOnlyempty(true)
+            .setOnlyrestart(true);
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         effectManager = new EffectManager(EffectLib.instance());
         cacheHandler = new CacheHandler();
