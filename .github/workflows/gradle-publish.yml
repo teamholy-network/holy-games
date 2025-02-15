@@ -38,7 +38,7 @@ jobs:
       # Verify that the JAR files are present in the expected output folders
       - name: Verify JAR files
         run: |
-          for dir in Bedwars Clutches KnockbackFFA Lobby MLGrush SGFFA; do
+          for dir in Bedwars Clutches KnockbackFFA Lobby MLGRush SGFFA; do
             find "$dir/build/libs" -type f -name "*-all.jar" -exec ls -lh {} \;
           done
 
