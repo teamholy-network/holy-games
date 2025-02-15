@@ -89,6 +89,7 @@ public class PlayerJoinListener implements Listener {
                 }
                 playerEntry.setSpectator();
             }, 5);
+            player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
         }
         Bedwars.getInstance().updateData();
     }
