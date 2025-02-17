@@ -77,7 +77,7 @@ public class KnockbackFFA extends JavaPlugin {
 
     private void startMoveListener() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerUtils.sendActionBar(player,prefix + "§f§lmax 3 player per team (/teaming)");
+            PlayerUtils.sendActionBar(player, prefix + "§f§lmax 3 players per team (/teaming)");
             PlayerEntry playerEntry = getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
             if (playerEntry != null) {
                 if (playerEntry.getPlayerState() == PlayerState.INGAME) {
@@ -105,7 +105,7 @@ public class KnockbackFFA extends JavaPlugin {
             } catch (Exception e) {
                 sign = null;
 
-                getLogger().log(Level.WARNING,"Map " + map + " dont have a sign! /setup");
+                getLogger().log(Level.WARNING,"Map " + map + " doesn't have a sign! /setup");
             }
             cacheHandler.getMapEntrys().put(map,
                     new MapEntry(map

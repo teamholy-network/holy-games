@@ -175,7 +175,7 @@ public class PlayerDeathListener implements Listener {
         }
         event.setRespawnLocation(playerEntry.getActiveMap().getSpawn());
         player.getInventory().clear();
-        player.getInventory().setItem(4,new ItemBuilder(Material.MAGMA_CREAM).setName("§8» §6Back to lobby §8(§7rightclick§8)").build());
+        player.getInventory().setItem(4,new ItemBuilder(Material.MAGMA_CREAM).setName("§8» §6Back to Lobby §8(§7Rightclick§8)").build());
     }
 
     private ChatColor getHealthColor(double health) {
