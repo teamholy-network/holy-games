@@ -78,11 +78,7 @@ public class PlayerDeathListener implements Listener {
             killerEntry.setAlltimeTrophies(killerEntry.getAlltimeTrophies() + killerTrophies);
             playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() - playerTrophies);
 
-            killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName()
-                    + " §8(§a+" + killerTrophies
-
-                    + " §6trophies§8)"
-            );
+            killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §8(§a+" + killerTrophies + " §6trophies§8)");
             String healthString = getHealthColor(killer.getHealth()) + String.valueOf(Math.round(killer.getHealth() / 2D));
             player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You have been killed by " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName()
                     + " §8(" + healthString + "§c❤§8)"+

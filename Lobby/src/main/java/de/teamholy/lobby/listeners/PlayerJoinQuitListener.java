@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
@@ -44,6 +43,7 @@ public class PlayerJoinQuitListener implements Listener {
             //player.teleport();
             Lobby.getInstance().getLobbyPlayerEntryHandler().put(player.getUniqueId(), lobbyPlayer[0]);
             for (PotionEffect effect : player.getActivePotionEffects()) player.removePotionEffect(effect.getType());
+            player.addPotionEffect(new PotionEffect(org.bukkit.potion.PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false));
             player.getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setLeatherColor(Color.fromBGR(
                     lobbyPlayer[0].getPlayerRank().getBlue(), lobbyPlayer[0].getPlayerRank().getGreen(), lobbyPlayer[0].getPlayerRank().getRed()
             )).build());

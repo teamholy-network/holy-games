@@ -63,7 +63,7 @@ public class BlockListener implements Listener {
 
             if (playerEntry.isGrace()) {
                 playerEntry.setGrace(false);
-                player.sendMessage(SGFFA.PREFIX + "Your grace period finished!");
+                player.sendMessage(SGFFA.PREFIX + "Your grace period has ended!");
                 player.removePotionEffect(PotionEffectType.INVISIBILITY);
             }
             if (event.getEntity().getType() == EntityType.ITEM_FRAME)

@@ -121,7 +121,7 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.showPlayer(player);
                 } else {
-                    all.sendMessage(SGFFA.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getName() + " §7Ist nun nicht mehr im Vanish!");
+                    all.sendMessage(SGFFA.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getName() + " §7is no longer in vanish!");
                 }
             }
             player.setAllowFlight(false);
@@ -134,7 +134,7 @@ public class PlayerEntry {
                 if (!all.hasPermission("teamholy.team")) {
                     all.hidePlayer(player);
                 } else {
-                    all.sendMessage(SGFFA.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getName() +  " §7Ist nun im Vanish!");
+                    all.sendMessage(SGFFA.PREFIX + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), false) + player.getName() + " §7is now in vanish!");
                 }
             }
             player.setAllowFlight(true);
@@ -185,7 +185,7 @@ public class PlayerEntry {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(SGFFA.getInstance(), () -> {
             if (!player.isOnline() || !grace || vanish) return;
             grace = false;
-            player.sendMessage(SGFFA.PREFIX + "Your grace period finished!");
+            player.sendMessage(SGFFA.PREFIX + "Your grace period has ended!");
             for (PotionEffect effect : player.getActivePotionEffects()) player.removePotionEffect(effect.getType());
         },140);
     }
