@@ -7,30 +7,20 @@ import de.teamholy.knockbackffa.models.MapEntry;
 import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
-import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 /* copyright by Yassino */
 public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if(event.getClickedBlock() != null && event.getPlayer().getItemInHand() != null && event.getPlayer().getItemInHand().getType() == Material.ENDER_PEARL) {
-             Player player = event.getPlayer();
-             EnderPearl pearl = player.launchProjectile(EnderPearl.class);
-             ActiveEnderPearlManager.add(player.getUniqueId(), pearl);
-             player.setItemInHand(new ItemStack(Material.AIR));
-             player.sendMessage("§8» §7Du hast eine Enderperle geworfen.");
-        }
         if (event.getAction() != null || event.getItem() != null || event.getItem().getType() != null || event.getItem().getType() != Material.AIR || event.getItem().getItemMeta() != null || event.getItem().getItemMeta().getDisplayName() != null) {
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
