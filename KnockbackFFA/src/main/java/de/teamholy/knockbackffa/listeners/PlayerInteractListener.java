@@ -29,6 +29,7 @@ public class PlayerInteractListener implements Listener {
              EnderPearl pearl = player.launchProjectile(EnderPearl.class);
              ActiveEnderPearlManager.add(player.getUniqueId(), pearl);
              player.setItemInHand(new ItemStack(Material.AIR));
+             player.sendMessage("§8» §7Du hast eine Enderperle geworfen.");
         }
         if (event.getAction() != null || event.getItem() != null || event.getItem().getType() != null || event.getItem().getType() != Material.AIR || event.getItem().getItemMeta() != null || event.getItem().getItemMeta().getDisplayName() != null) {
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
