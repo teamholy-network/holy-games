@@ -56,14 +56,14 @@ public class EntityDamageByEntityListener implements Listener {
                 }
 
                 if (targetEntry.getTeamEntry() == null || playerEntry.getTeamEntry() == null) {
-                    COMBATLOG.put(playerEntry.getPlayer().getUniqueId(),new DamagedPlayer(targetEntry,playerEntry,System.currentTimeMillis() + 15000));
+                    COMBATLOG.put(playerEntry.getPlayer().getUniqueId(), new DamagedPlayer(targetEntry,playerEntry, System.currentTimeMillis() + 15000));
                     return;
                 }
 
                 if (targetEntry.getTeamEntry() == playerEntry.getTeamEntry()) {
                     event.setCancelled(true);
                 } else {
-                    COMBATLOG.put(playerEntry.getPlayer().getUniqueId(),new DamagedPlayer(targetEntry,playerEntry,System.currentTimeMillis() + 15000));
+                    COMBATLOG.put(playerEntry.getPlayer().getUniqueId(), new DamagedPlayer(targetEntry,playerEntry, System.currentTimeMillis() + 15000));
                 }
 
             }

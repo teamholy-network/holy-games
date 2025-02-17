@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -58,6 +59,17 @@ public class EntityShootListener implements Listener {
                         }
                     }.runTaskTimer(KnockbackFFA.getInstance(),0,10);
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        if (event.getEntity() instanceof EnderPearl) {
+            EnderPearl pearl = (EnderPearl) event.getEntity();
+            if (pearl.getShooter() instanceof Player) {
+                Player player = (Player) pearl.getShooter();
+                ActiveEnderPearlManager.add(player.getUniqueId(), pearl);
             }
         }
     }
