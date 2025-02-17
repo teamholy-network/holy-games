@@ -2,7 +2,6 @@ package de.teamholy.clutches.commands;
 
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerEntry;
-import de.teamholy.core.api.entities.clan.Clan;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

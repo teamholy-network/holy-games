@@ -1,6 +1,5 @@
 package de.teamholy.knockbackffa.handlers;
 
-import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.ArmorColor;
 import de.teamholy.knockbackffa.enums.BowTrail;

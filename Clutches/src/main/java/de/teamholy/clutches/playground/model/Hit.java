@@ -1,6 +1,5 @@
 package de.teamholy.clutches.playground.model;
 
-import jdk.jshell.Diag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

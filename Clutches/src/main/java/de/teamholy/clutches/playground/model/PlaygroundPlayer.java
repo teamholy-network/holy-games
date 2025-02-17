@@ -18,13 +18,11 @@ import de.teamholy.core.bukkit.utils.InventoryUtils;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.core.bukkit.utils.ScoreboardAPI;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

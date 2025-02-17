@@ -7,7 +7,6 @@ import de.teamholy.clutches.playground.model.PlaygroundPlayer;
 import de.teamholy.clutches.utils.PlayerUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;

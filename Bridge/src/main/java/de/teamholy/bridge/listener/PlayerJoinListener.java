@@ -1,7 +1,6 @@
 package de.teamholy.bridge.listener;
 
 import de.teamholy.bridge.Bridge;
-import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.map.service.BridgeMapService;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.service.BridgePlayerService;
@@ -11,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 

@@ -1,12 +1,8 @@
 package de.teamholy.mlgrush.listener;
 
-import de.teamholy.mlgrush.MLGRush;
-import de.teamholy.mlgrush.player.PlayerEntry;
-import de.teamholy.mlgrush.player.PlayerState;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -22,7 +18,6 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.util.Vector;
 
 public class BlockListener implements Listener {
     @EventHandler

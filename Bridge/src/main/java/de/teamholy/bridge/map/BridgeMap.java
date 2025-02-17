@@ -1,21 +1,12 @@
 package de.teamholy.bridge.map;
 
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.object.schematic.Schematic;
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import de.teamholy.bridge.Bridge;
 import de.teamholy.bridge.map.position.MapPosition;
 import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 /**
  * Copyright (c) charon, All Rights Reserved

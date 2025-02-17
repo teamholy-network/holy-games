@@ -18,8 +18,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
-
 /* copyright by Yassino */
 public class PlayerDeathRespawnListener implements Listener {
     @EventHandler

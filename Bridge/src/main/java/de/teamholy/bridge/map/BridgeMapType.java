@@ -6,8 +6,6 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
-
 @AllArgsConstructor
 @Getter
 public enum BridgeMapType {

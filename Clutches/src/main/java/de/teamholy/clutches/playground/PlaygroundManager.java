@@ -11,7 +11,6 @@ import de.teamholy.clutches.playground.model.Hit;
 import de.teamholy.clutches.playground.model.HitPreset;
 import de.teamholy.clutches.playground.model.PlaygroundWorld;
 import de.teamholy.clutches.playground.task.ArmorColorRainbowTask;
-import de.teamholy.clutches.playground.task.PlayerTask;
 import de.teamholy.core.bukkit.BukkitCore;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;

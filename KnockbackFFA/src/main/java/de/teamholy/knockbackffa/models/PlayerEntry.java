@@ -13,8 +13,6 @@ import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.perks.PerkManager;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
-import de.teamholy.knockbackffa.enums.*;
-import de.teamholy.knockbackffa.listeners.PlayerNameTagListener;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

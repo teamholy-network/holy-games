@@ -1,7 +1,6 @@
 package de.teamholy.bridge.util;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
 /**
  * Copyright (c) charon, All Rights Reserved

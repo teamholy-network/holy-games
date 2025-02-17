@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
-import java.util.Random;
 
 /* copyright by Yassino */
 public class PlayerInteractListener implements Listener {

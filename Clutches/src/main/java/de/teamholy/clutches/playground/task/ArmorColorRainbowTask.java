@@ -3,7 +3,6 @@ package de.teamholy.clutches.playground.task;
 import de.teamholy.clutches.Clutches;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.enums.ArmorColor;
-import de.teamholy.clutches.playground.model.PlaygroundPlayer;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;

@@ -1,12 +1,10 @@
 package de.teamholy.clutches.playground;
 
 import de.teamholy.clutches.Clutches;
-import de.teamholy.clutches.listeners.PlayerInteractListener;
 import de.teamholy.clutches.player.PlayerEntry;
 import de.teamholy.clutches.player.PlayerState;
 import de.teamholy.clutches.playground.model.PlaygroundPlayer;
 import de.teamholy.clutches.utils.PlayerUtils;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

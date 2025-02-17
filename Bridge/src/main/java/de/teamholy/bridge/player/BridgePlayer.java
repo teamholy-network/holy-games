@@ -29,7 +29,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
