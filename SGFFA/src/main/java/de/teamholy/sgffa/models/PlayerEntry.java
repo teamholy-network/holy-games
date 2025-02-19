@@ -16,6 +16,7 @@ import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -38,25 +39,26 @@ public class PlayerEntry {
 
     public int alltimeTrophies = 1000;
 
+    // New field to store the spawn location for movement check
+    private Location spawnLocation;
+
     public PlayerEntry(Player player) {
         this.player = player;
 
-
         GameProfile statsProfile = BukkitCore.getAPI().getGameService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()));
-
 
         if (!statsProfile.exists(Gamemodes.SGFFA.toString())) {
             for (StatsType time : StatsType.values()) {
-                for (Gamemodes.StatKey statKey : Gamemodes.SGFFA.getStatKeys()) statsProfile.setStat(Gamemodes.SGFFA.toString(), time, statKey.getName(), statKey.getDefaultValue());
+                for (Gamemodes.StatKey statKey : Gamemodes.SGFFA.getStatKeys())
+                    statsProfile.setStat(Gamemodes.SGFFA.toString(), time, statKey.getName(), statKey.getDefaultValue());
             }
 
-            BukkitCore.getAPI().getGameService().saveEntity(statsProfile,true,true);
+            BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
-            alltimeTrophies = (int) statsProfile.getStat(Gamemodes.SGFFA.toString(),StatsType.ALLTIME,"trophies");
+            alltimeTrophies = (int) statsProfile.getStat(Gamemodes.SGFFA.toString(), StatsType.ALLTIME, "trophies");
         }
 
-
-        scoreboardAPI = new ScoreboardAPI().createScoreboard(player,"§a");
+        scoreboardAPI = new ScoreboardAPI().createScoreboard(player, "§a");
         setScoreboard();
         performSpawn();
     }
@@ -68,8 +70,6 @@ public class PlayerEntry {
             scoreboardAPI.updateLine(11," §7Team§8: §a" + teamEntry.getTag());
         }
     }
-
-
 
     public void updateMapScore() {
         scoreboardAPI.updateLine(12," §7Map§8: §a" + SGFFA.getInstance().getActiveMapEntry().getMapName());
@@ -98,8 +98,6 @@ public class PlayerEntry {
             Bukkit.getScheduler().runTask(SGFFA.getInstance(),() -> scoreboardAPI.build());
         });
     }
-
-
 
     public void updateScoreboard() {
         BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(),() -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),gameProfile -> {
@@ -180,14 +178,33 @@ public class PlayerEntry {
         this.player.getInventory().setLeggings(new ItemBuilder(Material.LEATHER_LEGGINGS).setUnbreakable().build());
         this.player.getInventory().setBoots(new ItemBuilder(Material.LEATHER_BOOTS).setUnbreakable().build());
 
-        if (SGFFA.getInstance().getActiveMapEntry() != null)
-        Bukkit.getScheduler().runTaskLater(SGFFA.getInstance(), () -> player.teleport(SGFFA.getInstance().getActiveMapEntry().getSpawns().get(new Random().nextInt(SGFFA.getInstance().getActiveMapEntry().getSpawns().size()))),1);
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(SGFFA.getInstance(), () -> {
-            if (!player.isOnline() || !grace || vanish) return;
-            grace = false;
-            player.sendMessage(SGFFA.PREFIX + "Your grace period has ended!");
-            for (PotionEffect effect : player.getActivePotionEffects()) player.removePotionEffect(effect.getType());
-        },140);
+        if (SGFFA.getInstance().getActiveMapEntry() != null) {
+            Bukkit.getScheduler().runTaskLater(SGFFA.getInstance(), () -> {
+                // Teleport to a random spawn and record the location
+                player.teleport(SGFFA.getInstance().getActiveMapEntry().getSpawns().get(new Random().nextInt(SGFFA.getInstance().getActiveMapEntry().getSpawns().size())));
+                spawnLocation = player.getLocation();
+            }, 1);
+        }
+
+        // Replacing the single delayed task with a repeating check that ends grace only if the player moved
+        final int[] taskId = new int[1];
+        taskId[0] = Bukkit.getScheduler().runTaskTimer(SGFFA.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                if (!player.isOnline() || !grace || vanish) {
+                    Bukkit.getScheduler().cancelTask(taskId[0]);
+                    return;
+                }
+                // Only end grace period if spawnLocation is set and the player has moved more than 1 unit
+                if (spawnLocation != null && player.getLocation().distance(spawnLocation) > 1) {
+                    grace = false;
+                    player.sendMessage(SGFFA.PREFIX + "Your grace period has ended!");
+                    for (PotionEffect effect : player.getActivePotionEffects())
+                        player.removePotionEffect(effect.getType());
+                    Bukkit.getScheduler().cancelTask(taskId[0]);
+                }
+            }
+        }, 140L, 20L).getTaskId();
     }
 
     public void sendActionBar(String message) {
