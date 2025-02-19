@@ -53,16 +53,24 @@ subprojects {
 
     }
 
+    configurations.all {
+        resolutionStrategy {
+            force "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
+        }
+    }
+
     dependencies {
-        compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "5.3.0";
-        compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.8.8-R0.1-SNAPSHOT'
         compileOnly("de.teamholy:holy-core-api:$coreVersion");
         compileOnly "de.teamholy:bukkit-core-api:${coreVersion}"
         compileOnly "de.teamholy:bungee-core-api:${coreVersion}"
         compileOnly "de.teamholy:bukkit-markupapi:${coreVersion}"
+        compileOnly 'com.comphenix.protocol:ProtocolLib:5.3.0'
         compileOnly 'eu.koboo:en2do:3.1.9'
         compileOnly 'io.netty:netty-codec:4.1.97.Final'
         compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
+        compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
+            transitive = false
+        }
         compileOnly 'com.github.azbh111:craftbukkit-1.8.8:R'
         compileOnly 'org.mongodb:mongo-java-driver:3.12.8'
         compileOnly 'org.redisson:redisson:3.19.1'
