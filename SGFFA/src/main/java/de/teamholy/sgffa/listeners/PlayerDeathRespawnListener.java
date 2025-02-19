@@ -66,7 +66,7 @@ public class PlayerDeathRespawnListener implements Listener {
                              + " §6trophies§8)"
             );
             String healthString = getHealthColor(killer.getHealth()) + String.valueOf(Math.round(killer.getHealth() / 2D));
-            player.sendMessage(SGFFA.PREFIX + "You have been killed by " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + killer.getName()
+            player.sendMessage(SGFFA.PREFIX + "You have been killed by " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName()
                     + " §8(" + healthString + "§c❤§8)"+
                     " §8(§c-" + playerTrophies + " §6trophies§8)"
             );
