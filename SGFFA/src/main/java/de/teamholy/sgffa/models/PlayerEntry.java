@@ -171,7 +171,7 @@ public class PlayerEntry {
         grace = true;
 
         for (PotionEffect effect : player.getActivePotionEffects()) player.removePotionEffect(effect.getType());
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999, 0));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
 
         this.player.getInventory().setHelmet(new ItemBuilder(Material.LEATHER_HELMET).setUnbreakable().build());
         this.player.getInventory().setChestplate(new ItemBuilder(Material.LEATHER_CHESTPLATE).setUnbreakable().build());
