@@ -13,8 +13,6 @@ import de.teamholy.lobby.listeners.CloudListener;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayerHandler;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.reflect.ClassPath;
-import de.dytanic.cloudnet.driver.CloudNetDriver;
-import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.lobby.handlers.CloudCacheHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +23,8 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.skydb.updater.BukkitUpdaterAPI;
 
 import java.util.concurrent.ExecutionException;
@@ -63,7 +63,7 @@ public class Lobby extends JavaPlugin {
         bedwarsSpectateInventory = new BedwarsSpectateInventory();
         leaderboardInventory = new LeaderboardInventory();
         registerListener("de.teamholy.lobby.listeners");
-        if (Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0].equalsIgnoreCase("PremiumLobby")) {
+        if (Bukkit.getServerName().contains("Premium")) {
             prefix = "§6PremiumLobby §8× §7";
             isPremiumLobby = true;
         }
@@ -92,8 +92,6 @@ public class Lobby extends JavaPlugin {
         CloudNetDriver.getInstance().getEventManager().registerListener(new CloudListener());
         Bukkit.getPluginManager().registerEvents(bedwarsServerInventory,this);
         Bukkit.getPluginManager().registerEvents(bedwarsSpectateInventory,this);
-
-
     }
 
 
