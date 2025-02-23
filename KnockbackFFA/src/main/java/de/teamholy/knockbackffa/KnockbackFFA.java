@@ -81,13 +81,13 @@ public class KnockbackFFA extends JavaPlugin {
             PlayerEntry playerEntry = getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
             if (playerEntry != null) {
                 if (playerEntry.getPlayerState() == PlayerState.INGAME) {
-                    if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getSpawnHight() && player.getInventory().contains(Material.MAGMA_CREAM))  {
+                    if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getSpawnHight() && player.getInventory().contains(Material.MAGMA_CREAM) && player.getGameMode() == GameMode.SURVIVAL) {
                         player.closeInventory();
                         playerEntry.setIngameItems();
                     } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead() && !ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
                         player.damage(1234);
                     }
-                } else if (playerEntry.getPlayerState() == PlayerState.LOBBY) {
+                } else if (playerEntry.getPlayerState() == PlayerState.LOBBY && player.getGameMode() == GameMode.SURVIVAL) {
                     if (player.getLocation().getBlockY() < 10) {
                         player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"));
                     }
