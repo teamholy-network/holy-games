@@ -53,25 +53,66 @@ public class KnockbackFFA extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Initialize plugin instance
+        initializePlugin();
+        
+        // Initialize configuration and managers
+        initializeConfiguration();
+        
+        // Register commands
+        registerCommands();
+        
+        // Register event listeners
+        registerListener("de.teamholy.knockbackffa.listeners");
+        
+        // Load maps and entities
+        registerMaps();
+        
+        // Start scheduled tasks
+        startTasks();
+    }
+
+    /**
+     * Initialize plugin instance and core services
+     */
+    private void initializePlugin() {
         instance = this;
         new BukkitUpdaterAPI(this,"37153192-6ff5-46f5-9899-8d33a67f3797","")
             .setHibernat(true)
             .setOnlyempty(true)
             .setOnlyrestart(true);
+    }
+    
+    /**
+     * Initialize configuration and managers
+     */
+    private void initializeConfiguration() {
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         effectManager = new EffectManager(EffectLib.instance());
         cacheHandler = new CacheHandler();
         playerUtils = new PlayerUtils();
         teamingHandler = new TeamingHandler(this);
         perkInventoriesHandler = new PerkInventoriesHandler();
+    }
+    
+    /**
+     * Register commands with their executors
+     */
+    private void registerCommands() {
         getCommand("setup").setExecutor(new SetupCommand());
         getCommand("quit").setExecutor(new QuitCommand());
         getCommand("vanish").setExecutor(new VanishCommand());
         getCommand("teaming").setExecutor(new TeamingCommand());
-        registerListener("de.teamholy.knockbackffa.listeners");
-        registerMaps();
+    }
+    
+    /**
+     * Start scheduled tasks and holograms
+     */
+    private void startTasks() {
         startMoveListener();
-        new TopHolo(BukkitCore.getInstance().getLocationManager().getLocation("topHolo"), Gamemodes.KNOCKBACKFFA, new ItemBuilder(Material.SANDSTONE).build());
+        new TopHolo(BukkitCore.getInstance().getLocationManager().getLocation("topHolo"), 
+                    Gamemodes.KNOCKBACKFFA, 
+                    new ItemBuilder(Material.SANDSTONE).build());
         new ArmorColorRainbowTask(this);
     }
 
@@ -101,10 +142,8 @@ public class KnockbackFFA extends JavaPlugin {
             Sign sign;
             try {
                 sign = (Sign) ((Location) yamlConfiguration.get(map + ".sign")).getBlock().getState();
-
             } catch (Exception e) {
                 sign = null;
-
                 getLogger().log(Level.WARNING,"Map " + map + " doesn't have a sign! /setup");
             }
             cacheHandler.getMapEntrys().put(map,

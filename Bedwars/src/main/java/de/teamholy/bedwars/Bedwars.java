@@ -252,7 +252,7 @@ public class Bedwars extends JavaPlugin {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
                 if (obj instanceof Listener) {
                     this.getServer().getPluginManager().registerEvents((Listener) obj, this);
                 }
