@@ -59,14 +59,11 @@ public class BridgeSchematicMapLoader implements BridgeMapLoader {
             if (format == null) {
                 System.out.println("Format not found");
                 return null;
-            }
-
-            try {
+            }            try {
                 var bukkitWorld = FaweAPI.getWorld(bridgeMap.getMapType().getName());
                 BlockVector vector = new BlockVector(bridgeMap.getPasteLocation().getBlockX(), bridgeMap.getPasteLocation().getBlockY(), bridgeMap.getPasteLocation().getBlockZ());
 
-                Schematic schematic = format.load(file);
-
+                Schematic schematic = FaweAPI.load(file);
                 schematic.paste(bukkitWorld, vector, true, air, null);
 
             } catch (IOException exception) {
