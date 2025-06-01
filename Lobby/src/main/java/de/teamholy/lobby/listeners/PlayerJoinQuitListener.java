@@ -57,6 +57,7 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("knockbackffa","§e§lKnockbackFFA", UUID.fromString("2646aecf-ddcc-4f3a-bedd-3b2c8d386350"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("kbffa")).build(player);
             new NPCBuilder("sgffa","§a§lSGFFA", UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("sgffa")).build(player);
             new NPCBuilder("bridge","§e§lBridge", UUID.fromString("d08cbbd7-5e65-43e1-ad58-6ed90a560818"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bridge")).build(player);
+            new NPCBuilder("duels","§d§lDuels", UUID.fromString("8667ba71-b85a-4004-af54-457a9734eed8"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("duels")).build(player);
 
             new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bedwars")).build(player);
 
