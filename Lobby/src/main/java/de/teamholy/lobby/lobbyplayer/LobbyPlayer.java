@@ -353,9 +353,7 @@ public class LobbyPlayer {
                         , " "
                         , "§8» §7Click to §6§nconnect"
                 )
-                .build(), 12, (event) -> openGameSubInventory("Bridge", Material.IRON_PICKAXE));
-
-        inventory.setItem(new ItemBuilder(Material.GRASS, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SkyWarsFFA")))
+                .build(), 12, (event) -> openGameSubInventory("Bridge", Material.IRON_PICKAXE));        inventory.setItem(new ItemBuilder(Material.GRASS, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SkyWarsFFA")))
                 .setName("§8» §6SkywarsFFA §c§lNEW")
                 .setLore(" "
                         , " §7Practice your combat skills "
@@ -368,6 +366,20 @@ public class LobbyPlayer {
                         , "§8» §7Click to §6§nconnect"
                 )
                 .build(), 22, (event) -> openGameSubInventory("SkyWarsFFA", Material.GRASS));
+
+        inventory.setItem(new ItemBuilder(Material.DIAMOND_SWORD, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Duels")))
+                .setName("§8» §6Duels")
+                .setLore(" "
+                        , " §7Fight against other players in intense 1v1 duels! "
+                        , " §7Choose your kit and prove your skills "
+                        , " §7in various combat scenarios. "
+                        , " "
+                        , " §fMultiplayer "
+                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Duels") + " §7players"
+                        , " "
+                        , "§8» §7Click to §6§nconnect"
+                )
+                .build(), 23, (event) -> openGameSubInventory("Duels", Material.DIAMOND_SWORD));
 
 
         player.openInventory(inventory.getInventory());
