@@ -44,6 +44,7 @@ public class HologramHandler {
         gameholograms.put("SGFFA",createHologram(new ItemBuilder(Material.IRON_SWORD).build(), BukkitCore.getInstance().getLocationManager().getLocation("sgffa")));
         gameholograms.put("Bridge",createHologram(new ItemBuilder(Material.IRON_PICKAXE).build(), BukkitCore.getInstance().getLocationManager().getLocation("bridge")));
         gameholograms.put("SkywarsFFA",createHologram(new ItemBuilder(Material.GRASS).build(), BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc")));
+        gameholograms.put("Duels",createHologram(new ItemBuilder(Material.DIAMOND_SWORD).build(), BukkitCore.getInstance().getLocationManager().getLocation("duels")));
 
 
         ArrayList<String> arrayList = new ArrayList<>();
