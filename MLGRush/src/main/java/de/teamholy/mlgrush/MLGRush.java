@@ -1,7 +1,12 @@
 package de.teamholy.mlgrush;
 
+import com.google.common.reflect.ClassPath;
+import de.skydb.updater.BukkitUpdaterAPI;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.mlgrush.commands.QuitCMD;
+import de.teamholy.mlgrush.commands.SetupCMD;
 import de.teamholy.mlgrush.commands.SpawnCMD;
+import de.teamholy.mlgrush.commands.SpectateCommand;
 import de.teamholy.mlgrush.enums.GameType;
 import de.teamholy.mlgrush.game.GameEntry;
 import de.teamholy.mlgrush.game.GameEntryHandler;
@@ -18,11 +23,6 @@ import de.teamholy.mlgrush.player.PlayerEntryHandler;
 import de.teamholy.mlgrush.player.PlayerState;
 import de.teamholy.mlgrush.utils.LocationManager;
 import de.teamholy.mlgrush.utils.PlayerUtils;
-import com.google.common.reflect.ClassPath;
-import de.teamholy.mlgrush.commands.QuitCMD;
-import de.teamholy.mlgrush.commands.SetupCMD;
-import de.teamholy.mlgrush.commands.SpectateCommand;
-import de.skydb.updater.BukkitUpdaterAPI;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -38,13 +38,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter @Setter
+/**
+ * Main plugin class for MLGRush game mode.
+ * Handles game initialization, management, and cleanup.
+ */
+@Getter
+@Setter
 public class MLGRush extends JavaPlugin {
 
-    @Getter
-    public static MLGRush instance;
+    private static MLGRush instance;
     private MapEntryHandler mapEntryHandler;
     private MapTemplateEntryHandler mapTemplateEntryHandler;
     private LocationManager locationManager;
@@ -57,19 +62,19 @@ public class MLGRush extends JavaPlugin {
 
 
     private String prefix = "§6MLGRush §8× §7";
-    private ArrayList<String> templates = new ArrayList<>();
-    private ArrayList<String> maps = new ArrayList<>();
+    private List<String> templates = new ArrayList<>();
+    private List<String> maps = new ArrayList<>();
 
-    private File cfgfFile = new File("plugins//MLGRush//ChefConfig.yml");
-    private YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
+    private final File configFile = new File("plugins/MLGRush/ChefConfig.yml");
+    private final YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 
     @Override
     public void onEnable() {
         instance = this;
-        new BukkitUpdaterAPI(this,"a02d5753-a4ee-4fc6-a96e-49b280f2111f","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
+        new BukkitUpdaterAPI(this, "a02d5753-a4ee-4fc6-a96e-49b280f2111f", "")
+                .setHibernat(true)
+                .setOnlyempty(true)
+                .setOnlyrestart(true);
         registerClasses();
         registerTemplates();
         getCommand("setup").setExecutor(new SetupCMD());
@@ -81,19 +86,17 @@ public class MLGRush extends JavaPlugin {
         startIngameCounter();
         startIngameKiller();
 
-
         lobby = BukkitCore.getInstance().getLocationManager().getConfigLocation("lobby");
         for (World world : Bukkit.getWorlds()) {
             world.setMonsterSpawnLimit(0);
             world.setTicksPerMonsterSpawns(8888888);
             world.setTime(0);
-            world.setGameRuleValue("doDaylightCycle","false");
-            world.setGameRuleValue("doMobSpawning","false");
-            for (Entity ent : Bukkit.getWorld(world.getName()).getEntities()) {
-                if (ent instanceof Animals)
-                    ent.remove();
-                if (ent instanceof Monster)
-                    ent.remove();
+            world.setGameRuleValue("doDaylightCycle", "false");
+            world.setGameRuleValue("doMobSpawning", "false");
+            for (Entity entity : Bukkit.getWorld(world.getName()).getEntities()) {
+                if (entity instanceof Animals || entity instanceof Monster) {
+                    entity.remove();
+                }
             }
         }
     }
@@ -114,30 +117,31 @@ public class MLGRush extends JavaPlugin {
     }
 
     private void registerTemplates() {
-        templates = (ArrayList) yamlConfiguration.getStringList("Templates");
-        templates.forEach(templates -> getMapTemplateEntryHandler().put(templates,new MapTemplateEntry(templates, Material.valueOf(yamlConfiguration.getString(templates + ".material")))));
-        maps = (ArrayList) yamlConfiguration.getStringList("Maps");
+        templates = new ArrayList<>(yamlConfiguration.getStringList("Templates"));
+        templates.forEach(template -> getMapTemplateEntryHandler().put(template,
+                new MapTemplateEntry(template, Material.valueOf(yamlConfiguration.getString(template + ".material")))));
+        maps = new ArrayList<>(yamlConfiguration.getStringList("Maps"));
         maps.forEach(map -> {
-            getMapEntryHandler().put(map,new MapEntry(map));
+            getMapEntryHandler().put(map, new MapEntry(map));
             String[] mapSplit = map.split("-");
             MapEntry mapEntry = getMapEntryHandler().get(map);
-            mapEntry.setDeathhight(yamlConfiguration.getDouble(map + ".deathhight"));
+            mapEntry.setDeathHeight(yamlConfiguration.getDouble(map + ".deathHeight"));
             mapEntry.setMapTemplate(getMapTemplateEntryHandler().get(mapSplit[0]));
-            mapEntry.setBed1(getLocationManager().getConfigLocation(map+ ".bed1",yamlConfiguration));
-            mapEntry.setBed2(getLocationManager().getConfigLocation(map+ ".bed2",yamlConfiguration));
-            mapEntry.setSpawn1(getLocationManager().getConfigLocation(map+ ".spawn1",yamlConfiguration));
-            mapEntry.setSpawn2(getLocationManager().getConfigLocation(map+ ".spawn2",yamlConfiguration));
-            mapEntry.setRegion1(getLocationManager().getConfigLocation(map+ ".region1",yamlConfiguration));
-            mapEntry.setRegion2(getLocationManager().getConfigLocation(map+ ".region2",yamlConfiguration));
-            mapEntry.setRegionManager(new RegionManager(mapEntry.getRegion1(),mapEntry.getRegion2()));
+            mapEntry.setBed1(getLocationManager().getConfigLocation(map + ".bed1", yamlConfiguration));
+            mapEntry.setBed2(getLocationManager().getConfigLocation(map + ".bed2", yamlConfiguration));
+            mapEntry.setSpawn1(getLocationManager().getConfigLocation(map + ".spawn1", yamlConfiguration));
+            mapEntry.setSpawn2(getLocationManager().getConfigLocation(map + ".spawn2", yamlConfiguration));
+            mapEntry.setRegion1(getLocationManager().getConfigLocation(map + ".region1", yamlConfiguration));
+            mapEntry.setRegion2(getLocationManager().getConfigLocation(map + ".region2", yamlConfiguration));
+            mapEntry.setRegionManager(new RegionManager(mapEntry.getRegion1(), mapEntry.getRegion2()));
             mapEntry.setGameType(GameType.TWOxONE);
-            Location bed3 = getLocationManager().getConfigLocation(map+ ".bed3",yamlConfiguration);
+            Location bed3 = getLocationManager().getConfigLocation(map + ".bed3", yamlConfiguration);
             if (bed3 != null) {
                 mapEntry.setGameType(GameType.FOURxONE);
                 mapEntry.setBed3(bed3);
-                mapEntry.setBed4(getLocationManager().getConfigLocation(map+ ".bed4",yamlConfiguration));
-                mapEntry.setSpawn3(getLocationManager().getConfigLocation(map+ ".spawn3",yamlConfiguration));
-                mapEntry.setSpawn4(getLocationManager().getConfigLocation(map+ ".spawn4",yamlConfiguration));
+                mapEntry.setBed4(getLocationManager().getConfigLocation(map + ".bed4", yamlConfiguration));
+                mapEntry.setSpawn3(getLocationManager().getConfigLocation(map + ".spawn3", yamlConfiguration));
+                mapEntry.setSpawn4(getLocationManager().getConfigLocation(map + ".spawn4", yamlConfiguration));
             }
             mapEntry.getMapTemplate().getFreeTemplatesCount().add(mapEntry);
             mapEntry.getMapTemplate().getTemplatesCount().add(mapEntry);
@@ -155,7 +159,7 @@ public class MLGRush extends JavaPlugin {
                         }
                     }
                     if (playerEntry.getGameEntry().getGameState() == GameState.INGAME && playerEntry.getPlayerState() == PlayerState.INGAME) {
-                        if (playerEntry.getGameEntry().getMapEntry().getDeathhight() > playerEntry.getPlayer().getLocation().getY()) {
+                        if (playerEntry.getGameEntry().getMapEntry().getDeathHeight() > playerEntry.getPlayer().getLocation().getY()) {
                             playerEntry.killPlayer();
                         }
                     }
@@ -167,7 +171,7 @@ public class MLGRush extends JavaPlugin {
                     }
                 }
             }
-        },0,5);
+        }, 0, 5);
     }
 
     private void startIngameCounter() {
@@ -183,22 +187,32 @@ public class MLGRush extends JavaPlugin {
                         gameEntry.getPlayersPlaying().forEach(playerEntry1 -> {
                             i.getAndIncrement();
                             if (gameEntry.getPlayersPlaying().size() == 2 && i.get() == 2) {
-                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(),true) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds());
+                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(), true))
+                                        .append(playerEntry1.getPlayer().getName())
+                                        .append(" §e")
+                                        .append(playerEntry1.getIngamePlayer().getBeds());
                             } else if (gameEntry.getPlayersPlaying().size() == 4 && i.get() == 4) {
-                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(),true) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds());
+                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(), true))
+                                        .append(playerEntry1.getPlayer().getName())
+                                        .append(" §e")
+                                        .append(playerEntry1.getIngamePlayer().getBeds());
                             } else {
-                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(),true) + playerEntry1.getPlayer().getName() + " §e" + playerEntry1.getIngamePlayer().getBeds() + " §8§l︳ ");
+                                stringBuilder.append(BukkitCore.getInstance().getPlayerColor(playerEntry1.getPlayer().getUniqueId(), true))
+                                        .append(playerEntry1.getPlayer().getName())
+                                        .append(" §e")
+                                        .append(playerEntry1.getIngamePlayer().getBeds())
+                                        .append(" §8§l︳ ");
                             }
                         });
                         playerEntry.updateScoreBoard();
-                        playerUtils.sendActionBar(playerEntry.getPlayer(),stringBuilder.toString());
+                        playerUtils.sendActionBar(playerEntry.getPlayer(), stringBuilder.toString());
                     }
                     if (gameEntry.getTimeSinceStart() > 3600) {
                         gameEntry.finishGame(false);
                     }
                 }
             }
-        },20,20);
+        }, 20, 20);
     }
 
 
@@ -207,29 +221,35 @@ public class MLGRush extends JavaPlugin {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
                 if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener)obj, this);
+                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
                     this.getLogger().info("Registered " + obj.getClass().getName());
                 }
             }
+        } catch (Exception e) {
+            this.getLogger().warning("Failed to register listener: " + e.getMessage());
         }
-        catch (Exception ignored) {}
     }
 
     @Override
     public void onDisable() {
-        yamlConfiguration.set("Maps",maps);
-        yamlConfiguration.set("Templates",templates);
+        yamlConfiguration.set("Maps", maps);
+        yamlConfiguration.set("Templates", templates);
         for (GameEntry gameEntry : getGameEntryHandler().values()) {
             gameEntry.finishGame(true);
         }
         for (PlayerEntry playerEntry : getPlayerEntryHandler().values()) {
             playerEntry.saveData();
         }
-
-        // test
     }
 
-
+    /**
+     * Gets the plugin instance.
+     *
+     * @return the MLGRush plugin instance
+     */
+    public static MLGRush getInstance() {
+        return instance;
+    }
 }
