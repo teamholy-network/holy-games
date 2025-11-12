@@ -1,15 +1,5 @@
 package de.teamholy.bedwars;
 
-import de.teamholy.bedwars.commands.*;
-import de.teamholy.bedwars.handlers.InventoryHandler;
-import de.teamholy.bedwars.config.BedwarsConfig;
-import de.teamholy.bedwars.enums.GameState;
-import de.teamholy.bedwars.inventoriers.ShopInventory;
-import de.teamholy.bedwars.model.MapEntry;
-import de.teamholy.bedwars.model.PlayerEntry;
-import de.teamholy.bedwars.model.TeamEntry;
-import de.teamholy.bedwars.task.LobbyTask;
-import de.teamholy.bedwars.utils.CacheHandler;
 import com.google.common.reflect.ClassPath;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -17,6 +7,16 @@ import com.google.gson.JsonObject;
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
 import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
+import de.skydb.updater.BukkitUpdaterAPI;
+import de.teamholy.bedwars.commands.*;
+import de.teamholy.bedwars.config.BedwarsConfig;
+import de.teamholy.bedwars.enums.GameState;
+import de.teamholy.bedwars.handlers.InventoryHandler;
+import de.teamholy.bedwars.inventoriers.ShopInventory;
+import de.teamholy.bedwars.model.MapEntry;
+import de.teamholy.bedwars.model.PlayerEntry;
+import de.teamholy.bedwars.task.LobbyTask;
+import de.teamholy.bedwars.utils.CacheHandler;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import eu.koboo.markup.MarkupAPI;
@@ -27,27 +27,30 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import de.skydb.updater.BukkitUpdaterAPI;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-/* copyright by Yassino */
+/**
+ * Main plugin class for Bedwars game mode.
+ * Copyright by Yassino
+ */
 @Getter
 @Setter
 public class Bedwars extends JavaPlugin {
 
-    @Getter
     private static Bedwars instance;
     public static Gamemodes MODE = Gamemodes.BEDWARS;
 
     private GameState gameState;
     private String prefix = "§6Bedwars §8× §7";
-    private ArrayList<String> maps;
-    private ArrayList<PlayerEntry> ingamePlayers;
-    private ArrayList<PlayerEntry> spectatePlayers;
-    private ArrayList<Location> placedBlocks;
+    private List<String> maps;
+    private List<PlayerEntry> ingamePlayers;
+    private List<PlayerEntry> spectatePlayers;
+    private List<Location> placedBlocks;
     private int maxPlayers;
     private int minPlayers;
     private String mode;
@@ -67,20 +70,18 @@ public class Bedwars extends JavaPlugin {
 
     private long gameStartedSince;
 
-
     private LobbyTask lobbyTask;
 
-    public ArrayList<UUID> shopUuids;
+    public List<UUID> shopUuids;
 
     @SneakyThrows
     @Override
     public void onEnable() {
-
         instance = this;
-        new BukkitUpdaterAPI(this,"dd6371bf-ca85-4a78-839a-f9617cb442bc","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
+        new BukkitUpdaterAPI(this, "dd6371bf-ca85-4a78-839a-f9617cb442bc", "")
+                .setHibernat(true)
+                .setOnlyempty(true)
+                .setOnlyrestart(true);
 
         shopUuids = new ArrayList<>();
         shopUuids.add(UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"));
@@ -100,7 +101,6 @@ public class Bedwars extends JavaPlugin {
 
         Collections.shuffle(shopUuids);
 
-
         slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         slimeLoader = slimePlugin.getLoader("mongodb");
 
@@ -109,18 +109,14 @@ public class Bedwars extends JavaPlugin {
         getCommand("forcemap").setExecutor(new ForcemapCommand());
         getCommand("npcshop").setExecutor(new NPCShopCommand());
         getCommand("resetinv").setExecutor(new ResetInvCommand());
-        instance = this;
+        
         file = new File("plugins/Bedwars/locations.yml");
 
         loadLobbyChunks();
 
-
-
         new File("plugins/Bedwars/songs/").mkdirs();
 
         yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-
-
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Bedwars.getInstance(), () -> {
             if (getGameState() != GameState.INGAME) {
@@ -134,29 +130,33 @@ public class Bedwars extends JavaPlugin {
         registerListener("de.teamholy.bedwars.listeners");
         Bukkit.getPluginManager().registerEvents(new ShopInventory(), this);
 
-
-
-        bootrap();
+        bootstrap();
     }
 
+    /**
+     * Loads the lobby chunks to keep them loaded.
+     */
     public void loadLobbyChunks() {
         Location lobbyLocation = BukkitCore.getInstance().getLocationManager().getLocation("lobby");
         if (lobbyLocation != null) {
             Chunk chunk = lobbyLocation.getWorld().getChunkAt(lobbyLocation);
             chunk.load(true);
         } else {
-            System.out.println("Lobby location is not set.");
+            getLogger().warning("Lobby location is not set.");
         }
     }
 
-    public void bootrap() {
+    /**
+     * Bootstraps the game configuration.
+     */
+    public void bootstrap() {
         bedwarsConfig = new BedwarsConfig();
         cacheHandler = new CacheHandler();
         inventoryHandler = new InventoryHandler();
 
-        maps = (ArrayList<String>) getYamlConfiguration().getStringList("Maps");
+        maps = new ArrayList<>(getYamlConfiguration().getStringList("Maps"));
 
-        initMAps();
+        initMaps();
 
         initMode();
 
@@ -181,26 +181,38 @@ public class Bedwars extends JavaPlugin {
         updateMotd();
     }
 
-    private void initMAps() {
+    /**
+     * Initializes the map entries from configuration.
+     */
+    private void initMaps() {
         for (String mapName : getMaps()) {
             String[] typeAndId = yamlConfiguration.getString(mapName + ".material").split(";");
             Material material = Material.getMaterial(typeAndId[0]);
             int id = Integer.parseInt(typeAndId[1]);
             if (yamlConfiguration.getString(mapName + ".spawn.Red.World") == null) {
-                System.out.println(mapName + " ----------");
+                getLogger().warning(mapName + " spawn location not configured");
             }
             getCacheHandler().getMapEntries().put(mapName, new MapEntry(material, id, mapName, yamlConfiguration.getString(mapName + ".spawn.Red.World")));
         }
     }
 
+    /**
+     * Updates the player name tags.
+     */
     public void updateNameTags() {
         MarkupAPI.updateNameTags();
     }
 
+    /**
+     * Updates the server data with a delay.
+     */
     public void updateData() {
-        Bukkit.getScheduler().runTaskLater(this, this::updateMotd,2);
+        Bukkit.getScheduler().runTaskLater(this, this::updateMotd, 2);
     }
 
+    /**
+     * Updates the server MOTD based on game state.
+     */
     public void updateMotd() {
         if (gameState == GameState.LOBBY) {
             if (forceMap == null) {
@@ -214,32 +226,31 @@ public class Bedwars extends JavaPlugin {
 
             JsonObject object = new JsonObject();
             object.addProperty("rushbw", isRushMode());
-            object.addProperty("variante",mode);
-            object.addProperty("ingame",getIngamePlayers().size());
-            object.addProperty("start",gameStartedSince);
+            object.addProperty("variante", mode);
+            object.addProperty("ingame", getIngamePlayers().size());
+            object.addProperty("start", gameStartedSince);
             Bedwars.getInstance().getCacheHandler().getTeamEntries().forEach(teamEntry -> {
 
                 JsonArray playerObjects = new JsonArray();
                 teamEntry.getAllPlayers().forEach(player -> {
                     JsonObject playerObject = new JsonObject();
-                    playerObject.addProperty("kills",player.getKills());
-                    playerObject.addProperty("beds",player.getBeds());
-                    playerObject.addProperty("dead",player.isDead());
+                    playerObject.addProperty("kills", player.getKills());
+                    playerObject.addProperty("beds", player.getBeds());
+                    playerObject.addProperty("dead", player.isDead());
 
-                    playerObject.addProperty("nicked",MarkupAPI.isNicked(player.getPlayer()));
+                    playerObject.addProperty("nicked", MarkupAPI.isNicked(player.getPlayer()));
                     playerObject.addProperty("uuid", String.valueOf(player.getPlayer().getUniqueId()));
                     playerObject.addProperty("name", player.getPlayer().getName());
 
                     playerObjects.add(playerObject);
                 });
 
-
                 JsonObject teamObj = new JsonObject();
-                teamObj.add("players",playerObjects);
-                teamObj.addProperty("hasBed",teamEntry.isHasBed());
-                teamObj.addProperty("colorCode",teamEntry.getColorCode());
+                teamObj.add("players", playerObjects);
+                teamObj.addProperty("hasBed", teamEntry.isHasBed());
+                teamObj.addProperty("colorCode", teamEntry.getColorCode());
 
-                object.add(teamEntry.getName(),teamObj);
+                object.add(teamEntry.getName(), teamObj);
             });
             BukkitCloudNetHelper.setExtra(new Gson().toJson(object));
         } else if (Bedwars.getInstance().getGameState() == GameState.END) {
@@ -248,6 +259,11 @@ public class Bedwars extends JavaPlugin {
         BukkitCloudNetHelper.updateServiceInfo();
     }
 
+    /**
+     * Registers event listeners from the specified package.
+     *
+     * @param path the package path containing listeners
+     */
     private void registerListener(final String path) {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
@@ -257,14 +273,23 @@ public class Bedwars extends JavaPlugin {
                     this.getServer().getPluginManager().registerEvents((Listener) obj, this);
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            getLogger().warning("Failed to register listener: " + e.getMessage());
         }
     }
 
+    /**
+     * Checks if the game mode is Rush Bedwars.
+     *
+     * @return true if Rush mode is enabled
+     */
     public static boolean isRushMode() {
         return (MODE == Gamemodes.RUSHBW);
     }
 
+    /**
+     * Initializes the game mode configuration.
+     */
     private void initMode() {
         gameState = GameState.LOBBY;
         if (!Bukkit.getPluginManager().isPluginEnabled("NoteBlockAPI")) {
@@ -281,12 +306,12 @@ public class Bedwars extends JavaPlugin {
         minPlayers = getBedwarsConfig().getConfiguration().getInt("PlayersToStart");
         if (!(mode.equals("2x1") || mode.equals("4x2") || mode.equals("8x1") || mode.equals("8x2") || mode.equals("4x4"))) {
             getServer().getPluginManager().disablePlugin(this);
-            getServer().getConsoleSender().sendMessage("§l§cBEDWARS §7" + "Bitte Ãndere die Variante in §c2x1§8/§c4x2§8/§c8x1/§c8x2§8/§c4x4§7!");
+            getServer().getConsoleSender().sendMessage("§l§cBEDWARS §7Bitte ändere die Variante in §c2x1§8/§c4x2§8/§c8x1/§c8x2§8/§c4x4§7!");
         } else {
             getCacheHandler().getTeamEntries().clear();
-            getServer().getConsoleSender().sendMessage("§l§cBEDWARS" + "§RushMode §8: §b" + isRushMode());
-            getServer().getConsoleSender().sendMessage("§l§cBEDWARS" + "§7Spiel-Variante §8: §b" + mode);
-            getServer().getConsoleSender().sendMessage("§l§cBEDWARS" + " §7Benoetigten-Spieler-zum-starten §8: §b" + minPlayers);
+            getServer().getConsoleSender().sendMessage("§l§cBEDWARS §7RushMode §8: §b" + isRushMode());
+            getServer().getConsoleSender().sendMessage("§l§cBEDWARS §7Spiel-Variante §8: §b" + mode);
+            getServer().getConsoleSender().sendMessage("§l§cBEDWARS §7Benoetigten-Spieler-zum-starten §8: §b" + minPlayers);
             switch (mode) {
                 case "2x1":
                     maxPlayers = 2;
@@ -333,5 +358,12 @@ public class Bedwars extends JavaPlugin {
         }
     }
 
-
+    /**
+     * Gets the plugin instance.
+     *
+     * @return the Bedwars plugin instance
+     */
+    public static Bedwars getInstance() {
+        return instance;
+    }
 }

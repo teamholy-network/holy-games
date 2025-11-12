@@ -10,22 +10,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-/* copyright by Yassino */
-@Getter @Setter
+/**
+ * Represents a team entry in Bedwars.
+ * Copyright by Yassino
+ */
+@Getter
+@Setter
 public class TeamEntry {
 
-    private String name, colorCode;
-    private ArrayList<Player> players;
-    private ArrayList<PlayerEntry> allPlayers;
+    private String name;
+    private String colorCode;
+    private List<Player> players;
+    private List<PlayerEntry> allPlayers;
     private int size;
     private boolean hasBed;
     private Color color;
     private String skullId;
     private int id;
-    private Location bed, spawn, Shop;
+    private Location bed;
+    private Location spawn;
+    private Location shop;
     private Inventory teamChest;
     private UUID shopNPCUuid;
 
@@ -37,25 +45,32 @@ public class TeamEntry {
         this.skullId = skullId;
         this.color = color;
         this.id = id;
-        players = new ArrayList<Player>();
-        allPlayers = new ArrayList<>();
-        teamChest = Bukkit.createInventory(null, 27,"§8» " + colorCode + name);
+        this.players = new ArrayList<>();
+        this.allPlayers = new ArrayList<>();
+        this.teamChest = Bukkit.createInventory(null, 27, "§8» " + colorCode + name);
 
         int index = new Random().nextInt(Bedwars.getInstance().getShopUuids().size());
-
-        shopNPCUuid = Bedwars.getInstance().getShopUuids().get(index);
-
+        this.shopNPCUuid = Bedwars.getInstance().getShopUuids().get(index);
         Bedwars.getInstance().getShopUuids().remove(index);
     }
 
-
+    /**
+     * Adds a player to the team.
+     *
+     * @param player the player to add
+     */
     public void addPlayer(Player player) {
-        if (!this.players.contains(player))
+        if (!this.players.contains(player)) {
             this.players.add(player);
+        }
     }
 
+    /**
+     * Removes a player from the team.
+     *
+     * @param player the player to remove
+     */
     public void removePlayer(Player player) {
-        if (this.players.contains(player)) this.players.remove(player);
+        this.players.remove(player);
     }
-
 }
