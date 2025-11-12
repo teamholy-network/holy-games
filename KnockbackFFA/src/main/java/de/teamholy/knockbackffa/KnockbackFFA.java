@@ -1,5 +1,9 @@
 package de.teamholy.knockbackffa;
 
+import com.google.common.reflect.ClassPath;
+import de.skydb.updater.BukkitUpdaterAPI;
+import de.slikey.effectlib.EffectLib;
+import de.slikey.effectlib.EffectManager;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
@@ -15,13 +19,8 @@ import de.teamholy.knockbackffa.handlers.TeamingHandler;
 import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import de.teamholy.knockbackffa.models.MapEntry;
 import de.teamholy.knockbackffa.models.PlayerEntry;
-import de.teamholy.knockbackffa.utils.PlayerUtils;
 import de.teamholy.knockbackffa.tasks.ArmorColorRainbowTask;
-import com.google.common.reflect.ClassPath;
-
-import de.skydb.updater.BukkitUpdaterAPI;
-import de.slikey.effectlib.EffectLib;
-import de.slikey.effectlib.EffectManager;
+import de.teamholy.knockbackffa.utils.PlayerUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -36,16 +35,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.logging.Level;
 
-/* copyright by Yassino */
-@Getter @Setter
+/**
+ * Main plugin class for Knockback FFA game mode.
+ * Copyright by Yassino
+ */
+@Getter
+@Setter
 public class KnockbackFFA extends JavaPlugin {
 
-    @Getter
     private static KnockbackFFA instance;
     private String prefix = "§eKnockbackFFA §8× §7";
     private CacheHandler cacheHandler;
     private PlayerUtils playerUtils;
-    private File cfgfFile = new File("plugins//KnockbackFFA//locations.yml");
+    private final File configFile = new File("plugins/KnockbackFFA/locations.yml");
     private YamlConfiguration yamlConfiguration;
     private EffectManager effectManager;
     private PerkInventoriesHandler perkInventoriesHandler;
@@ -53,50 +55,39 @@ public class KnockbackFFA extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Initialize plugin instance
         initializePlugin();
-        
-        // Initialize configuration and managers
         initializeConfiguration();
-        
-        // Register commands
         registerCommands();
-        
-        // Register event listeners
         registerListener("de.teamholy.knockbackffa.listeners");
-        
-        // Load maps and entities
         registerMaps();
-        
-        // Start scheduled tasks
         startTasks();
     }
 
     /**
-     * Initialize plugin instance and core services
+     * Initialize plugin instance and core services.
      */
     private void initializePlugin() {
         instance = this;
-        new BukkitUpdaterAPI(this,"37153192-6ff5-46f5-9899-8d33a67f3797","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
+        new BukkitUpdaterAPI(this, "37153192-6ff5-46f5-9899-8d33a67f3797", "")
+                .setHibernat(true)
+                .setOnlyempty(true)
+                .setOnlyrestart(true);
     }
-    
+
     /**
-     * Initialize configuration and managers
+     * Initialize configuration and managers.
      */
     private void initializeConfiguration() {
-        yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
+        yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
         effectManager = new EffectManager(EffectLib.instance());
         cacheHandler = new CacheHandler();
         playerUtils = new PlayerUtils();
         teamingHandler = new TeamingHandler(this);
         perkInventoriesHandler = new PerkInventoriesHandler();
     }
-    
+
     /**
-     * Register commands with their executors
+     * Register commands with their executors.
      */
     private void registerCommands() {
         getCommand("setup").setExecutor(new SetupCommand());
@@ -104,28 +95,31 @@ public class KnockbackFFA extends JavaPlugin {
         getCommand("vanish").setExecutor(new VanishCommand());
         getCommand("teaming").setExecutor(new TeamingCommand());
     }
-    
+
     /**
-     * Start scheduled tasks and holograms
+     * Start scheduled tasks and holograms.
      */
     private void startTasks() {
         startMoveListener();
-        new TopHolo(BukkitCore.getInstance().getLocationManager().getLocation("topHolo"), 
-                    Gamemodes.KNOCKBACKFFA, 
-                    new ItemBuilder(Material.SANDSTONE).build());
+        new TopHolo(BukkitCore.getInstance().getLocationManager().getLocation("topHolo"),
+                Gamemodes.KNOCKBACKFFA,
+                new ItemBuilder(Material.SANDSTONE).build());
         new ArmorColorRainbowTask(this);
     }
 
+    /**
+     * Starts the move listener task that monitors player positions.
+     */
     private void startMoveListener() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> Bukkit.getOnlinePlayers().forEach(player -> {
             PlayerUtils.sendActionBar(player, prefix + "§f§lmax 3 players per team (/teaming)");
             PlayerEntry playerEntry = getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
             if (playerEntry != null) {
                 if (playerEntry.getPlayerState() == PlayerState.INGAME) {
-                    if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getSpawnHight() && player.getInventory().contains(Material.MAGMA_CREAM) && player.getGameMode() == GameMode.SURVIVAL) {
+                    if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getSpawnHeight() && player.getInventory().contains(Material.MAGMA_CREAM) && player.getGameMode() == GameMode.SURVIVAL) {
                         player.closeInventory();
                         playerEntry.setIngameItems();
-                    } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead() && !ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
+                    } else if (player.getLocation().getBlockY() < playerEntry.getActiveMap().getDeathHeight() && player.getGameMode() == GameMode.SURVIVAL && !player.getInventory().contains(Material.MAGMA_CREAM) && player.getHealth() > 0.00D && !player.isDead() && !ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
                         player.damage(1234);
                     }
                 } else if (playerEntry.getPlayerState() == PlayerState.LOBBY && player.getGameMode() == GameMode.SURVIVAL) {
@@ -134,9 +128,12 @@ public class KnockbackFFA extends JavaPlugin {
                     }
                 }
             }
-        }),0,10);
+        }), 0, 10);
     }
 
+    /**
+     * Registers all maps from configuration.
+     */
     private void registerMaps() {
         for (String map : SetupCommand.MAPS) {
             Sign sign;
@@ -144,30 +141,44 @@ public class KnockbackFFA extends JavaPlugin {
                 sign = (Sign) ((Location) yamlConfiguration.get(map + ".sign")).getBlock().getState();
             } catch (Exception e) {
                 sign = null;
-                getLogger().log(Level.WARNING,"Map " + map + " doesn't have a sign! /setup");
+                getLogger().log(Level.WARNING, "Map " + map + " doesn't have a sign! Use /setup");
             }
             cacheHandler.getMapEntrys().put(map,
-                    new MapEntry(map
-                    ,(Location)yamlConfiguration.get(map + ".spawn")
-                            ,yamlConfiguration.getDouble(map + ".high.Y"),
+                    new MapEntry(map,
+                            (Location) yamlConfiguration.get(map + ".spawn"),
+                            yamlConfiguration.getDouble(map + ".high.Y"),
                             yamlConfiguration.getDouble(map + ".death.Y"),
                             sign
                     ));
         }
     }
 
+    /**
+     * Registers event listeners from the specified package.
+     *
+     * @param path the package path containing listeners
+     */
     private void registerListener(final String path) {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
                 if (obj instanceof Listener) {
                     this.getServer().getPluginManager().registerEvents((Listener) obj, this);
                     this.getLogger().info("Registered " + obj.getClass().getName());
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            getLogger().warning("Failed to register listener: " + e.getMessage());
         }
     }
 
+    /**
+     * Gets the plugin instance.
+     *
+     * @return the KnockbackFFA plugin instance
+     */
+    public static KnockbackFFA getInstance() {
+        return instance;
+    }
 }
