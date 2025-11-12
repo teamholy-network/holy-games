@@ -1,5 +1,7 @@
 package de.teamholy.sgffa;
 
+import com.google.common.reflect.ClassPath;
+import de.skydb.updater.BukkitUpdaterAPI;
 import de.teamholy.sgffa.commands.SetupCommand;
 import de.teamholy.sgffa.commands.TeamingCommand;
 import de.teamholy.sgffa.commands.VanishCommand;
@@ -8,15 +10,12 @@ import de.teamholy.sgffa.handlers.ItemHandler;
 import de.teamholy.sgffa.handlers.TeamingHandler;
 import de.teamholy.sgffa.models.MapEntry;
 import de.teamholy.sgffa.tasks.MapChangeTask;
-
-import com.google.common.reflect.ClassPath;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import de.skydb.updater.BukkitUpdaterAPI;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,25 +25,27 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-/* copyright by Yassino */
+/**
+ * Main plugin class for Survival Games FFA.
+ * Copyright by Yassino
+ */
 @Getter
 public class SGFFA extends JavaPlugin {
 
-    @Getter
     private static SGFFA instance;
-    public static String PREFIX = "§aSGFFA §8× §7";
+    public static final String PREFIX = "§aSGFFA §8× §7";
+    
     @Setter
     private MapEntry activeMapEntry;
 
     private CacheHandler cacheHandler;
     private ItemHandler itemHandler;
-
     private TeamingHandler teamingHandler;
 
     private File file;
     private YamlConfiguration yamlConfiguration;
 
-    private final ArrayList<Location> clickedChests = new ArrayList<>();
+    private final List<Location> clickedChests = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -66,6 +67,11 @@ public class SGFFA extends JavaPlugin {
         new MapChangeTask();
     }
 
+    /**
+     * Registers event listeners from the specified package.
+     *
+     * @param path the package path containing listeners
+     */
     private void registerListener(final String path) {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
@@ -77,10 +83,14 @@ public class SGFFA extends JavaPlugin {
                     this.getLogger().info("Registered " + obj.getClass().getName());
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            getLogger().warning("Failed to register listener: " + e.getMessage());
         }
     }
 
+    /**
+     * Registers maps and configuration.
+     */
     private void registerMapsAndConfig() {
         file = new File("plugins/SGFFA/locations.yml");
         yamlConfiguration = YamlConfiguration.loadConfiguration(file);
@@ -97,8 +107,17 @@ public class SGFFA extends JavaPlugin {
                     .collect(Collectors.toList());
             getCacheHandler().getMapEntryHashMap().put(map, new MapEntry(map, locationList, death));
         }
-        if (mapStrings.size() != 0)
+        if (!mapStrings.isEmpty()) {
             activeMapEntry = getCacheHandler().getMapEntryHashMap().get(mapStrings.get(new Random().nextInt(mapStrings.size())));
+        }
     }
 
+    /**
+     * Gets the plugin instance.
+     *
+     * @return the SGFFA plugin instance
+     */
+    public static SGFFA getInstance() {
+        return instance;
+    }
 }

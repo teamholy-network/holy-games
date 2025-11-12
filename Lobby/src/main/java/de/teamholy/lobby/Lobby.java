@@ -1,19 +1,21 @@
 package de.teamholy.lobby;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.google.common.reflect.ClassPath;
+import de.dytanic.cloudnet.driver.CloudNetDriver;
+import de.skydb.updater.BukkitUpdaterAPI;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.lobby.bedwars.BedwarsServerInventory;
 import de.teamholy.lobby.bedwars.BedwarsSpectateInventory;
 import de.teamholy.lobby.commands.FlyCommand;
 import de.teamholy.lobby.commands.SpawnCommand;
 import de.teamholy.lobby.commands.TestCommand;
+import de.teamholy.lobby.handlers.CloudCacheHandler;
 import de.teamholy.lobby.handlers.HologramHandler;
 import de.teamholy.lobby.handlers.StatsResetHandler;
 import de.teamholy.lobby.leaderboard.LeaderboardInventory;
 import de.teamholy.lobby.listeners.CloudListener;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayerHandler;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.google.common.reflect.ClassPath;
-import de.teamholy.lobby.handlers.CloudCacheHandler;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -24,16 +26,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.dytanic.cloudnet.driver.CloudNetDriver;
-import de.skydb.updater.BukkitUpdaterAPI;
-
 import java.util.concurrent.ExecutionException;
 
-/* copyright by Yassino */
-@Getter @Setter
+/**
+ * Main plugin class for Lobby.
+ * Copyright by Yassino
+ */
+@Getter
+@Setter
 public class Lobby extends JavaPlugin {
 
-    @Getter
     private static Lobby instance;
     private String prefix = "§6Lobby §8× §7";
     private boolean isPremiumLobby;
@@ -106,23 +108,36 @@ public class Lobby extends JavaPlugin {
         cp.getHandle().playerConnection.sendPacket(ppoc);
     }
 
-
-
     @Override
     public void onDisable() {
         getHologramHandler().getHolograms().values().forEach(Hologram::delete);
     }
 
+    /**
+     * Registers event listeners from the specified package.
+     *
+     * @param path the package path containing listeners
+     */
     private void registerListener(final String path) {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
                 if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener)obj, this);
+                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
                 }
             }
+        } catch (Exception e) {
+            getLogger().warning("Failed to register listener: " + e.getMessage());
         }
-        catch (Exception ignored) {}
+    }
+
+    /**
+     * Gets the plugin instance.
+     *
+     * @return the Lobby plugin instance
+     */
+    public static Lobby getInstance() {
+        return instance;
     }
 }

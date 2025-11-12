@@ -4,20 +4,23 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/* copyright by Yassino */
-@Getter @Setter
+/**
+ * Represents a map entry for SGFFA.
+ * Copyright by Yassino
+ */
+@Getter
+@Setter
 public class MapEntry {
 
     private String mapName;
     private List<Location> spawns;
-    private int deathHight;
+    private int deathHeight;
 
-    public MapEntry(String mapName, List<Location> spawns, int deathHight) {
+    public MapEntry(String mapName, List<Location> spawns, int deathHeight) {
         this.mapName = mapName;
         this.spawns = spawns;
-        this.deathHight = deathHight;
+        this.deathHeight = deathHeight;
     }
 }
