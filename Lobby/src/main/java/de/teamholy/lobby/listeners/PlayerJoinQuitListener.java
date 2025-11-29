@@ -52,12 +52,12 @@ public class PlayerJoinQuitListener implements Listener {
         },1);
         Bukkit.getScheduler().runTaskLater(Lobby.getInstance(),() -> {
 
-            new NPCBuilder("mlgrush","§6§lMLGRush", UUID.fromString("03c55754-08fc-4a12-a451-e517c89a3f91"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("mlgrush")).build(player);
+            new NPCBuilder("mlgrush","§6§lMLGRush", UUID.fromString("a54e8818-845d-4f55-923b-38b334697096"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("mlgrush")).build(player);
             new NPCBuilder("clutches","§b§lClutches", UUID.fromString("1dd0cc8f-5271-4d49-b774-16dc36877017"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("clutches")).build(player);
             new NPCBuilder("knockbackffa","§e§lKnockbackFFA", UUID.fromString("2646aecf-ddcc-4f3a-bedd-3b2c8d386350"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("kbffa")).build(player);
             new NPCBuilder("sgffa","§a§lSGFFA", UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("sgffa")).build(player);
-            new NPCBuilder("bridge","§e§lBridge", UUID.fromString("d08cbbd7-5e65-43e1-ad58-6ed90a560818"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bridge")).build(player);
-            new NPCBuilder("duels","§d§lDuels", UUID.fromString("8667ba71-b85a-4004-af54-457a9734eed8"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("duels")).build(player);
+            new NPCBuilder("bridge","§e§lBridge", UUID.fromString("0906aa96-698f-4542-8a22-9543d5dce379"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bridge")).build(player);
+            new NPCBuilder("duels","§d§lDuels", UUID.fromString("99f75c4a-daec-476b-98da-d791b1faf60d"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("duels")).build(player);
 
             new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bedwars")).build(player);
 
