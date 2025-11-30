@@ -46,6 +46,7 @@ public class HologramHandler {
         gameholograms.put("SkywarsFFA",createHologram(new ItemBuilder(Material.GRASS).build(), BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc")));
         gameholograms.put("Duels",createHologram(new ItemBuilder(Material.DIAMOND_SWORD).build(), BukkitCore.getInstance().getLocationManager().getLocation("duels")));
 
+        holograms.put("xmas",createHologram(BukkitCore.getInstance().getLocationManager().getLocation("xmas_npc")));
 
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("§8§m------------§f§lLEAGUES§8§m------------");
@@ -120,6 +121,16 @@ public class HologramHandler {
         Hologram hologram = HologramsAPI.createHologram(instance,location.add(0,3.35,0));
         hologram.appendItemLine(itemStack);
         hologram.appendTextLine("§60 §76Players");
+        return hologram;
+    }
+
+    public Hologram createInfoHologram(Location location) {
+        Hologram hologram = HologramsAPI.createHologram(instance, location.add(0, 2.5, 0));
+
+        hologram.appendItemLine(new ItemBuilder(Material.CHEST).build());
+        hologram.appendTextLine("§eHier auf der Map befinden sich §cGeschenke§e für dich!");
+        hologram.appendTextLine("§7Suche alle, um deine §aBelohnungen §7abzuholen!");
+
         return hologram;
     }
 
