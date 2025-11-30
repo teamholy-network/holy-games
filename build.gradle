@@ -37,10 +37,18 @@ subprojects {
             name = 'sonatype'
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
+        maven {
+            name = 'cloudnet-releases'
+            url = uri('https://repo.cloudnetservice.eu/releases/')
+            metadataSources { gradleMetadata(); mavenPom(); artifact() }
+            content {
+                includeGroup 'de.dytanic.cloudnet'
+                includeGroup 'eu.cloudnetservice'
+            }
+        }
         maven { url "https://repo.codemc.io/repository/maven-public/" }
         maven { url "https://repo.glaremasters.me/repository/concuncan/" }
-        maven { url "https://repository.skydb.de/repo/"}
-        maven { url 'https://repo.cloudnetservice.eu/repository/releases/' }
+        maven { url "https://repository.skydb.de/repo/" }
         maven { url 'https://maven.enginehub.org/repo/' }
         maven {
             url = 'https://repo.gin1.cc/repository/releases/'
