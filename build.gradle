@@ -28,19 +28,14 @@ subprojects {
     apply plugin: 'com.gradleup.shadow'
 
     repositories {
-        maven { url "https://repo.dmulloy2.net/repository/public/" }
         maven {
             name = 'spigotmc-repo'
-            url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+            url = uri('https://hub.spigotmc.org/nexus/content/repositories/public/')
             metadataSources { gradleMetadata(); mavenPom(); artifact() }
             content {
                 includeGroup 'net.md-5'
                 includeGroup 'org.spigotmc'
             }
-        }
-        maven {
-            name = 'sonatype'
-            url = 'https://oss.sonatype.org/content/groups/public/'
         }
         maven {
             name = 'cloudnet-releases'
@@ -50,6 +45,11 @@ subprojects {
                 includeGroup 'de.dytanic.cloudnet'
                 includeGroup 'eu.cloudnetservice'
             }
+        }
+        maven { url "https://repo.dmulloy2.net/repository/public/" }
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/groups/public/'
         }
         maven { url "https://repo.codemc.io/repository/maven-public/" }
         maven { url "https://repo.glaremasters.me/repository/concuncan/" }
