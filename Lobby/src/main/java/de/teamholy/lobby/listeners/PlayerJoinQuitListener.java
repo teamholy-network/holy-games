@@ -61,11 +61,11 @@ public class PlayerJoinQuitListener implements Listener {
 
             new NPCBuilder("bedwars","§c§lBedwars&Rush", UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bedwars")).build(player);
 
-            new NPCBuilder("bedwars_spawn","§c§lBedwars", UUID.fromString("fa44c187-80dd-4171-bb5a-2e694c4c8b4f"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_bw")).build(player);
-            new NPCBuilder("rush_spawn","§c§lRushBW", UUID.fromString("7414ffe4-6355-4877-8103-1ff6e0432e61"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_rbw")).build(player);
+            new NPCBuilder("bedwars_spawn","§c§lBedwars", UUID.fromString("1cfcd3b8-10ff-40a8-b3f9-c61628b5d098"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_bw")).build(player);
+            new NPCBuilder("rush_spawn","§c§lRushBW", UUID.fromString("ce397ef0-7973-4ce5-a3b1-3bd6e7fc9970"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_rbw")).build(player);
 
             new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
-            new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("cac3bd6a-b55f-4bfd-8c2b-537dc06375a6"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
+            new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("60d97170-3d03-4562-918d-7ff7a493b68e"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
 
             new NPCBuilder("skywarsffa","§3§lSkyWarsFFA", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc")).build(player);
 
