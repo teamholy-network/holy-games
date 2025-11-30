@@ -30,7 +30,8 @@ import de.skydb.updater.BukkitUpdaterAPI;
 import java.util.concurrent.ExecutionException;
 
 /* copyright by Yassino */
-@Getter @Setter
+@Getter
+@Setter
 public class Lobby extends JavaPlugin {
 
     @Getter
@@ -47,14 +48,13 @@ public class Lobby extends JavaPlugin {
     private LeaderboardInventory leaderboardInventory;
 
 
-
     @Override
     public void onEnable() {
         instance = this;
-        new BukkitUpdaterAPI(this,"79844b1c-aa14-453b-96b2-492a3a3a4c1d","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
+        new BukkitUpdaterAPI(this, "79844b1c-aa14-453b-96b2-492a3a3a4c1d", "")
+                .setHibernat(true)
+                .setOnlyempty(true)
+                .setOnlyrestart(true);
         lobbyPlayerEntryHandler = new LobbyPlayerHandler();
         cloudCacheHandler = new CloudCacheHandler();
         hologramHandler = new HologramHandler(this);
@@ -67,9 +67,9 @@ public class Lobby extends JavaPlugin {
             prefix = "§6PremiumLobby §8× §7";
             isPremiumLobby = true;
         }
-        //Bukkit.getScheduler().runTaskTimer(this,new HalloweenEffectsRunnable(),50,600);
+        Bukkit.getScheduler().runTaskTimer(this, new HalloweenEffectsRunnable(), 50, 600);
         int maxPlayers = 250;
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this,() -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             try {
                 int count = BukkitCore.getAPI().getCloudManager().getPlayerManager().getOnlineCountAsync().get();
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -84,19 +84,15 @@ public class Lobby extends JavaPlugin {
                 e.printStackTrace();
             }
 
-        },20,20);
+        }, 20, 20);
 
         getCommand("fly").setExecutor(new FlyCommand());
         getCommand("spawn").setExecutor(new SpawnCommand());
         getCommand("test1").setExecutor(new TestCommand());
         CloudNetDriver.getInstance().getEventManager().registerListener(new CloudListener());
-        Bukkit.getPluginManager().registerEvents(bedwarsServerInventory,this);
-        Bukkit.getPluginManager().registerEvents(bedwarsSpectateInventory,this);
+        Bukkit.getPluginManager().registerEvents(bedwarsServerInventory, this);
+        Bukkit.getPluginManager().registerEvents(bedwarsSpectateInventory, this);
     }
-
-
-
-
 
 
     public void sendActionBar(Player p, String nachricht) {
@@ -105,7 +101,6 @@ public class Lobby extends JavaPlugin {
         PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
         cp.getHandle().playerConnection.sendPacket(ppoc);
     }
-
 
 
     @Override
@@ -119,10 +114,10 @@ public class Lobby extends JavaPlugin {
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
                 final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
                 if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener)obj, this);
+                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
                 }
             }
+        } catch (Exception ignored) {
         }
-        catch (Exception ignored) {}
     }
 }
