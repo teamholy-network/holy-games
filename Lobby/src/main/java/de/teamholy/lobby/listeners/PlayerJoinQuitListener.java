@@ -64,6 +64,8 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("bedwars_spawn","§c§lBedwars", UUID.fromString("1cfcd3b8-10ff-40a8-b3f9-c61628b5d098"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_bw")).build(player);
             new NPCBuilder("rush_spawn","§c§lRushBW", UUID.fromString("ce397ef0-7973-4ce5-a3b1-3bd6e7fc9970"),50,10,true,true,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_rbw")).build(player);
 
+            new NPCBuilder("xmas","§c§lHo ho ho", UUID.fromString("8c9f1f14-1617-470d-880d-2a4a06b30bd6"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("xmas_npc")).addHolo("Here are many Christmas presents for you on the map!","§cFind all the gifts to collect your reward.").build(player);
+
             new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
             new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("60d97170-3d03-4562-918d-7ff7a493b68e"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
 
