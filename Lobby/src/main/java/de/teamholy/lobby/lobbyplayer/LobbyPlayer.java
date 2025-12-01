@@ -1,23 +1,24 @@
 package de.teamholy.lobby.lobbyplayer;
 
-import de.teamholy.core.api.entities.game.GameProfile;
-import de.teamholy.core.bukkit.manager.PlayerCacheManager;
-import de.teamholy.core.bukkit.npc.models.NPCEntry;
-import de.teamholy.core.bukkit.perks.enums.PerkType;
-import de.teamholy.core.bukkit.utils.ScoreboardAPI;
-import de.teamholy.lobby.Lobby;
 import de.dytanic.cloudnet.common.document.gson.JsonDocument;
 import de.dytanic.cloudnet.driver.service.ServiceInfoSnapshot;
 import de.dytanic.cloudnet.ext.bridge.BridgeServiceProperty;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import de.teamholy.core.api.entities.clan.Clan;
 import de.teamholy.core.api.entities.friend.FriendProfile;
+import de.teamholy.core.api.entities.game.GameProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.PartyInviteAllowance;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.core.bukkit.manager.PlayerCacheManager;
+import de.teamholy.core.bukkit.npc.models.NPCEntry;
+import de.teamholy.core.bukkit.perks.enums.PerkType;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.core.bukkit.utils.ScoreboardAPI;
+import de.teamholy.lobby.Lobby;
+import de.teamholy.lobby.handlers.CloudCacheHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
@@ -27,520 +28,719 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-/* copyright by Yassino */
+/**
+ * The LobbyPlayer class represents a player in the lobby system with specific settings, configurations,
+ * and functionalities. This class provides methods to manage and manipulate the player's data, scoreboard,
+ * settings, inventories, and game functionalities within the lobby environment.
+ *
+ * Fields:
+ *  - INVENTORY_BORDER_COLOR: The color used for inventory borders in the lobby system.
+ *  - MAX_ITEM_STACK: The maximum stack size for items in the lobby system.
+ *  - NO_CLAN_TEXT: Placeholder text for players without a clan.
+ *  - player: Represents the Player object associated with the lobby player.
+ *  - scoreboardAPI: The API used for managing and updating the player's scoreboard.
+ *  - playerRank: Stores the rank of the player in the lobby.
+ *  - friendEntry: Stores the player's friend-related information.
+ *  - gameProfile: Represents the player's game profile for lobby gameplay.
+ *  - onlineTimeString: The string representation of the player's online time.
+ *  - clanNameString: The name of the player's clan.
+ *  - cooldown: Tracks cooldowns for various player actions in the lobby.
+ *  - isInArena: Indicates whether the player is currently in an arena.
+ *  - fly: Indicates whether the player has the ability to fly.
+ *  - collectedNameMCReward: Tracks whether the player has collected the NameMC reward.
+ *  - collectedLabyModReward: Tracks whether the player has collected the LabyMod reward.
+ *
+ * Constructors:
+ *  - LobbyPlayer(Player player, PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer):
+ *      Instantiates a new LobbyPlayer object based on the given player and cached Bukkit player data.
+ *
+ * Methods:
+ *  - public LobbyPlayer(Player player, PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer):
+ *      Creates a new instance of LobbyPlayer with the Player and cached Bukkit data provided.
+ *  - private void initializePlayer():
+ *      Initializes the player's settings and configurations upon joining the lobby.
+ *  - private void loadGameProfileAsync():
+ *      Asynchronously loads the player's game profile.
+ *  - public void executeBungeeCommand(String command):
+ *      Executes a BungeeCord command on behalf of the player.
+ *  - public void createNPC(String name, UUID uuid, Location location):
+ *      Creates a non-player character (NPC) with the specified name, UUID, and location for lobby interactions.
+ *  - private String formatOnlineTime(long millis):
+ *      Formats the provided online time in milliseconds to a readable string representation.
+ *  - public void updateOnlineTime():
+ *      Updates the player's online time and its associated formatted string.
+ *  - public void updateClanTagScore():
+ *      Updates the player's clan tag score on the scoreboard.
+ *  - public void updateCoinsScore():
+ *      Updates the player's coins score on the scoreboard.
+ *  - public void updateRankScore():
+ *      Updates the player's rank score on the scoreboard.
+ *  - public void setScoreboard():
+ *      Configures and sets the scoreboard for the player in the lobby.
+ *  - private void loadClanForScoreboard(CountDownLatch latch):
+ *      Loads the player's clan information for updating the scoreboard, synchronizing with a latch.
+ *  - private void loadPlayerDataForScoreboard(CountDownLatch latch):
+ *      Loads the player's data to update the scoreboard, synchronizing with a latch.
+ *  - public void openGameSubInventory(String group, Material material):
+ *      Opens a sub-inventory for selecting game modes within a specified group and associated material.
+ *  - private List<ServiceInfoSnapshot> getAvailableServices(String group):
+ *      Retrieves a list of available services for the specified group.
+ *  - private void sendNoServerMessage(String group):
+ *      Sends a message to the player indicating that there are no available servers for the specified group.
+ *  - private void connectToServer(String serverName):
+ *      Connects the player to the specified server by name.
+ *  - private void openServerSelectionInventory(String group, Material material, List<ServiceInfoSnapshot> services):
+ *      Opens a server selection inventory for the player for a given group, material, and available services.
+ *  - public void sendPlayerToGroup(String group):
+ *      Sends the player to a server group based on the specified group identifier.
+ *  - private List<ServiceInfoSnapshot> findBestServers(String group):
+ *      Finds and provides the best servers available for the specified group.
+ *  - public void openLobbySwitcher():
+ *      Opens the lobby switcher interface to allow the player to switch between lobbies.
+ *  - private void addLobbyServers(Inventory inventory, String group, Material material, String currentServer,
+ *                                AtomicInteger slot, boolean requiresPermission):
+ *      Adds available lobby servers to the player's inventory interface.
+ *  - public void openGamesInventory():
+ *      Opens the game's inventory interface for the player to select game modes.
+ *  - private void addGameModeItem(Inventory inventory, int slot, Material material, String gameMode,
+ *                                 String desc1, String desc2, String desc3, String playerType):
+ *      Adds a game mode item to the inventory at the specified slot with the given metadata.
+ *  - public void openSettings():
+ *      Opens the settings interface for the player to modify their preferences.
+ *  - private FriendProfile loadFriendProfile():
+ *      Loads and returns the friend profile associated with the player.
+ *  - private PlayerProfile loadPlayerProfile():
+ *      Loads and returns the player's profile data.
+ *  - private void addToggleSetting(Inventory inventory, int slot, Material material, String name,
+ *                                  boolean currentState, Runnable onToggle):
+ *      Adds a toggleable setting to the inventory at the specified slot.
+ *  - private void addPartyInviteSetting(Inventory inventory, int slot, FriendProfile friendProfile, AtomicBoolean updateFlag):
+ *      Adds a party invite setting to the inventory based on the player's friend profile and update flag.
+ *  - private PartyInviteAllowance getNextPartyAllowance(PartyInviteAllowance current):
+ *      Retrieves the next party allowance state based on the current allowance state.
+ *  - private void addAutoNickSetting(Inventory inventory, int slot, PlayerProfile playerProfile, AtomicBoolean updateFlag):
+ *      Adds the auto-nick setting to the inventory based on the player profile and update flag.
+ *  - private void updateToggleLore(ItemBuilder builder, boolean activated):
+ *      Updates the lore of a toggleable item based on its activation state.
+ *  - private void updatePartyInviteLore(ItemBuilder builder, PartyInviteAllowance allowance):
+ *      Updates the lore item to reflect the current party invite allowance state.
+ *  - private void addInventoryBorder(Inventory inventory, int size):
+ *      Adds a border to an inventory of the specified size.
+ *  - public void setInventory():
+ *      Configures and sets the player's inventory in the lobby environment.
+ */
 @Getter
 @Setter
 public class LobbyPlayer {
 
-    private Player player;
-    private ScoreboardAPI scoreboardAPI;
-    private PlayerRank playerRank;
+    private static final int INVENTORY_BORDER_COLOR = 15;
+    private static final int MAX_ITEM_STACK = 64;
+    private static final String NO_CLAN_TEXT = "§cno clan";
 
-    public boolean isInArena;
-    public String onlineTimeString, clanNameString;
-    private Long cooldown = System.currentTimeMillis();
-    private boolean fly = false, collectedNameMCReward = false, collectedLabyModReward = false;
-
-    private FriendEntry friendEntry;
+    private final Player player;
+    private final ScoreboardAPI scoreboardAPI;
+    private final PlayerRank playerRank;
+    private final FriendEntry friendEntry;
 
     private GameProfile gameProfile;
+    private String onlineTimeString;
+    private String clanNameString;
+    private Long cooldown = System.currentTimeMillis();
 
+    private boolean isInArena;
+    private boolean fly;
+    private boolean collectedNameMCReward;
+    private boolean collectedLabyModReward;
 
     public LobbyPlayer(Player player, PlayerCacheManager.CachedBukkitPlayer cachedBukkitPlayer) {
         this.player = player;
-        scoreboardAPI = new ScoreboardAPI();
+        this.playerRank = cachedBukkitPlayer.getRank();
+        this.scoreboardAPI = new ScoreboardAPI();
+
+        initializePlayer();
+        this.friendEntry = new FriendEntry(player);
+        loadGameProfileAsync();
+    }
+
+    private void initializePlayer() {
         scoreboardAPI.createScoreboard(player, "§6");
         player.getInventory().clear();
-
-        playerRank = cachedBukkitPlayer.getRank();
         setScoreboard();
-
-        //setLabyModSubtitle();
-
-        friendEntry = new FriendEntry(player);
         setInventory();
+    }
 
-        BukkitCore.getAPI().getGameService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()), this::setGameProfile);
+    private void loadGameProfileAsync() {
+        BukkitCore.getAPI().getGameService().getEntityAsync(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getGameService().getRepository().findFirstById(player.getUniqueId()),
+                this::setGameProfile
+        );
     }
 
     public void executeBungeeCommand(String command) {
-        BukkitCore.getAPI().getCloudManager().sendCloudMessage("command", "command", JsonDocument.newDocument("uuid", player.getUniqueId()).append("command", command));
+        BukkitCore.getAPI().getCloudManager().sendCloudMessage(
+                "command",
+                "command",
+                JsonDocument.newDocument("uuid", player.getUniqueId()).append("command", command)
+        );
     }
 
     public void createNPC(String name, UUID uuid, Location location) {
-        BukkitCore.getInstance().getPlayerCacheManager().getCachedPlayers().get(player.getUniqueId()).getNpcPlayer().getNpcs().put(ChatColor.stripColor(name),
-                new NPCEntry(name, uuid, location, 100, 10, true, true).setPlayer(player));
+        BukkitCore.getInstance().getPlayerCacheManager()
+                .getCachedPlayers()
+                .get(player.getUniqueId())
+                .getNpcPlayer()
+                .getNpcs()
+                .put(ChatColor.stripColor(name),
+                        new NPCEntry(name, uuid, location, 100, 10, true, true).setPlayer(player)
+                );
     }
 
-    private String getOnlineTimeFormated(Long millis) {
-        Long hours = Long.valueOf(millis / 3600000L);
-        Long minT = Long.valueOf(millis - hours.longValue() * 3600000L);
-        Long min = Long.valueOf(minT.longValue() / 60000L);
-        return "§6" + hours + "h " + min + "m";
+    private String formatOnlineTime(long millis) {
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(hours);
+        return String.format("§6%dh %dm", hours, minutes);
     }
 
     public void updateOnlineTime() {
-
-        BukkitCore.getAPI().getPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
-            setOnlineTimeString(getOnlineTimeFormated(playerProfile.getOnlineTime()));
-            scoreboardAPI.updateLine(3, " §7Playtime§8: §6" + getOnlineTimeString());
-        });
+        BukkitCore.getAPI().getPlayerService().getEntityAsync(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()),
+                playerProfile -> {
+                    onlineTimeString = formatOnlineTime(playerProfile.getOnlineTime());
+                    scoreboardAPI.updateLine(3, " §7Playtime§8: §6" + onlineTimeString);
+                }
+        );
     }
-
-    public void setLabyModSubtitle() {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(Lobby.getInstance(), () -> {
-            for (LobbyPlayer all : Lobby.getInstance().getLobbyPlayerEntryHandler().values()) {
-                //    setSubtitle(all.getPlayer(), player.getUniqueId(), "§7Clan §8» " + getClanNameString() + " §8︳ §7Onlinetime §8» §a" + getOnlineTimeString());
-                //    setSubtitle(player, all.getPlayer().getUniqueId(), "§7Clan §8» " + all.getClanNameString() + " §8︳ §7Onlinetime §8» §a" + all.getOnlineTimeString());
-            }
-        }, 5);
-    }
-
 
     public void updateClanTagScore() {
-
-        BukkitCore.getAPI().getClanPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getClanPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
-            if (playerProfile != null) {
-                Clan clan = BukkitCore.getAPI().getClanManager().getClanById(playerProfile.getClanId());
-                clanNameString = clan.getColor() + clan.getName();
-            } else {
-                clanNameString = "§cno clan";
-            }
-            scoreboardAPI.updateLine(5, " §7Clan§8: " + clanNameString);
-
-        });
+        BukkitCore.getAPI().getClanPlayerService().getEntityAsync(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getClanPlayerService().getRepository().findFirstById(player.getUniqueId()),
+                clanPlayerProfile -> {
+                    if (clanPlayerProfile != null) {
+                        Clan clan = BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId());
+                        clanNameString = clan.getColor() + clan.getName();
+                    } else {
+                        clanNameString = NO_CLAN_TEXT;
+                    }
+                    scoreboardAPI.updateLine(5, " §7Clan§8: " + clanNameString);
+                }
+        );
     }
 
     public void updateCoinsScore() {
-        BukkitCore.getAPI().getCoinManager().getCoinsAsync(player.getUniqueId(), coins -> scoreboardAPI.updateLine(4, " §7Coins§8: §6" + BukkitCore.getAPI().getCoinManager().formatInteger(coins)));
+        BukkitCore.getAPI().getCoinManager().getCoinsAsync(
+                player.getUniqueId(),
+                coins -> scoreboardAPI.updateLine(4, " §7Coins§8: §6" + BukkitCore.getAPI().getCoinManager().formatInteger(coins))
+        );
     }
 
     public void updateRankScore() {
         scoreboardAPI.updateLine(7, " §7Rank§8: " + playerRank.getColorCode() + playerRank.getName());
     }
 
-
     public void setScoreboard() {
         scoreboardAPI.setLine(9, " §8§m--------------- ");
         scoreboardAPI.setLine(8, "§7");
         scoreboardAPI.setLine(7, " §7Rank§8: " + playerRank.getColorCode() + playerRank.getName());
         scoreboardAPI.setLine(6, "§2");
-
-        CountDownLatch latch = new CountDownLatch(2);
-
-        BukkitCore.getAPI().getClanPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getClanPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
-            if (playerProfile != null) {
-                Clan clan = BukkitCore.getAPI().getClanManager().getClanById(playerProfile.getClanId());
-                clanNameString = clan.getColor() + clan.getName();
-            } else {
-                clanNameString = "§cno clan";
-            }
-            scoreboardAPI.setLine(5, " §7Clan§8: " + clanNameString);
-            latch.countDown();
-        });
-
-        BukkitCore.getAPI().getPlayerService().getEntityAsync(player.getUniqueId(), () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()), playerProfile -> {
-            setOnlineTimeString(getOnlineTimeFormated(playerProfile.getOnlineTime()));
-            scoreboardAPI.setLine(4, " §7Coins§8: §6" + BukkitCore.getAPI().getCoinManager().formatInteger(playerProfile.getCoins()));
-            scoreboardAPI.setLine(3, " §7Playtime§8: §6" + getOnlineTimeString());
-            latch.countDown();
-        });
-
         scoreboardAPI.setLine(2, "§5");
         scoreboardAPI.setLine(1, " §8§m--------------- ");
         scoreboardAPI.setLine(0, "§o" + Wrapper.getInstance().getCurrentServiceInfoSnapshot().getServiceId().getName());
 
+        CountDownLatch latch = new CountDownLatch(2);
+
+        loadClanForScoreboard(latch);
+
+        loadPlayerDataForScoreboard(latch);
+
         Bukkit.getScheduler().runTaskAsynchronously(Lobby.getInstance(), () -> {
             try {
-                latch.await();
-                Bukkit.getScheduler().runTask(Lobby.getInstance(), scoreboardAPI::build);
+                if (latch.await(5, TimeUnit.SECONDS)) {
+                    Bukkit.getScheduler().runTask(Lobby.getInstance(), scoreboardAPI::build);
+                } else {
+                    Bukkit.getLogger().warning("Scoreboard loading timeout for player " + player.getName());
+                }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Bukkit.getLogger().log(Level.SEVERE, "Error loading scoreboard for " + player.getName(), e);
+                Thread.currentThread().interrupt();
             }
         });
+    }
+
+    private void loadClanForScoreboard(CountDownLatch latch) {
+        BukkitCore.getAPI().getClanPlayerService().getEntityAsync(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getClanPlayerService().getRepository().findFirstById(player.getUniqueId()),
+                clanPlayerProfile -> {
+                    try {
+                        if (clanPlayerProfile != null) {
+                            Clan clan = BukkitCore.getAPI().getClanManager().getClanById(clanPlayerProfile.getClanId());
+                            clanNameString = clan.getColor() + clan.getName();
+                        } else {
+                            clanNameString = NO_CLAN_TEXT;
+                        }
+                        scoreboardAPI.setLine(5, " §7Clan§8: " + clanNameString);
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+        );
+    }
+
+    private void loadPlayerDataForScoreboard(CountDownLatch latch) {
+        BukkitCore.getAPI().getPlayerService().getEntityAsync(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()),
+                playerProfile -> {
+                    try {
+                        onlineTimeString = formatOnlineTime(playerProfile.getOnlineTime());
+                        scoreboardAPI.setLine(4, " §7Coins§8: §6" + BukkitCore.getAPI().getCoinManager().formatInteger(playerProfile.getCoins()));
+                        scoreboardAPI.setLine(3, " §7Playtime§8: §6" + onlineTimeString);
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+        );
     }
 
     public void openGameSubInventory(String group, Material material) {
+        List<ServiceInfoSnapshot> gameServices = getAvailableServices(group);
 
-
-        String error = "§cthere is currently no §6" + group + " §cserver available§4!";
-        AtomicInteger i = new AtomicInteger();
-        List<ServiceInfoSnapshot> gameServices = Lobby.getInstance().getCloudCacheHandler().getServerInfos().values().stream()
-                .filter(info -> info.getConfiguration().getGroups()[0].equals(group))
-                .sorted(Comparator.comparingInt(info -> info.getServiceId().getTaskServiceId())).collect(Collectors.toList());
-
-        try {
-            if (gameServices.isEmpty()) {
-                player.sendMessage(Lobby.getInstance().getPrefix() + error);
-            } else if (gameServices.size() == 1) {
-                BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameServices.get(0).getName());
-            } else {
-                Inventory inventory = new Inventory("§8» §6" + group, 9);
-
-                for (int j = 0; j < 9; j++) {
-                    inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), j);
-                }
-                gameServices.forEach(gameService -> {
-                    int onlinecount = (gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).isPresent() ? gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).get() : 0);
-                    inventory.setItem(new ItemBuilder(material, Math.min(64, onlinecount)).setLore("§7Players §8× §6" + onlinecount).setName("§8» §6" + gameService.getName()).build(), i.get(), (event) -> {
-                        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName());
-                    });
-                    i.getAndIncrement();
-                });
-
-                player.openInventory(inventory.getInventory());
-            }
-        } catch (IndexOutOfBoundsException e) {
-            player.sendMessage(Lobby.getInstance().getPrefix() + error);
+        if (gameServices.isEmpty()) {
+            sendNoServerMessage(group);
+            return;
         }
+
+        if (gameServices.size() == 1) {
+            connectToServer(gameServices.get(0).getName());
+            return;
+        }
+
+        openServerSelectionInventory(group, material, gameServices);
+    }
+
+    private List<ServiceInfoSnapshot> getAvailableServices(String group) {
+        return Lobby.getInstance().getCloudCacheHandler()
+                .getServerInfos()
+                .values()
+                .stream()
+                .filter(info -> info.getConfiguration().getGroups()[0].equals(group))
+                .sorted(Comparator.comparingInt(info -> info.getServiceId().getTaskServiceId()))
+                .collect(Collectors.toList());
+    }
+
+    private void sendNoServerMessage(String group) {
+        player.sendMessage(Lobby.getInstance().getPrefix() + "§cthere is currently no §6" + group + " §cserver available§4!");
+    }
+
+    private void connectToServer(String serverName) {
+        BukkitCore.getAPI().getCloudManager()
+                .getPlayerManager()
+                .getPlayerExecutor(player.getUniqueId())
+                .connect(serverName);
+    }
+
+    private void openServerSelectionInventory(String group, Material material, List<ServiceInfoSnapshot> services) {
+        Inventory inventory = new Inventory("§8» §6" + group, 9);
+        addInventoryBorder(inventory, 9);
+
+        AtomicInteger slot = new AtomicInteger(0);
+        services.forEach(service -> {
+            int onlineCount = service.getProperty(BridgeServiceProperty.ONLINE_COUNT).orElse(0);
+            inventory.setItem(
+                    new ItemBuilder(material, Math.min(MAX_ITEM_STACK, onlineCount))
+                            .setLore("§7Players §8× §6" + onlineCount)
+                            .setName("§8» §6" + service.getName())
+                            .build(),
+                    slot.getAndIncrement(),
+                    event -> connectToServer(service.getName())
+            );
+        });
+
+        player.openInventory(inventory.getInventory());
     }
 
     public void sendPlayerToGroup(String group) {
-        List<ServiceInfoSnapshot> collect = Lobby.getInstance().getCloudCacheHandler().getServerInfos().values().stream()
-                .filter(info -> info.getConfiguration().getGroups()[0].equals(group))
-                .filter(serviceInfoSnapshot -> !serviceInfoSnapshot.getProperty(BridgeServiceProperty.IS_IN_GAME).get())
-                .filter(serviceInfoSnapshot -> serviceInfoSnapshot.getProperty(BridgeServiceProperty.STATE).isPresent())
-                .filter(serviceInfoSnapshot -> serviceInfoSnapshot.getProperty(BridgeServiceProperty.MOTD).isPresent())
-                .filter(serviceInfoSnapshot -> serviceInfoSnapshot.getProperty(BridgeServiceProperty.STATE).get().equalsIgnoreCase("LOBBY"))
-                .filter(serviceInfoSnapshot -> serviceInfoSnapshot.getProperty(BridgeServiceProperty.EXTRA).isPresent())
-                .filter(serviceInfoSnapshot -> serviceInfoSnapshot.getProperty(BridgeServiceProperty.EXTRA).get().equalsIgnoreCase("1"))
-                .filter(serviceInfoSnapshot -> !serviceInfoSnapshot.getProperty(BridgeServiceProperty.IS_FULL).get())
-                .sorted(Comparator.comparingInt(info -> info.getProperty(BridgeServiceProperty.ONLINE_COUNT).get())).collect(Collectors.toList());
-        Collections.reverse(collect);
-        ServiceInfoSnapshot service = collect.get(0);
-        if (service == null) {
+        List<ServiceInfoSnapshot> availableServers = findBestServers(group);
+
+        if (availableServers.isEmpty()) {
             player.sendMessage(Lobby.getInstance().getPrefix() + "Could not find a §c" + group + " §7server");
-        } else {
-            BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(service.getName());
+            return;
         }
+
+        connectToServer(availableServers.get(0).getName());
     }
 
+    private List<ServiceInfoSnapshot> findBestServers(String group) {
+        List<ServiceInfoSnapshot> servers = Lobby.getInstance().getCloudCacheHandler()
+                .getServerInfos()
+                .values()
+                .stream()
+                .filter(info -> info.getConfiguration().getGroups()[0].equals(group))
+                .filter(info -> !info.getProperty(BridgeServiceProperty.IS_IN_GAME).orElse(true))
+                .filter(info -> info.getProperty(BridgeServiceProperty.STATE).isPresent())
+                .filter(info -> "LOBBY".equalsIgnoreCase(info.getProperty(BridgeServiceProperty.STATE).get()))
+                .filter(info -> "1".equals(info.getProperty(BridgeServiceProperty.EXTRA).orElse("")))
+                .filter(info -> !info.getProperty(BridgeServiceProperty.IS_FULL).orElse(true))
+                .sorted(Comparator.comparingInt(info -> info.getProperty(BridgeServiceProperty.ONLINE_COUNT).orElse(0)))
+                .collect(Collectors.toList());
+
+        Collections.reverse(servers);
+        return servers;
+    }
 
     public void openLobbySwitcher() {
         Inventory inventory = new Inventory("§8» §6Lobby Switcher", 9);
+        addInventoryBorder(inventory, 9);
 
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
-        }
+        AtomicInteger slot = new AtomicInteger(0);
+        String currentServer = Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0];
 
-        AtomicInteger i = new AtomicInteger();
-        List<ServiceInfoSnapshot> gameServices = Lobby.getInstance().getCloudCacheHandler().getServerInfos().values().stream().filter(info -> info.getConfiguration().getGroups()[0].equals("Lobby")).sorted(Comparator.comparingInt(info -> info.getServiceId().getTaskServiceId())).collect(Collectors.toList());
-        List<ServiceInfoSnapshot> gameServices1 = Lobby.getInstance().getCloudCacheHandler().getServerInfos().values().stream().filter(info -> info.getConfiguration().getGroups()[0].equals("PremiumLobby")).sorted(Comparator.comparingInt(info -> info.getServiceId().getTaskServiceId())).collect(Collectors.toList());
+        addLobbyServers(inventory, "PremiumLobby", Material.GLOWSTONE_DUST, currentServer, slot, true);
 
-        gameServices1.forEach(gameService -> {
-            int onlinecount = (gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).isPresent() ? gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).get() : 0);
-            if (gameService.getName().equalsIgnoreCase(Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0])) {
-                inventory.setItem(new ItemBuilder(Material.GLOWSTONE_DUST, Math.min(64, onlinecount)).setEnchantments(Enchantment.KNOCKBACK, 1).setAttributs().setLore("§7Players §8× §6" + onlinecount, "§cYou are currently on this lobby").setName("§8» §6" + gameService.getName()).build(), i.get());
-            } else {
-                inventory.setItem(new ItemBuilder(Material.GLOWSTONE_DUST, Math.min(64, onlinecount)).setLore("§7You need §6Premium §7or above to join", ("§7Players §8× §6" + onlinecount)).setName("§8» §6" + gameService.getName()).build(), i.get(), event -> {
-                    if (player.hasPermission("teamholy.fulljoin")) {
-                        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName());
-                    }
-                });
-            }
-            i.getAndIncrement();
-        });
-
-        gameServices.forEach(gameService -> {
-            int onlinecount = (gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).isPresent() ? gameService.getProperty(BridgeServiceProperty.ONLINE_COUNT).get() : 0);
-            ;
-            if (gameService.getName().equalsIgnoreCase(Wrapper.getInstance().getCurrentServiceInfoSnapshot().getConfiguration().getGroups()[0])) {
-                inventory.setItem(new ItemBuilder(Material.SUGAR, Math.min(64, onlinecount)).setEnchantments(Enchantment.KNOCKBACK, 1).setAttributs().setLore("§7Players §8× §6" + onlinecount, "§cYou are currently on this lobby").setName("§8» §6" + gameService.getName()).build(), i.get());
-            } else {
-                inventory.setItem(new ItemBuilder(Material.SUGAR, Math.min(64, onlinecount)).setLore("§7Players §8× §6" + onlinecount).setName("§8» §6" + gameService.getName()).build(), i.get(), (event) -> BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(gameService.getName()));
-            }
-            i.getAndIncrement();
-        });
-
+        addLobbyServers(inventory, "Lobby", Material.SUGAR, currentServer, slot, false);
 
         player.openInventory(inventory.getInventory());
+    }
+
+    private void addLobbyServers(Inventory inventory, String group, Material material, String currentServer, AtomicInteger slot, boolean requiresPermission) {
+        List<ServiceInfoSnapshot> servers = getAvailableServices(group);
+
+        servers.forEach(service -> {
+            int onlineCount = service.getProperty(BridgeServiceProperty.ONLINE_COUNT).orElse(0);
+            boolean isCurrent = service.getName().equalsIgnoreCase(currentServer);
+
+            ItemBuilder builder = new ItemBuilder(material, Math.min(MAX_ITEM_STACK, onlineCount))
+                    .setName("§8» §6" + service.getName());
+
+            if (isCurrent) {
+                builder.setEnchantments(Enchantment.KNOCKBACK, 1)
+                        .setAttributs()
+                        .setLore("§7Players §8× §6" + onlineCount, "§cYou are currently on this lobby");
+                inventory.setItem(builder.build(), slot.getAndIncrement());
+            } else {
+                if (requiresPermission) {
+                    builder.setLore("§7You need §6Premium §7or above to join", "§7Players §8× §6" + onlineCount);
+                    inventory.setItem(builder.build(), slot.getAndIncrement(), event -> {
+                        if (player.hasPermission("teamholy.fulljoin")) {
+                            connectToServer(service.getName());
+                        }
+                    });
+                } else {
+                    builder.setLore("§7Players §8× §6" + onlineCount);
+                    inventory.setItem(builder.build(), slot.getAndIncrement(), event -> connectToServer(service.getName()));
+                }
+            }
+        });
     }
 
     public void openGamesInventory() {
-        Inventory inventory = new Inventory("§8» §6Games", 9 * 4);
+        Inventory inventory = new Inventory("§8» §6Games", 36);
+        addInventoryBorder(inventory, 36);
 
-        for (int i = 0; i < 9 * 4; i++) {
-            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
-        }
+        CloudCacheHandler cacheHandler = Lobby.getInstance().getCloudCacheHandler();
+        int lobbyCount = cacheHandler.getOnlineCount("Lobby") + cacheHandler.getOnlineCount("PremiumLobby");
 
-        inventory.setItem(new ItemBuilder(Material.SLIME_BALL, Math.min(64, (Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Lobby") + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("PremiumLobby")))).setName("§8» §6Spawn").build(), 10, event -> player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby")));
+        inventory.setItem(
+                new ItemBuilder(Material.SLIME_BALL, Math.min(MAX_ITEM_STACK, lobbyCount))
+                        .setName("§8» §6Spawn")
+                        .build(),
+                10,
+                event -> player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("lobby"))
+        );
 
+        addGameModeItem(inventory, 21, Material.STICK, "MLGRush",
+                "§7Fight against an opponent in a 1v1 or 1v1v1v1 mode!",
+                "§7Try to destroy their bed and knock them down.",
+                "§7It's also great for practicing, clutching, and improving your skills.",
+                "Multiplayer"
+        );
 
-        inventory.setItem(new ItemBuilder(Material.STICK, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("MLGRush")))
-                .setName("§8» §6MLGRush")
-                .setLore(" "
-                        , " §7Fight against an opponent in a 1v1 or 1v1v1v1 mode! "
-                        , " §7Try to destroy their bed and knock them down. "
-                        , " §7It's also great for practicing, clutching, and improving your skills."
-                        , " "
-                        , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("MLGRush") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 21, (event) -> openGameSubInventory("MLGRush", Material.STICK));
-        inventory.setItem(new ItemBuilder(Material.RED_SANDSTONE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Clutches")))
-                .setName("§8» §6Clutches §8x §6Reduce §8/ §aPlayground")
-                .setLore(""
-                        , " §7The perfect mode for practicing your clutching skills §7§lalone§7! "
-                        , " §7Use our ReduceBot, which behaves just like a real player, and "
-                        , " §7it offers modes like reduce, clutch, diagonal-clutch, and multi-reduce."
-                        , " "
-                        , " §fSingleplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Clutches") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 13, (event) -> openGameSubInventory("Clutches", Material.RED_SANDSTONE));
-        inventory.setItem(new ItemBuilder(Material.SANDSTONE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("KnockbackFFA")))
-                .setName("§8» §6KnockbackFFA")
-                .setLore(" "
-                        , " §7Fight against other players on small platforms! "
-                        , " §7You can practice your PvP and bow skills "
-                        , " §7with different maps & perks. "
-                        , " "
-                        , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("KnockbackFFA") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 14, (event) -> openGameSubInventory("KnockbackFFA", Material.SANDSTONE));
+        addGameModeItem(inventory, 13, Material.RED_SANDSTONE, "Clutches",
+                "§7The perfect mode for practicing your clutching skills §7§lalone§7!",
+                "§7Use our ReduceBot, which behaves just like a real player, and",
+                "§7it offers modes like reduce, clutch, diagonal-clutch, and multi-reduce.",
+                "Singleplayer"
+        );
 
+        addGameModeItem(inventory, 14, Material.SANDSTONE, "KnockbackFFA",
+                "§7Fight against other players on small platforms!",
+                "§7You can practice your PvP and bow skills",
+                "§7with different maps & perks.",
+                "Multiplayer"
+        );
 
-        inventory.setItem(new ItemBuilder(Material.BED, Math.min(64, Lobby.getInstance().getBedwarsServerInventory().getBedwarsPlayers() + Lobby.getInstance().getBedwarsServerInventory().getRushBWPlayers()))
-                .setName("§8» §6Bedwars §7& §cRushBW")
-                .setLore(" "
-                        , " §7The most intense PvP game, combining "
-                        , " §7all game modes at once: Bedwars, German-style."
-                        , " §7Break the enemy's bed and knock them down "
-                        , " §7in 2x1, 4x2, and 8x1 variants. "
-                        , " §7Introducing §cRushBW§8: §7a faster Bedwars mode for "
-                        , " §7the best German mouse abuse experience "
-                        , " "
-                        , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + (Lobby.getInstance().getBedwarsServerInventory().getBedwarsPlayers() + Lobby.getInstance().getBedwarsServerInventory().getRushBWPlayers()) + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nteleport"
-                )
-                .build(), 15, event -> player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn")));
-        inventory.setItem(new ItemBuilder(Material.IRON_SWORD, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SGFFA")))
-                .setName("§8» §6SGFFA")
-                .setLore(" "
-                        , " §7The all-time favorite Survival Games, but with a little "
-                        , " §7twist: we combined Survival Games and Free-For-All in one mode "
-                        , " §7Try to think fast and get out of difficult situations. "
-                        , " "
-                        , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SGFFA") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 16, (event) -> openGameSubInventory("SGFFA", Material.IRON_SWORD));
+        int bedwarsCount = Lobby.getInstance().getBedwarsServerInventory().getBedwarsPlayers() +
+                Lobby.getInstance().getBedwarsServerInventory().getRushBWPlayers();
+        inventory.setItem(
+                new ItemBuilder(Material.BED, Math.min(MAX_ITEM_STACK, bedwarsCount))
+                        .setName("§8» §6Bedwars §7& §cRushBW")
+                        .setLore(
+                                " ",
+                                " §7The most intense PvP game, combining",
+                                " §7all game modes at once: Bedwars, German-style.",
+                                " §7Break the enemy's bed and knock them down",
+                                " §7in 2x1, 4x2, and 8x1 variants.",
+                                " §7Introducing §cRushBW§8: §7a faster Bedwars mode for",
+                                " §7the best German mouse abuse experience",
+                                " ",
+                                " §fMultiplayer",
+                                " §7Currently playing§8: §6" + bedwarsCount + " §7players",
+                                " ",
+                                "§8» §7Click to §6§nteleport"
+                        )
+                        .build(),
+                15,
+                event -> player.teleport(BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn"))
+        );
 
-        inventory.setItem(new ItemBuilder(Material.IRON_PICKAXE, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Bridge")))
-                .setName("§8» §6Bridge §8/ §6Fastbuilders")
-                .setLore(" "
-                        , " §7Practice your building skills "
-                        , " §7by fast building a §ebridge §7to the end island. "
-                        , " §7Best way to practice your §atelly§8, §emoonwalk§8, §cgodbridge§8.... "
-                        , " "
-                        , " §fSingleplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Bridge") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 12, (event) -> openGameSubInventory("Bridge", Material.IRON_PICKAXE));        inventory.setItem(new ItemBuilder(Material.GRASS, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SkyWarsFFA")))
-                .setName("§8» §6SkywarsFFA §c§lNEW")
-                .setLore(" "
-                        , " §7Practice your combat skills "
-                        , " §7by fighting against other players on "
-                        , " §7skywars environment islands. "
-                        , " "
-                        , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("SkyWarsFFA") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 22, (event) -> openGameSubInventory("SkyWarsFFA", Material.GRASS));
+        addGameModeItem(inventory, 16, Material.IRON_SWORD, "SGFFA",
+                "§7The all-time favorite Survival Games, but with a little",
+                "§7twist: we combined Survival Games and Free-For-All in one mode",
+                "§7Try to think fast and get out of difficult situations.",
+                "Multiplayer"
+        );
 
-        inventory.setItem(new ItemBuilder(Material.DIAMOND_SWORD, Math.min(64, Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Duels")))
-                .setName("§8» §6Duels")
-                .setLore(" "
-                        , " §7Fight against other players in intense 1v1 duels! "
-                        , " §7Choose your kit and prove your skills "
-                        , " §7in various combat scenarios. "
-                        , " "
-                        , " §fMultiplayer "
-                        , " §7Currently playing§8: §6" + Lobby.getInstance().getCloudCacheHandler().getOnlineCount("Duels") + " §7players"
-                        , " "
-                        , "§8» §7Click to §6§nconnect"
-                )
-                .build(), 23, (event) -> openGameSubInventory("Duels", Material.DIAMOND_SWORD));
+        addGameModeItem(inventory, 12, Material.IRON_PICKAXE, "Bridge",
+                "§7Practice your building skills",
+                "§7by fast building a §ebridge §7to the end island.",
+                "§7Best way to practice your §atelly§8, §emoonwalk§8, §cgodbridge§8....",
+                "Singleplayer"
+        );
 
+        addGameModeItem(inventory, 22, Material.GRASS, "SkyWarsFFA §c§lNEW",
+                "§7Practice your combat skills",
+                "§7by fighting against other players on",
+                "§7skywars environment islands.",
+                "Multiplayer"
+        );
+
+        addGameModeItem(inventory, 23, Material.DIAMOND_SWORD, "Duels",
+                "§7Fight against other players in intense 1v1 duels!",
+                "§7Choose your kit and prove your skills",
+                "§7in various combat scenarios.",
+                "Multiplayer"
+        );
 
         player.openInventory(inventory.getInventory());
     }
 
+    private void addGameModeItem(Inventory inventory, int slot, Material material, String gameMode,
+                                 String desc1, String desc2, String desc3, String playerType) {
+        int onlineCount = Lobby.getInstance().getCloudCacheHandler().getOnlineCount(gameMode.split(" ")[0]);
+
+        inventory.setItem(
+                new ItemBuilder(material, Math.min(MAX_ITEM_STACK, onlineCount))
+                        .setName("§8» §6" + gameMode)
+                        .setLore(
+                                " ",
+                                " " + desc1,
+                                " " + desc2,
+                                " " + desc3,
+                                " ",
+                                " §f" + playerType,
+                                " §7Currently playing§8: §6" + onlineCount + " §7players",
+                                " ",
+                                "§8» §7Click to §6§nconnect"
+                        )
+                        .build(),
+                slot,
+                event -> openGameSubInventory(gameMode.split(" ")[0], material)
+        );
+    }
+
     public void openSettings() {
+        Inventory inventory = new Inventory("§8» §6Settings", 27);
+        addInventoryBorder(inventory, 27);
 
-        Inventory inventory = new Inventory("§8» §6Settings", 9 * 3);
-        for (int i = 0; i < 9 * 3; i++) {
-            inventory.setItem(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 15).setName("§8//").build(), i);
+        FriendProfile friendProfile = loadFriendProfile();
+        PlayerProfile playerProfile = loadPlayerProfile();
+
+        if (friendProfile == null || playerProfile == null) {
+            player.sendMessage(Lobby.getInstance().getPrefix() + "§cError loading settings!");
+            return;
         }
-
-        ItemBuilder itemBuilder = new ItemBuilder(Material.FIREWORK, 1).setName("§8» §6Allow Party invites").setAttributs();
-        ItemBuilder requests = new ItemBuilder(Material.BOOK, 1).setName("§8» §6Allow Friend requests").setLore("§7currently §cdeactivated").setAttributs();
-        ItemBuilder jump = new ItemBuilder(Material.ENDER_PEARL, 1).setName("§8» §6Allow Friend jump").setLore("§7currently §cdeactivated").setAttributs();
-
-        FriendProfile friendProfile = BukkitCore.getAPI().getFriendService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getFriendService().getRepository().findFirstById(player.getUniqueId()));
-        PlayerProfile playerProfile = BukkitCore.getAPI().getPlayerService().getEntity(player.getUniqueId(), () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId()));
-
-        setPartyLore(itemBuilder, friendProfile.getPartyInviteAllowance());
-        if (friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.EVERYONE || friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.ONLY_FRIENDS) {
-            itemBuilder.setEnchantments(Enchantment.KNOCKBACK, 1);
-        }
-
-        changeActivatedLore(jump, friendProfile.isAllowFriendJump());
-        changeActivatedLore(requests, friendProfile.isAllowFriendRequests());
 
         AtomicBoolean friendUpdate = new AtomicBoolean(false);
         AtomicBoolean nickUpdate = new AtomicBoolean(false);
 
-        inventory.setItem(new ItemBuilder(Material.DIAMOND, 1).setName("§8» §6Perks").build(), 22, event1 -> BukkitCore.getInstance().getPerkManager().openMainPerkInventory(player));
-        inventory.setItem(requests.build(), 11, event1 -> {
-            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
-            friendProfile.setAllowFriendRequests(!friendProfile.isAllowFriendRequests());
+        inventory.setItem(
+                new ItemBuilder(Material.DIAMOND).setName("§8» §6Perks").build(),
+                22,
+                event -> BukkitCore.getInstance().getPerkManager().openMainPerkInventory(player)
+        );
 
-            changeActivatedLore(requests, friendProfile.isAllowFriendRequests());
-            inventory.setItem(requests.build(), 11);
+        addToggleSetting(inventory, 11, Material.BOOK, "Allow Friend requests",
+                friendProfile.isAllowFriendRequests(),
+                () -> {
+                    friendProfile.setAllowFriendRequests(!friendProfile.isAllowFriendRequests());
+                    friendUpdate.set(true);
+                });
 
-            friendUpdate.set(true);
-        });
+        addToggleSetting(inventory, 10, Material.ENDER_PEARL, "Allow Friend jump",
+                friendProfile.isAllowFriendJump(),
+                () -> {
+                    friendProfile.setAllowFriendJump(!friendProfile.isAllowFriendJump());
+                    friendUpdate.set(true);
+                });
 
-        inventory.setItem(jump.build(), 10, event1 -> {
-            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
-            friendProfile.setAllowFriendJump(!friendProfile.isAllowFriendJump());
+        addPartyInviteSetting(inventory, 15, friendProfile, friendUpdate);
 
-            changeActivatedLore(jump, friendProfile.isAllowFriendJump());
-            inventory.setItem(jump.build(), 10);
+        addAutoNickSetting(inventory, 16, playerProfile, nickUpdate);
 
-            friendUpdate.set(true);
-        });
+        inventory.setItem(
+                new ItemBuilder(Material.LAVA_BUCKET).setName("§8» §6Statsreset").build(),
+                4,
+                event -> Lobby.getInstance().getStatsResetHandler().openStatsReset(player)
+        );
 
-        inventory.setItem(itemBuilder.build(), 15, event1 -> {
-            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
-            PartyInviteAllowance partyInviteAllowance = null;
-            if (friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.EVERYONE) {
-                partyInviteAllowance = PartyInviteAllowance.ONLY_FRIENDS;
-            } else if (friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.ONLY_FRIENDS) {
-                partyInviteAllowance = PartyInviteAllowance.NONE;
-            } else if (friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.NONE) {
-                partyInviteAllowance = PartyInviteAllowance.EVERYONE;
-            }
-            friendProfile.setPartyInviteAllowance(partyInviteAllowance);
-            setPartyLore(itemBuilder, friendProfile.getPartyInviteAllowance());
-            if (friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.EVERYONE || friendProfile.getPartyInviteAllowance() == PartyInviteAllowance.ONLY_FRIENDS) {
-                itemBuilder.setEnchantments(Enchantment.KNOCKBACK, 1);
-            } else {
-                ItemMeta itemMeta = itemBuilder.itemStack.getItemMeta();
-                itemMeta.removeEnchant(Enchantment.KNOCKBACK);
-                itemBuilder.itemStack.setItemMeta(itemMeta);
-            }
-
-            inventory.setItem(itemBuilder.build(), 15);
-            friendUpdate.set(true);
-        });
-
-        inventory.setOnClose(inventoryCloseEvent -> {
+        inventory.setOnClose(event -> {
             if (nickUpdate.get()) {
                 BukkitCore.getAPI().getPlayerService().saveEntity(playerProfile, true, true);
             }
-
             if (friendUpdate.get()) {
                 BukkitCore.getAPI().getFriendService().saveEntity(friendProfile, true, true);
             }
         });
 
-        ItemBuilder nick = new ItemBuilder(Material.NAME_TAG).setName("§8» §6Autonick").setAttributs();
-
-        if (!player.hasPermission("markuapi.nick")) {
-            nick.setLore("§cYou need atleast the §dVIP §crank!");
-        }
-
-        changeActivatedLore(nick, playerProfile.isAutoNick());
-
-        inventory.setItem(nick.build(), 16, event -> {
-
-            if (!player.hasPermission("markupapi.nick")) {
-                player.sendMessage(Lobby.getInstance().getPrefix() + "§cYou need at least the §dVIP §crank to nick yourself!");
-                player.playSound(player.getLocation(), Sound.NOTE_BASS, 10, 50);
-                player.closeInventory();
-                return;
-            }
-
-            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
-
-
-            if (playerProfile.isAutoNick()) {
-                playerProfile.setAutoNick(false);
-            } else {
-                playerProfile.setAutoNick(true);
-            }
-
-            changeActivatedLore(nick, playerProfile.isAutoNick());
-            inventory.setItem(nick.build(), 16);
-
-            nickUpdate.set(true);
-        });
-
-        inventory.setItem(new ItemBuilder(Material.LAVA_BUCKET, 1).setName("§8» §6Statsreset").build(), 4, event1 -> Lobby.getInstance().getStatsResetHandler().openStatsReset(player));
-
         player.openInventory(inventory.getInventory());
     }
 
-    private void changeActivatedLore(ItemBuilder itemBuilder, boolean activated) {
+    private FriendProfile loadFriendProfile() {
+        return BukkitCore.getAPI().getFriendService().getEntity(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getFriendService().getRepository().findFirstById(player.getUniqueId())
+        );
+    }
+
+    private PlayerProfile loadPlayerProfile() {
+        return BukkitCore.getAPI().getPlayerService().getEntity(
+                player.getUniqueId(),
+                () -> BukkitCore.getAPI().getPlayerService().getRepository().findFirstById(player.getUniqueId())
+        );
+    }
+
+    private void addToggleSetting(Inventory inventory, int slot, Material material, String name,
+                                  boolean currentState, Runnable onToggle) {
+        ItemBuilder builder = new ItemBuilder(material).setName("§8» §6" + name).setAttributs();
+        updateToggleLore(builder, currentState);
+
+        inventory.setItem(builder.build(), slot, event -> {
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
+            onToggle.run();
+            updateToggleLore(builder, !currentState);
+            inventory.setItem(builder.build(), slot);
+        });
+    }
+
+    private void addPartyInviteSetting(Inventory inventory, int slot, FriendProfile friendProfile, AtomicBoolean updateFlag) {
+        ItemBuilder builder = new ItemBuilder(Material.FIREWORK).setName("§8» §6Allow Party invites").setAttributs();
+        updatePartyInviteLore(builder, friendProfile.getPartyInviteAllowance());
+
+        inventory.setItem(builder.build(), slot, event -> {
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
+
+            PartyInviteAllowance newAllowance = getNextPartyAllowance(friendProfile.getPartyInviteAllowance());
+            friendProfile.setPartyInviteAllowance(newAllowance);
+
+            updatePartyInviteLore(builder, newAllowance);
+            inventory.setItem(builder.build(), slot);
+            updateFlag.set(true);
+        });
+    }
+
+    private PartyInviteAllowance getNextPartyAllowance(PartyInviteAllowance current) {
+        return switch (current) {
+            case EVERYONE -> PartyInviteAllowance.ONLY_FRIENDS;
+            case ONLY_FRIENDS -> PartyInviteAllowance.NONE;
+            case NONE -> PartyInviteAllowance.EVERYONE;
+        };
+    }
+
+    private void addAutoNickSetting(Inventory inventory, int slot, PlayerProfile playerProfile, AtomicBoolean updateFlag) {
+        ItemBuilder builder = new ItemBuilder(Material.NAME_TAG).setName("§8» §6Autonick").setAttributs();
+
+        if (!player.hasPermission("markupapi.nick")) {
+            builder.setLore("§cYou need atleast the §dVIP §crank!");
+            inventory.setItem(builder.build(), slot, event -> {
+                player.sendMessage(Lobby.getInstance().getPrefix() + "§cYou need at least the §dVIP §crank to nick yourself!");
+                player.playSound(player.getLocation(), Sound.NOTE_BASS, 10, 50);
+                player.closeInventory();
+            });
+            return;
+        }
+
+        updateToggleLore(builder, playerProfile.isAutoNick());
+        inventory.setItem(builder.build(), slot, event -> {
+            player.playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 2F, 2F);
+            playerProfile.setAutoNick(!playerProfile.isAutoNick());
+            updateToggleLore(builder, playerProfile.isAutoNick());
+            inventory.setItem(builder.build(), slot);
+            updateFlag.set(true);
+        });
+    }
+
+    private void updateToggleLore(ItemBuilder builder, boolean activated) {
         if (activated) {
-            itemBuilder.setLore("§7currently §aactivated");
-            itemBuilder.setEnchantments(Enchantment.KNOCKBACK, 1);
+            builder.setLore("§7currently §aactivated");
+            builder.setEnchantments(Enchantment.KNOCKBACK, 1);
         } else {
-            itemBuilder.setLore("§7currently §cdeactivated");
-            ItemMeta itemMeta = itemBuilder.itemStack.getItemMeta();
-            itemMeta.removeEnchant(Enchantment.KNOCKBACK);
-            itemBuilder.itemStack.setItemMeta(itemMeta);
+            builder.setLore("§7currently §cdeactivated");
+            ItemMeta meta = builder.itemStack.getItemMeta();
+            meta.removeEnchant(Enchantment.KNOCKBACK);
+            builder.itemStack.setItemMeta(meta);
         }
     }
 
-
-    private void setPartyLore(de.teamholy.core.bukkit.utils.ItemBuilder itemBuilder, PartyInviteAllowance partyInviteAllowance) {
-
-
-        List<String> collection = Arrays.stream(PartyInviteAllowance.values())
-                .map(value -> (partyInviteAllowance == value) ? "§a" + value.toString().replace("_", " ").toLowerCase(Locale.ROOT) : "§7" + value.toString().replace("_", " ").toLowerCase(Locale.ROOT))
+    private void updatePartyInviteLore(ItemBuilder builder, PartyInviteAllowance allowance) {
+        List<String> lore = Arrays.stream(PartyInviteAllowance.values())
+                .map(value -> (allowance == value ? "§a" : "§7") +
+                        value.toString().replace("_", " ").toLowerCase(Locale.ROOT))
                 .collect(Collectors.toList());
 
-        Collections.reverse(collection);
+        Collections.reverse(lore);
+        builder.setLore(lore);
 
-        itemBuilder.setLore(collection);
+        if (allowance == PartyInviteAllowance.EVERYONE || allowance == PartyInviteAllowance.ONLY_FRIENDS) {
+            builder.setEnchantments(Enchantment.KNOCKBACK, 1);
+        } else {
+            ItemMeta meta = builder.itemStack.getItemMeta();
+            meta.removeEnchant(Enchantment.KNOCKBACK);
+            builder.itemStack.setItemMeta(meta);
+        }
     }
 
+    private void addInventoryBorder(Inventory inventory, int size) {
+        ItemBuilder border = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) INVENTORY_BORDER_COLOR).setName("§8//");
+        for (int i = 0; i < size; i++) {
+            inventory.setItem(border.build(), i);
+        }
+    }
 
     public void setInventory() {
-
         player.getInventory().clear();
-
 
         ItemBuilder perk = BukkitCore.getInstance().getPerkManager().getPerk(player, PerkType.BLOCK);
         if (perk != null) {
-            player.getInventory().setItem(4, perk.setAmount(64).setName("§8» §6Blocks §8(§7rightclick§8)").build());
+            player.getInventory().setItem(4, perk.setAmount(MAX_ITEM_STACK).setName("§8» §6Blocks §8(§7rightclick§8)").build());
         }
 
-        player.getInventory().setItem(0, new ItemBuilder(Material.COMPASS, 1).setName("§8» §6Games §8(§7rightclick§8)").build());
-        player.getInventory().setItem(7, new ItemBuilder(Material.REDSTONE_COMPARATOR, 1).setName("§8» §6Settings §8(§7rightclick§8)").build());
-        player.getInventory().setItem(1, new ItemBuilder(Material.NETHER_STAR, 1).setName("§8» §6Lobby Switcher §8(§7rightclick§8)").build());
-        player.getInventory().setItem(8, new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3).setSkullOwner(player.getName()).setName("§8» §6Friends §8(§7rightclick§8)").build());
+        player.getInventory().setItem(0, new ItemBuilder(Material.COMPASS).setName("§8» §6Games §8(§7rightclick§8)").build());
+        player.getInventory().setItem(7, new ItemBuilder(Material.REDSTONE_COMPARATOR).setName("§8» §6Settings §8(§7rightclick§8)").build());
+        player.getInventory().setItem(1, new ItemBuilder(Material.NETHER_STAR).setName("§8» §6Lobby Switcher §8(§7rightclick§8)").build());
+        player.getInventory().setItem(8,
+                new ItemBuilder(Material.SKULL_ITEM, 1, (byte) 3)
+                        .setSkullOwner(player.getName())
+                        .setName("§8» §6Friends §8(§7rightclick§8)")
+                        .build()
+        );
     }
 }
