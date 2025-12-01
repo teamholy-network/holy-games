@@ -21,7 +21,7 @@ public class TestCommand implements CommandExecutor {
         sender.sendMessage(Lobby.getInstance().getCloudCacheHandler().getServerInfos().size() + " servers");
         for (Gamemodes gamemodes : Gamemodes.values()) {
             for (StatsType value : StatsType.values()) {
-                sender.sendMessage(Lobby.getInstance().getLeaderboardInventory().topEntries.get(gamemodes).get(value).size() + " " + value.name() + " - " + gamemodes.name());
+                sender.sendMessage(Lobby.getInstance().getLeaderboardInventory().getTopEntries().get(gamemodes).get(value).size() + " " + value.name() + " - " + gamemodes.name());
             }
         }
         sender.sendMessage(Lobby.getInstance().getBedwarsSpectateInventory().getGameHashMap().size() + " games spec");

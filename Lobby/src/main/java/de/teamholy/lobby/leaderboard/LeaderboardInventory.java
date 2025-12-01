@@ -77,6 +77,7 @@ public class LeaderboardInventory {
     private static final int MIN_SCORE_THRESHOLD = 1000;
     private static final String DEFAULT_COLOR_CODE = "§7";
 
+    @Getter
     private final Map<Gamemodes, Map<StatsType, List<TopEntry>>> topEntries = new ConcurrentHashMap<>();
     private final DecimalFormat kdFormat = new DecimalFormat("0.00");
 
