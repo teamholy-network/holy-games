@@ -23,7 +23,7 @@ public class FlyCommand implements CommandExecutor {
 
         LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(player.getUniqueId());
 
-        if (lobbyPlayer.isInArena) {
+        if (lobbyPlayer.isInArena()) {
             player.sendMessage(prefix + "You cannot use fly in the arena");
             return false;
         }
