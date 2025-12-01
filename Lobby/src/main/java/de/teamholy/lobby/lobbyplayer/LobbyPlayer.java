@@ -145,7 +145,7 @@ public class LobbyPlayer {
 
     private final Player player;
     private final ScoreboardAPI scoreboardAPI;
-    private final PlayerRank playerRank;
+    private PlayerRank playerRank;
     private final FriendEntry friendEntry;
 
     private GameProfile gameProfile;

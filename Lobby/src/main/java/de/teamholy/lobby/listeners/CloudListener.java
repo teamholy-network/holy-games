@@ -29,10 +29,8 @@ public class CloudListener implements Listener {
         JsonDocument data = event.getData();
         if (event.getChannel().equalsIgnoreCase("bukkit")) {
             if (event.getMessage().equalsIgnoreCase("onlineTime_update")) {
-                Lobby.getInstance().getLobbyPlayerEntryHandler().values().forEach(lobbyPlayer -> {
-                    lobbyPlayer.updateOnlineTime();
-                    //lobbyPlayer.setLabyModSubtitle();
-                });
+                //lobbyPlayer.setLabyModSubtitle();
+                Lobby.getInstance().getLobbyPlayerEntryHandler().values().forEach(LobbyPlayer::updateOnlineTime);
             } else if (event.getMessage().equalsIgnoreCase("clan_update")) {
                 UUID uuid = UUID.fromString(event.getData().getString("uuid"));
                 LobbyPlayer lobbyPlayer = Lobby.getInstance().getLobbyPlayerEntryHandler().get(uuid);
