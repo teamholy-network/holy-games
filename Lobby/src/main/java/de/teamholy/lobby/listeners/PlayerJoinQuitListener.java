@@ -22,7 +22,6 @@ import java.util.UUID;
 public class PlayerJoinQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-
     public void onLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
         if (Lobby.getInstance().isPremiumLobby() && !player.hasPermission("teamholy.perk.premium")) {
@@ -67,7 +66,7 @@ public class PlayerJoinQuitListener implements Listener {
             new NPCBuilder("namemc","§f§lNameMC", UUID.fromString("982239a5-582a-483f-ac1f-2289b8dccf20"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("namemc_npc")).addHolo("Vote on","§6https://teamholy.de/vote","To receive §eCoins!").build(player);
             new NPCBuilder("bw_spec","§6§lSpectate", UUID.fromString("60d97170-3d03-4562-918d-7ff7a493b68e"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("bw_spawn_spec")).build(player);
 
-            new NPCBuilder("skywarsffa","§3§lSkyWarsFFA", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,false,BukkitCore.getInstance().getLocationManager().getLocation("labymod_npc")).build(player);
+            new NPCBuilder("skywarsffa","§3§lSkyWarsFFA", UUID.fromString("eecc3c44-eaaf-48fe-af23-3af762578446"),50,10,true,true, BukkitCore.getInstance().getLocationManager().getLocation("skywarsffa")).build(player);
 
         },10);
     }

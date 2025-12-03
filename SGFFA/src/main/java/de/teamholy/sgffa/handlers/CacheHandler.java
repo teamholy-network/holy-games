@@ -14,6 +14,6 @@ public class CacheHandler {
 
     private final HashMap<String, MapEntry> mapEntryHashMap = new HashMap<>();
     private final HashMap<UUID, PlayerEntry> playerEntryHashMap = new HashMap<>();
-    private HashMap<String, TeamEntry> teamEntryHashMap = new HashMap<>();
+    private final HashMap<String, TeamEntry> teamEntryHashMap = new HashMap<>();
 
 }

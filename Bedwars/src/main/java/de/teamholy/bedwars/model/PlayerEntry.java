@@ -292,8 +292,7 @@ public class PlayerEntry {
     }
 
     public void setSpectator() {
-        if (Bedwars.getInstance().getIngamePlayers().contains(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId())))
-            Bedwars.getInstance().getIngamePlayers().remove(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
+      Bedwars.getInstance().getIngamePlayers().remove(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
         if (!Bedwars.getInstance().getSpectatePlayers().contains(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId())))
             Bedwars.getInstance().getSpectatePlayers().add(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
         player.setGameMode(GameMode.ADVENTURE);
@@ -536,11 +535,11 @@ public class PlayerEntry {
 
 
     public Material getMaterial(String material) {
-        if (material.toLowerCase().equals("iron")) {
+        if (material.equalsIgnoreCase("iron")) {
             return Material.IRON_INGOT;
-        } else if (material.toLowerCase().equals("bronze")) {
+        } else if (material.equalsIgnoreCase("bronze")) {
             return Material.CLAY_BRICK;
-        } else if (material.toLowerCase().equals("gold")) {
+        } else if (material.equalsIgnoreCase("gold")) {
             return Material.GOLD_INGOT;
         }
         return null;

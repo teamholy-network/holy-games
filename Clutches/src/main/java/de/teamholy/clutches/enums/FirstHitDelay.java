@@ -12,7 +12,7 @@ public enum FirstHitDelay {
     @Setter
     private boolean received;
 
-    private String name;
+    private final String name;
 
     FirstHitDelay(boolean received, String name) {
         this.received = received;

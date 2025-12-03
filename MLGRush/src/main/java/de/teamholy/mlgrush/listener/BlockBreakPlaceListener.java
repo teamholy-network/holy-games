@@ -94,7 +94,7 @@ public class BlockBreakPlaceListener implements Listener {
 
                 BukkitTask bukkitRunnable = new BukkitRunnable() {
                     int i = 0;
-                    int random = new Random().nextInt(99999999);
+                    final int random = new Random().nextInt(99999999);
                     @Override
                     public void run() {
                         PacketPlayOutBlockBreakAnimation packet = new PacketPlayOutBlockBreakAnimation(random, new BlockPosition(b.getX(), b.getY(), b.getZ()), i);

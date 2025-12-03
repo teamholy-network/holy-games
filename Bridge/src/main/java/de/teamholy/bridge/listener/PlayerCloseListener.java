@@ -11,10 +11,9 @@ public class PlayerCloseListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) return;
+        if (!(event.getPlayer() instanceof Player player)) return;
 
-        var player = (Player) event.getPlayer();
-        var inventory = event.getInventory();
+      var inventory = event.getInventory();
 
 
         if (inventory == null) return;

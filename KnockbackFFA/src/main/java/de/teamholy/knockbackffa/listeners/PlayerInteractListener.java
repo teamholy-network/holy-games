@@ -28,10 +28,9 @@ public class PlayerInteractListener implements Listener {
                 PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
 
                 if (event.getClickedBlock() != null) {
-                    if (event.getClickedBlock().getState() instanceof Sign && !(player.getGameMode() == GameMode.CREATIVE)) {
-                        Sign sign = (Sign) event.getClickedBlock().getState();
+                    if (event.getClickedBlock().getState() instanceof Sign sign && !(player.getGameMode() == GameMode.CREATIVE)) {
 
-                        for (MapEntry mapEntry : KnockbackFFA.getInstance().getCacheHandler().getMapEntrys().values()) {
+                      for (MapEntry mapEntry : KnockbackFFA.getInstance().getCacheHandler().getMapEntrys().values()) {
 
                             if (mapEntry.getSign().equals(sign)) {
                                 if (playerEntry.getPlayerState() == PlayerState.LOBBY) {

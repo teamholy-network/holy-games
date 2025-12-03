@@ -88,7 +88,6 @@ public class PlayerShopListener {
         } else {
             player.sendMessage(Bedwars.getInstance().getPrefix() + "§cYou dont have enough materials");
             player.playSound(player.getLocation(), Sound.NOTE_BASS, 2.0F, 2.0F);
-            return;
         }
 
 

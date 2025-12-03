@@ -11,7 +11,7 @@ import java.util.UUID;
 /* copyright by Yassino */
 @Getter
 public class CacheHandler {
-    private HashMap<String, MapEntry> mapEntrys = new HashMap<>();
-    private HashMap<UUID, PlayerEntry> playerEntrys = new HashMap<>();
-    private HashMap<String, TeamEntry> teamEntryHashMap = new HashMap<>();
+    private final HashMap<String, MapEntry> mapEntrys = new HashMap<>();
+    private final HashMap<UUID, PlayerEntry> playerEntrys = new HashMap<>();
+    private final HashMap<String, TeamEntry> teamEntryHashMap = new HashMap<>();
 }

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 @Getter
 public class TeamEntry {
 
-    private String tag;
-    private ArrayList<PlayerEntry> playerEntries = new ArrayList<>();
-    private ArrayList<PlayerEntry> invites = new ArrayList<>();
+    private final String tag;
+    private final ArrayList<PlayerEntry> playerEntries = new ArrayList<>();
+    private final ArrayList<PlayerEntry> invites = new ArrayList<>();
 
     public TeamEntry(String tag) {
         this.tag = tag;

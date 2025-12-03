@@ -135,7 +135,7 @@ public class BedwarsSpectateInventory implements Listener {
         updateItems();
     }
 
-    private String[] teams = new String[]{"Red", "Blue", "Yellow", "Green", "Black", "White", "Orange", "Pink"};
+    private final String[] teams = new String[]{"Red", "Blue", "Yellow", "Green", "Black", "White", "Orange", "Pink"};
 
     public void updateServer(ServiceInfoSnapshot server) {
 

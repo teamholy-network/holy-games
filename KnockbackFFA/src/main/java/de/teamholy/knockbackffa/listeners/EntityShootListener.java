@@ -27,10 +27,9 @@ public class EntityShootListener implements Listener {
 
     @EventHandler
     public void onShoot(EntityShootBowEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player player) {
             if (event.getProjectile().getType() == EntityType.ARROW) {
-                Player player = (Player) event.getEntity();
-                PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+              PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
                 World world = player.getWorld();
                 if (player.getLocation().getY() > playerEntry.getActiveMap().getSpawnHight()) {
                     event.getProjectile().remove();
@@ -65,22 +64,18 @@ public class EntityShootListener implements Listener {
 
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        if (event.getEntity() instanceof EnderPearl) {
-            EnderPearl pearl = (EnderPearl) event.getEntity();
-            if (pearl.getShooter() instanceof Player) {
-                Player player = (Player) pearl.getShooter();
-                ActiveEnderPearlManager.add(player.getUniqueId(), pearl);
+        if (event.getEntity() instanceof EnderPearl pearl) {
+          if (pearl.getShooter() instanceof Player player) {
+              ActiveEnderPearlManager.add(player.getUniqueId(), pearl);
             }
         }
     }
 
     @EventHandler
     public void onLand(ProjectileHitEvent event) {
-        if (event.getEntity() instanceof EnderPearl) {
-            EnderPearl pearl = (EnderPearl) event.getEntity();
-            if(pearl.getShooter() instanceof Player) {
-                Player shooter = (Player) pearl.getShooter();
-                ActiveEnderPearlManager.remove(shooter.getUniqueId());
+        if (event.getEntity() instanceof EnderPearl pearl) {
+          if(pearl.getShooter() instanceof Player shooter) {
+              ActiveEnderPearlManager.remove(shooter.getUniqueId());
             }
         }
         if (event.getEntity() instanceof Arrow) {

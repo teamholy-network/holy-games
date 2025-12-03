@@ -17,11 +17,11 @@ import java.util.ArrayList;
 @Getter
 public class MapEntry {
 
-    private Material material;
-    private int materialSubId;
-    private String name;
+    private final Material material;
+    private final int materialSubId;
+    private final String name;
     private int votes;
-    private String world;
+    private final String world;
 
     private int schedBronze;
     private int schedIron;

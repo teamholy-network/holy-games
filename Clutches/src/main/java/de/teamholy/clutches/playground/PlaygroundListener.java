@@ -46,7 +46,6 @@ public class PlaygroundListener implements Listener {
                         } else playgroundPlayer.getPlayerTask().playCountdownTask(playgroundPlayer.getSettings().getSelectedPreset());
                     }
                 }
-                return;
             }
 
         } catch (Exception ignored) {}
@@ -54,9 +53,8 @@ public class PlaygroundListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) return;
-        Player player = (Player) event.getPlayer();
-        if (event.getInventory().getName() != null && (event.getInventory().getName().toLowerCase().contains("perks") || event.getInventory().getName().toLowerCase().contains("armor"))) {
+        if (!(event.getPlayer() instanceof Player player)) return;
+      if (event.getInventory().getName() != null && (event.getInventory().getName().toLowerCase().contains("perks") || event.getInventory().getName().toLowerCase().contains("armor"))) {
             PlaygroundPlayer playgroundPlayer = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId()).getPlaygroundPlayer();
             PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
             if (playgroundPlayer == null) return;

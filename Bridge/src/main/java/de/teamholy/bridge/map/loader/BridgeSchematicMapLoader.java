@@ -53,7 +53,7 @@ public class BridgeSchematicMapLoader implements BridgeMapLoader {
         CompletableFuture<BridgeMapSkin> completableFuture = new CompletableFuture<>();
 
         completableFuture.completeAsync(() -> {
-            File file = new File(Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics/" + bridgeMapSkin.getSchematic().getName().replace("%type%", bridgeMap.getMapType().getName()));
+            File file = new File(Bridge.getInstance().getDataFolder().getAbsolutePath() + "/schematics/" + bridgeMapSkin.schematic().getName().replace("%type%", bridgeMap.getMapType().getName()));
             ClipboardFormat format = ClipboardFormat.findByFile(file);
 
             if (format == null) {

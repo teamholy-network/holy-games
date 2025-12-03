@@ -11,10 +11,10 @@ import java.util.Locale;
 /* copyright by Yassino */
 public class TeamingHandler {
 
-    private String prefix = "§bTeaming §8× §7";
+    private final String prefix = "§bTeaming §8× §7";
 
 
-    private SGFFA instance;
+    private final SGFFA instance;
 
     public TeamingHandler(SGFFA instance) {
         this.instance = instance;
@@ -30,8 +30,7 @@ public class TeamingHandler {
     }
 
     public boolean isInTeam(PlayerEntry playerEntry) {
-        if (getTeamByPlayerEntry(playerEntry) != null) return true;
-        return false;
+      return getTeamByPlayerEntry(playerEntry) != null;
     }
 
     public boolean isLeader(PlayerEntry playerEntry) {

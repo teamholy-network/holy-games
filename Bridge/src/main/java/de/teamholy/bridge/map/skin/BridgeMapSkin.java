@@ -4,6 +4,7 @@ import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.core.bukkit.perks.enums.PerkRankType;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import javax.annotation.Nullable;
@@ -13,6 +14,7 @@ import java.util.List;
 /* copyright by Yassino */
 
 @Getter
+@Accessors(fluent = true)
 @FieldDefaults(makeFinal = true)
 public class BridgeMapSkin {
 

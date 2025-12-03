@@ -94,9 +94,9 @@ public class PlayerEntry {
             shownBoardStatsType = StatsType.valueOf(statsProfile.getSetting(Gamemodes.KNOCKBACKFFA.toString(),"scoreboardStats"));
 
 
-            boolean needUpdate = false;
-            if (!player.hasPermission("teamholy.perk.premium") && getKillStreakEffect() != KillStreakEffect.NONE) needUpdate = true;
-            if (!player.hasPermission("teamholy.perk.premium") && getArmorColor() != ArmorColor.GREY) needUpdate = true;
+            boolean needUpdate = !player.hasPermission("teamholy.perk.premium")
+                && getKillStreakEffect() != KillStreakEffect.NONE;
+          if (!player.hasPermission("teamholy.perk.premium") && getArmorColor() != ArmorColor.GREY) needUpdate = true;
             if (!player.hasPermission("teamholy.perk.premium") && getBowTrail() != BowTrail.NONE) needUpdate = true;
             if (needUpdate) {
                 setKillStreakEffect(KillStreakEffect.NONE);

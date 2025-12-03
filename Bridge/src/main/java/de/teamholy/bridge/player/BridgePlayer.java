@@ -132,7 +132,7 @@ public class BridgePlayer {
             for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
                 statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best", String.valueOf(0L));
                 statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "BestTimes", gson.toJson(Lists.newArrayList()));
-                statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(BridgeMapSkins.getDefaultSkin(bridgeMapType).getId()));
+                statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(BridgeMapSkins.getDefaultSkin(bridgeMapType).id()));
             }
 
             statsProfile.setSetting(gameKey, "offsetZ", String.valueOf(bridgeSettings.getOffsetZ()));
@@ -145,7 +145,7 @@ public class BridgePlayer {
                 if (statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best") == null) {
                     statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best", String.valueOf(0L));
                     statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "BestTimes", gson.toJson(Lists.newArrayList()));
-                    statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(BridgeMapSkins.getDefaultSkin(bridgeMapType).getId()));
+                    statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(BridgeMapSkins.getDefaultSkin(bridgeMapType).id()));
                 }
 
                 this.globalBestTime.put(bridgeMapType, Long.valueOf(statsProfile.getSetting(gameKey, bridgeMapType.name().toLowerCase() + "Best")));
@@ -238,7 +238,7 @@ public class BridgePlayer {
             // TODO: Add map perks
             if (id > 5500 && id <= 6000) {
                 Arrays.stream(BridgeMapSkins.values())
-                        .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin().getId() == id)
+                        .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin().id() == id)
                         .toList()
                         .forEach(bridgeMapSkins -> bridgeSettings.getMapSkins().add(bridgeMapSkins.getBridgeMapSkin()));
             }
@@ -261,7 +261,7 @@ public class BridgePlayer {
         for (BridgeMapType bridgeMapType : BridgeMapType.values()) {
             statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "BestTimes", gson.toJson(this.bestTimes.get(bridgeMapType)));
             statsProfile.setSetting(gameKey, bridgeMapType.name().toLowerCase() + "Selected", String.valueOf(Arrays.stream(BridgeMapSkins.values())
-                    .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(bridgeMapType)).findFirst().get().getBridgeMapSkin().getId()));
+                    .filter(bridgeMapSkins -> bridgeMapSkins.getBridgeMapSkin() == getSelectedSkins().get(bridgeMapType)).findFirst().get().getBridgeMapSkin().id()));
         }
 
         if (globalBestTime != null) {
@@ -304,7 +304,7 @@ public class BridgePlayer {
     public void addGamesPlayed() { this.gamesPlayed++; }
 
     public enum PlayerState {
-        LOBBY, INGAME, SPECTATOR;
+        LOBBY, INGAME, SPECTATOR
     }
 
     public long getLocalBestTime(BridgeMapType mapType) {

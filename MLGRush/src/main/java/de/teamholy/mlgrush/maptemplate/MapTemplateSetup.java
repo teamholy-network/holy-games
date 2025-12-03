@@ -19,11 +19,11 @@ import java.io.IOException;
 
 public class MapTemplateSetup implements Listener {
 
-    private Player player;
+    private final Player player;
     private int currentStep;
     private boolean running;
-    private MapEntry mapEntry;
-    private GameType gameType;
+    private final MapEntry mapEntry;
+    private final GameType gameType;
 
     public MapTemplateSetup(Player player, MapEntry mapEntry,GameType gameType) {
         this.player = player;

@@ -130,7 +130,7 @@ public class LeaderboardInventory {
             scoredSortedSet.entryRangeReversed(0, TOP_ENTRIES_LIMIT).forEach(entry -> {
                 try {
                     @SuppressWarnings("unchecked")
-                    ScoredEntry<UUID> scoredEntry = (ScoredEntry<UUID>) entry;
+                    ScoredEntry<UUID> scoredEntry = entry;
 
                     if (scoredEntry.getScore() > MIN_SCORE_THRESHOLD) {
                         TopEntry topEntry = createTopEntry(scoredEntry.getValue());

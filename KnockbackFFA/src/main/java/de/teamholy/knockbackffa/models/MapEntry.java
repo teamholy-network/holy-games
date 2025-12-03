@@ -13,11 +13,11 @@ import java.util.ArrayList;
 /* copyright by Yassino */
 @Getter
 public class MapEntry {
-    private String mapName;
-    private Location spawn;
-    private Double spawnHight;
-    private Double deathHight;
-    private ArrayList<Player> players;
+    private final String mapName;
+    private final Location spawn;
+    private final Double spawnHight;
+    private final Double deathHight;
+    private final ArrayList<Player> players;
     private Sign sign;
 
     public MapEntry(String mapName, Location spawn, Double spawnHight, Double deathHight, Sign sign) {

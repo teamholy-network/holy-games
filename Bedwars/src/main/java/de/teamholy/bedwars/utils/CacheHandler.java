@@ -12,9 +12,9 @@ import java.util.UUID;
 /* copyright by Yassino */
 @Getter
 public class CacheHandler {
-    private HashMap<UUID, PlayerEntry>  playerEntries = new HashMap<>();
-    private ArrayList<TeamEntry>  teamEntries = new ArrayList<>();
-    private HashMap<String, MapEntry>  mapEntries = new HashMap<>();
+    private final HashMap<UUID, PlayerEntry>  playerEntries = new HashMap<>();
+    private final ArrayList<TeamEntry>  teamEntries = new ArrayList<>();
+    private final HashMap<String, MapEntry>  mapEntries = new HashMap<>();
 
     public TeamEntry getTeamByName(String name) {
 

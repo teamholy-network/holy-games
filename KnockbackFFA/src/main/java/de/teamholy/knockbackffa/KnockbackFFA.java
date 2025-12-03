@@ -77,10 +77,6 @@ public class KnockbackFFA extends JavaPlugin {
      */
     private void initializePlugin() {
         instance = this;
-        new BukkitUpdaterAPI(this,"37153192-6ff5-46f5-9899-8d33a67f3797","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
     }
     
     /**

@@ -24,9 +24,8 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player))  return;
-        Player player = (Player) event.getEntity();
-        // Cancel void damage if an enderpearl is still active
+        if (!(event.getEntity() instanceof Player player))  return;
+      // Cancel void damage if an enderpearl is still active
         if (event.getCause() == DamageCause.VOID && ActiveEnderPearlManager.hasActive(player.getUniqueId())) {
             event.setCancelled(true);
             return;
@@ -72,9 +71,8 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
     public void onArrowDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Arrow)) return;
-        Arrow arrow = (Arrow) event.getDamager();
-        if (!(arrow.getShooter() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+      if (!(arrow.getShooter() instanceof Player)) return;
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getEntity().getUniqueId());
         PlayerEntry attackerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(((Player) arrow.getShooter()).getUniqueId());
         if (playerEntry == attackerEntry) return;

@@ -35,9 +35,8 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public void onArrowDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Arrow)) return;
-        Arrow arrow = (Arrow) event.getDamager();
-        if (!(arrow.getShooter() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+      if (!(arrow.getShooter() instanceof Player)) return;
         PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(event.getEntity().getUniqueId());
         PlayerEntry attackerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(((Player) arrow.getShooter()).getUniqueId());
         if (playerEntry == attackerEntry) return;
@@ -49,9 +48,8 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player)event.getDamager();
-            Player entity = (Player) event.getEntity();
+        if (event.getDamager() instanceof Player player) {
+          Player entity = (Player) event.getEntity();
             PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(player.getUniqueId());
             PlayerEntry entityEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(entity.getUniqueId());
             if (entityEntry.isVanish()) {

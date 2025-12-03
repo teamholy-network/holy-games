@@ -24,9 +24,8 @@ public class SetupCommand implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
-            if (!player.hasPermission("command.setup")) {
+        if (commandSender instanceof Player player) {
+          if (!player.hasPermission("command.setup")) {
                 return false;
             }
             if (!(args.length == 2)) {
@@ -93,7 +92,7 @@ public class SetupCommand implements CommandExecutor, Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (currentMap == null) return;
-        Player player = (Player)event.getPlayer();
+        Player player = event.getPlayer();
         int clickedBlock = event.getClickedBlock().getTypeId();
         if(clickedBlock==63 | clickedBlock==68) {
             Sign a = (Sign)event.getClickedBlock();

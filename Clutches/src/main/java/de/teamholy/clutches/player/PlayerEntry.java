@@ -428,7 +428,6 @@ public class PlayerEntry {
 
             if (event.getClick().isRightClick()) {
                 if (getDelay() <= 2) {
-                    return;
                 } else {
                     setDelay(getDelay() - 1);
                     openIngameSettings();
@@ -436,7 +435,6 @@ public class PlayerEntry {
                 }
             } else if (event.getClick().isLeftClick()) {
                 if (getDelay() >= 12) {
-                    return;
                 } else {
                     setDelay(getDelay() + 1);
                     openIngameSettings();
@@ -476,7 +474,6 @@ public class PlayerEntry {
 
             if (event.getClick().isRightClick()) {
                 if (getMultiReduceNpcDistance() <= 1) {
-                    return;
                 } else {
                     setMultiReduceNpcDistance(getMultiReduceNpcDistance() - 0.1);
                     openIngameSettings();
@@ -484,7 +481,6 @@ public class PlayerEntry {
                 }
             } else if (event.getClick().isLeftClick()) {
                 if (getMultiReduceNpcDistance() >= 7) {
-                    return;
                 } else {
                     setMultiReduceNpcDistance(getMultiReduceNpcDistance() + 0.1);
                     openIngameSettings();

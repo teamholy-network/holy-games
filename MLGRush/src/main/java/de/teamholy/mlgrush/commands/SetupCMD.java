@@ -13,9 +13,8 @@ import org.bukkit.entity.Player;
 public class SetupCMD implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if (commandSender instanceof Player) {
-            Player player = (Player)commandSender;
-            if (!player.hasPermission("command.setup"))
+        if (commandSender instanceof Player player) {
+          if (!player.hasPermission("command.setup"))
                 return false;
             if (args.length == 2) {
                 switch (args[1].toLowerCase()) {

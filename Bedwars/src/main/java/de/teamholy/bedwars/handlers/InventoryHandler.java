@@ -9,10 +9,10 @@ import lombok.Getter;
 /* copyright by Yassino */
 @Getter
 public class InventoryHandler {
-    private TeamSelectInventory teamSelectInventory;
-    private GoldVotingInventory goldVotingInventory;
-    private MapVotingInventory mapVotingInventory;
-    private ShopInventory shopInventory;
+    private final TeamSelectInventory teamSelectInventory;
+    private final GoldVotingInventory goldVotingInventory;
+    private final MapVotingInventory mapVotingInventory;
+    private final ShopInventory shopInventory;
 
     public InventoryHandler() {
         shopInventory = new ShopInventory();

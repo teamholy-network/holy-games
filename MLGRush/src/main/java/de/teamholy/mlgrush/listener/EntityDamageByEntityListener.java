@@ -19,7 +19,7 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
     public void onDamageAll(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player player) {
             if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID))
                 event.setCancelled(true);
             if (event.getCause().equals(EntityDamageEvent.DamageCause.FIRE))
@@ -34,20 +34,17 @@ public class EntityDamageByEntityListener implements Listener {
                 event.setCancelled(true);
             if (event.getCause().equals(EntityDamageEvent.DamageCause.FALLING_BLOCK))
                 event.setCancelled(true);
-            Player player = (Player) event.getEntity();
-            player.setHealth(20);
+          player.setHealth(20);
         }
     }
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (!(event.getDamager() instanceof Player)) {
+        if (event.getEntity() instanceof Player player) {
+            if (!(event.getDamager() instanceof Player attacker)) {
                 return;
             }
-            Player player = (Player) event.getEntity();
-            Player attacker = (Player) event.getDamager();
-            PlayerEntry attackerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(attacker.getUniqueId());
+          PlayerEntry attackerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(attacker.getUniqueId());
             PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
             switch (attackerEntry.getPlayerState()) {
                 case INGAME:

@@ -333,6 +333,7 @@ public class LobbyPlayer {
                 .values()
                 .stream()
                 .filter(info -> info.getConfiguration().getGroups()[0].equals(group))
+                .filter(info -> !info.getProperty(BridgeServiceProperty.IS_STARTING).orElse(true))
                 .sorted(Comparator.comparingInt(info -> info.getServiceId().getTaskServiceId()))
                 .collect(Collectors.toList());
     }

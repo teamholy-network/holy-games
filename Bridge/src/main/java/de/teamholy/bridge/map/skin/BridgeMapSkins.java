@@ -69,7 +69,7 @@ public enum BridgeMapSkins {
 
     public static BridgeMapSkin getDefaultSkin(BridgeMapType bridgeMapType) {
         for (BridgeMapSkins value : values()) {
-            for (BridgeMapType mapType : value.getBridgeMapSkin().getBridgeMapTypes()) {
+            for (BridgeMapType mapType : value.getBridgeMapSkin().bridgeMapTypes()) {
                 if (mapType == bridgeMapType && value.getBridgeMapSkin().isDefault()) {
                     return value.getBridgeMapSkin();
                 }
@@ -80,7 +80,7 @@ public enum BridgeMapSkins {
 
     public static BridgeMapSkin getById(int id) {
         for (BridgeMapSkins value : values()) {
-            if (value.getBridgeMapSkin().getId() == id) {
+            if (value.getBridgeMapSkin().id() == id) {
                 return value.getBridgeMapSkin();
             }
         }

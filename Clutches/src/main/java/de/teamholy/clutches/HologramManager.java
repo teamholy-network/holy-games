@@ -19,8 +19,8 @@ import java.util.HashMap;
 @Getter
 public class HologramManager {
 
-    private HashMap<ArenaType, Hologram> hologramHashMap = new HashMap<>();
-    private Hologram playgroundHologram;
+    private final HashMap<ArenaType, Hologram> hologramHashMap = new HashMap<>();
+    private final Hologram playgroundHologram;
 
 
     public HologramManager() {

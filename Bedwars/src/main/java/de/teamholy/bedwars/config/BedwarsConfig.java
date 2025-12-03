@@ -12,7 +12,7 @@ import java.io.IOException;
 public class BedwarsConfig {
 
 
-    private File file = new File("plugins/Bedwars/Config.yml");
+    private final File file = new File("plugins/Bedwars/Config.yml");
     public FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
     public BedwarsConfig() {

@@ -19,11 +19,10 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onEntityInteract(PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
-        if (!(event.getRightClicked() instanceof Player)) return;
+        if (!(event.getRightClicked() instanceof Player target)) return;
         if (player.getItemInHand() != null && player.getItemInHand().getType() != null) {
             if (player.getItemInHand().getType() == Material.FIREWORK) {
-                Player target = (Player) event.getRightClicked();
-                BukkitCore.getAPI().getCloudManager().sendCloudMessage("party","removeinvite", JsonDocument.newDocument("attacker",player.getUniqueId()).append("entity",target.getUniqueId()));
+              BukkitCore.getAPI().getCloudManager().sendCloudMessage("party","removeinvite", JsonDocument.newDocument("attacker",player.getUniqueId()).append("entity",target.getUniqueId()));
             }
         }
     }

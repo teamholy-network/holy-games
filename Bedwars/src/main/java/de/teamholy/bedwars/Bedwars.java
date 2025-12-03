@@ -77,10 +77,6 @@ public class Bedwars extends JavaPlugin {
     public void onEnable() {
 
         instance = this;
-        new BukkitUpdaterAPI(this,"dd6371bf-ca85-4a78-839a-f9617cb442bc","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
 
         shopUuids = new ArrayList<>();
         shopUuids.add(UUID.fromString("6d40f495-d796-4244-9f45-964cdd7e685a"));

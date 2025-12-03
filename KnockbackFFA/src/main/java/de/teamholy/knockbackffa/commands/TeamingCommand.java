@@ -16,7 +16,7 @@ import java.util.Locale;
 /* copyright by Yassino */
 public class TeamingCommand implements CommandExecutor {
 
-    private String prefix = "§bTeaming §8× §7";
+    private final String prefix = "§bTeaming §8× §7";
     private final TeamingHandler teamingHandler = KnockbackFFA.getInstance().getTeamingHandler();
 
     @Override

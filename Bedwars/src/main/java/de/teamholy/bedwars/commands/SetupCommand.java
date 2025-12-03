@@ -25,9 +25,8 @@ public class SetupCommand implements CommandExecutor {
     @SneakyThrows
     @Override
     public boolean onCommand(CommandSender commandSender, Command cmd, String s, String[] args) {
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
-            YamlConfiguration cfg = Bedwars.getInstance().getYamlConfiguration();
+        if (commandSender instanceof Player player) {
+          YamlConfiguration cfg = Bedwars.getInstance().getYamlConfiguration();
             if (!player.hasPermission("system.setup")) {
                 return false;
             }

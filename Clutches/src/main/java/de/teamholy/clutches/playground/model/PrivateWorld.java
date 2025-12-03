@@ -21,10 +21,10 @@ public class PrivateWorld {
 
     public static List<PrivateWorld> LOADED_WORLDS = Lists.newArrayList();
 
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
     private SlimeWorld slimeWorld;
-    private PlaygroundWorld playgroundWorld;
-    private List<UUID> allowedPlayers = Lists.newArrayList();
+    private final PlaygroundWorld playgroundWorld;
+    private final List<UUID> allowedPlayers = Lists.newArrayList();
 
     public PrivateWorld(PlaygroundWorld playgroundWorld) {
         this.playgroundWorld = playgroundWorld;

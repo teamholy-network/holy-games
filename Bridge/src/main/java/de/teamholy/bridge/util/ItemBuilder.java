@@ -28,7 +28,7 @@ import java.util.UUID;
 public class ItemBuilder {
 
     protected ItemStack is;
-    private static String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    private static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
     private static Class<?> skullMetaClass;
 
     public ItemBuilder(Material mat) {

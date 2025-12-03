@@ -81,7 +81,7 @@ public class PlayerEntry {
             statsProfile.setSetting(Gamemodes.MLGRUSH.toString(), "scoreboardStats", shownBoardStatsType.toString());
             BukkitCore.getAPI().getGameService().saveEntity(statsProfile, true, true);
         } else {
-            String inventory = (String) statsProfile.getSetting(Gamemodes.MLGRUSH.toString(), "invsort");
+            String inventory = statsProfile.getSetting(Gamemodes.MLGRUSH.toString(), "invsort");
             if (inventory.isEmpty()) {
                 createInv();
             } else {

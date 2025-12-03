@@ -15,10 +15,10 @@ import java.util.HashMap;
 @Getter
 public class QueueHandler {
 
-    private Hologram TwoxOne;
-    private Hologram FourxOne;
+    private final Hologram TwoxOne;
+    private final Hologram FourxOne;
 
-    private HashMap<PlayerEntry, GameType> queue = new HashMap<>();
+    private final HashMap<PlayerEntry, GameType> queue = new HashMap<>();
 
 
     public QueueHandler(MLGRush instance) {

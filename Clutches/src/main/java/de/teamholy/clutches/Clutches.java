@@ -22,6 +22,7 @@ import de.teamholy.clutches.npcskin.NPCSkin;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.npc.models.SkinEntry;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -63,16 +64,13 @@ public class Clutches extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        new BukkitUpdaterAPI(this,"9bd6b569-b1f2-4b7e-ad27-9bc1a1e50d72","")
-            .setHibernat(true)
-            .setOnlyempty(true)
-            .setOnlyrestart(true);
 
         slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
         slimeLoader = slimePlugin.getLoader("mongodb");
 
 
-        mapEntryHandler.put("line", new MapEntry("Line",  new ItemBuilder(Material.WOOD, 1, (byte) 0).setName("§8» §6Line"), Arrays.asList(ArenaType.DIAGONAL_CLUTCH)));
+        mapEntryHandler.put("line", new MapEntry("Line",  new ItemBuilder(Material.WOOD, 1, (byte) 0).setName("§8» §6Line"),
+            List.of(ArenaType.DIAGONAL_CLUTCH)));
         mapEntryHandler.put("wood", new MapEntry("Wood", new ItemBuilder(Material.LOG, 1, (byte) 0).setName("§8» §6Wood"), null));
         mapEntryHandler.put("rainbow", new MapEntry("Rainbow",  new ItemBuilder(Material.GLASS, 1, (byte) 1).setName("§8» §6Rainbow"), null));
         mapEntryHandler.put("island", new MapEntry("Island", new ItemBuilder(Material.GRASS, 1, (byte) 0).setName("§8» §6Island"),Arrays.asList(ArenaType.EXPERIMENTAL,ArenaType.DIAGONAL_CLUTCH)));

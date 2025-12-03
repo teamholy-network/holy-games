@@ -452,7 +452,6 @@ public class PlaygroundPlayer {
                     this.joinWorld(playgroundWorld);
                 } else if (event1.isRightClick()) {
                     if (player.hasPermission("teamholy.perk.premium")) {
-                        return;
                     } else {
                         player.sendMessage(Clutches.PREFIX + "You need at least the §dVIP §7rank to create a §aprivate world");
                     }

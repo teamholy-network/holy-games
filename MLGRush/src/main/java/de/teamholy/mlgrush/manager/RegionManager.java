@@ -4,17 +4,17 @@ import org.bukkit.Location;
 
 public class RegionManager {
 
-    private double maxX;
+    private final double maxX;
 
-    private double maxY;
+    private final double maxY;
 
-    private double maxZ;
+    private final double maxZ;
 
-    private double minX;
+    private final double minX;
 
-    private double minY;
+    private final double minY;
 
-    private double minZ;
+    private final double minZ;
 
     public RegionManager(Location postionOne, Location postionTwo) {
         this.maxX = Math.max(postionOne.getX(), postionTwo.getX());

@@ -15,9 +15,8 @@ public class SetupCommand implements CommandExecutor {
     @SneakyThrows
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
-            if (!player.hasPermission("command.setup")) {
+        if (commandSender instanceof Player player) {
+          if (!player.hasPermission("command.setup")) {
                 return false;
             }
 

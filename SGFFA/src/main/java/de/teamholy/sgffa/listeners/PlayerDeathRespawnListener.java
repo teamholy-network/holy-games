@@ -43,7 +43,6 @@ public class PlayerDeathRespawnListener implements Listener {
             player.setLevel(0);
             BukkitCore.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.SGFFA.toString(), StatsManager.TrophieAdjustType.MINUS,2);
             playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() -2);
-            return;
         } else {
 
 

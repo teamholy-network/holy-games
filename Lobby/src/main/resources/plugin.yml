@@ -7,7 +7,5 @@ depend: [CloudNet-Bridge ,HolographicDisplays, bukkit-core]
 softdepend: [CloudNet-Bridge, HolographicDisplays, bukkit-core]
 
 commands:
-  fly:
-  eastern:
   test1:
   spawn:

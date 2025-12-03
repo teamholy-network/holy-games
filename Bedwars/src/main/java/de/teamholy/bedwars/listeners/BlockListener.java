@@ -159,9 +159,8 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public void onDamaeArrow(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Arrow)) return;
-        Arrow arrow = (Arrow) event.getDamager();
-        if (!(arrow.getShooter() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Arrow arrow)) return;
+      if (!(arrow.getShooter() instanceof Player)) return;
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(((Player) arrow.getShooter()).getUniqueId());
         PlayerEntry entityDamage = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(event.getEntity().getUniqueId());
         if (entityDamage.getTeamEntry() == playerEntry.getTeamEntry()) {

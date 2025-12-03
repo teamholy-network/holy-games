@@ -208,11 +208,7 @@ public class LobbyTask {
                 teamEntry.getAllPlayers().add(Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId()));
             });
 
-            if (teamEntry.getPlayers().isEmpty()) {
-                teamEntry.setHasBed(false);
-            } else {
-                teamEntry.setHasBed(true);
-            }
+          teamEntry.setHasBed(!teamEntry.getPlayers().isEmpty());
         }
 
         Bedwars.getInstance().getMapEntry().startSpawner();

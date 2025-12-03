@@ -73,7 +73,7 @@ subprojects {
     }
 
     dependencies {
-        compileOnly("de.teamholy:holy-core-api:$coreVersion");
+        compileOnly("de.teamholy:holy-core-api:$coreVersion")
         compileOnly "de.teamholy:bukkit-core-api:${coreVersion}"
         compileOnly "de.teamholy:bungee-core-api:${coreVersion}"
         compileOnly "de.teamholy:bukkit-markupapi:${coreVersion}"
