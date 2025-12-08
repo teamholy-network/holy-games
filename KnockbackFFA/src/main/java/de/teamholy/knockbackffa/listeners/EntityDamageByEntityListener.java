@@ -52,6 +52,7 @@ public class EntityDamageByEntityListener implements Listener {
             } else if (playerEntry.getPlayerState() == PlayerState.INGAME) {
                 if (playerEntry.getPlayer().getLocation().getBlockY() > playerEntry.getActiveMap().getSpawnHight()) {
                     event.setCancelled(true);
+                    return;
                 }
 
                 if (targetEntry.getTeamEntry() == null || playerEntry.getTeamEntry() == null) {
