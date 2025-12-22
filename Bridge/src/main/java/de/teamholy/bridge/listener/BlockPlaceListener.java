@@ -61,13 +61,14 @@ public class BlockPlaceListener implements Listener {
                 return;
             }
 
-
             var blocks = bridgePlayer.getBlocks();
-            blocks.put(event.getBlock(), System.currentTimeMillis());
-            if (!bridgePlayerService.getPlayerTime().containsKey(event.getPlayer().getUniqueId())) {
+            Long currentTime = System.currentTimeMillis();
+
+            if (!bridgePlayerService.getPlayerTime().containsKey(event.getPlayer().getUniqueId()) && blocks.isEmpty()) {
                 bridgePlayer.addGamesPlayed();
-                bridgePlayerService.getPlayerTime().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
+                bridgePlayerService.getPlayerTime().put(event.getPlayer().getUniqueId(), currentTime);
             }
+            blocks.put(event.getBlock(), currentTime);
 
             if (event.getPlayer().getInventory().getItemInHand().getType() == event.getBlockPlaced().getType()) {
                 event.getPlayer().getInventory().getItemInHand().setAmount(event.getPlayer().getInventory().getItemInHand().getMaxStackSize());
