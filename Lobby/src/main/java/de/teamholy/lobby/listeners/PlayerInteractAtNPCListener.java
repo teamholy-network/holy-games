@@ -38,6 +38,7 @@ public class PlayerInteractAtNPCListener implements Listener {
             case "website" -> lobbyPlayer.executeBungeeCommand("link");
             case "namemc" -> lobbyPlayer.executeBungeeCommand("vote");
             case "bridge" -> lobbyPlayer.openGameSubInventory("Bridge", Material.IRON_PICKAXE);
+            case "web shop" -> Lobby.getInstance().getWebshopInventory().openInventory(lobbyPlayer);
             default -> {
             }
 

@@ -14,6 +14,7 @@ import de.teamholy.lobby.handlers.StatsResetHandler;
 import de.teamholy.lobby.leaderboard.LeaderboardInventory;
 import de.teamholy.lobby.listeners.CloudListener;
 import de.teamholy.lobby.lobbyplayer.LobbyPlayerHandler;
+import de.teamholy.lobby.webshop.WebshopInventory;
 import java.util.concurrent.ExecutionException;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +43,7 @@ public class Lobby extends JavaPlugin {
   private BedwarsServerInventory bedwarsServerInventory;
   private BedwarsSpectateInventory bedwarsSpectateInventory;
   private LeaderboardInventory leaderboardInventory;
+  private WebshopInventory webshopInventory;
 
 
   @Override
@@ -54,6 +56,7 @@ public class Lobby extends JavaPlugin {
     bedwarsServerInventory = new BedwarsServerInventory();
     bedwarsSpectateInventory = new BedwarsSpectateInventory();
     leaderboardInventory = new LeaderboardInventory();
+    webshopInventory = new WebshopInventory();
     registerListener("de.teamholy.lobby.listeners");
     if (Bukkit.getServerName().contains("Premium")) {
       prefix = "§6PremiumLobby §8× §7";
