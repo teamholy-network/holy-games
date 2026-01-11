@@ -62,7 +62,6 @@ public class Lobby extends JavaPlugin {
       prefix = "§6PremiumLobby §8× §7";
       isPremiumLobby = true;
     }
-    Bukkit.getScheduler().runTaskTimer(this, new HalloweenEffectsRunnable(), 50, 600);
     int maxPlayers = 250;
     Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
       try {
