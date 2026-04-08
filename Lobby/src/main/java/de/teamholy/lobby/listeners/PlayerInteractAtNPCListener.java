@@ -27,10 +27,10 @@ public class PlayerInteractAtNPCListener implements Listener {
         switch (game) {
             case "mlgrush" -> lobbyPlayer.openGameSubInventory("MLGRush", Material.STICK);
             case "clutches" -> lobbyPlayer.openGameSubInventory("Clutches", Material.RED_SANDSTONE);
-            case "knockbackffa" -> lobbyPlayer.openGameSubInventory("KnockbackFFA", Material.SANDSTONE);
-            case "sgffa" -> lobbyPlayer.openGameSubInventory("SGFFA", Material.IRON_SWORD);
-            case "skywarsffa" -> lobbyPlayer.openGameSubInventory("SkyWarsFFA", Material.GRASS);
-            case "duels" -> lobbyPlayer.openGameSubInventory("Duels", Material.DIAMOND_SWORD);
+            //case "knockbackffa" -> lobbyPlayer.openGameSubInventory("KnockbackFFA", Material.SANDSTONE);
+            //case "sgffa" -> lobbyPlayer.openGameSubInventory("SGFFA", Material.IRON_SWORD);
+            //case "skywarsffa" -> lobbyPlayer.openGameSubInventory("SkyWarsFFA", Material.GRASS);
+            //case "duels" -> lobbyPlayer.openGameSubInventory("Duels", Material.DIAMOND_SWORD);
             case "spectate" -> lobbyPlayer.getPlayer().openInventory(Lobby.getInstance().getBedwarsSpectateInventory().getInventory());
             case "bedwars" -> Lobby.getInstance().getBedwarsServerInventory().openBWInventory(lobbyPlayer.getPlayer());
             case "rushbw" -> Lobby.getInstance().getBedwarsServerInventory().openRushInventory(lobbyPlayer.getPlayer());
