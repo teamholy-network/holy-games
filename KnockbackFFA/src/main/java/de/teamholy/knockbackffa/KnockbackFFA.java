@@ -19,7 +19,6 @@ import de.teamholy.knockbackffa.utils.PlayerUtils;
 import de.teamholy.knockbackffa.tasks.ArmorColorRainbowTask;
 import com.google.common.reflect.ClassPath;
 
-import de.skydb.updater.BukkitUpdaterAPI;
 import de.slikey.effectlib.EffectLib;
 import de.slikey.effectlib.EffectManager;
 import lombok.Getter;

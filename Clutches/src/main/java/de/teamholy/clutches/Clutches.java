@@ -41,7 +41,6 @@ import org.bukkit.util.Vector;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-import de.skydb.updater.BukkitUpdaterAPI;
 
 @Getter
 @Setter

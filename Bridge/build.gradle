@@ -16,10 +16,10 @@ dependencies {
     compileOnly fileTree(dir: 'lib', include: ['*.jar'])
     compileOnly 'com.google.code.gson:gson:2.10.1'
     compileOnly 'com.github.koca2000:NoteBlockAPI:1.6.2'
-    implementation('de.skydb.updater:Updater-Bukkit:0.0.3-SNAPSHOT')
+    /**implementation('de.skydb.updater:Updater-Bukkit:0.0.3-SNAPSHOT')
     shadowJar {
         relocate('de.skydb.updater', 'de.teamholy.bridge.updater')
-    }
+    }**/
 }
 
 tasks.withType(JavaCompile).configureEach {

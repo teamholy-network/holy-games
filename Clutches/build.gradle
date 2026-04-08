@@ -14,10 +14,10 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
-    implementation('de.skydb.updater:Updater-Bukkit:0.0.3-SNAPSHOT')
+    /**implementation('de.skydb.updater:Updater-Bukkit:0.0.3-SNAPSHOT')
     shadowJar {
         relocate('de.skydb.updater', 'de.teamholy.clutches.updater')
-    }
+    }**/
 }
 
 tasks.withType(JavaCompile).configureEach {

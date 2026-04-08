@@ -22,7 +22,6 @@ import com.google.common.reflect.ClassPath;
 import de.teamholy.mlgrush.commands.QuitCMD;
 import de.teamholy.mlgrush.commands.SetupCMD;
 import de.teamholy.mlgrush.commands.SpectateCommand;
-import de.skydb.updater.BukkitUpdaterAPI;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
