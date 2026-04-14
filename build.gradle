@@ -53,7 +53,7 @@ subprojects {
         }
         maven { url "https://repo.codemc.io/repository/maven-public/" }
         maven { url "https://repo.glaremasters.me/repository/concuncan/" }
-        maven { url "https://repository.skydb.de/repo/" }
+        maven { url "https://api.insights-api.top/deployment/repo" }
         maven { url 'https://maven.enginehub.org/repo/' }
         maven {
             url = 'https://repo.gin1.cc/repository/releases/'
