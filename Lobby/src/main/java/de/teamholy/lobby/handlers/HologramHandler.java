@@ -55,30 +55,30 @@ public class HologramHandler {
             BukkitCore.getInstance().getLocationManager().getLocation("mlgrush")).ifPresentOrElse(holo -> {
           gameholograms.put("MLGRush", holo);
         }, () -> Bukkit.getLogger().warning("mlgrush Location is null!"));
-        createHologram(new ItemBuilder(Material.SANDSTONE).build(),
-            BukkitCore.getInstance().getLocationManager().getLocation("kbffa")).ifPresentOrElse(holo -> {
-          gameholograms.put("KnockbackFFA", holo);
-        }, () -> Bukkit.getLogger().warning("kbffa Location is null!"));
+//        createHologram(new ItemBuilder(Material.SANDSTONE).build(),
+//            BukkitCore.getInstance().getLocationManager().getLocation("kbffa")).ifPresentOrElse(holo -> {
+//          gameholograms.put("KnockbackFFA", holo);
+//        }, () -> Bukkit.getLogger().warning("kbffa Location is null!"));
         createHologram(new ItemBuilder(Material.RED_SANDSTONE).build(),
             BukkitCore.getInstance().getLocationManager().getLocation("clutches")).ifPresentOrElse(holo -> {
           gameholograms.put("Clutches", holo);
         }, () -> Bukkit.getLogger().warning("clutches Location is null!"));
-        createHologram(new ItemBuilder(Material.IRON_SWORD).build(),
-            BukkitCore.getInstance().getLocationManager().getLocation("sgffa")).ifPresentOrElse(holo -> {
-          gameholograms.put("SGFFA", holo);
-        }, () -> Bukkit.getLogger().warning("sgffa Location is null!"));
+//        createHologram(new ItemBuilder(Material.IRON_SWORD).build(),
+//            BukkitCore.getInstance().getLocationManager().getLocation("sgffa")).ifPresentOrElse(holo -> {
+//          gameholograms.put("SGFFA", holo);
+//        }, () -> Bukkit.getLogger().warning("sgffa Location is null!"));
         createHologram(new ItemBuilder(Material.IRON_PICKAXE).build(),
             BukkitCore.getInstance().getLocationManager().getLocation("bridge")).ifPresentOrElse(holo -> {
           gameholograms.put("Bridge", holo);
         }, () -> Bukkit.getLogger().warning("bridge Location is null!"));
-        createHologram(new ItemBuilder(Material.GRASS).build(),
-            BukkitCore.getInstance().getLocationManager().getLocation("skywarsffa")).ifPresentOrElse(holo -> {
-          gameholograms.put("SkywarsFFA", holo);
-        }, () -> Bukkit.getLogger().warning("skywarsffa Location is null!"));
-        createHologram(new ItemBuilder(Material.DIAMOND_SWORD).build(),
-            BukkitCore.getInstance().getLocationManager().getLocation("duels")).ifPresentOrElse(holo -> {
-          gameholograms.put("Duels", holo);
-        }, () -> Bukkit.getLogger().warning("duels Location is null!"));
+//        createHologram(new ItemBuilder(Material.GRASS).build(),
+//            BukkitCore.getInstance().getLocationManager().getLocation("skywarsffa")).ifPresentOrElse(holo -> {
+//          gameholograms.put("SkywarsFFA", holo);
+//        }, () -> Bukkit.getLogger().warning("skywarsffa Location is null!"));
+//        createHologram(new ItemBuilder(Material.DIAMOND_SWORD).build(),
+//            BukkitCore.getInstance().getLocationManager().getLocation("duels")).ifPresentOrElse(holo -> {
+//          gameholograms.put("Duels", holo);
+//        }, () -> Bukkit.getLogger().warning("duels Location is null!"));
 
         holograms.put("xmas",
             createInfoHologram(BukkitCore.getInstance().getLocationManager().getLocation("xmas_npc")));
