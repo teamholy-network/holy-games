@@ -22,23 +22,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configure Gradle properties
-        run: |
-          echo "HolyRepoUser=${{ secrets.HolyRepoUser }}" >> gradle.properties
-          echo "HolyRepoPass=${{ secrets.HolyRepoPass }}" >> gradle.properties
-              
       # Gradle-Wrapper ausführbar machen
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
 
       # Shadow JAR bauen (erzeugt im Ordner "output" die spezifischen JARs)
+      # GITHUB_TOKEN wird von Gradle als Fallback für gpr.key genutzt
+      # (Zugriff auf die de.teamholy-Pakete unter teamholy-network/holy-core)
       - name: Build JAR with Gradle ShadowJar
         run: ./gradlew clean shadowJar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GPR_KEY }}
 
       # Verify that the JAR files are present in the expected output folders
       - name: Verify JAR files
         run: |
-          for dir in Bedwars Clutches KnockbackFFA Lobby MLGRush SGFFA; do
+          for dir in Bedwars Bridge Clutches KnockbackFFA MLGRush SGFFA; do
             find "$dir/build/libs" -type f -name "*-all.jar" -exec ls -lh {} \;
           done
 
@@ -52,8 +51,6 @@ jobs:
           CLUTCHES_KEY: ${{ secrets.CLUTCHES_KEY }}
           KNOCKBACKFFA_UUID: ${{ secrets.KNOCKBACKFFA_UUID }}
           KNOCKBACKFFA_KEY: ${{ secrets.KNOCKBACKFFA_KEY }}
-          LOBBY_UUID: ${{ secrets.LOBBY_UUID }}
-          LOBBY_KEY: ${{ secrets.LOBBY_KEY }}
           MLGRUSH_UUID: ${{ secrets.MLGRUSH_UUID }}
           MLGRUSH_KEY: ${{ secrets.MLGRUSH_KEY }}
           SGFFA_UUID: ${{ secrets.SGFFA_UUID }}
@@ -67,7 +64,6 @@ jobs:
             UPLOAD_DETAILS["Bedwars/build/libs/Bedwars-${VERSION}-all.jar"]="${BEDWARS_UUID}:${BEDWARS_KEY}"
             UPLOAD_DETAILS["Clutches/build/libs/Clutches-${VERSION}-all.jar"]="${CLUTCHES_UUID}:${CLUTCHES_KEY}"
             UPLOAD_DETAILS["KnockbackFFA/build/libs/KnockbackFFA-${VERSION}-all.jar"]="${KNOCKBACKFFA_UUID}:${KNOCKBACKFFA_KEY}"
-            UPLOAD_DETAILS["Lobby/build/libs/Lobby-${VERSION}-all.jar"]="${LOBBY_UUID}:${LOBBY_KEY}"
             UPLOAD_DETAILS["MLGRush/build/libs/MLGRush-${VERSION}-all.jar"]="${MLGRUSH_UUID}:${MLGRUSH_KEY}"
             UPLOAD_DETAILS["SGFFA/build/libs/SGFFA-${VERSION}-all.jar"]="${SGFFA_UUID}:${SGFFA_KEY}"
 
