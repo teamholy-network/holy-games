@@ -229,12 +229,12 @@ public class EditInventories implements Listener {
                 case MIDDLE -> hit.setXknock(hit.getXknock() - 1);
             }
 
-            if (hit.getXknock() >= 6) {
+            if (hit.getXknock() >= Hit.MAX_XKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setXknock(6);
-            } else if (hit.getXknock() <= 0) {
+                hit.setXknock(Hit.MAX_XKNOCK);
+            } else if (hit.getXknock() <= Hit.MIN_XKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setXknock(0);
+                hit.setXknock(Hit.MIN_XKNOCK);
             }
             goBackToHits.set(false);
 
@@ -264,12 +264,12 @@ public class EditInventories implements Listener {
                 case MIDDLE -> hit.setXknock(hit.getXknock() + 1);
             }
 
-            if (hit.getXknock() >= 6) {
+            if (hit.getXknock() >= Hit.MAX_XKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setXknock(6);
-            } else if (hit.getXknock() <= 0) {
+                hit.setXknock(Hit.MAX_XKNOCK);
+            } else if (hit.getXknock() <= Hit.MIN_XKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setXknock(0);
+                hit.setXknock(Hit.MIN_XKNOCK);
             }
 
             goBackToHits.set(false);
@@ -298,12 +298,12 @@ public class EditInventories implements Listener {
                 case MIDDLE -> hit.setYknock(hit.getYknock() - 1);
             }
 
-            if (hit.getYknock() >= 2) {
+            if (hit.getYknock() >= Hit.MAX_YKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setYknock(2);
-            } else if (hit.getYknock() <= 0) {
+                hit.setYknock(Hit.MAX_YKNOCK);
+            } else if (hit.getYknock() <= Hit.MIN_YKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setYknock(0);
+                hit.setYknock(Hit.MIN_YKNOCK);
             }
 
             goBackToHits.set(false);
@@ -328,12 +328,12 @@ public class EditInventories implements Listener {
                 case MIDDLE -> hit.setYknock(hit.getYknock() + 1);
             }
 
-            if (hit.getYknock() >= 2) {
+            if (hit.getYknock() >= Hit.MAX_YKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setYknock(2);
-            } else if (hit.getYknock() <= 0) {
+                hit.setYknock(Hit.MAX_YKNOCK);
+            } else if (hit.getYknock() <= Hit.MIN_YKNOCK) {
                 playgroundPlayer.getPlayer().playSound(playgroundPlayer.getPlayer().getLocation(),Sound.NOTE_BASS,2,2);
-                hit.setYknock(0);
+                hit.setYknock(Hit.MIN_YKNOCK);
             }
 
             goBackToHits.set(false);

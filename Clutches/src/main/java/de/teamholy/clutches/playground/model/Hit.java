@@ -11,10 +11,33 @@ import org.bukkit.Material;
 @Setter
 public class Hit {
 
+    public static final double MIN_XKNOCK = 0.8, MAX_XKNOCK = 6;
+    public static final double MIN_YKNOCK = 0.353, MAX_YKNOCK = 2;
+
     private double xknock = 1.2;
     private double yknock = 0.373;
     private Icon icon = Icon.YELLOW_WOOL;
     private DiagonalDirection diagonalDirection = DiagonalDirection.STRAIGHT;
+
+    public void setXknock(double xknock) {
+        this.xknock = clamp(xknock, MIN_XKNOCK, MAX_XKNOCK);
+    }
+
+    public void setYknock(double yknock) {
+        this.yknock = clamp(yknock, MIN_YKNOCK, MAX_YKNOCK);
+    }
+
+   public double getXknock() {
+        return clamp(xknock, MIN_XKNOCK, MAX_XKNOCK);
+    }
+
+    public double getYknock() {
+        return clamp(yknock, MIN_YKNOCK, MAX_YKNOCK);
+    }
+
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
 
 
     @AllArgsConstructor

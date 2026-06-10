@@ -3,14 +3,11 @@ plugins {
     id('com.gradleup.shadow') version('8.3.5')
 }
 
-def HolyRepoUser = project.findProperty("HolyRepoUser")
-def HolyRepoPass = project.findProperty("HolyRepoPass")
-
 group = 'de.teamholy'
 version = '1.0'
 
 ext {
-    coreVersion = '2.7.2'
+    coreVersion = '2.9.0'
 }
 
 repositories {
@@ -26,6 +23,7 @@ dependencies {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'com.gradleup.shadow'
+    apply plugin: 'maven-publish'
 
     repositories {
         maven {
@@ -56,10 +54,14 @@ subprojects {
         maven { url "https://api.insights-api.top/deployment/repo" }
         maven { url 'https://maven.enginehub.org/repo/' }
         maven {
-            url = 'https://repo.gin1.cc/repository/releases/'
+            name = 'GitHubPackagesHolyCore'
+            url = uri('https://maven.pkg.github.com/teamholy-network/holy-core')
             credentials {
-                username = HolyRepoUser
-                password = HolyRepoPass
+                username = project.findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR')
+                password = project.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN')
+            }
+            content {
+                includeGroup 'de.teamholy'
             }
         }
         mavenLocal()
@@ -93,5 +95,24 @@ subprojects {
         compileOnly 'de.dytanic.cloudnet:cloudnet-bridge:3.4.0-RELEASE'
         compileOnly 'com.grinderwolf:slimeworldmanager-api:2.2.1'
         compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
+    }
+
+    publishing {
+        publications {
+            shadow(MavenPublication) {
+                from components.shadow
+                artifactId = project.name.toLowerCase()
+            }
+        }
+        repositories {
+            maven {
+                name = 'GitHubPackages'
+                url = uri('https://maven.pkg.github.com/teamholy-network/holy-games')
+                credentials {
+                    username = project.findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR')
+                    password = project.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN')
+                }
+            }
+        }
     }
 }

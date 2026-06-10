@@ -179,6 +179,10 @@ public class PlayerTask {
         }
     }
 
+    public boolean isActive() {
+        return bukkitTask != null;
+    }
+
     public boolean stopIfActive() {
         if (bukkitTask != null) {
             Bukkit.getScheduler().cancelTask(bukkitTask.getTaskId());
