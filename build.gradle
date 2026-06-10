@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'de.teamholy'
-version = '1.0'
+version = '1.0-SNAPSHOT'
 
 ext {
     coreVersion = '2.9.0'
