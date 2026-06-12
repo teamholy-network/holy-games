@@ -20,6 +20,8 @@ public class PlayerChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(event.getPlayer().getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         Player player = playerEntry.getPlayer();
         String message = event.getMessage().replace("%","%%");
         if (Bedwars.getInstance().getGameState() != GameState.INGAME) {

@@ -29,12 +29,17 @@ public class ShopInventory implements Listener {
         Player player = (Player) event.getWhoClicked();
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId());
         if (!event.getInventory().getName().startsWith("§8» §6Shop")) return;
-        if (event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) return;
+        // Null-Check stand vorher NACH dem getType()-Zugriff (NPE, vom Event-Bus geschluckt) — Reihenfolge korrigiert
         if (event.getCurrentItem() == null) return;
+        if (event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) return;
         if (!(event.getRawSlot() < event.getInventory().getSize())) return;
         player.playSound(player.getLocation(), Sound.CLICK, 1f, 100f);
         if (event.getSlot() <= 8 && !Bedwars.isRushMode()) return;
         if (!Bedwars.getInstance().getIngamePlayers().contains(playerEntry)) return;
+        // Vorher NPE bei Items ohne Meta/Lore (vom Event-Bus geschluckt, Klick blieb unbearbeitet) — gleiches Ergebnis per Early-Return
+        if (event.getCurrentItem().getItemMeta() == null
+                || event.getCurrentItem().getItemMeta().getLore() == null
+                || event.getCurrentItem().getItemMeta().getLore().isEmpty()) return;
         String lore = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getLore().get(0)).replace("× ", "");
         String[] strings = lore.split(" ");
         PlayerShopListener.buyItem(event, player, new ItemBuilder(event.getCurrentItem()).build(), playerEntry.getMaterial(strings[1]), Integer.parseInt(strings[0]));

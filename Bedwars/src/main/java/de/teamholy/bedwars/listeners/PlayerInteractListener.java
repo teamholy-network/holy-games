@@ -30,11 +30,14 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction() != null || event.getItem() != null || event.getItem().getType() != null || event.getItem().getType() != Material.AIR || event.getItem().getItemMeta() != null || event.getItem().getItemMeta().getDisplayName() != null) {
+        // Die frühere ||-Kette war durch Short-Circuit immer true (getAction() ist nie null);
+        // der Item-Null-Guard stand redundant darunter und ist hierher konsolidiert
+        if (event.getItem() != null) {
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
-                if (event.getItem() == null) return;
                 PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(event.getPlayer().getUniqueId());
+                // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+                if (playerEntry == null) return;
                 Player player = event.getPlayer();
                 if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
                     if (event.getItem().getType() == Material.DIAMOND) {
@@ -179,7 +182,8 @@ public class PlayerInteractListener implements Listener {
             PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(event.getPlayer().getUniqueId());
             ArmorStand armorStand = (ArmorStand) event.getRightClicked();
             if (Bedwars.getInstance().getIngamePlayers().contains(playerEntry) && Bedwars.getInstance().getGameState() == GameState.INGAME) {
-                if (armorStand.getCustomName().toLowerCase().contains("shop")) {
+                // Vorher NPE bei ArmorStands ohne CustomName (vom Event-Bus geschluckt) — gleiches Ergebnis per Null-Check
+                if (armorStand.getCustomName() != null && armorStand.getCustomName().toLowerCase().contains("shop")) {
                     Bedwars.getInstance().getInventoryHandler().getShopInventory().openShop(event.getPlayer());
                 }
             }

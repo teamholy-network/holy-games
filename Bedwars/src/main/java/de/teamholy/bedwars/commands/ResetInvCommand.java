@@ -27,6 +27,7 @@ public class ResetInvCommand implements CommandExecutor {
         }
 
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId());
+        if (playerEntry == null) return false;
         playerEntry.createInv();
 
         player.sendMessage(Bedwars.getInstance().getPrefix() + "§aYour shop inventory was reset");

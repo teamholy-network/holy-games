@@ -146,6 +146,8 @@ public class BlockListener implements Listener {
             event.setCancelled(true);
         } else if (Bedwars.getInstance().getGameState() == GameState.INGAME) {
             PlayerEntry entityDamage = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(event.getEntity().getUniqueId());
+            // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ohne Cancel ab) — gleiches Ergebnis per Early-Return
+            if (playerEntry == null || entityDamage == null) return;
             if (Bedwars.isRushMode()) {
                 if (playerEntry.getPlayer().getItemInHand().getType() == Material.WOOD_PICKAXE) {
                     event.setDamage(0);
@@ -163,6 +165,8 @@ public class BlockListener implements Listener {
       if (!(arrow.getShooter() instanceof Player)) return;
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(((Player) arrow.getShooter()).getUniqueId());
         PlayerEntry entityDamage = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(event.getEntity().getUniqueId());
+        // Vorher NPE bei Nicht-Spieler-Zielen/fehlendem Cache-Eintrag (vom Event-Bus geschluckt) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null || entityDamage == null) return;
         if (entityDamage.getTeamEntry() == playerEntry.getTeamEntry()) {
             event.setCancelled(true);
         }

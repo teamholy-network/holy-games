@@ -96,6 +96,8 @@ public class PlayerJoinListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = Bedwars.getInstance().getCacheHandler().getPlayerEntries().get(player.getUniqueId());
+        // Quit bevor der Cache-Eintrag existiert: vorher NPE mitten im Handler (vom Event-Bus geschluckt) — Early-Return
+        if (playerEntry == null) return;
         if (Bedwars.getInstance().getGameState() == GameState.LOBBY) {
             Bukkit.broadcastMessage(Bedwars.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7has left §8(§a" + (Bukkit.getOnlinePlayers().size() - 1) + "§8/§c" + Bedwars.getInstance().getMaxPlayers() + "§8)");
             if (Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().getWithoutGold().remove(player) || Bedwars.getInstance().getInventoryHandler().getGoldVotingInventory().getWithGold().remove(player)) {
