@@ -40,6 +40,8 @@ public class PlayerMoveListener implements Listener {
         var player = event.getPlayer();
 
         BridgePlayer bridgePlayer = bridgePlayerService.getBridgePlayer(player);
+        // Move-Events feuern bereits vor addPlayer (vorher NPE, vom Event-Bus geschluckt) — gleiches Ergebnis per Early-Return
+        if (bridgePlayer == null) return;
         if (bridgePlayer.getState() == BridgePlayer.PlayerState.SPECTATOR) {
             var bukkitToSpectate = bridgePlayer.getToSpectate();
             if (bukkitToSpectate == null) {

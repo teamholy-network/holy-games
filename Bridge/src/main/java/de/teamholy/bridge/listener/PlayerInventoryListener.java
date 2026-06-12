@@ -33,6 +33,8 @@ public class PlayerInventoryListener implements Listener {
         if (view.getTitle().equals("§8» §6Sound Settings")) {
             event.setCancelled(true);
             var bridgePlayer = bridgePlayerService.getBridgePlayer(player);
+            // Vorher NPE bei fehlendem Eintrag (vom Event-Bus geschluckt, Klick blieb gecancelt) — gleiches Ergebnis per Early-Return
+            if (bridgePlayer == null) return;
             var soundPerkInventory = bridgeSoundPerkService.openSoundInventory(bridgePlayer, BridgeSoundType.ALL, PerkManager.SortOptionPerk.NORMAL, PerkManager.SortOptionPlayer.ALL, 1).getInventory();
 
 
@@ -48,6 +50,7 @@ public class PlayerInventoryListener implements Listener {
             event.setCancelled(true);
 
             var bridgePlayer = bridgePlayerService.getBridgePlayer(player);
+            if (bridgePlayer == null) return;
 
             var clickedItem = event.getCurrentItem();
             if (clickedItem == null) return;

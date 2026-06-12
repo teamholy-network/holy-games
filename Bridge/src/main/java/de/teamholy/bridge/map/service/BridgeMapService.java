@@ -31,7 +31,7 @@ import java.util.logging.Level;
 public class BridgeMapService {
 
     private final List<BridgeMap> maps;
-    public static int MAP_COUNT = 6*9;
+    public static final int MAP_COUNT = 6*9;
 
     public static boolean MAPS_PASTED = false;
 

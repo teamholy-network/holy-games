@@ -31,7 +31,7 @@ import java.util.concurrent.*;
 @Getter
 public class Bridge extends JavaPlugin {
 
-    public static String PREFIX = "§6Bridge §8* §7";
+    public static final String PREFIX = "§6Bridge §8* §7";
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
 
     private BridgePlayerService bridgePlayerService;
