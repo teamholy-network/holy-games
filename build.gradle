@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id('com.gradleup.shadow') version('8.3.5')
+    id('io.freefair.lombok') version('8.4') apply false
 }
 
 group = 'de.teamholy'
@@ -24,8 +25,27 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'com.gradleup.shadow'
     apply plugin: 'maven-publish'
+    apply plugin: 'io.freefair.lombok'
+
+    group = 'de.teamholy'
+    version = '1.0-SNAPSHOT'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 
     repositories {
+        mavenCentral()
         maven {
             name = 'spigotmc-repo'
             url = uri('https://hub.spigotmc.org/nexus/content/repositories/public/')
@@ -75,6 +95,9 @@ subprojects {
     }
 
     dependencies {
+        testImplementation platform('org.junit:junit-bom:5.9.1')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+
         compileOnly("de.teamholy:holy-core-api:$coreVersion")
         compileOnly "de.teamholy:bukkit-core-api:${coreVersion}"
         compileOnly "de.teamholy:bungee-core-api:${coreVersion}"

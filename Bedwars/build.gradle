@@ -1,31 +1,9 @@
-plugins {
-    id 'java'
-    id("io.freefair.lombok") version "8.4"
-}
-
-group = 'de.teamholy'
-version = '1.0-SNAPSHOT'
+// Konventionen (Java 21, Lombok, Repositories, Test-Setup) kommen aus dem Root-build.gradle.
 
 repositories {
-    mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
     compileOnly 'com.github.koca2000:NoteBlockAPI:1.6.2'
-
-    /**implementation('de.skydb.updater:Updater-Bukkit:0.0.3-SNAPSHOT')
-    shadowJar {
-        relocate('de.skydb.updater', 'de.teamholy.bedwars.updater')
-    }**/
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-test {
-    useJUnitPlatform()
 }

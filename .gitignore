@@ -355,3 +355,6 @@ bin/
 /.nb-gradle/
 
 # End of https://www.toptal.com/developers/gitignore/api/maven,gradle,java,visualstudiocode,intellij,intellij+iml,intellij+all,git
+
+### macOS ###
+.DS_Store
