@@ -83,13 +83,7 @@ public class BlockListener implements Listener {
         e.setCancelled(true);
     }
     @EventHandler
-    public void onFoodChanger(FoodLevelChangeEvent e){ e.setCancelled(true); }
-    @EventHandler
     public void onDrop(PlayerDropItemEvent e){
-        e.setCancelled(true);
-    }
-    @EventHandler
-    public void drop(PlayerDropItemEvent e) {
         e.setCancelled(true);
     }
     @EventHandler

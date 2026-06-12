@@ -53,7 +53,7 @@ public class CloudListener implements Listener {
                 player.getInventory().setItem(4,new ItemBuilder(Material.COMPASS).setName("§8» §6Vanish Menü").build());
 
                 Bukkit.getScheduler().runTaskLater(KnockbackFFA.getInstance(),() -> {
-                    if (targetEntry.getPlayer().isOnline() && targetEntry.getPlayer() != null) {
+                    if (targetEntry.getPlayer().isOnline()) {
                         player.teleport(targetEntry.getPlayer());
                     }
                 },1);

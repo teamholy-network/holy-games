@@ -15,7 +15,7 @@ import de.teamholy.knockbackffa.handlers.TeamingHandler;
 import de.teamholy.knockbackffa.managers.ActiveEnderPearlManager;
 import de.teamholy.knockbackffa.models.MapEntry;
 import de.teamholy.knockbackffa.models.PlayerEntry;
-import de.teamholy.knockbackffa.utils.PlayerUtils;
+import de.teamholy.gamescommon.PlayerMessages;
 import de.teamholy.knockbackffa.tasks.ArmorColorRainbowTask;
 import com.google.common.reflect.ClassPath;
 
@@ -43,7 +43,6 @@ public class KnockbackFFA extends JavaPlugin {
     private static KnockbackFFA instance;
     private String prefix = "§eKnockbackFFA §8× §7";
     private CacheHandler cacheHandler;
-    private PlayerUtils playerUtils;
     private File cfgfFile = new File("plugins//KnockbackFFA//locations.yml");
     private YamlConfiguration yamlConfiguration;
     private EffectManager effectManager;
@@ -85,7 +84,6 @@ public class KnockbackFFA extends JavaPlugin {
         yamlConfiguration = YamlConfiguration.loadConfiguration(cfgfFile);
         effectManager = new EffectManager(EffectLib.instance());
         cacheHandler = new CacheHandler();
-        playerUtils = new PlayerUtils();
         teamingHandler = new TeamingHandler(this);
         perkInventoriesHandler = new PerkInventoriesHandler();
     }
@@ -113,7 +111,7 @@ public class KnockbackFFA extends JavaPlugin {
 
     private void startMoveListener() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerUtils.sendActionBar(player, prefix + "§f§lmax 3 players per team (/teaming)");
+            PlayerMessages.sendActionBar(player, prefix + "§f§lmax 3 players per team (/teaming)");
             PlayerEntry playerEntry = getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
             if (playerEntry != null) {
                 if (playerEntry.getPlayerState() == PlayerState.INGAME) {
@@ -155,13 +153,14 @@ public class KnockbackFFA extends JavaPlugin {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
-                if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
+                if (obj instanceof Listener listener) {
+                    this.getServer().getPluginManager().registerEvents(listener, this);
                     this.getLogger().info("Registered " + obj.getClass().getName());
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            this.getLogger().severe("Failed to register listeners from " + path + ": " + e);
         }
     }
 
