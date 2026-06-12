@@ -12,20 +12,15 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 /* copyright by Yassino */
 public class PlayerInteractListener implements Listener {
 
 
-        /*
-    Dirty code weil zu faul
-     */
-
     @EventHandler
     public void onChestClick(PlayerInteractEvent event) {
         try {
-            if (event.getAction() == null && event.getClickedBlock() == null && Objects.requireNonNull(event.getClickedBlock()).getType() == null) return;
+            // Vorher unwirksame Bedingung mit anschließender NPE bei fehlendem Block (lokal geschluckt) — gleiches Ergebnis per Early-Return
+            if (event.getClickedBlock() == null) return;
             if (event.getClickedBlock().getType() != Material.CHEST) return;
 
             Player player = event.getPlayer();
@@ -49,6 +44,8 @@ public class PlayerInteractListener implements Listener {
     public void onInteractInventoryArmor(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         try {
+            // Vorher NPE bei leerer Hand (lokal geschluckt, Methode brach ab) — gleiches Ergebnis per Early-Return
+            if (event.getItem() == null) return;
             if (event.getItem().getType() == Material.COMPASS) {
                 PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(player.getUniqueId());
                 playerEntry.openVanishMenu();

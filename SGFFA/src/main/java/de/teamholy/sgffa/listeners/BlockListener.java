@@ -36,10 +36,12 @@ public class BlockListener implements Listener {
     @EventHandler
     public void onArrowDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Arrow arrow)) return;
-      if (!(arrow.getShooter() instanceof Player)) return;
+        if (!(arrow.getShooter() instanceof Player shooter)) return;
         PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(event.getEntity().getUniqueId());
-        PlayerEntry attackerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(((Player) arrow.getShooter()).getUniqueId());
+        PlayerEntry attackerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(shooter.getUniqueId());
         if (playerEntry == attackerEntry) return;
+        // Vorher NPE bei Nicht-Spieler-Zielen (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null || attackerEntry == null) return;
         if (playerEntry.getTeamEntry() != null && attackerEntry.getTeamEntry() != null && playerEntry.getTeamEntry() == attackerEntry.getTeamEntry()) {
             event.setCancelled(true);
         }
@@ -49,9 +51,12 @@ public class BlockListener implements Listener {
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-          Player entity = (Player) event.getEntity();
+            // Vorher blinder Cast auf Player: bei Nicht-Spieler-Zielen (Item-Frames etc.) flog eine
+            // ClassCastException und der Handler brach ab — gleiches Ergebnis per Early-Return
+            if (!(event.getEntity() instanceof Player entity)) return;
             PlayerEntry playerEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(player.getUniqueId());
             PlayerEntry entityEntry = SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().get(entity.getUniqueId());
+            if (playerEntry == null || entityEntry == null) return;
             if (entityEntry.isVanish()) {
                 event.setCancelled(true);
             }
@@ -64,16 +69,10 @@ public class BlockListener implements Listener {
                 player.sendMessage(SGFFA.PREFIX + "Your grace period has ended!");
                 player.removePotionEffect(PotionEffectType.INVISIBILITY);
             }
-            if (event.getEntity().getType() == EntityType.ITEM_FRAME)
-                event.setCancelled(true);
-            if (event.getEntity().getType() == EntityType.PAINTING)
-                event.setCancelled(true);
 
             if (playerEntry.getTeamEntry() != null && entityEntry.getTeamEntry() != null && playerEntry.getTeamEntry() == entityEntry.getTeamEntry()) {
                 event.setCancelled(true);
             }
-
-
         }
     }
 

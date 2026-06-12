@@ -16,6 +16,8 @@ public class MapChangeTask {
 
     public MapChangeTask() {
         Bukkit.getScheduler().runTaskTimer(SGFFA.getInstance(),() -> {
+            // Ohne konfigurierte Map würde der Task beim ersten Tick an einer NPE sterben und nie wieder laufen
+            if (SGFFA.getInstance().getActiveMapEntry() == null) return;
             countdown--;
             for (PlayerEntry playerEntry : SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().values()) {
                 playerEntry.sendActionBar("§7Map change in §a" + formatSeconds(countdown) + " §8︳ §7Teaming? §7/§cteaming");
@@ -26,9 +28,13 @@ public class MapChangeTask {
     }
 
     private void changeMap() {
-        ArrayList tempMaps = new ArrayList<String>();
-        tempMaps.addAll(SGFFA.getInstance().getCacheHandler().getMapEntryHashMap().keySet());
+        ArrayList<String> tempMaps = new ArrayList<>(SGFFA.getInstance().getCacheHandler().getMapEntryHashMap().keySet());
         tempMaps.remove(SGFFA.getInstance().getActiveMapEntry().getMapName());
+        // Mit nur einer Map würde Random.nextInt(0) werfen und der Timer-Task dauerhaft sterben
+        if (tempMaps.isEmpty()) {
+            countdown = 600;
+            return;
+        }
 
         SGFFA.getInstance().getClickedChests().forEach(location -> location.getBlock().setType(Material.CHEST));
         SGFFA.getInstance().getClickedChests().clear();
