@@ -20,6 +20,8 @@ public class DoubleJumpListener implements Listener {
     public void onFly(PlayerToggleFlightEvent e) {
         Player player = e.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() != PlayerState.LOBBY) return;
         if (player.getGameMode() == GameMode.SURVIVAL) {
             e.setCancelled(true);
@@ -37,6 +39,8 @@ public class DoubleJumpListener implements Listener {
     public void onMove(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+        // Move-Events feuern bereits bevor der Cache-Eintrag existiert (vorher NPE, vom Event-Bus geschluckt)
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() != PlayerState.LOBBY) return;
         if (player.getGameMode() == GameMode.SURVIVAL) {
             if (player.isOnGround() && !player.getAllowFlight())

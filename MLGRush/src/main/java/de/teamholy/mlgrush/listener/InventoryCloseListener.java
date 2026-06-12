@@ -18,9 +18,9 @@ public class InventoryCloseListener implements Listener {
     public void onHandle(InventoryCloseEvent event) {
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(event.getPlayer().getUniqueId());
         Player player = (Player) event.getPlayer();
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (event.getInventory().getName().equals("§8» §6Inventory sort")) {
-            if (player == null)
-                return;
             if(Items.correctInventory(event.getInventory())){
                 playerEntry.setInventory(event.getInventory());
                 player.sendMessage(MLGRush.getInstance().getPrefix()+"Your inventory sort was saved");

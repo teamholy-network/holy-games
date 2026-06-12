@@ -103,12 +103,13 @@ public class BlockListener implements Listener {
     }
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.SOIL) event.setCancelled(true);
+        if (event.getAction() == Action.PHYSICAL && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.SOIL) event.setCancelled(true);
     }
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Block block = e.getClickedBlock();
+            if (block == null) return;
             if (block.getType() == Material.CHEST) e.setCancelled(true);
             if (block.getType() == Material.FURNACE) e.setCancelled(true);
             if (block.getType() == Material.BURNING_FURNACE) e.setCancelled(true);

@@ -17,7 +17,7 @@ public class NickListener implements Listener {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
 
-        if (!(playerEntry.getPlayerState() == PlayerState.INGAME)) {
+        if (playerEntry == null || playerEntry.getPlayerState() != PlayerState.INGAME) {
             return;
         }
 
@@ -31,7 +31,7 @@ public class NickListener implements Listener {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
 
-        if (!(playerEntry.getPlayerState() == PlayerState.INGAME)) {
+        if (playerEntry == null || playerEntry.getPlayerState() != PlayerState.INGAME) {
             return;
         }
 

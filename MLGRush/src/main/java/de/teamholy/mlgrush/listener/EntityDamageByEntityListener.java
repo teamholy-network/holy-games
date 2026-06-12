@@ -44,8 +44,10 @@ public class EntityDamageByEntityListener implements Listener {
             if (!(event.getDamager() instanceof Player attacker)) {
                 return;
             }
-          PlayerEntry attackerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(attacker.getUniqueId());
+            PlayerEntry attackerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(attacker.getUniqueId());
             PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+            // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+            if (attackerEntry == null || playerEntry == null) return;
             switch (attackerEntry.getPlayerState()) {
                 case INGAME:
                     playerEntry.setGotLastHit(attackerEntry);

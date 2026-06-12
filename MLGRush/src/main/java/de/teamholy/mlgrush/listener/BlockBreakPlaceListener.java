@@ -25,11 +25,10 @@ public class BlockBreakPlaceListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (event.getPlayer() == null) {
-            return;
-        }
         Player player = event.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.LOBBY || playerEntry.getPlayerState() == PlayerState.SPECTATE) {
             if (player.getGameMode() != GameMode.CREATIVE)
                 event.setCancelled(true);
@@ -82,6 +81,8 @@ public class BlockBreakPlaceListener implements Listener {
     public void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.LOBBY || playerEntry.getPlayerState() == PlayerState.SPECTATE) {
             if (player.getGameMode() != GameMode.CREATIVE)
                 event.setCancelled(true);

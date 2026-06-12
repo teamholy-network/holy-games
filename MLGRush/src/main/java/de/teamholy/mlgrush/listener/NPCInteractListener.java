@@ -20,6 +20,8 @@ public class NPCInteractListener implements Listener {
     public void onInteract(PlayerInteractAtNPCEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = MLGRush.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (event.getNpcEntry().getDisplayName().equals("§6§lQueue 4x1")) {
             proceesQueue(playerEntry,GameType.FOURxONE);
         } else if (event.getNpcEntry().getDisplayName().equals("§6§lQueue 2x1")) {
@@ -65,11 +67,9 @@ public class NPCInteractListener implements Listener {
                     playerEntry1.setGameEntry(gameEntry);
                     playerEntry1.openMapSelection(gameType);
                 });
-                MLGRush.getInstance().getQueueHandler().getQueue().forEach((playerEntry1, gameType2) -> {
-                    if (gameType2 == gameType) {
-                        MLGRush.getInstance().getQueueHandler().getQueue().remove(playerEntry1);
-                    }
-                });
+                // Vorher remove() innerhalb von forEach über dieselbe Map → ConcurrentModificationException,
+                // wodurch Spieler laufender Spiele in der Queue hängen blieben
+                MLGRush.getInstance().getQueueHandler().getQueue().entrySet().removeIf(entry -> entry.getValue() == gameType);
                 MLGRush.getInstance().getQueueHandler().updateQueue();
             }
         }
