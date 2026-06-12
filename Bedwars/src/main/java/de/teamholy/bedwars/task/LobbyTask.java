@@ -8,13 +8,12 @@ import de.teamholy.bedwars.model.TeamEntry;
 import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetHelper;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.gamescommon.PlayerMessages;
+import de.teamholy.gamescommon.TimeFormat;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -35,10 +34,7 @@ public class LobbyTask {
     private int minPlayers = Bedwars.getInstance().getMinPlayers();
 
     public void sendActionBar(Player p, String nachricht) {
-        CraftPlayer cp = (CraftPlayer) p;
-        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + nachricht + "\"}");
-        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-        cp.getHandle().playerConnection.sendPacket(ppoc);
+        PlayerMessages.sendActionBar(p, nachricht);
     }
 
     public void startLobby() {
@@ -235,9 +231,7 @@ public class LobbyTask {
     }
 
     public String formatSeconds(int seconds) {
-        int minutes = seconds / 60;
-        seconds %= 60;
-        return String.format("%02d:%02d", minutes, seconds);
+        return TimeFormat.formatSeconds(seconds);
     }
 
 }

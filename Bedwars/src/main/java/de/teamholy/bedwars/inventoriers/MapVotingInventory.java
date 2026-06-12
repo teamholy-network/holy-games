@@ -41,7 +41,7 @@ public class MapVotingInventory {
     public String getHighestValue() {
         int max = 0;
         Iterator<Integer> iterator;
-        HashMap<String, Integer> voting = new HashMap();
+        HashMap<String, Integer> voting = new HashMap<>();
         ArrayList<String> arrayList = new ArrayList<>();
         for (MapEntry mapEntry : Bedwars.getInstance().getCacheHandler().getMapEntries().values()) {
             voting.put(mapEntry.getName(), mapEntry.getVotes());

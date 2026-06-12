@@ -248,11 +248,12 @@ public class Bedwars extends JavaPlugin {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
                 final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
-                if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
+                if (obj instanceof Listener listener) {
+                    this.getServer().getPluginManager().registerEvents(listener, this);
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            this.getLogger().severe("Failed to register listeners from " + path + ": " + e);
         }
     }
 

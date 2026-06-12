@@ -22,14 +22,11 @@ import de.teamholy.core.bukkit.npc.models.NPCPlayer;
 import de.teamholy.core.bukkit.utils.InventoryUtils;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
 import de.teamholy.core.bukkit.utils.ScoreboardAPI;
+import de.teamholy.gamescommon.PlayerMessages;
 import eu.koboo.markup.MarkupAPI;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
-import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -343,14 +340,14 @@ public class PlayerEntry {
 
     public void checkWin() {
         TeamEntry winner;
-        ArrayList list = new ArrayList<TeamEntry>();
+        ArrayList<TeamEntry> list = new ArrayList<>();
         for (TeamEntry teamEntry : Bedwars.getInstance().getCacheHandler().getTeamEntries()) {
             if (!teamEntry.getPlayers().isEmpty()) {
                 list.add(teamEntry);
             }
         }
         if (list.size() == 1) {
-            winner = (TeamEntry) list.get(0);
+            winner = list.get(0);
             File dir = new File("plugins/Bedwars/songs/");
             File[] files = dir.listFiles();
             Song song = NBSDecoder.parse(files[new Random().nextInt(files.length)]);
@@ -547,10 +544,7 @@ public class PlayerEntry {
 
 
     public void sendActionBar(Player p, String nachricht) {
-        CraftPlayer cp = (CraftPlayer) p;
-        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + nachricht + "\"}");
-        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-        cp.getHandle().playerConnection.sendPacket(ppoc);
+        PlayerMessages.sendActionBar(p, nachricht);
     }
 
 
@@ -569,12 +563,11 @@ public class PlayerEntry {
                 .sorted(Comparator.comparingInt(info -> info.getProperty(BridgeServiceProperty.ONLINE_COUNT).get()))
                 .collect(Collectors.toList());
         Collections.reverse(servers);
-        try {
-            ServiceInfoSnapshot service = servers.get(0);
-            BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(service.getName());
-        } catch (IndexOutOfBoundsException e) {
+        if (servers.isEmpty()) {
             player.kickPlayer(Bedwars.getInstance().getPrefix() + "Could not find a §c" + group + " §7server");
+            return;
         }
+        BukkitCore.getAPI().getCloudManager().getPlayerManager().getPlayerExecutor(player.getUniqueId()).connect(servers.get(0).getName());
     }
 
     public void setNpcShops() {
