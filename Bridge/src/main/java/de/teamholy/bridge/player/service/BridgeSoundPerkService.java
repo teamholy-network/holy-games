@@ -11,7 +11,7 @@ import de.teamholy.bridge.player.settings.sounds.BridgeSong;
 import de.teamholy.bridge.player.settings.sounds.BridgeSound;
 import de.teamholy.bridge.player.settings.sounds.BridgeSoundType;
 import de.teamholy.bridge.player.settings.sounds.BridgeSounds;
-import de.teamholy.bridge.util.ItemBuilder;
+import de.teamholy.gamescommon.ItemBuilder;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.Pagifier;

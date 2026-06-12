@@ -1,8 +1,7 @@
-package de.teamholy.bridge.util;
+package de.teamholy.gamescommon;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -28,14 +27,12 @@ import java.util.UUID;
 public class ItemBuilder {
 
     protected ItemStack is;
-    private static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-    private static Class<?> skullMetaClass;
 
     public ItemBuilder(Material mat) {
         this.is = new ItemStack(mat);
     }
 
-    public ItemBuilder(org.bukkit.inventory.ItemStack is) {
+    public ItemBuilder(ItemStack is) {
         this.is = is.clone();
     }
 
@@ -62,7 +59,7 @@ public class ItemBuilder {
         ItemMeta meta = this.is.getItemMeta();
         List<String> lore = meta.getLore();
         if (lore == null) {
-            lore = new ArrayList();
+            lore = new ArrayList<>();
         }
         lore.add(name);
         meta.setLore(lore);
@@ -83,7 +80,6 @@ public class ItemBuilder {
         this.is.setItemMeta(meta);
         return this;
     }
-
 
     public ItemBuilder setSkullOwner(String owner) {
         if ((this.is.getType() == Material.SKULL_ITEM) || (this.is.getType() == Material.SKULL)) {
@@ -123,7 +119,7 @@ public class ItemBuilder {
 
     public ItemBuilder clearLore() {
         ItemMeta meta = this.is.getItemMeta();
-        meta.setLore(new ArrayList());
+        meta.setLore(new ArrayList<>());
         this.is.setItemMeta(meta);
         return this;
     }
@@ -148,7 +144,7 @@ public class ItemBuilder {
 
     public ItemBuilder withGlow() {
         this.is.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        ItemMeta meta  = this.is.getItemMeta();
+        ItemMeta meta = this.is.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         this.is.setItemMeta(meta);
         return this;
@@ -157,19 +153,19 @@ public class ItemBuilder {
     public ItemBuilder setSkullMeta(String value, String signature) {
         if (this.is.getType() != Material.SKULL_ITEM) {
             this.is.setType(Material.SKULL_ITEM);
-            this.is.setDurability((short)3);
+            this.is.setDurability((short) 3);
         }
 
         try {
-            SkullMeta skullMeta = (SkullMeta)this.is.getItemMeta();
+            SkullMeta skullMeta = (SkullMeta) this.is.getItemMeta();
             GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
             gameProfile.getProperties().put("textures", new Property("textures", value, signature));
             Field profileField = skullMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(skullMeta, gameProfile);
             this.is.setItemMeta(skullMeta);
-        } catch (Exception var6) {
-            var6.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return this;
@@ -182,8 +178,7 @@ public class ItemBuilder {
         return this;
     }
 
-
-    public org.bukkit.inventory.ItemStack build() {
+    public ItemStack build() {
         return this.is;
     }
 

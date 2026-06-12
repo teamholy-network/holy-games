@@ -1,4 +1,4 @@
-package de.teamholy.bridge.util;
+package de.teamholy.gamescommon;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -7,15 +7,10 @@ import org.bukkit.World;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import java.lang.reflect.Method;
 import java.util.Random;
 
 /* copyright by Yassino */
 public class FireworkUtil {
-
-    private static Method worldGetHandle;
-    private static Method nmsWorldBroadcastEntityEffect;
-    private static Method fireworkGetHandle;
 
     public static Firework playFirework(World world, Location location, FireworkEffect fireworkEffect) {
         Firework firework = world.spawn(location, Firework.class);

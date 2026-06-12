@@ -7,7 +7,7 @@ import de.teamholy.bridge.map.skin.BridgeMapSkin;
 import de.teamholy.bridge.map.skin.BridgeMapSkins;
 import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
-import de.teamholy.bridge.util.ItemBuilder;
+import de.teamholy.gamescommon.ItemBuilder;
 import de.teamholy.core.api.entities.perkplayer.PerkPlayerProfile;
 import de.teamholy.core.api.entities.player.PlayerProfile;
 import de.teamholy.core.api.utility.Pagifier;

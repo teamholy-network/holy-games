@@ -1,4 +1,4 @@
-package de.teamholy.bridge.util;
+package de.teamholy.gamescommon;
 
 import java.text.DecimalFormat;
 
@@ -12,14 +12,12 @@ public class FormatTime {
 
     private static final DecimalFormat df = new DecimalFormat("#.###");
 
-
     public static long getTimeDiffMillis(final long millis) {
         return System.currentTimeMillis() - millis;
     }
 
     public static String formatTimeManually(final long millis) {
         final double time = millis / 1000d;
-        //final double roundedTime = Math.round(time * 20.0) / 20.0;
         return String.format("%.2f", time);
     }
 
@@ -28,12 +26,9 @@ public class FormatTime {
         return String.format("%.2f", time);
     }
 
-  //  getFormatedString
     public static String getFormatedString(long millis) {
         final double time = millis / 1000d;
         return df.format(time);
     }
-
-
 
 }

@@ -5,7 +5,7 @@ import de.teamholy.bridge.map.BridgeMapType;
 import de.teamholy.bridge.player.BridgePlayer;
 import de.teamholy.bridge.player.service.BridgePlayerService;
 import de.teamholy.bridge.player.settings.BridgeSettings;
-import de.teamholy.bridge.util.FormatTime;
+import de.teamholy.gamescommon.FormatTime;
 import de.teamholy.core.bukkit.BukkitCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
