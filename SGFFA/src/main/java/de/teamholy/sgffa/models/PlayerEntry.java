@@ -10,15 +10,13 @@ import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.Inventory;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.gamescommon.PlayerMessages;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -208,10 +206,7 @@ public class PlayerEntry {
     }
 
     public void sendActionBar(String message) {
-        CraftPlayer cp = (CraftPlayer) player;
-        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
-        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-        cp.getHandle().playerConnection.sendPacket(ppoc);
+        PlayerMessages.sendActionBar(player, message);
     }
 
 }

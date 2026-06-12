@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /* copyright by Yassino */
 public class SetupCommand implements CommandExecutor {
@@ -30,9 +31,9 @@ public class SetupCommand implements CommandExecutor {
                 switch (args[1].toLowerCase()) {
                     case "addspawn":
                         player.sendMessage(SGFFA.PREFIX + "Du hast einen Spawn für die Map §a" + args[0] + " §7hinugefügt");
-                        ArrayList spawn = (ArrayList) SGFFA.getInstance().getYamlConfiguration().getList(args[0]+".spawns");
+                        List<Object> spawn = (List<Object>) SGFFA.getInstance().getYamlConfiguration().getList(args[0]+".spawns");
                         if (spawn == null)
-                            spawn = new ArrayList();
+                            spawn = new ArrayList<>();
                         spawn.add(player.getLocation());
                         SGFFA.getInstance().getYamlConfiguration().set(args[0]+".spawns",spawn);
                         SGFFA.getInstance().getYamlConfiguration().save(SGFFA.getInstance().getFile());

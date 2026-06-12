@@ -31,7 +31,7 @@ public class SGFFA extends JavaPlugin {
 
     @Getter
     private static SGFFA instance;
-    public static String PREFIX = "§aSGFFA §8× §7";
+    public static final String PREFIX = "§aSGFFA §8× §7";
     @Setter
     private MapEntry activeMapEntry;
 
@@ -67,12 +67,13 @@ public class SGFFA extends JavaPlugin {
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
                 final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor()
                         .newInstance();
-                if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
+                if (obj instanceof Listener listener) {
+                    this.getServer().getPluginManager().registerEvents(listener, this);
                     this.getLogger().info("Registered " + obj.getClass().getName());
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            this.getLogger().severe("Failed to register listeners from " + path + ": " + e);
         }
     }
 
@@ -92,7 +93,7 @@ public class SGFFA extends JavaPlugin {
                     .collect(Collectors.toList());
             getCacheHandler().getMapEntryHashMap().put(map, new MapEntry(map, locationList, death));
         }
-        if (mapStrings.size() != 0)
+        if (!mapStrings.isEmpty())
             activeMapEntry = getCacheHandler().getMapEntryHashMap().get(mapStrings.get(new Random().nextInt(mapStrings.size())));
     }
 

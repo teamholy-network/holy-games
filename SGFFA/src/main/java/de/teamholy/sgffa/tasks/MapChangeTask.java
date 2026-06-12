@@ -1,5 +1,6 @@
 package de.teamholy.sgffa.tasks;
 
+import de.teamholy.gamescommon.TimeFormat;
 import de.teamholy.sgffa.SGFFA;
 import de.teamholy.sgffa.models.PlayerEntry;
 import org.bukkit.Bukkit;
@@ -20,7 +21,7 @@ public class MapChangeTask {
             if (SGFFA.getInstance().getActiveMapEntry() == null) return;
             countdown--;
             for (PlayerEntry playerEntry : SGFFA.getInstance().getCacheHandler().getPlayerEntryHashMap().values()) {
-                playerEntry.sendActionBar("§7Map change in §a" + formatSeconds(countdown) + " §8︳ §7Teaming? §7/§cteaming");
+                playerEntry.sendActionBar("§7Map change in §a" + TimeFormat.formatSeconds(countdown) + " §8︳ §7Teaming? §7/§cteaming");
                 if (SGFFA.getInstance().getActiveMapEntry().getDeathHight() > playerEntry.getPlayer().getLocation().getBlockY()) playerEntry.getPlayer().setHealth(0);
             }
             if (countdown == 0) changeMap();
@@ -49,12 +50,6 @@ public class MapChangeTask {
             playerEntry.getPlayer().sendTitle("§7§lNEW MAP","§a" + SGFFA.getInstance().getActiveMapEntry().getMapName());
         });
         countdown = 600;
-    }
-
-    private String formatSeconds(int seconds) {
-        int minutes = seconds / 60;
-        seconds %= 60;
-        return String.format("%02d:%02d", minutes, seconds);
     }
 
 }

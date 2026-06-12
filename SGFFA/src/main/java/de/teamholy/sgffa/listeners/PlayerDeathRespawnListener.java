@@ -31,7 +31,7 @@ public class PlayerDeathRespawnListener implements Listener {
         BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.SGFFA.toString(),"deaths",player.getUniqueId());
 
         Bukkit.getScheduler().runTaskLater(SGFFA.getInstance(), () -> {
-            if (player.isOnline() && player != null) {
+            if (player.isOnline()) {
                 (((CraftPlayer)player).getHandle()).playerConnection.a(new PacketPlayInClientCommand(PacketPlayInClientCommand.EnumClientCommand.PERFORM_RESPAWN));
                 playerEntry.updateScoreboard();
                 player.playSound(player.getLocation(), Sound.ANVIL_BREAK,50,50);
