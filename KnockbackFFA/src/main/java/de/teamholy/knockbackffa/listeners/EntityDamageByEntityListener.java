@@ -31,7 +31,8 @@ public class EntityDamageByEntityListener implements Listener {
             return;
         }
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
-        if (playerEntry.getActiveMap() == null) return;
+        // Vorher NPE direkt nach dem Join, bevor der Cache-Eintrag existiert (vom Event-Bus geschluckt) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null || playerEntry.getActiveMap() == null) return;
         if (player.getLocation().getY() > playerEntry.getActiveMap().getSpawnHight()) {
             event.setCancelled(true);
         }
@@ -41,12 +42,10 @@ public class EntityDamageByEntityListener implements Listener {
     public void onDamae(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player) {
             if (event.getDamager().getType() != EntityType.PLAYER) return;
-            if (event.getEntity().getType() == EntityType.ARMOR_STAND) {
-                event.setCancelled(true);
-                return;
-            }
             PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getEntity().getUniqueId());
             PlayerEntry targetEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getDamager().getUniqueId());
+            // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+            if (playerEntry == null || targetEntry == null) return;
             if (playerEntry.getPlayerState() == PlayerState.LOBBY || playerEntry.getPlayerState() == PlayerState.SPECTATE) {
                 event.setCancelled(true);
             } else if (playerEntry.getPlayerState() == PlayerState.INGAME) {
@@ -73,10 +72,12 @@ public class EntityDamageByEntityListener implements Listener {
     @EventHandler
     public void onArrowDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Arrow arrow)) return;
-      if (!(arrow.getShooter() instanceof Player)) return;
+        if (!(arrow.getShooter() instanceof Player shooter)) return;
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getEntity().getUniqueId());
-        PlayerEntry attackerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(((Player) arrow.getShooter()).getUniqueId());
+        PlayerEntry attackerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(shooter.getUniqueId());
         if (playerEntry == attackerEntry) return;
+        // Vorher NPE bei Nicht-Spieler-Zielen (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null || attackerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.SPECTATE) {
             event.setCancelled(true);
             return;

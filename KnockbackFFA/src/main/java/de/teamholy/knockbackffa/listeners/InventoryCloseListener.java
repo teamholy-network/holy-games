@@ -16,6 +16,8 @@ public class InventoryCloseListener implements Listener {
     public void onClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getPlayer().getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (event.getInventory().getName().equals("§8» §6Inventory Sort")) {
             if(Items.correctInventory(event.getInventory())){
                 playerEntry.setInventory(event.getInventory());

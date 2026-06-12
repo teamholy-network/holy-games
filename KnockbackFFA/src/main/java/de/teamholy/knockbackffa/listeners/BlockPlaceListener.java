@@ -23,6 +23,8 @@ public class BlockPlaceListener implements Listener {
     public void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         Block b = event.getBlock();
         if (playerEntry.getPlayerState() == PlayerState.INGAME) {
             if (event.getBlock().getLocation().getBlockY() > playerEntry.getActiveMap().getSpawnHight()) {

@@ -54,6 +54,8 @@ public class PlayerJoinQuitListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+        // Quit innerhalb des ersten Ticks nach Join: Cache-Eintrag existiert noch nicht (vorher NPE, Cleanup übersprungen)
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.INGAME) {
             playerEntry.leaveGame();
         }

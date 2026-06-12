@@ -3,7 +3,6 @@ package de.teamholy.knockbackffa.models;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -40,7 +39,8 @@ public class MapEntry {
     }
 
     public void updateSign() {
-        Block signBlock = sign.getBlock();
+        // Maps ohne Schild (Setup unvollständig) brachen vorher den kompletten Join-Handler per NPE ab
+        if (sign == null) return;
         sign.setLine(0,"§0× §6§lKBFFA §0×");
         sign.setLine(1, "   " + mapName + "   ");
         sign.setLine(2, "   Players » " + players.size() + "   ");

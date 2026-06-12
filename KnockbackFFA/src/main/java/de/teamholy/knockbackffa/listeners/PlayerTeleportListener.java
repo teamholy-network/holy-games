@@ -14,6 +14,8 @@ public class PlayerTeleportListener implements Listener {
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL) {
             if (playerEntry.getPlayerState() != PlayerState.INGAME) return;
             if (player.isDead() || player.getLocation().getBlockY() > playerEntry.getActiveMap().getSpawnHight() || event.getTo().getBlockY() > playerEntry.getActiveMap().getSpawnHight()) {

@@ -29,7 +29,9 @@ public class EntityShootListener implements Listener {
     public void onShoot(EntityShootBowEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (event.getProjectile().getType() == EntityType.ARROW) {
-              PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+                PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+                // Vorher NPE ohne Cache-Eintrag/aktive Map (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+                if (playerEntry == null || playerEntry.getActiveMap() == null) return;
                 World world = player.getWorld();
                 if (player.getLocation().getY() > playerEntry.getActiveMap().getSpawnHight()) {
                     event.getProjectile().remove();

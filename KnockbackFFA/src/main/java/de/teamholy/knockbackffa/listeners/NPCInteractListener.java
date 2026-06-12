@@ -13,6 +13,8 @@ public class NPCInteractListener implements Listener {
     @EventHandler
     public void onNPC(PlayerInteractAtNPCEvent event) {
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(event.getPlayer().getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.LOBBY && event.getNpcEntry().getDisplayName().equalsIgnoreCase("§6§lInventory")) {
             playerEntry.openInventorySort();
         }

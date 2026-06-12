@@ -63,7 +63,9 @@ public class BlockListener implements Listener {
             event.setCancelled(true);
     }
     @EventHandler
-    public void onInteract(PlayerInteractEvent event) { if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.SOIL) event.setCancelled(true); }
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.PHYSICAL && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.SOIL) event.setCancelled(true);
+    }
     @EventHandler
     public void onArmorStand(PlayerArmorStandManipulateEvent event) {
         event.setCancelled(true);
@@ -103,20 +105,18 @@ public class BlockListener implements Listener {
     }
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (event.getPlayer() == null) return;
-        Player player = event.getPlayer();
-        PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
-            if (player.getGameMode() == GameMode.CREATIVE)return;
-            event.setCancelled(true);
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+        event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        if (event.getPlayer() == null) return;
         Player player = event.getPlayer();
         PlayerEntry playerEntry = KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().get(player.getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.LOBBY) {
-            if (player.getGameMode() == GameMode.CREATIVE)return;
+            if (player.getGameMode() == GameMode.CREATIVE) return;
             event.setCancelled(true);
         }
     }
