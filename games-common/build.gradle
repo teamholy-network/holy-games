@@ -1,0 +1,4 @@
+// Gemeinsame Utilities für alle Game-Module. Wird per Shadow in jedes Plugin-Jar
+// eingebettet und dabei relocated — dieses Modul wird NICHT eigenständig publiziert.
+// Regeln: keine Reflection/Class.forName auf das eigene Package (relocation-sicher),
+// keine spielersichtbaren Strings mit dem Package-Namen.

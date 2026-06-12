@@ -1,4 +1,5 @@
 rootProject.name = 'holy-games'
+include 'games-common'
 include 'Bedwars'
 include 'Clutches'
 include 'KnockbackFFA'

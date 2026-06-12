@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/KnockbackFFA" />
             <option value="$PROJECT_DIR$/MLGRush" />
             <option value="$PROJECT_DIR$/SGFFA" />
+            <option value="$PROJECT_DIR$/games-common" />
           </set>
         </option>
       </GradleProjectSettings>
