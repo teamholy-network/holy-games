@@ -24,6 +24,8 @@ public class PlaygroundListener implements Listener {
             PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(event.getPlayer().getUniqueId());
             Player player = event.getPlayer();
 
+            // Vorher NPE bei leerer Hand/fehlendem Cache-Eintrag (lokal geschluckt) — gleiches Ergebnis per Early-Return
+            if (playerEntry == null || event.getItem() == null) return;
             if (event.getItem().getType() != Material.REDSTONE_COMPARATOR) return;
             if (playerEntry.getPlayerState() == PlayerState.PLAYGROUND) {
                 PlaygroundPlayer playgroundPlayer = playerEntry.getPlaygroundPlayer();
@@ -54,9 +56,11 @@ public class PlaygroundListener implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
-      if (event.getInventory().getName() != null && (event.getInventory().getName().toLowerCase().contains("perks") || event.getInventory().getName().toLowerCase().contains("armor"))) {
-            PlaygroundPlayer playgroundPlayer = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId()).getPlaygroundPlayer();
+        if (event.getInventory().getName() != null && (event.getInventory().getName().toLowerCase().contains("perks") || event.getInventory().getName().toLowerCase().contains("armor"))) {
             PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+            // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+            if (playerEntry == null) return;
+            PlaygroundPlayer playgroundPlayer = playerEntry.getPlaygroundPlayer();
             if (playgroundPlayer == null) return;
             if (playerEntry.getPlayerState() != PlayerState.PLAYGROUND) return;
             playgroundPlayer.setItems();

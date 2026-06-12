@@ -31,9 +31,10 @@ public class PrivateWorld {
     }
 
     public void unloadWorld() {
+        // Zuerst austragen: Schlug deleteWorld fehl, blieb die Welt vorher dauerhaft in LOADED_WORLDS (Memory-Leak)
+        LOADED_WORLDS.remove(this);
         try {
             Clutches.getInstance().getSlimeLoader().deleteWorld(slimeWorld.getName());
-            LOADED_WORLDS.remove(this);
         } catch (UnknownWorldException | IOException e) {
             throw new RuntimeException(e);
         }

@@ -43,6 +43,8 @@ public class BlockListener implements Listener {
         if (event.getEntity().getType() == EntityType.PLAYER && event.getDamager().getType() == EntityType.PLAYER) {
             PlayerEntry entity = Clutches.getInstance().getPlayerEntryHandler().get(event.getEntity().getUniqueId());
             PlayerEntry damager = Clutches.getInstance().getPlayerEntryHandler().get(event.getDamager().getUniqueId());
+            // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ohne Cancel ab) — gleiches Ergebnis per Early-Return
+            if (entity == null || damager == null) return;
 
             if (damager.getPlayerState() == PlayerState.PLAYGROUND
                     && damager.getPlaygroundPlayer() != null
@@ -136,7 +138,7 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.SOIL)
+        if (event.getAction() == Action.PHYSICAL && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.SOIL)
             event.setCancelled(true);
     }
 
@@ -167,6 +169,8 @@ public class BlockListener implements Listener {
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
         PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(event.getPlayer().getUniqueId());
+        // Vorher NPE bei fehlendem Cache-Eintrag (vom Event-Bus geschluckt, Handler brach ab) — gleiches Ergebnis per Early-Return
+        if (playerEntry == null) return;
         if (playerEntry.getPlayerState() == PlayerState.LOBBY) {
             if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
                 event.setCancelled(true);

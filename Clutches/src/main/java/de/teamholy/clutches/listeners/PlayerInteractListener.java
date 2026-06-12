@@ -20,6 +20,8 @@ public class PlayerInteractListener implements Listener {
         try {
             Player player = event.getPlayer();
             PlayerEntry playerEntry = Clutches.getInstance().getPlayerEntryHandler().get(player.getUniqueId());
+            // Vorher NPE bei fehlendem Cache-Eintrag (lokal geschluckt, Methode brach ab) — gleiches Ergebnis per Early-Return
+            if (playerEntry == null) return;
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 if (event.getItem() == null || event.getItem().getItemMeta() == null)
                     return;
