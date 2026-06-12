@@ -109,9 +109,9 @@ public class MLGRush extends JavaPlugin {
     }
 
     private void registerTemplates() {
-        templates = (ArrayList) yamlConfiguration.getStringList("Templates");
+        templates = new ArrayList<>(yamlConfiguration.getStringList("Templates"));
         templates.forEach(templates -> getMapTemplateEntryHandler().put(templates,new MapTemplateEntry(templates, Material.valueOf(yamlConfiguration.getString(templates + ".material")))));
-        maps = (ArrayList) yamlConfiguration.getStringList("Maps");
+        maps = new ArrayList<>(yamlConfiguration.getStringList("Maps"));
         maps.forEach(map -> {
             getMapEntryHandler().put(map,new MapEntry(map));
             String[] mapSplit = map.split("-");
@@ -202,14 +202,15 @@ public class MLGRush extends JavaPlugin {
         try {
             final ClassLoader classLoader = this.getClass().getClassLoader();
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
-                if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener)obj, this);
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
+                if (obj instanceof Listener listener) {
+                    this.getServer().getPluginManager().registerEvents(listener, this);
                     this.getLogger().info("Registered " + obj.getClass().getName());
                 }
             }
+        } catch (Exception e) {
+            this.getLogger().severe("Failed to register listeners from " + path + ": " + e);
         }
-        catch (Exception ignored) {}
     }
 
     @Override
@@ -222,8 +223,6 @@ public class MLGRush extends JavaPlugin {
         for (PlayerEntry playerEntry : getPlayerEntryHandler().values()) {
             playerEntry.saveData();
         }
-
-        // test
     }
 
 

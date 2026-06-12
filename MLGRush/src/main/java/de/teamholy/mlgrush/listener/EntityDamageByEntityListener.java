@@ -92,11 +92,6 @@ public class EntityDamageByEntityListener implements Listener {
                     event.setCancelled(true);
                     break;
             }
-            if (event.getEntity().getType() == EntityType.ARMOR_STAND) {
-                if (player.getGameMode() != GameMode.CREATIVE) {
-                    event.setCancelled(true);
-                }
-            }
         }
     }
 }
