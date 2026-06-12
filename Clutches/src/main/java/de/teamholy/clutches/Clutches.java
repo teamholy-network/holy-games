@@ -13,7 +13,6 @@ import de.teamholy.clutches.playground.commands.PlaygroundCommand;
 import de.teamholy.clutches.playground.PlaygroundManager;
 import de.teamholy.clutches.playground.commands.PresentedPresetCommand;
 import de.teamholy.clutches.task.ClutchTask;
-import de.teamholy.clutches.utils.PlayerUtils;
 import com.google.common.reflect.ClassPath;
 import com.grinderwolf.swm.api.SlimePlugin;
 import com.grinderwolf.swm.api.loaders.SlimeLoader;
@@ -50,7 +49,6 @@ public class Clutches extends JavaPlugin {
     @Getter
     private static Clutches instance;
     private PlayerEntryHandler playerEntryHandler = new PlayerEntryHandler();
-    private PlayerUtils playerUtils;
     private MapEntryHandler mapEntryHandler = new MapEntryHandler();
     private HologramManager hologramManager;
     private PlaygroundManager playgroundManager;
@@ -118,12 +116,13 @@ public class Clutches extends JavaPlugin {
         final ClassLoader classLoader = this.getClass().getClassLoader();
         try {
             for (final ClassPath.ClassInfo info : ClassPath.from(classLoader).getTopLevelClasses(path)) {
-                final Object obj = Class.forName(info.getName(), true, classLoader).newInstance();
-                if (obj instanceof Listener) {
-                    this.getServer().getPluginManager().registerEvents((Listener) obj, this);
+                final Object obj = Class.forName(info.getName(), true, classLoader).getDeclaredConstructor().newInstance();
+                if (obj instanceof Listener listener) {
+                    this.getServer().getPluginManager().registerEvents(listener, this);
                 }
             }
-        } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException exception) {
+        } catch (ReflectiveOperationException | IOException exception) {
+            this.getLogger().severe("Failed to register listeners from " + path + ":");
             exception.printStackTrace();
         }
     }

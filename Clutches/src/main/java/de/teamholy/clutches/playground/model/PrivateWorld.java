@@ -47,9 +47,8 @@ public class PrivateWorld {
             LOADED_WORLDS.add(this);
 
 
-            while (Bukkit.getWorld("PRIVATE-" + uuid + "-" + playgroundWorld.getName()) != null) {
+            if (Bukkit.getWorld("PRIVATE-" + uuid + "-" + playgroundWorld.getName()) != null) {
                 teleportPlayerToRandomSpawn(player);
-                break;
             }
 
         } catch (WorldAlreadyExistsException | IOException e) {
