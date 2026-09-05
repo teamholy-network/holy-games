@@ -13,6 +13,7 @@ import de.slikey.effectlib.util.RandomUtils;
 import de.teamholy.core.api.utility.Gamemodes;
 import de.teamholy.core.bukkit.BukkitCore;
 import de.teamholy.core.bukkit.utils.ItemBuilder;
+import de.teamholy.replay.api.ReplayAPI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,6 +52,9 @@ public class PlayerDeathListener implements Listener {
         event.setDeathMessage(null);
         BukkitCore.getInstance().getStatsManager().addStat(Gamemodes.KNOCKBACKFFA.toString(),"deaths",player.getUniqueId());
 
+
+
+
         Bukkit.getScheduler().runTaskLater(KnockbackFFA.getInstance(), () -> {
             if (player.isOnline()) {
                 player.spigot().respawn();
@@ -60,6 +64,7 @@ public class PlayerDeathListener implements Listener {
         },  1L);
 
         if (killer == null || killer == player) {
+            ReplayAPI.getInstance().addMessageToAllRecordings(KnockbackFFA.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §7has died.");
             player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You died! §8(§c-2 §6trophies§8)");
             player.setLevel(0);
             BukkitCore.getInstance().getStatsManager().handleTrophie(player.getUniqueId(),Gamemodes.KNOCKBACKFFA.toString(), StatsManager.TrophieAdjustType.MINUS,2);
@@ -78,12 +83,20 @@ public class PlayerDeathListener implements Listener {
             killerEntry.setAlltimeTrophies(killerEntry.getAlltimeTrophies() + killerTrophies);
             playerEntry.setAlltimeTrophies(playerEntry.getAlltimeTrophies() - playerTrophies);
 
+
+
+            ReplayAPI.getInstance().addMessageToAllRecordings(KnockbackFFA.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName() + " §7killed " +
+                    BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + "§7.");
             killer.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You killed " + BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §8(§a+" + killerTrophies + " §6trophies§8)");
             String healthString = getHealthColor(killer.getHealth()) + String.valueOf(Math.round(killer.getHealth() / 2D));
             player.sendMessage(KnockbackFFA.getInstance().getPrefix() + "You have been killed by " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName()
                     + " §8(" + healthString + "§c❤§8)"+
                     " §8(§c-" + playerTrophies + " §6trophies§8)"
             );
+
+            ReplayAPI.getInstance().addMessageToAllRecordings(KnockbackFFA.getInstance().getPrefix() + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName() + " §7killed " +
+                    BukkitCore.getInstance().getPlayerColor(player.getUniqueId(), true) + player.getName() + " §8(" + healthString + "§c❤§8)");
+
             killer.setLevel(killer.getLevel() + 1);
             killer.setHealth(20);
             if (killer.getLocation().getBlockY() < killerEntry.getActiveMap().getSpawnHight()) {
@@ -107,6 +120,8 @@ public class PlayerDeathListener implements Listener {
                 all.sendMessage(KnockbackFFA.getInstance().getPrefix() + "The Player " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName() + " §7has made §c" + killer.getLevel() + " §7kills in a row!");
                 all.getPlayer().playSound(all.getPlayer().getLocation(), Sound.ENDERDRAGON_GROWL,50,50);
             });
+
+            ReplayAPI.getInstance().addMessageToAllRecordings(KnockbackFFA.getInstance().getPrefix() + "The Player " + BukkitCore.getInstance().getPlayerColor(killer.getUniqueId(), true) + killer.getName() + " §7has made §c" + killer.getLevel() + " §7kills in a row!");
             Location location = new Location(killer.getPlayer().getLocation().getWorld(), killer.getPlayer().getLocation().getX(), killer.getPlayer().getLocation().getY() + 1.0D, killer.getPlayer().getLocation().getZ());
             List<Player> players = new ArrayList<>();
             KnockbackFFA.getInstance().getCacheHandler().getPlayerEntrys().forEach((uuid, playerEntry1) -> {

@@ -3,6 +3,7 @@ package de.teamholy.knockbackffa.listeners;
 import de.teamholy.knockbackffa.KnockbackFFA;
 import de.teamholy.knockbackffa.enums.PlayerState;
 import de.teamholy.knockbackffa.models.PlayerEntry;
+import de.teamholy.replay.api.ReplayAPI;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ public class BlockPlaceListener implements Listener {
                             ((CraftPlayer) all).getHandle().playerConnection.sendPacket(packet);
                         }
                     } else {
+                        ReplayAPI.getInstance().addBlockChangeToAllRecordings(b, Material.AIR);
                         b.setType(Material.AIR);
                         PacketPlayOutBlockBreakAnimation packet1 = new PacketPlayOutBlockBreakAnimation(random, new BlockPosition(b.getX(), b.getY(), b.getZ()), -1);
                         for (Player all : Bukkit.getOnlinePlayers()) {

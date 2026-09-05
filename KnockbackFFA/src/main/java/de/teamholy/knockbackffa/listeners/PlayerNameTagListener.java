@@ -7,6 +7,7 @@ import de.teamholy.knockbackffa.models.PlayerEntry;
 import de.teamholy.core.api.entities.clan.Clan;
 import de.teamholy.core.api.utility.PlayerRank;
 import de.teamholy.core.bukkit.BukkitCore;
+import de.teamholy.replay.api.ReplayAPI;
 import eu.koboo.markup.MarkupAPI;
 import eu.koboo.markup.events.PlayerNameTagEvent;
 import org.bukkit.entity.Player;
@@ -61,6 +62,7 @@ public class PlayerNameTagListener implements Listener {
         }
 
 
+        ReplayAPI.getInstance().addNameTagDataToAllRecordings(player.getName(), prefix, suffixBuilder.toString(), prefix, displaySuffixBuilder.toString());
         event.setSortId(sortId);
         event.setPrefix(prefix);
         event.setSuffix(suffixBuilder.toString());
